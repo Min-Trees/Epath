@@ -1,0 +1,358 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "aboutUs": "About Us",
+    "vision": "Vision",
+    "mission": "Mission",
+    "values": "Core Values",
+    "programs": "Programs",
+    "kindergarten": "Kindergarten",
+    "elementary": "Elementary",
+    "middle": "Middle School",
+    "high": "High School",
+    "partners": "Partners",
+    "admissions": "Admissions",
+    "tuition": "Tuition",
+    "faq": "FAQ",
+    "contact": "Contact Us",
+    "events": "Events",
+    "register": "Register"
+  },
+  "hero": {
+    "welcome": "Welcome to",
+    "title": "EPath Education",
+    "subtitle": "Children are the foundation of sustainable development.",
+    "description": "The early years play a crucial role not only in physical development but also in cognitive ability.",
+    "cta": "LEARN MORE"
+  },
+  "stats": {
+    "years": "Years Experience",
+    "levels": "Education Levels",
+    "edmentum": "Years Edmentum",
+    "partners": "Intl Partners",
+    "personalized": "Personalized"
+  },
+  "values": {
+    "title": "Why Parents Choose EPath?",
+    "subtitle": "6 core values that make EPath Education different",
+    "continuousPath": "Continuous Pathway",
+    "continuousPathDesc": "From Kindergarten to High School without interruption.",
+    "usStandard": "US Standards Certified",
+    "usStandardDesc": "Edmentum International — Cognia & WASC certified.",
+    "blended": "Blended Learning",
+    "blendedDesc": "Online + Onsite combined.",
+    "parentsRelax": "Parents Relax",
+    "parentsRelaxDesc": "EPath tracks progress for you.",
+    "portfolio": "Personal Portfolio",
+    "portfolioDesc": "Build Student Portfolio.",
+    "ecosystem": "Open Ecosystem",
+    "ecosystemDesc": "Connect school – family – experts – intl partners.",
+    "learnMore": "Learn more",
+    "viewAll": "View all programs"
+  },
+  "pathways": {
+    "title": "Learning Pathways by Age",
+    "subtitle": "From Kindergarten to High School - Continuous Pathway",
+    "curriculum": "Curriculum",
+    "viewAll": "View all programs",
+    "kindergartenDesc": "A perfect start to your child's learning journey",
+    "elementaryDesc": "A solid foundation with the US-standard curriculum",
+    "middleDesc": "Develop skills and academic thinking",
+    "highDesc": "International dual diploma, opens doors to study abroad"
+  },
+  "partners": {
+    "title": "International Partners",
+    "subtitle": "Global education ecosystem at EPath",
+    "learnMore": "Learn more about our partners",
+    "cognia": "Intl Accreditation",
+    "wasc": "US Accreditation",
+    "edmentumPartner": "Strategic Partner",
+    "edmentumDesc": "US-standard curriculum with 60+ years of experience",
+    "cambridgeDesc": "International English exams and certifications",
+    "cogniaDesc": "Global education quality accreditation",
+    "wascDesc": "Trusted US school accreditation",
+    "fablabDesc": "Modern STEM lab at EIU",
+    "edoptionsDesc": "US-standard online high-school program"
+  },
+  "cta": {
+    "title": "Start your international academic journey with EPath today",
+    "subtitle": "Book a free consultation to discover the best learning pathway for your child",
+    "primary": "Book Free Consultation",
+    "secondary": "View Programs"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Answers to parents' questions about EPath Education",
+    "q1": "What age group is EPath suitable for?",
+    "a1": "EPath provides programs from Kindergarten (3-5 years) to High School (15-18 years).",
+    "q2": "Can my child attend EPath while studying at another school?",
+    "a2": "Absolutely! EPath's Blended Learning allows students to combine schools.",
+    "q3": "What are the tuition and financial policies?",
+    "a3": "EPath offers flexible tuition packages from part-time to full-time.",
+    "q4": "Are Edmentum degrees internationally recognized?",
+    "a4": "Yes! Edmentum is accredited by Cognia and WASC.",
+    "q5": "Can my child study for an American Dual Diploma after Middle School?",
+    "a5": "Absolutely! EPath provides Dual Diploma program.",
+    "otherQuestion": "Do you have other questions?",
+    "contactBtn": "Contact for Consultation"
+  },
+  "about": {
+    "hero": {
+      "title": "About EPath Education",
+      "subtitle": "International academic pathway from Elementary to High School"
+    },
+    "who": {
+      "title": "Who We Are",
+      "p1": "EPath Education provides American-standard international programs.",
+      "p2": "With over 10 years from Little People and 60+ years from Edmentum."
+    },
+    "vision": "Vision",
+    "visionText": "To become Vietnam's leading educational system.",
+    "mission": "Mission",
+    "missionText": "To bring Vietnamese students opportunities to access international education.",
+    "coreValues": {
+      "title": "Core Values",
+      "subtitle": "6 values that guide all EPath Education activities"
+    },
+    "milestones": {
+      "title": "Development Milestones",
+      "subtitle": "Journey of building and developing EPath Education",
+      "m1Title": "Little People Founded",
+      "m1Desc": "Started with the Little People kindergarten program in Binh Duong.",
+      "m2Title": "Edmentum Partnership",
+      "m2Desc": "Became an official partner of Edmentum International.",
+      "m3Title": "Cognia Accreditation",
+      "m3Desc": "Achieved the international Cognia quality accreditation.",
+      "m4Title": "High-School Expansion",
+      "m4Desc": "Launched the Dual Diploma program for high-school students.",
+      "m5Title": "Complete Ecosystem",
+      "m5Desc": "Completed the continuous learning pathway from Kindergarten to High School."
+    },
+    "cta": {
+      "title": "Ready to Start Your Journey with EPath?",
+      "subtitle": "Contact us for advice on the most suitable learning pathway",
+      "button": "Contact for Consultation"
+    },
+    "objective": { "title": "Objective", "desc": "Accompany students to build personalized learning pathways." },
+    "team": { "title": "Team", "desc": "International and Vietnamese teachers with extensive experience." },
+    "stats": {
+      "years": "Years Experience",
+      "levels": "Education Levels",
+      "edmentum": "Years Edmentum"
+    }
+  },
+  "programs": {
+    "hero": {
+      "title": "Academic Programs",
+      "subtitle": "Continuous learning pathway from Kindergarten to High School"
+    },
+    "filter": "Filter by level:",
+    "all": "All",
+    "curriculum": "American Curriculum - Cognia & WASC Accredited",
+    "duration": "Duration:",
+    "subjects": "Subjects:",
+    "register": "Register for Consultation",
+    "levels": {
+      "kindergarten": "Kindergarten",
+      "elementary": "Elementary",
+      "middle": "Middle School",
+      "high": "High School"
+    },
+    "cta": {
+      "title": "Need more advice on academic programs?",
+      "subtitle": "EPath's advisory team is ready to help you choose the most suitable pathway",
+      "button": "Contact for Free Consultation"
+    }
+  },
+  "admissions": {
+    "hero": {
+      "title": "Admissions",
+      "subtitle": "Register for free consultation to start your journey with EPath"
+    },
+    "form": {
+      "title": "Register for Free Consultation",
+      "parentName": "Parent's Full Name *",
+      "phone": "Phone Number *",
+      "email": "Email *",
+      "studentName": "Student's Name",
+      "grade": "Current Grade",
+      "selectGrade": "Select Grade",
+      "program": "Program of Interest",
+      "selectProgram": "Select Program",
+      "message": "Message (Optional)",
+      "submit": "Register for Free Consultation",
+      "submitting": "Submitting...",
+      "success": "Thank you for registering!",
+      "successText": "EPath will contact you within 24 hours.",
+      "registerMore": "Register More"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "address": "Address",
+      "hotline": "Hotline",
+      "emailLabel": "Email",
+      "hours": "Working Hours",
+      "hoursValue": "Mon - Fri: 8:00 - 17:00"
+    },
+    "tuition": {
+      "title": "Tuition Packages",
+      "subtitle": "EPath offers flexible tuition packages to suit each family's needs",
+      "popular": "Most Popular",
+      "contact": "Contact",
+      "consult": "Consult Now"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "What is the registration process?",
+      "a1": "Step 1: Contact for consultation. Step 2: Book free assessment.",
+      "q2": "What to prepare for the assessment session?",
+      "a2": "Bring school reports and ID.",
+      "q3": "What is the refund policy?",
+      "a3": "100% refund if withdrawing 15 days before opening."
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Contact Us",
+      "subtitle": "We are always ready to listen and support you"
+    },
+    "info": {
+      "title": "Contact Information",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Working Hours",
+      "hoursValue": "Mon - Fri: 8:00 - 17:00"
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "name": "Full Name *",
+      "emailField": "Email *",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "selectSubject": "Select Subject",
+      "admission": "Admission Consultation",
+      "program": "About Programs",
+      "tuition": "Tuition & Payment",
+      "feedback": "Feedback",
+      "partnership": "Partnership",
+      "other": "Other",
+      "message": "Content *",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Message Sent!",
+      "successText": "Thank you for contacting. EPath will respond within 24 hours.",
+      "sendAnother": "Send Another Message"
+    }
+  },
+  "events": {
+    "hero": {
+      "title": "Events",
+      "subtitle": "Updates on events and activities at EPath Education"
+    },
+    "filter": "All",
+    "registered": "Registered",
+    "register": "Register to Attend",
+    "viewDetail": "View Details",
+    "eventLabel": "Event",
+    "location": "EPath Center",
+    "event1Title": "Open House Day",
+    "event2Title": "Edmentum Workshop",
+    "event3Title": "Parent Orientation",
+    "event4Title": "Cambridge Briefing",
+    "cta": {
+      "title": "Want to receive event information earliest?",
+      "subtitle": "Register your email to receive the latest EPath events",
+      "button": "Register for Updates"
+    }
+  },
+  "partnersPage": {
+    "hero": {
+      "title": "International Partners",
+      "subtitle": "Global education ecosystem at EPath Education"
+    },
+    "curriculum": { "title": "Curriculum", "desc": "Partners providing educational programs and content" },
+    "certification": { "title": "Accreditation", "desc": "International educational quality accreditation organizations" },
+    "lab": { "title": "Lab", "desc": "Facilities supporting STEM learning" },
+    "features": "Key Features",
+    "featureList": {
+      "f1": "Globally recognized US-standard curriculum",
+      "f2": "Accredited by Cognia and WASC",
+      "f3": "Personalized learning pathways",
+      "f4": "Continuous support from K-12"
+    },
+    "visitWebsite": "Visit Website",
+    "cta": {
+      "title": "Learn more about EPath's partners",
+      "subtitle": "Contact us for advice on international programs at EPath",
+      "button": "Contact for Consultation"
+    }
+  },
+  "steps": {
+    "title": "5-Step Companion Model",
+    "subtitle": "EPath accompanies students from assessment to success",
+    "assessment": "Assessment",
+    "assessmentDesc": "Entry-level capability assessment",
+    "pathway": "Pathway",
+    "pathwayDesc": "Design personalized learning pathway",
+    "blended": "Blended Learning",
+    "blendedDesc": "Online + Onsite combined",
+    "advising": "Advising",
+    "advisingDesc": "Continuous monitoring and adjustment",
+    "achievement": "Achievement",
+    "achievementDesc": "Achieve learning goals",
+    "ctaText": "Ready to start?",
+    "ctaSubtext": "Register for free consultation today",
+    "register": "Register Now"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "testimonials": {
+    "title": "What Parents Say About EPath",
+    "subtitle": "Trusted by hundreds of families across Vietnam",
+    "list": [
+      {
+        "name": "Ms. Nguyen Thi Lan",
+        "location": "District 1, HCMC",
+        "quote": "My child who couldn't write English, after 6 months at EPath now studies online without reminders. What impressed me most is the Blended Learning method that gives flexibility while ensuring quality.",
+        "rating": 5
+      },
+      {
+        "name": "Mr. Tran Van Minh",
+        "location": "Thu Duc, HCMC",
+        "quote": "My spouse and I are busy with work and don't have much time to tutor our child. EPath has taken over tracking progress and providing detailed periodic reports for us.",
+        "rating": 5
+      },
+      {
+        "name": "Ms. Pham Thi Huong",
+        "location": "Binh Thanh, HCMC",
+        "quote": "We've tried many centers but EPath is the only one with a continuous learning pathway from kindergarten to high school. My child's knowledge isn't interrupted and is much more confident taking Cambridge exams.",
+        "rating": 5
+      }
+    ]
+  },
+  "footer": {
+    "description": "International academic pathway from Elementary to High School. Blended Learning - Edmentum International - Personalized learning pathways.",
+    "programsTitle": "Programs",
+    "quickLinksTitle": "EPath",
+    "contactTitle": "Contact",
+    "partnersTitle": "Partners",
+    "contact": {
+      "address": "38 Tran Phu, Thu Dau Mot, HCMC",
+      "phone": "+84 912 345 678",
+      "email": "info@epatheducation.edu.vn"
+    },
+    "partners": [
+      "Edmentum International",
+      "Cambridge Assessment",
+      "Cognia & WASC",
+      "FabLab EIU"
+    ],
+    "copyright": "© {year} EPath Education. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  }
+}

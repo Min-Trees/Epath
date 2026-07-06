@@ -1,0 +1,1065 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* EPath Color System - 2026 */
+    /* Xanh dương chính (học thuật, tin cậy) */
+    --primary: 227 54% 52%;
+    --primary-foreground: 0 0% 100%;
+    /* Xanh lá (phát triển, năng lượng) */
+    --secondary: 76 57% 53%;
+    --secondary-foreground: 0 0% 0%;
+    /* Cam (sáng tạo, CTA) */
+    --accent: 14 79% 57%;
+    --accent-foreground: 0 0% 100%;
+    /* Nền */
+    --background: 0 0% 100%;
+    --foreground: 228 7% 14%;
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 228 7% 14%;
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 228 7% 14%;
+    /* Muted */
+    --muted: 210 20% 96%;
+    --muted-foreground: 228 7% 40%;
+    /* Border & Input */
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    /* Ring */
+    --ring: 227 54% 52%;
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    /* Radius */
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-white text-[#231F20];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F9FA;
+}
+::-webkit-scrollbar-thumb {
+  background: #3A53A3;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2E4389;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Token-based surface tints (used in component inline styles) */
+  .surface-tint-blue { background-color: #E6ECFF; }
+  .surface-tint-green { background-color: #F3FAE0; }
+  .surface-tint-orange { background-color: #FFF3ED; }
+  .surface-alt { background-color: #F8F9FA; }
+
+  /* Soft cross-fade used by the language switcher label */
+  .animate-fade-in {
+    animation: label-fade-in 220ms ease-out both;
+  }
+
+  /* -----------------------------------------------------------------
+     Performance utilities – apply to elements that animate via
+     transform / opacity. Promote them to a dedicated compositor
+     layer once, then JS / CSS transitions / animations run at
+     native 60 fps without triggering paint / layout on every frame.
+     ----------------------------------------------------------------- */
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Cards that hover with translate-y: cheaper on the GPU layer */
+  .hover-card {
+    transform: translateZ(0);
+    will-change: transform;
+    transition:
+      transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-card:hover {
+    transform: translateY(-6px) translateZ(0);
+    box-shadow: 0 18px 40px -16px rgba(35, 31, 32, 0.18);
+  }
+
+  /* -----------------------------------------------------------------
+     Core Values cards.
+     Card hover is a CSS transform (no framer-motion wrapper).
+     Internal number / icon reveal animations are CSS keyframes that
+     start once the section becomes active (IntersectionObserver)
+     so they don't compete with the parent's framer-motion entrance.
+     ----------------------------------------------------------------- */
+
+  .values-card {
+    transform: translateZ(0);
+    will-change: transform;
+    transition:
+      transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* Play internal animations once section enters viewport. */
+  }
+  .values-card:hover {
+    transform: translateY(-6px) translateZ(0);
+    box-shadow: 0 18px 40px -16px rgba(35, 31, 32, 0.18);
+  }
+  .values-card .values-icon {
+    background-color: var(--accent);
+    transform: translateZ(0);
+  }
+  .values-card .values-number {
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  .values-card .values-desc {
+    color: var(--accent);
+  }
+  .values-card .values-cta {
+    color: var(--accent);
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Trigger internal reveals after the section becomes active.
+     Pauses automatically when user scrolls away. */
+  .values-section[data-active='true'] .values-card .values-number {
+    animation: values-number-in 0.35s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--reveal-delay, 0s);
+  }
+
+  @keyframes values-number-in {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .values-card .values-number {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* -----------------------------------------------------------------
+     Hero – pure CSS entrance + pulse.
+     ----------------------------------------------------------------- */
+  .hero-title,
+  .hero-subtitle,
+  .hero-cta,
+  .hero-scroll-indicator {
+    opacity: 0;
+    transform: translateY(16px) translateZ(0);
+  }
+  .hero-section.is-visible .hero-title,
+  .hero-section.is-visible .hero-subtitle,
+  .hero-section.is-visible .hero-cta,
+  .hero-section.is-visible .hero-scroll-indicator {
+    animation: hero-enter 0.6s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--enter-delay, 0s);
+  }
+  @keyframes hero-enter {
+    to { opacity: 1; transform: translateY(0) translateZ(0); }
+  }
+
+  /* Per-word reveal: each .hero-word uses --word-delay (set inline). */
+  .hero-word {
+    opacity: 0;
+    transform: translateY(20px) translateZ(0);
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+  .hero-section.is-visible .hero-word {
+    animation: hero-word-in 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--word-delay, 0s);
+  }
+  @keyframes hero-word-in {
+    to { opacity: 1; transform: translateY(0) translateZ(0); }
+  }
+
+  /* Pulse rings – two layered layers around the CTA. */
+  .hero-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .hero-pulse--solid {
+    background-color: #F05A28;
+    animation: hero-pulse-grow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .hero-pulse--ring {
+    border: 2px solid white;
+    animation: hero-pulse-ring 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 0.4s;
+  }
+  @keyframes hero-pulse-grow {
+    0%   { transform: scale(1);    opacity: 0.4; }
+    100% { transform: scale(1.18); opacity: 0;   }
+  }
+  @keyframes hero-pulse-ring {
+    0%   { transform: scale(1);    opacity: 0.6; }
+    100% { transform: scale(1.4);  opacity: 0;   }
+  }
+
+  /* Sliding arrow on the CTA */
+  .hero-arrow {
+    animation: hero-arrow-slide 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  @keyframes hero-arrow-slide {
+    0%, 60%, 100% { transform: translateX(0); }
+    30%           { transform: translateX(6px); }
+  }
+
+  /* Scroll indicator bounce */
+  .hero-bounce {
+    animation: hero-bounce 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform;
+  }
+  @keyframes hero-bounce {
+    0%, 100% { transform: translateY(0);    }
+    50%      { transform: translateY(8px);  }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-word,
+    .hero-title,
+    .hero-subtitle,
+    .hero-cta,
+    .hero-scroll-indicator {
+      animation: none !important;
+      opacity: 1;
+      transform: none !important;
+    }
+    .hero-pulse,
+    .hero-arrow,
+    .hero-bounce {
+      animation: none !important;
+    }
+  }
+
+  /* -----------------------------------------------------------------
+     Partners section.
+     ----------------------------------------------------------------- */
+  .partners-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .partners-section[data-active='true'] .partners-header {
+    animation: partners-header-in 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+  }
+  @keyframes partners-header-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .partner-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px) translateZ(0);
+    transition:
+      transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 200ms ease-out;
+    will-change: transform;
+  }
+  .partners-section[data-active='true'] .partner-card {
+    animation: partner-card-in 0.45s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--reveal-delay, 0s);
+  }
+  @keyframes partner-card-in {
+    to { opacity: 1; transform: translateY(0) translateZ(0); }
+  }
+  .partner-card:hover {
+    transform: translateY(-4px) scale(1.02) translateZ(0);
+    box-shadow: 0 18px 30px -10px rgba(35, 31, 32, 0.18);
+    border-color: rgba(58, 83, 163, 0.3);
+  }
+  .partner-icon {
+    transition: background-color 200ms ease-out;
+  }
+  .partner-card:hover .partner-icon {
+    background-color: rgba(58, 83, 163, 0.2);
+  }
+
+  .cert-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: white;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.94) translateZ(0);
+    transition:
+      transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 200ms ease-out;
+    will-change: transform;
+  }
+  .partners-section[data-active='true'] .cert-pill {
+    animation: cert-pill-in 0.4s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--reveal-delay, 0s);
+  }
+  @keyframes cert-pill-in {
+    to { opacity: 1; transform: scale(1) translateZ(0); }
+  }
+  .cert-pill:hover {
+    transform: translateY(-2px) scale(1.04) translateZ(0);
+    box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.12);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partners-section .partners-header,
+    .partners-section .partner-card,
+    .partners-section .cert-pill {
+      animation: none !important;
+      opacity: 1;
+      transform: none !important;
+    }
+  }
+
+  /* -----------------------------------------------------------------
+     Statistics cells – CSS reveal when section becomes active.
+     ----------------------------------------------------------------- */
+  .stats-section .stat-cell {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  .stats-section[data-active='true'] .stat-cell {
+    animation: stat-cell-in 0.45s cubic-bezier(0, 0, 0.2, 1) forwards;
+  }
+  .stats-section[data-active='true'] .stat-cell:nth-child(1) { animation-delay: 0s; }
+  .stats-section[data-active='true'] .stat-cell:nth-child(2) { animation-delay: 0.08s; }
+  .stats-section[data-active='true'] .stat-cell:nth-child(3) { animation-delay: 0.16s; }
+  .stats-section[data-active='true'] .stat-cell:nth-child(4) { animation-delay: 0.24s; }
+  .stats-section[data-active='true'] .stat-cell:nth-child(5) { animation-delay: 0.32s; }
+  @keyframes stat-cell-in {
+    to { opacity: 1; transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stats-section .stat-cell {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* -----------------------------------------------------------------
+     Learning Pathways cards – pure CSS.
+     ----------------------------------------------------------------- */
+  .pathways-header {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .pathways-section[data-active='true'] .pathways-header {
+    animation: pathways-fade-in 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+  }
+  @keyframes pathways-fade-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pathway-card-wrap {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .pathways-section[data-active='true'] .pathway-card-wrap {
+    animation: pathways-card-in 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+    animation-delay: var(--reveal-delay, 0s);
+  }
+  @keyframes pathways-card-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pathway-card {
+    transform: translateZ(0);
+    will-change: transform;
+    transition:
+      transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .pathway-card:hover {
+    transform: translateY(-8px) translateZ(0);
+    box-shadow: 0 24px 50px -16px rgba(35, 31, 32, 0.22);
+  }
+
+  .pathway-watermark {
+    opacity: 0.1;
+    transition: opacity 220ms ease-out;
+  }
+  .pathway-card:hover .pathway-watermark {
+    opacity: 0.25;
+  }
+
+  .pathway-badge {
+    background-color: var(--accent);
+    transition: background-color 300ms ease-out,
+                box-shadow 300ms ease-out;
+    transform: translateZ(0);
+  }
+  .pathway-card:hover .pathway-badge {
+    background-color: white;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .pathway-icon-default {
+    color: white;
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+  }
+  .pathway-card:hover .pathway-icon-default {
+    opacity: 0;
+    transform: scale(0.75) translateZ(0);
+  }
+
+  /* Hover layer icon (default hidden) */
+  .pathway-badge-hover {
+    opacity: 0;
+    transform: scale(1.1) translateZ(0);
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+  }
+  .pathway-card:hover .pathway-badge-hover {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+  .pathway-icon-hover {
+    opacity: 1;
+    color: var(--accent);
+    transform: scale(1);
+  }
+
+  .pathway-arrow {
+    opacity: 0;
+    transform: translateX(-8px) translateZ(0);
+    transition: opacity 220ms ease-out, transform 220ms ease-out;
+  }
+  .pathway-card:hover .pathway-arrow {
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pathways-section .pathways-header,
+    .pathways-section .pathway-card-wrap {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+    }
+    .pathway-card,
+    .pathway-badge,
+    .pathway-watermark,
+    .pathway-arrow,
+    .pathway-icon-default {
+      transition: none !important;
+    }
+    .pathway-card:hover {
+      transform: none;
+    }
+    .pathway-card:hover .pathway-icon-default {
+      opacity: 1;
+    }
+    .pathway-card:hover .pathway-badge-hover {
+      opacity: 0;
+    }
+    .pathway-card:hover .pathway-arrow {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes label-fade-in {
+  from { opacity: 0; transform: translateY(-1px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* -----------------------------------------------------------------
+   EPath Header – CSS-only state via [data-scrolled].
+
+   Why CSS-only: every visual change (height, padding, shadow, colors)
+   happens on compositor-friendly properties (transform / opacity /
+   filter). React stays untouched during scroll = no re-renders.
+
+   The header reserves its `pt`/`pb` space up-front to avoid CLS; we
+   only translate inner content up/down, never reflow layout.
+   ----------------------------------------------------------------- */
+
+.epath-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* z-index 60 keeps the header + all its descendant menus above
+     chatbot bubble (z-50) and any sticky siblings. */
+  z-index: 60;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(58, 83, 163, 0.95); /* epath-blue/95 */
+  box-shadow: none;
+  /* Reserve enough vertical room for the largest state (logo + nav) so we
+     never reflow the page when the user scrolls past the threshold. */
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition:
+    background-color 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Promote to its own GPU layer – one-time cost, huge payoff. */
+  transform: translateZ(0);
+  will-change: background-color;
+}
+
+.epath-header[data-scrolled='true'] {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Logo pill – height is fixed in both states (no CLS) and we use
+   transform: scale for the size change. Color is on the inner pill. */
+.logo-pill {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  transition: background-color 200ms ease-out;
+  transform: translateZ(0);
+}
+.epath-header[data-scrolled='true'] .logo-pill {
+  background-color: transparent;
+}
+
+.logo-img {
+  display: block;
+  width: auto;
+  height: 28px; /* fixed – no CLS */
+  transform: scale(1);
+  transform-origin: left center;
+  transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+.epath-header[data-scrolled='true'] .logo-img {
+  transform: scale(0.86);
+}
+
+/* Nav link colors driven by header state – no per-link re-renders. */
+.nav-link {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+  color: rgba(255, 255, 255, 1);
+}
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+.epath-header[data-scrolled='true'] .nav-link {
+  color: #231F20;
+}
+.epath-header[data-scrolled='true'] .nav-link:hover {
+  background-color: #3A53A3;
+  color: white;
+}
+
+/* CTA – small padding difference animated via simple transition. */
+.header-cta {
+  padding: 10px 20px;
+  background-color: #F05A28;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition:
+    background-color 200ms ease-out,
+    box-shadow 200ms ease-out,
+    transform 200ms ease-out,
+    padding 200ms ease-out;
+}
+.header-cta:hover {
+  background-color: #E04D1A;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+.epath-header[data-scrolled='true'] .header-cta {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Mobile menu button – no recolor needed since `.epath-header[data-scrolled]`
+   already swaps colors, but we keep a stable contrast target. */
+.mobile-menu-btn {
+  padding: 8px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+.mobile-menu-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.epath-header[data-scrolled='true'] .mobile-menu-btn {
+  color: #3A53A3;
+}
+.epath-header[data-scrolled='true'] .mobile-menu-btn:hover {
+  background-color: rgba(58, 83, 163, 0.1);
+}
+
+/* CSS-only hamburger (3 bars) – avoids Lucide icon swap & re-render. */
+.menu-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+}
+.menu-icon .bar {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 220ms ease-out,
+              top 220ms ease-out;
+}
+.menu-icon .bar-1 { top: 7px; }
+.menu-icon .bar-2 { top: 12px; }
+.menu-icon .bar-3 { top: 17px; }
+.menu-icon[data-open='true'] .bar-1 {
+  top: 12px;
+  transform: rotate(45deg);
+}
+.menu-icon[data-open='true'] .bar-2 {
+  opacity: 0;
+}
+.menu-icon[data-open='true'] .bar-3 {
+  top: 12px;
+  transform: rotate(-45deg);
+}
+
+/* Respect users' OS-level preference. */
+@media (prefers-reduced-motion: reduce) {
+  .epath-header,
+  .logo-img,
+  .nav-link,
+  .header-cta,
+  .logo-pill {
+    transition: none !important;
+  }
+  .logo-img {
+    transform: none !important;
+  }
+}
+
+/* EPath Gradients */
+
+/* -----------------------------------------------------------------
+   CTA Banner orbs – pure CSS, pause when off-screen via
+   `[data-active]`. The orbs use transform-only animations so they
+   stay on the compositor thread and don't trigger layout/paint.
+   ----------------------------------------------------------------- */
+.cta-orb {
+  position: absolute;
+  width: 16rem;     /* 256px */
+  height: 16rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 1);
+  filter: blur(40px); /* blur-2xl equivalent – cheaper than blur-3xl */
+  opacity: 0.1;
+  pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
+  /* Pause when off-screen; JS toggles [data-active] on the parent. */
+  animation-play-state: paused;
+}
+[data-active='true'] > .cta-orb {
+  animation-play-state: running;
+}
+
+.cta-orb--1 {
+  left: 10%;
+  top: 10%;
+  animation: cta-orb-drift-a 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.cta-orb--2 {
+  left: 45%;
+  top: 50%;
+  animation: cta-orb-drift-b 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.cta-orb--3 {
+  left: 75%;
+  top: 25%;
+  animation: cta-orb-drift-c 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes cta-orb-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0)   scale(1); }
+  50%      { transform: translate3d(30px, -20px, 0) scale(1.05); }
+}
+@keyframes cta-orb-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0)   scale(1); }
+  50%      { transform: translate3d(-40px, 25px, 0) scale(0.95); }
+}
+@keyframes cta-orb-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0)   scale(1); }
+  50%      { transform: translate3d(20px, 30px, 0) scale(1.08); }
+}
+
+/* CTA buttons – plain CSS, no framer-motion wrapper. */
+.cta-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  height: 56px;
+  background-color: #F05A28;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition:
+    background-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    transform 180ms ease-out;
+  will-change: transform;
+}
+.cta-btn-primary:hover {
+  background-color: #E04D1A;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+.cta-btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.cta-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  height: 56px;
+  border: 2px solid white;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: transparent;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out,
+    transform 180ms ease-out;
+}
+.cta-btn-outline:hover {
+  background-color: white;
+  color: #3A53A3;
+  transform: translateY(-2px);
+}
+.cta-btn-outline:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Tiny arrow slide on the primary CTA – decorative only. */
+.cta-arrow-anim {
+  display: inline-flex;
+  animation: cta-arrow-slide 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes cta-arrow-slide {
+  0%, 50%, 100% { transform: translateX(0); }
+  25%           { transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-orb,
+  .cta-arrow-anim {
+    animation: none !important;
+  }
+}
+
+.primary-gradient {
+  background: linear-gradient(135deg, #3A53A3 0%, #2E4389 100%);
+}
+.green-gradient {
+  background: linear-gradient(135deg, #8BC53F 0%, #B7D333 100%);
+}
+.accent-gradient {
+  background: linear-gradient(135deg, #F05A28 0%, #F26A42 100%);
+}
+.brand-gradient {
+  background: linear-gradient(135deg, #3A53A3 0%, #8BC53F 100%);
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #F05A28;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.btn-primary:hover {
+  background-color: #E04D1A;
+  transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------------
+   Step Model Timeline – CSS-only connectors, hover via transform.
+
+   Why CSS:
+     - Each connector was previously a separate framer-motion <div>
+       with its own animation tick. With 4 connectors + 5 motion-wrapped
+       cards + 5 motion-wrapped icons the page held 30+ JS-managed
+       tweens.
+     - CSS transform animations run on the compositor and are free
+       once triggered. They also pause cleanly when off-screen.
+   ----------------------------------------------------------------- */
+
+/* DESKTOP – horizontal line between two cards */
+.step-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.step-col {
+  position: relative;
+  padding-top: 64px;
+}
+
+.step-connector {
+  position: absolute;
+  top: 70px;
+  left: 60%;
+  right: -50%;
+  height: 4px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--from), var(--to));
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: step-connector-grow 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: var(--delay);
+  will-change: transform;
+}
+.step-section[data-active='true'] .step-connector {
+  animation-play-state: running;
+}
+@keyframes step-connector-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.step-icon-wrap {
+  position: relative;
+  z-index: 10;
+  margin: 0 auto 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: transform 180ms ease-out;
+  will-change: transform;
+}
+.step-icon-wrap:hover {
+  transform: scale(1.08);
+}
+
+.step-card {
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out;
+  will-change: transform;
+}
+.step-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px -10px rgba(35, 31, 32, 0.18);
+}
+
+/* MOBILE – vertical timeline */
+.step-mobile-rail {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(58, 83, 163, 0.12);
+  border-radius: 9999px;
+}
+
+.step-mobile-grid {
+  position: relative;
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.step-mobile-row {
+  position: relative;
+}
+
+.step-mobile-connector {
+  position: absolute;
+  left: -20px;
+  top: 48px;
+  height: calc(100% + 24px);
+  width: 4px;
+  background-color: var(--color);
+  border-radius: 9999px;
+  transform-origin: top center;
+  transform: scaleY(0);
+  animation: step-mobile-connector-grow 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: var(--delay);
+  will-change: transform;
+}
+.step-section[data-active='true'] .step-mobile-connector {
+  animation-play-state: running;
+}
+@keyframes step-mobile-connector-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+.step-icon-mobile {
+  position: absolute;
+  left: -20px;
+  top: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.step-card-mobile {
+  margin-left: 16px;
+  border-radius: 12px;
+  padding: 16px;
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+.step-card-mobile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px -10px rgba(35, 31, 32, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-connector,
+  .step-mobile-connector,
+  .step-card,
+  .step-card-mobile,
+  .step-icon-wrap {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Stagger animation for lists */
+.stagger-item {
+  opacity: 0;
+  animation: fade-in-up 0.3s ease-out forwards;
+}
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 50ms; }
+.stagger-item:nth-child(3) { animation-delay: 100ms; }
+.stagger-item:nth-child(4) { animation-delay: 150ms; }
+.stagger-item:nth-child(5) { animation-delay: 200ms; }
+.stagger-item:nth-child(6) { animation-delay: 250ms; }
+.stagger-item:nth-child(7) { animation-delay: 300ms; }
+.stagger-item:nth-child(8) { animation-delay: 350ms; }
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.layout-stable {
+  contain: layout style;
+}
+
+/* -----------------------------------------------------------------
+   Native View Transitions API (Chrome / Edge / Safari 18+).
+   Used by the LanguageSwitcher so the entire page cross-fades
+   atomically when the user toggles vi <-> en, instead of the
+   previous "first paint old, then snap to new" flicker.
+   ----------------------------------------------------------------- */
+@layer base {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.22s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  ::view-transition-old(root) {
+    animation-name: vt-fade-out;
+  }
+  ::view-transition-new(root) {
+    animation-name: vt-fade-in;
+  }
+}
+
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Suppress browser default transition on the language label so our
+   animate-fade-in keyframe owns the timing entirely. */
+.view-transition-target {
+  view-transition-name: language-switcher;
+}
