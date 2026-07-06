@@ -38,6 +38,9 @@ env-vercel
 # Vercel
 .vercel
 
+# Legacy subfolder (kept around for IDE index locks; ignore to avoid committing)
+epath-website/
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
