@@ -309,13 +309,22 @@ export function Chatbot() {
   // they've asked 3+ questions and haven't left their info yet.
   const [ctaReminderSent, setCtaReminderSent] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   // Prevent scroll-to-bottom during topic-question animations so user
   // doesn't get yanked upward when new items appear at the bottom.
   const scrollLockRef = useRef(false)
 
+  const isUserAtBottom = () => {
+    const container = messagesContainerRef.current
+    if (!container) return true
+    const threshold = 100 // pixels from bottom
+    return container.scrollHeight - container.scrollTop - container.clientHeight < threshold
+  }
+
   const scrollToBottom = () => {
     if (scrollLockRef.current) return
+    if (!isUserAtBottom()) return // Don't scroll if user is reading older content
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     })
@@ -1042,7 +1051,7 @@ export function Chatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F8F9FA]">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F8F9FA]">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -1060,12 +1069,12 @@ export function Chatbot() {
                         <Bot className="w-4 h-4 text-white" />
                       )}
                     </div>
-                    <div className={`rounded-2xl px-4 py-3 ${
+                    <div className={`rounded-2xl px-4 py-3 max-w-full ${
                       message.role === 'user'
                         ? 'bg-[#F05A28] text-white rounded-br-sm'
                         : 'bg-white text-[#231F20] rounded-bl-sm shadow-sm'
                     }`}>
-                      <p className="text-sm whitespace-pre-line">{message.content}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                       
                       {/* Rating */}
                       {message.showRating && message.role === 'assistant' && (
@@ -1136,20 +1145,23 @@ export function Chatbot() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-4 space-y-2"
+                  className="mt-2 bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-[#3A53A3]/20 max-h-52 overflow-y-auto"
                 >
-                  {selectedTopic.questions.slice(0, 8).map((q, i) => (
-                    <motion.button
-                      key={i}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => handleTopicQuestionClick(q)}
-                      className="w-full text-left bg-white px-4 py-3 rounded-xl text-sm text-[#231F20] border border-[#3A53A3]/20 hover:border-[#3A53A3]/50 hover:bg-[#3A53A3]/5 transition-colors duration-150 flex items-center gap-2"
-                    >
-                      <ChevronRight className="w-4 h-4 text-[#8BC53F]" />
-                      {q.q.length > 50 ? q.q.slice(0, 50) + '...' : q.q}
-                    </motion.button>
-                  ))}
+                  <p className="text-xs text-[#666] mb-2 font-medium">Câu hỏi phổ biến:</p>
+                  <div className="space-y-1">
+                    {selectedTopic.questions.slice(0, 5).map((q, i) => (
+                      <motion.button
+                        key={i}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={() => handleTopicQuestionClick(q)}
+                        className="w-full text-left bg-white px-3 py-2 rounded-lg text-xs text-[#231F20] border border-[#3A53A3]/15 hover:border-[#3A53A3]/40 hover:bg-[#3A53A3]/5 transition-colors duration-150 flex items-start gap-2"
+                      >
+                        <ChevronRight className="w-3 h-3 text-[#8BC53F] mt-0.5 shrink-0" />
+                        <span className="line-clamp-2">{q.q}</span>
+                      </motion.button>
+                    ))}
+                  </div>
                 </motion.div>
               )}
 
