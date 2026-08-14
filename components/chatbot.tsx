@@ -934,7 +934,7 @@ export function Chatbot() {
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: 'spring', stiffness: 200 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-4 sm:right-6 z-[70] w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#3A53A3] to-[#2E4389] rounded-full shadow-xl flex items-center justify-center hover:shadow-2xl transition-shadow"
+        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-6 z-[70] w-14 h-14 sm:w-14 sm:h-14 bg-gradient-to-br from-[#3A53A3] to-[#2E4389] rounded-full shadow-xl flex items-center justify-center hover:shadow-2xl transition-shadow"
         style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
         aria-label="Open chat"
       >
@@ -975,7 +975,7 @@ export function Chatbot() {
       {/* Chat Window
           - Mobile (default): full-screen sheet pinned to bottom, height uses
             `dvh` so the iOS URL bar / keyboard don't clip the input.
-          - Desktop (sm+): floating 420 x 650px panel anchored bottom-right.
+          - Desktop (sm+): floating 380 x 550px panel anchored bottom-right.
           - When the keyboard is detected we anchor the panel to the viewport
             top + safe area so nothing is hidden. */}
       <AnimatePresence>
@@ -991,8 +991,8 @@ export function Chatbot() {
               'inset-x-0 bottom-0 sm:inset-auto',
               'sm:rounded-2xl',
               // Mobile: full height with dvh (dynamic viewport height for iOS)
-              'h-[100dvh] sm:h-[650px] sm:w-[420px]',
-              'sm:bottom-24 sm:right-6'
+              'h-[100dvh] sm:h-[580px] sm:w-[380px]',
+              'sm:bottom-20 sm:right-6'
             )}
           >
             {/* Header */}
@@ -1006,8 +1006,17 @@ export function Chatbot() {
                   <ChevronRight className="w-5 h-5 rotate-180" />
                 </button>
               )}
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0">
-                <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center shrink-0 overflow-hidden">
+                <img 
+                  src="/epath-logo-small.svg" 
+                  alt="EPath" 
+                  className="w-7 h-7 sm:w-8 sm:h-8"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white hidden" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-white font-semibold text-base sm:text-lg truncate">
@@ -1018,16 +1027,14 @@ export function Chatbot() {
                     ? 'Đăng ký tư vấn 1-1'
                     : preChatLead
                     ? `Xin chào ${preChatLead.name} 👋`
-                    : 'Tư vấn giáo dục 24/7'}
+                    : 'EPath Education'}
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-1 shrink-0">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span className="text-white/80 text-xs">Online</span>
               </div>
-              {/* "Làm mới" button — explicitly clears the persisted session
-                  so the parent can restart fresh without clearing browser
-                  storage. Only shown when there's something worth clearing. */}
+              {/* "Làm mới" button */}
               <button
                 onClick={handleResetSession}
                 className="hidden sm:flex text-white/80 hover:text-white p-1 shrink-0 items-center gap-1 text-xs"
@@ -1045,7 +1052,6 @@ export function Chatbot() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             {/* Messages */}
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F8F9FA]">
               {messages.map((message) => (
@@ -1067,8 +1073,8 @@ export function Chatbot() {
                     </div>
                     <div className={`rounded-2xl px-4 py-3 max-w-full ${
                       message.role === 'user'
-                        ? 'bg-[#F05A28] text-white rounded-br-sm'
-                        : 'bg-white text-[#231F20] rounded-bl-sm shadow-sm'
+                        ? 'bg-gradient-to-br from-[#F05A28] to-[#E04D1A] text-white rounded-br-sm shadow-lg shadow-[#F05A28]/20'
+                        : 'bg-white text-[#231F20] rounded-bl-sm shadow-md'
                     }`}>
                       <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                       
@@ -1155,6 +1161,37 @@ export function Chatbot() {
                       >
                         <ChevronRight className="w-3 h-3 text-[#8BC53F] mt-0.5 shrink-0" />
                         <span className="line-clamp-2">{q.q}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Quick Questions Cards */}
+              {chatStep === 'main' && preChatLead && messages.length <= 3 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 space-y-2"
+                >
+                  <p className="text-xs text-[#666] font-medium px-1">
+                    💡 Gợi ý câu hỏi phổ biến:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {quickQuestions.map((q, i) => (
+                      <motion.button
+                        key={i}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleQuickQuestion(q)}
+                        className="bg-white border border-[#3A53A3]/15 rounded-xl px-3 py-3 text-left hover:border-[#3A53A3]/30 hover:shadow-md transition-all duration-200 group"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#3A53A3]/10 to-[#2E4389]/10 flex items-center justify-center group-hover:from-[#3A53A3]/20 group-hover:to-[#2E4389]/20 transition-all">
+                            <q.icon className="w-3.5 h-3.5 text-[#3A53A3]" />
+                          </div>
+                        </div>
+                        <p className="text-xs font-medium text-[#231F20] leading-tight">{q.question}</p>
                       </motion.button>
                     ))}
                   </div>
@@ -1314,9 +1351,47 @@ export function Chatbot() {
             </div>
 
             {/* Topic/Contact Buttons */}
-            {chatStep === 'main' && (
-              <div className="px-4 py-2 border-t border-[#3A53A3]/10 bg-white">
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {chatStep === 'main' && preChatLead && (
+              <div className="px-4 py-3 border-t border-[#3A53A3]/10 bg-gradient-to-t from-white to-[#F8F9FA]">
+                {/* Quick Actions */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {[
+                    { 
+                      icon: GraduationCap, 
+                      label: 'Tìm hiểu EPath',
+                      action: () => {
+                        setChatStep('topics')
+                        addMessage('assistant', 'Dưới đây là các chủ đề EPath có thể hỗ trợ quý phụ huynh:')
+                      },
+                      color: 'bg-[#3A53A3]/10 text-[#3A53A3] hover:bg-[#3A53A3]/20'
+                    },
+                    { 
+                      icon: FileText, 
+                      label: 'Học phí',
+                      action: () => handleQuickQuestion(quickQuestions[1]),
+                      color: 'bg-[#8BC53F]/10 text-[#8BC53F] hover:bg-[#8BC53F]/20'
+                    },
+                    { 
+                      icon: Clock, 
+                      label: 'Lịch học',
+                      action: () => handleQuickQuestion(quickQuestions[2]),
+                      color: 'bg-[#F05A28]/10 text-[#F05A28] hover:bg-[#F05A28]/20'
+                    },
+                  ].map((btn, idx) => (
+                    <motion.button
+                      key={idx}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={btn.action}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all duration-150 ${btn.color}`}
+                    >
+                      <btn.icon className="w-3.5 h-3.5" />
+                      {btn.label}
+                    </motion.button>
+                  ))}
+                </div>
+                {/* Primary Actions */}
+                <div className="flex gap-2">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -1324,9 +1399,9 @@ export function Chatbot() {
                       setChatStep('topics')
                       addMessage('assistant', 'Dưới đây là các chủ đề EPath có thể hỗ trợ quý phụ huynh:')
                     }}
-                    className="flex items-center gap-1.5 bg-[#3A53A3]/10 px-3 py-1.5 rounded-full text-xs text-[#3A53A3] whitespace-nowrap hover:bg-[#3A53A3]/20 transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-[#3A53A3]/10 px-3 py-2.5 rounded-xl text-xs text-[#3A53A3] whitespace-nowrap hover:bg-[#3A53A3]/20 transition-colors duration-150 font-medium"
                   >
-                    <BookOpen className="w-3 h-3" />
+                    <BookOpen className="w-3.5 h-3.5" />
                     Xem tất cả chủ đề
                   </motion.button>
                   <motion.button
@@ -1336,9 +1411,9 @@ export function Chatbot() {
                       setChatStep('contact')
                       addMessage('assistant', 'Vui lòng điền thông tin để EPath liên hệ tư vấn trực tiếp cho bạn:')
                     }}
-                    className="flex items-center gap-1.5 bg-[#F05A28]/10 px-3 py-1.5 rounded-full text-xs text-[#F05A28] whitespace-nowrap hover:bg-[#F05A28]/20 transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#F05A28] to-[#E04D1A] px-3 py-2.5 rounded-xl text-xs text-white whitespace-nowrap hover:shadow-lg hover:shadow-[#F05A28]/20 transition-all duration-150 font-medium"
                   >
-                    <Phone className="w-3 h-3" />
+                    <Phone className="w-3.5 h-3.5" />
                     Đăng ký tư vấn
                   </motion.button>
                 </div>
@@ -1379,19 +1454,17 @@ export function Chatbot() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     onFocus={() => {
-                      // Let the layout settle first, then ensure the latest
-                      // message is visible above the keyboard.
                       setTimeout(scrollToBottom, 100)
                     }}
                     placeholder="Nhập câu hỏi cho Cô Hương..."
-                    className="flex-1 px-4 py-3 rounded-full bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-base sm:text-sm"
+                    className="flex-1 px-4 py-3 rounded-2xl bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:ring-2 focus:ring-[#3A53A3]/10 focus:outline-none text-sm transition-all"
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim()}
-                    className="w-12 h-12 bg-gradient-to-br from-[#3A53A3] to-[#2E4389] rounded-full flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                    className="w-12 h-12 bg-gradient-to-br from-[#3A53A3] to-[#2E4389] rounded-2xl flex items-center justify-center text-white disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-[#3A53A3]/20 transition-shadow hover:shadow-xl hover:shadow-[#3A53A3]/30"
                   >
                     <Send className="w-5 h-5" />
                   </motion.button>
@@ -1418,10 +1491,11 @@ export function Chatbot() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.5 }}
-          className="hidden md:block fixed bottom-6 right-24 z-[70]"
+          className="hidden md:block fixed bottom-5 right-24 z-[70]"
         >
-          <div className="bg-white px-4 py-2 rounded-full shadow-lg border border-[#3A53A3]/20">
-            <p className="text-sm text-[#231F20]">Tư vấn cùng Cô Hương?</p>
+          <div className="bg-white px-4 py-2.5 rounded-full shadow-xl border border-[#3A53A3]/20 flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <p className="text-sm text-[#231F20] font-medium">Cô Hương đang online</p>
           </div>
         </motion.div>
       )}

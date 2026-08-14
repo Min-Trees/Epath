@@ -26,7 +26,7 @@ const Chatbot = dynamic(
     loading: () => (
       <div
         aria-hidden
-        className="fixed bottom-6 right-4 sm:right-6 z-[70] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#3A53A3]/40 animate-pulse"
+        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-6 z-[70] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#3A53A3]/40 animate-pulse"
         style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
       />
     ),
