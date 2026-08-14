@@ -987,14 +987,14 @@ export function Chatbot() {
             transition={{ duration: 0.3 }}
             style={
               keyboardOpen
-                ? { top: 8, bottom: 'auto' }
+                ? { top: 8, bottom: 8 }
                 : undefined
             }
             className={cn(
               'fixed z-[70] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#3A53A3]/20',
               // Mobile fullscreen sheet
               'inset-x-0 bottom-0 sm:inset-auto',
-              'h-[100dvh] sm:h-auto sm:w-[420px]',
+              'h-full sm:h-auto sm:w-[420px]',
               keyboardOpen ? 'sm:h-[650px]' : 'sm:h-[650px]',
               'sm:bottom-24 sm:right-6 sm:rounded-2xl'
             )}
@@ -1369,10 +1369,10 @@ export function Chatbot() {
               </div>
             )}
 
-            {/* Input – `pb-safe` keeps the bar above the iPhone home indicator. */}
+            {/* Input – keeps the bar above the iPhone home indicator. */}
             <div
               className="p-3 sm:p-4 bg-white border-t border-[#3A53A3]/20"
-              style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+              style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))' }}
             >
               {chatStep !== 'contact' && (
                 <div className="flex gap-2">
