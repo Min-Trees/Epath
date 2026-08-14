@@ -65,3 +65,10 @@ next-env.d.ts
 .vscode/
 *.swp
 *.swo
+
+# Session reports (may contain secrets)
+SESSION_REPORT*.md
+
+# Large game files
+*.yyz
+"A platformer game 2.yyz"
