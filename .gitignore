@@ -41,6 +41,21 @@ env-vercel
 # Legacy subfolder (kept around for IDE index locks; ignore to avoid committing)
 epath-website/
 
+# Firebase CLI cache + local project alias
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Firebase Admin SDK service-account JSON keys (NEVER commit).
+# Generate per-developer via Firebase Console -> Project Settings ->
+# Service Accounts -> "Generate new private key". Each dev keeps their
+# own copy locally and exports its values into .env.local instead.
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+service-account*.json
+gcp-credentials*.json
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts

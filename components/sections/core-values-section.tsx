@@ -1,13 +1,26 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network, BookOpen } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, staggerContainer, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
+import type { CoreValue } from '@/lib/cms-types'
 
-const coreValues = [
+// Icon mapping
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Route: Route,
+  Award: Award,
+  Laptop: Laptop,
+  Shield: Shield,
+  FileText: FileText,
+  Network: Network,
+}
+
+// Fallback values for when CMS is empty
+const fallbackValues = [
   { number: '01', key: 'continuousPath', icon: Route },
   { number: '02', key: 'usStandard', icon: Award },
   { number: '03', key: 'blended', icon: Laptop },
@@ -16,24 +29,27 @@ const coreValues = [
   { number: '06', key: 'ecosystem', icon: Network },
 ]
 
-/**
- * Performance-tuned rebuild of core values.
- *
- *   - 1 framer-motion wrapper per card (entrance only). Internal elements
- *     (number / icon) animate via CSS keyframes triggered by the parent
- *     `[data-active]` attribute.
- *   - Hover handled in CSS via the .hover-card utility so transitions
- *     stay on the compositor.
- *
- * Previously each card had 4 nested motion components, hitting ~24
- * framer-motion instances per page render.
- */
-
 export function CoreValuesSection() {
   const t = useTranslations('values')
   const params = useParams()
   const locale = (params.locale as string) || 'vi'
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
+  const [coreValues, setCoreValues] = useState<CoreValue[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/cms/core-values')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.items && data.items.length > 0) {
+          setCoreValues(data.items.filter((v: CoreValue) => v.isActive).sort((a: CoreValue, b: CoreValue) => a.order - b.order))
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  const displayValues = coreValues.length > 0 ? coreValues : fallbackValues
 
   return (
     <section ref={sectionRef} className="values-section py-20 surface-alt">
@@ -60,11 +76,20 @@ export function CoreValuesSection() {
           viewport={{ once: true, amount: 0.15 }}
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {coreValues.map((value, index) => {
+          {displayValues.map((value, index) => {
             const accent = accentCycle[index % accentCycle.length]
+            const isFromCMS = coreValues.length > 0
+            const cmsValue = value as CoreValue
+            const fallbackValue = value as typeof fallbackValues[0]
+
+            // Get icon: from CMS (string) or fallback (component)
+            const IconComponent = isFromCMS
+              ? (iconMap[cmsValue.icon] || Route)
+              : fallbackValue.icon
+
             return (
               <motion.div
-                key={value.number}
+                key={isFromCMS ? cmsValue.id : fallbackValue.number}
                 variants={{
                   hidden: { opacity: 0, y: 24 },
                   visible: {
@@ -76,7 +101,6 @@ export function CoreValuesSection() {
                 style={{
                   backgroundColor: accent.bg,
                   borderColor: accent.color,
-                  // CSS variables used by the inner animated children
                   ['--accent' as string]: accent.color,
                   ['--reveal-delay' as string]: `${0.08 * index}s`,
                 }}
@@ -84,18 +108,18 @@ export function CoreValuesSection() {
               >
                 <div className="flex items-start gap-4">
                   <div className="values-icon w-14 h-14 rounded-lg flex items-center justify-center shrink-0">
-                    <value.icon className="w-7 h-7 text-white" />
+                    <IconComponent className="w-7 h-7 text-white" />
                   </div>
 
                   <div className="flex-1">
                     <div className="values-number text-sm font-semibold mb-1">
-                      {value.number}
+                      {isFromCMS ? String(index + 1).padStart(2, '0') : fallbackValue.number}
                     </div>
                     <h3 className="text-xl font-semibold text-[#231F20] mb-2">
-                      {t(value.key)}
+                      {isFromCMS ? cmsValue.title?.vi || cmsValue.title?.en : t(fallbackValue.key)}
                     </h3>
                     <p className="values-desc text-sm leading-relaxed">
-                      {t(`${value.key}Desc`)}
+                      {isFromCMS ? cmsValue.description?.vi || cmsValue.description?.en : t(`${fallbackValue.key}Desc`)}
                     </p>
                   </div>
                 </div>

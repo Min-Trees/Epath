@@ -193,14 +193,50 @@ export async function POST(request: NextRequest) {
     notifyZalo(leadData),
   ])
 
-  // Sheets is the source of truth for the CRM. If it fails, we surface
-  // 500; if it succeeds but Zalo fails, we still 200 because the lead
-  // is captured and the team can still see it in the sheet.
-  if (!sheetResult.ok) {
+  // Sheets is the historical CRM and nice-to-have. Zalo is the primary
+  // notification channel the sales team watches in real time. To match
+  // that priority we let a missing/broken Sheet config NOT block the
+  // lead — Zalo still fires, we still 200, and we surface sheet status
+  // for debugging.
+  if (!zaloResult.ok && zaloResult.attempted) {
+    console.error('[chatbot/lead] Zalo notification failed:', zaloResult.error)
+  }
+
+  if (sheetResult.ok) {
+    return NextResponse.json({
+      success: true,
+      sheet: sheetResult,
+      zalo: zaloResult,
+    })
+  }
+
+  // Sheet not configured or failed AND Zalo also didn't fire → return 500.
+  // Sheet failed but Zalo still pinged → still a success (team has the lead).
+  if (!zaloResult.attempted || zaloResult.ok === false) {
+    // Special case: neither Sheets nor Zalo is configured (common in local
+    // dev / preview deploys). Don't 500 in that case — surface it as a
+    // warning so the front-end doesn't show a scary "mất kết nối" message
+    // and the dev can see in the server logs what's missing.
+    if (!zaloResult.attempted && !sheetResult.ok) {
+      console.warn(
+        '[chatbot/lead] Neither Google Sheets nor Zalo Bot is configured. Lead accepted but not persisted/forwarded. Set GOOGLE_SHEETS_* and ZALO_BOT_* env vars.'
+      )
+      return NextResponse.json({
+        success: true,
+        sheet: sheetResult,
+        zalo: zaloResult,
+        warning:
+          'Chưa cấu hình Google Sheets và Zalo Bot. Lead chỉ được ghi nhận tạm trong log.',
+      })
+    }
+
     return NextResponse.json(
       {
         success: false,
-        error: sheetResult.error || 'Không thể lưu thông tin lúc này.',
+        error:
+          sheetResult.error ||
+          zaloResult.error ||
+          'Không thể gửi thông tin lúc này.',
         sheet: sheetResult,
         zalo: zaloResult,
       },
@@ -208,10 +244,12 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Zalo fired (or was configured but didn't error) — treat as success.
   return NextResponse.json({
     success: true,
     sheet: sheetResult,
     zalo: zaloResult,
+    warning: sheetResult.error || 'Google Sheets chưa được cấu hình, lead chỉ được gửi qua Zalo.',
   })
 }
 

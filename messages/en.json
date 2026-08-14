@@ -59,7 +59,7 @@
     "kindergartenDesc": "A perfect start to your child's learning journey",
     "elementaryDesc": "A solid foundation with the US-standard curriculum",
     "middleDesc": "Develop skills and academic thinking",
-    "highDesc": "International dual diploma, opens doors to study abroad"
+    "highDesc": "Dual Diploma and Fulltime Homeschool, opens the door to international study"
   },
   "partners": {
     "title": "International Partners",
@@ -102,18 +102,55 @@
       "title": "About EPath Education",
       "subtitle": "International academic pathway from Elementary to High School"
     },
+    "intro": {
+      "title": "Opening Note",
+      "p1": "EPath Education was born from a very real question asked by parents at the Little People kindergarten system after more than 10 years of operation: \"After kindergarten, what learning pathway will keep my child from being interrupted?\"",
+      "p2": "From that need, EPath was born as a systematic solution — not just an academic program, but a continuous educational pathway from Elementary to High School that helps students access the international academic foundation early.",
+      "p3": "EPath is built on the belief that an effective education goes beyond knowledge transfer — it must create a learning ecosystem where school, family and experts walk together.",
+      "p4": "Through the Blended Learning model (combining Online and Onsite), together with Edmentum International (USA) — accredited by Cognia and WASC, EPath implements standardized programs at international standards while building a community of parents with shared educational direction & goals.",
+      "p5": "With a team of highly qualified teachers and academic advisors, EPath focuses on developing academic capability, self-learning skills and 21st-century thinking, preparing students to conquer international programs, earn academic certifications, and pursue the long-term goal of integrating into the global education environment."
+    },
     "who": {
       "title": "Who We Are",
       "p1": "EPath Education provides American-standard international programs.",
       "p2": "With over 10 years from Little People and 60+ years from Edmentum."
     },
     "vision": "Vision",
-    "visionText": "To become Vietnam's leading educational system.",
+    "visionText": "EPath aspires to become a comprehensive education solution, where students and parents can access international K-12 education in an effective, clear, and financially sustainable way.",
+    "visionP2": "EPath does more than deliver programs — we build a continuous educational journey connecting school, family and educational resources at home and abroad.",
+    "visionHighlight": "EPath's direction is to make high-quality international education more accessible to Vietnamese families. By combining technology, an experienced education team and a flexible learning model, EPath continuously expands learning opportunities with reputable partners, helping students develop comprehensive competencies ready to integrate and pursue lifelong learning in a global environment.",
     "mission": "Mission",
-    "missionText": "To bring Vietnamese students opportunities to access international education.",
+    "missionText": "Build an educational environment connecting school – family – experts, where students access international-standard curricula while participating in academic activities, experiences and skill orientation.",
+    "missionP2": "EPath is committed to accompanying parents in the comprehensive development of students — not only in learning but also in self-learning capability, thinking and life skills.",
     "coreValues": {
       "title": "Core Values",
-      "subtitle": "6 values that guide all EPath Education activities"
+      "subtitle": "6 values that guide all EPath Education activities",
+      "items": {
+        "v1": {
+          "title": "Continuous Learning Pathway",
+          "desc": "Building a seamless learning journey from Kindergarten (Little People) to High School, ensuring continuity and consistency in academic development."
+        },
+        "v2": {
+          "title": "Internationally Accredited Academic Standards",
+          "desc": "Implementing a program in partnership with Edmentum International (USA), accredited by Cognia and WASC, ensuring quality and globally recognized value."
+        },
+        "v3": {
+          "title": "Blended Learning Model",
+          "desc": "Flexibly integrating online and onsite learning to optimize acquisition and personalize the learning experience."
+        },
+        "v4": {
+          "title": "Personalized Learning Pathways",
+          "desc": "Designing pathways based on each student's capability, goals and direction through academic assessment and in-depth advising."
+        },
+        "v5": {
+          "title": "Holistic Development & Personal Portfolio",
+          "desc": "Combining academics with extracurriculars, skills and real-world experience to build an international-standard student profile, increasing competitiveness in global admissions."
+        },
+        "v6": {
+          "title": "Connected Education Ecosystem",
+          "desc": "Developing an open learning environment connecting school – family – experts – international partners, expanding learning opportunities through workshops, experiential activities and educational orientation."
+        }
+      }
     },
     "milestones": {
       "title": "Development Milestones",
@@ -136,6 +173,12 @@
     },
     "objective": { "title": "Objective", "desc": "Accompany students to build personalized learning pathways." },
     "team": { "title": "Team", "desc": "International and Vietnamese teachers with extensive experience." },
+    "achievements": {
+      "title": "Outstanding Achievements",
+      "subtitle": "Confirming academic capability and adaptability in a global education environment",
+      "desc": "Throughout their learning journey at EPath, students have achieved many notable accomplishments in international exams and certifications — a testament to comprehensive development in thinking, learning skills and readiness for the international education environment.",
+      "imageNote": "(Student photos and achievements)"
+    },
     "stats": {
       "years": "Years Experience",
       "levels": "Education Levels",
@@ -153,6 +196,73 @@
     "duration": "Duration:",
     "subjects": "Subjects:",
     "register": "Register for Consultation",
+    "pathwayIntro": {
+      "p1": "At EPath Education, we understand that many families want their children to access high-quality international education, yet still face barriers around cost, geography, flexibility and the ability to sustain long-term study.",
+      "p2": "That's why EPath takes a more sustainable approach: building a continuous international learning pathway from Kindergarten to High School, helping students progressively develop academic foundations, learning skills and global integration capability before stepping into specialized choices such as Dual Diploma, International Baccalaureate, study abroad or international university programs."
+    },
+    "foundationStage": {
+      "title": "Foundation Stage: Kindergarten through Grade 8",
+      "desc": "In the early years and the Elementary – Middle School stage, the most important goal is not a diploma, but building the core competencies that prepare students for international learning environments in the future.",
+      "goalsTitle": "At EPath, students focus on developing:",
+      "goals": [
+        "Academic English foundation",
+        "Mathematical and Scientific thinking",
+        "Independent learning skills",
+        "Critical thinking and problem solving",
+        "Adaptability to international environments"
+      ],
+      "platformDesc": "To realize this goal, EPath chooses Edmentum International as the core academic platform for the foundation stage. Through Edmentum's international learning and assessment ecosystem combined with EPath's team of teachers and academic advisors, students are monitored objectively, learn along a suitable pathway, and progressively reach the level of bilingual peers.",
+      "note": "Detailed information on Edmentum International is presented in the section \"Why does EPath Education choose Edmentum International?\""
+    },
+    "advancedStage": {
+      "title": "Specialized Orientation Stage: Grade 9 and above",
+      "desc": "From Grade 9, requirements around credits, diplomas, academic profile and university orientation become more specialized. This is also the stage where EPath works with families to assess each student's capability, learning goals and future direction to choose a suitable pathway."
+    },
+    "edoptions": {
+      "title": "1. EdOptions Academy",
+      "subtitle": "US High School program with two pathway options to suit Vietnamese families",
+      "dual": {
+        "label": "1.1 Dual Diploma Option",
+        "title": "Dual Diploma — Vietnamese & US High School Diplomas",
+        "desc": "Dual Diploma is a learning pathway that lets students study the Vietnamese High School program and the US High School program via EdOptions Academy at the same time.",
+        "p2": "Instead of transferring to a full-time international school, students continue studying at their current public or private school while completing the subjects and credits required by the US program on EdOptions Academy's online learning platform.",
+        "diplomasTitle": "After fulfilling the academic requirements of both systems, students have the opportunity to receive:",
+        "diplomas": [
+          "Vietnamese High School Diploma",
+          "US High School Diploma"
+        ],
+        "p3": "Beyond the value of the diplomas, the program also helps students gradually get familiar with international learning methods, develop self-learning, time management and research skills, and use English in an academic environment.",
+        "p4": "This pathway is especially suitable for students who want to access the US education program, prepare study-abroad applications or expand admission opportunities to international universities in the future while continuing at their current school.",
+        "note": "Students study the program at their current school and the US High School program in parallel, working toward two diplomas."
+      },
+      "fulltime": {
+        "label": "1.2 Fulltime Homeschool Option",
+        "title": "Fulltime Homeschool — Studying the US High School program full time",
+        "desc": "This pathway is for students who wish to study the US High School program full time through EdOptions Academy instead of taking it in parallel with a domestic program.",
+        "p2": "In this model, students study, accumulate credits and complete graduation requirements entirely through the EdOptions Academy program. All learning content, assessments and progress management follow US education standards via the online learning environment.",
+        "fitTitle": "This option suits families who want:",
+        "fit": [
+          "To pursue a comprehensive US education pathway",
+          "Flexibility in time and place of study",
+          "Plans for study abroad or international transfer in the future",
+          "Students to develop high-level self-learning and self-management"
+        ],
+        "p3": "Through the program, students access teaching methods, assessment standards and an academic environment equivalent to US High Schools, with opportunities to build an academic profile aligned with university goals.",
+        "p4": "Due to the nature of full-time online learning, students must meet entry requirements on English proficiency, academic results and independent learning capability as regulated by EdOptions Academy. EPath Education advises and supports parents as they explore the program, evaluates student fit and accompanies the family throughout learning and any international transfer."
+      }
+    },
+    "personalized": {
+      "title": "2. Personalized International Pathway",
+      "desc": "Beyond the Edmentum and EdOptions Academy ecosystem, EPath is gradually expanding its academic partner network to bring more options to high-school students and those preparing for university.",
+      "goalsTitle": "EPath's development direction includes:",
+      "goals": [
+        "Connecting with reputable international schools and educational organizations at home and abroad",
+        "Expanding partnerships with education systems in the US, UK, Australia, Canada, Europe and countries with developed education systems",
+        "Sourcing international High School programs with globally recognized transfer value",
+        "Diversifying international diploma options, university foundation programs and transfer pathways suitable for various learning goals"
+      ],
+      "p2": "Through capability assessment, learning orientation and personalized advising, EPath supports parents and students in choosing the most suitable path — whether the goal is Dual Diploma, International Baccalaureate, university foundation, study abroad or other international transfer programs."
+    },
     "levels": {
       "kindergarten": "Kindergarten",
       "elementary": "Elementary",

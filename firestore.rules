@@ -1,0 +1,103 @@
+rules_version = '2';
+
+// Firestore security rules for Epath website.
+//
+// All CMS API routes run server-side using Firebase Admin SDK, which bypasses
+// these rules. The public site reads Firestore indirectly through
+// /api/public/cms (server route), NOT directly from the client.
+//
+// These rules therefore lock down direct client access to the database while
+// still allowing the public site to read `isActive == true` documents when
+// we choose to expose them via the client SDK in the future. Adjust the
+// `allow read` clauses below if you start reading CMS data directly from
+// the browser.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && request.auth.token.role == role;
+    }
+
+    function isAdminOrEditor() {
+      return hasRole('super_admin')
+          || hasRole('admin')
+          || hasRole('editor');
+    }
+
+    // ---------- CMS content collections ----------
+    // Public, ordered, active-only queries. Adjust here when exposing
+    // additional collections to the public client.
+    match /faqs/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /coreValues/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /learningPathways/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /programs/{docId} {
+      allow read: if resource.data.isActive == true
+                   && resource.data.status == 'published';
+      allow write: if false;
+    }
+
+    match /partners/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /events/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /admissionSteps/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /achievements/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /teamMembers/{docId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    // ---------- Page sections (per-page) ----------
+    match /pages/{pageId}/sections/{sectionId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if false;
+    }
+
+    match /pages/{pageId} {
+      allow read, write: if false;
+    }
+
+    // ---------- Chatbot telemetry ----------
+    // Leads are written only via the server route; deny direct client access.
+    match /chatbotLeads/{docId} {
+      allow read, write: if false;
+    }
+
+    // ---------- Default deny ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

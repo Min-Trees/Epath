@@ -6,7 +6,7 @@ import {
   MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap,
   DollarSign, Clock, Award, Phone, Mail, Check, ThumbsUp, ThumbsDown,
   Sparkles, FileText, Users, Globe, BookOpen, MapPin, Calendar,
-  Loader2, Building2, Heart, TrendingUp, Maximize2, Baby
+  Loader2, Building2, Heart, TrendingUp, Maximize2, Baby, ShieldCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { extractTopics, summarizeConversation, type LeadPayload } from '@/lib/google-sheets'
@@ -44,7 +44,7 @@ const qaDatabase: TopicQA[] = [
       },
       {
         q: 'Homeschool có phải là tự học ở nhà không?',
-        a: 'Không.\n\nHomeschool là một mô hình giáo dục có định hướng, với chương trình học rõ ràng, mục tiêu học tập cụ thể, cố vấn học tập và hệ thống theo dõi tiến độ xuyên suốt. Trong khi đó, tự học hoàn toàn là việc học sinh tự tìm tài liệu và tự quản lý việc học mà không có lộ trình hay hệ thống hỗ trợ chính thức.\n\nTại EPath, chúng tôi đồng hành cùng gia đình trong từng giai đoạn phát triển của học sinh từ Mầm non đến Trung học, với các chương trình được kiểm định bởi Cognia và WASC.'
+        a: 'Không.\n\nHomeschool là một mô hình giáo dục có định hướng, với chương trình học rõ ràng, mục tiêu học tập cụ thể, cố vấn học tập và hệ thống theo dõi tiến độ xuyên suốt. Trong khi đó, tự học hoàn toàn là việc học sinh tự tìm tài liệu và tự quản lý việc học mà không có lộ trình hay hệ thống hỗ trợ chính thức.\n\nTại EPath, cô đồng hành cùng gia đình trong từng giai đoạn phát triển của học sinh từ Mầm non đến Trung học, với các chương trình được kiểm định bởi Cognia và WASC.'
       },
       {
         q: 'Homeschool có phù hợp với mọi học sinh không?',
@@ -182,7 +182,7 @@ const qaDatabase: TopicQA[] = [
       },
       {
         q: 'EPath chuẩn bị cho SAT, ACT và AP như thế nào?',
-        a: 'Tại EPath, chúng tôi tập trung xây dựng nền tảng học thuật từ sớm thông qua các môn:\n- English Language Arts (ELA)\n- Mathematics\n- Science\n\nĐây chính là những năng lực cốt lõi mà học sinh cần có trước khi bước vào các chương trình SAT, ACT, AP, Song bằng, Tú tài Quốc tế hoặc các lộ trình đại học quốc tế.\n\nThay vì chỉ luyện thi ở giai đoạn cuối, EPath hướng đến việc giúp học sinh xây dựng nền tảng học thuật bền vững để sẵn sàng cho nhiều lựa chọn giáo dục quốc tế khác nhau.'
+        a: 'Tại EPath, cô tập trung xây dựng nền tảng học thuật từ sớm thông qua các môn:\n- English Language Arts (ELA)\n- Mathematics\n- Science\n\nĐây chính là những năng lực cốt lõi mà học sinh cần có trước khi bước vào các chương trình SAT, ACT, AP, Song bằng, Tú tài Quốc tế hoặc các lộ trình đại học quốc tế.\n\nThay vì chỉ luyện thi ở giai đoạn cuối, EPath hướng đến việc giúp học sinh xây dựng nền tảng học thuật bền vững để sẵn sàng cho nhiều lựa chọn giáo dục quốc tế khác nhau.'
       },
       {
         q: 'Nếu đã có SAT hoặc ACT thì có cần IELTS không?',
@@ -248,18 +248,38 @@ const quickQuestions = [
   { icon: DollarSign, question: 'Học phí', answer: qaDatabase[4].questions[0].a, category: 'hoc-phi' },
   { icon: Clock, question: 'Lịch học', answer: qaDatabase[1].questions[6].a, category: 'do-tuoi' },
   { icon: Award, question: 'Bằng cấp quốc tế', answer: qaDatabase[0].questions[6].a, category: 'gioi-thieu' },
-  { icon: FileText, question: 'Đăng ký nhập học', answer: 'Để đăng ký nhập học tại EPath, quý phụ huynh có thể liên hệ trực tiếp bộ phận tư vấn. Chúng tôi sẽ hỗ trợ các bước đăng ký và sắp xếp lịch kiểm tra đầu vào cho con.', category: 'contact' },
+  { icon: FileText, question: 'Đăng ký nhập học', answer: 'Để đăng ký nhập học tại EPath, quý phụ huynh có thể liên hệ trực tiếp bộ phận tư vấn. Cô sẽ hỗ trợ các bước đăng ký và sắp xếp lịch kiểm tra đầu vào cho con.', category: 'contact' },
 ]
 
 type ChatStep = 'main' | 'topics' | 'topic_questions' | 'contact'
 
+interface PreChatLead {
+  name: string
+  phone: string
+  // Whether this lead has already been POSTed to /api/chatbot/lead
+  // (which fans out to Google Sheets + Zalo). Used so the later
+  // "Đăng ký tư vấn" submit doesn't double-notify the sales team.
+  notified?: boolean
+}
+
+function isValidVietnamPhone(phone: string): boolean {
+  const cleaned = phone.replace(/[\s+\-().]/g, '')
+  // Accept 10-11 digit Vietnamese numbers (0xxx or +84xxx → 9xxx), or 8-15
+  // digit international format as a safety net.
+  return /^(\d{9,11})$/.test(cleaned) || /^\d{8,15}$/.test(cleaned)
+}
+
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
+  const [preChatLead, setPreChatLead] = useState<PreChatLead | null>(null)
+  const [preChatForm, setPreChatForm] = useState<PreChatLead>({ name: '', phone: '' })
+  const [preChatError, setPreChatError] = useState<string | null>(null)
+  const [preChatSubmitting, setPreChatSubmitting] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: 'Xin chào! Em là trợ lý tư vấn của EPath Education.\n\nEm có thể giúp quý phụ huynh về:\n• Giới thiệu EPath & Homeschool\n• Độ tuổi & Lộ trình học tập\n• Chất lượng đào tạo & Giáo viên\n• Cơ sở vật chất\n• Học phí & Chính sách tài chính\n• Đăng ký nhập học\n\nQuý phụ huynh muốn hỏi về vấn đề gì ạ?',
+      content: 'Xin chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath Education.\n\nEm có thể hỗ trợ anh/chị tìm hiểu về:\n• Giới thiệu EPath & các lộ trình học tập\n• Độ tuổi & chương trình phù hợp cho con\n• Lịch học, học phí & chính sách\n• Đánh giá năng lực đầu vào & đăng ký tư vấn\n\nAnh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi cô bất cứ điều gì nhé! 😊',
       timestamp: new Date(),
     },
   ])
@@ -285,13 +305,17 @@ export function Chatbot() {
   // and use visualViewport height so the chat panel never gets clipped
   // by the iOS keyboard (a common cause of "can't see the input" bugs).
   const [keyboardOpen, setKeyboardOpen] = useState(false)
+  // Track user message count so we can gently prompt for contact info after
+  // they've asked 3+ questions and haven't left their info yet.
+  const [ctaReminderSent, setCtaReminderSent] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  // Prevent scroll-to-bottom during topic-question animations so user
+  // doesn't get yanked upward when new items appear at the bottom.
+  const scrollLockRef = useRef(false)
 
   const scrollToBottom = () => {
-    // Defer to next frame so motion.div has finished its initial animation,
-    // otherwise scrollIntoView measures the pre-animation height and the
-    // newest message ends up hidden below the input.
+    if (scrollLockRef.current) return
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     })
@@ -319,6 +343,175 @@ export function Chatbot() {
     return () => vv.removeEventListener('resize', handleResize)
   }, [])
 
+  // -------------------------------------------------------------
+  // Persist chat session in localStorage so reloads / tab reopens
+  // don't wipe the conversation or the half-filled contact form.
+  // -------------------------------------------------------------
+  // Versioned so a future schema change can ignore old payloads.
+  const STORAGE_KEY = 'epath:chatbot:session:v1'
+  // Sessions older than this are considered stale (30 days).
+  const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000
+  // Hydration flag: only mutate state from localStorage once, on mount,
+  // otherwise we overwrite storage with the initial (empty) state on
+  // every re-render.
+  const hydratedRef = useRef(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (hydratedRef.current) return
+    hydratedRef.current = true
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as {
+        savedAt?: number
+        preChatLead?: PreChatLead | null
+        messages?: Message[]
+        chatStep?: ChatStep
+        selectedTopic?: TopicQA | null
+        topicsInterested?: string[]
+        contactForm?: typeof contactForm
+        ctaReminderSent?: boolean
+      }
+      if (!parsed || typeof parsed !== 'object') return
+      // Drop stale sessions so we don't load a conversation that
+      // doesn't reflect the user's current intent.
+      if (!parsed.savedAt || Date.now() - parsed.savedAt > SESSION_TTL_MS) {
+        window.localStorage.removeItem(STORAGE_KEY)
+        return
+      }
+      if (parsed.preChatLead) setPreChatLead(parsed.preChatLead)
+      if (Array.isArray(parsed.messages) && parsed.messages.length > 0) {
+        // Rehydrate Date objects (JSON.stringify turns them into strings).
+        setMessages(
+          parsed.messages.map((m) => ({
+            ...m,
+            timestamp: new Date(m.timestamp),
+          }))
+        )
+      }
+      if (parsed.chatStep) setChatStep(parsed.chatStep)
+      if (parsed.selectedTopic !== undefined) setSelectedTopic(parsed.selectedTopic)
+      if (Array.isArray(parsed.topicsInterested))
+        setTopicsInterested(parsed.topicsInterested)
+      if (parsed.contactForm) setContactForm(parsed.contactForm)
+      if (typeof parsed.ctaReminderSent === 'boolean')
+        setCtaReminderSent(parsed.ctaReminderSent)
+    } catch (err) {
+      // Corrupted JSON or storage disabled — fail silently and start fresh.
+      console.warn('[chatbot] failed to restore session:', err)
+    }
+    // Intentionally empty deps: this runs once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!hydratedRef.current) return
+    // Skip persisting until the chat has actually been used — otherwise
+    // we clutter storage with the default state from every visitor.
+    const hasContent =
+      messages.length > 1 ||
+      !!preChatLead ||
+      topicsInterested.length > 0 ||
+      !!contactForm.name ||
+      !!contactForm.phone ||
+      !!contactForm.email ||
+      !!contactForm.note
+    if (!hasContent) return
+    try {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          savedAt: Date.now(),
+          preChatLead,
+          messages,
+          chatStep,
+          selectedTopic,
+          topicsInterested,
+          contactForm,
+          ctaReminderSent,
+        })
+      )
+    } catch {
+      // Storage full / disabled — don't crash the chat.
+    }
+  }, [
+    messages,
+    preChatLead,
+    chatStep,
+    selectedTopic,
+    topicsInterested,
+    contactForm,
+    ctaReminderSent,
+    STORAGE_KEY,
+  ])
+
+  // Listener so other tabs / a manual clear in DevTools stay in sync.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return
+      if (!e.newValue) {
+        // Storage was cleared externally — reset to a fresh chat.
+        handleResetSession()
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+    // handleResetSession is declared later as a const; referencing it
+    // here works because both run on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [STORAGE_KEY])
+
+  // Reset session to initial state when user clicks "Làm mới".
+  const handleResetSession = () => {
+    setChatStep('main')
+    setPreChatLead(null)
+    setPreChatForm({ name: '', phone: '' })
+    setSelectedTopic(null)
+    setTopicsInterested([])
+    setCtaReminderSent(false)
+    setInputValue('')
+    setIsTyping(false)
+    setMessages([
+      {
+        id: '1',
+        role: 'assistant',
+        content: 'Xin chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath Education.\n\nEm có thể hỗ trợ anh/chị tìm hiểu về:\n• Giới thiệu EPath & các lộ trình học tập\n• Độ tuổi & chương trình phù hợp cho con\n• Lịch học, học phí & chính sách\n• Đánh giá năng lực đầu vào & đăng ký tư vấn\n\nAnh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi cô bất cứ điều gì nhé! 😊',
+        timestamp: new Date(),
+      },
+    ])
+    setContactForm({
+      name: '',
+      phone: '',
+      email: '',
+      childAge: '',
+      program: '',
+      campus: '',
+      note: '',
+    })
+    // Drop persisted state too, so the next reload starts fresh.
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(STORAGE_KEY)
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Only reset on the false → true transition so we don't wipe state
+    // while the chat is still mounted but momentarily hidden.
+    if (!isOpen) return
+    // If we restored a session from localStorage, keep it — the user
+    // expects their conversation to still be there.
+    if (hydratedRef.current && messages.length > 1) return
+    handleResetSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+
   const addMessage = (role: 'user' | 'assistant', content: string, showRating = false) => {
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -327,7 +520,28 @@ export function Chatbot() {
       timestamp: new Date(),
       showRating,
     }
-    setMessages((prev) => [...prev, newMessage])
+    setMessages((prev) => {
+      const next = [...prev, newMessage]
+      // After 3+ user messages (not counting the greeting), if the user
+      // hasn't given their phone, nudge them once.
+      if (
+        role === 'user' &&
+        !preChatLead?.phone &&
+        !ctaReminderSent &&
+        next.filter((m) => m.role === 'user').length >= 3
+      ) {
+        setCtaReminderSent(true)
+        // Use setTimeout so this is added after the current batch renders.
+        setTimeout(() => {
+          addMessage(
+            'assistant',
+            'Nếu anh/chị muốn được tư vấn chi tiết hơn về lộ trình cho con, có thể để lại SĐT — cô tư vấn viên sẽ gọi lại trong 24h ạ.',
+            false
+          )
+        }, 100)
+      }
+      return next
+    })
   }
 
   const updateMessageRating = (messageId: string, rating: 'up' | 'down') => {
@@ -401,7 +615,7 @@ export function Chatbot() {
       'cơ sở': qaDatabase[3].questions[0].a,
       'địa điểm': qaDatabase[3].questions[0].a,
       'ngoại khóa': qaDatabase[3].questions[1].a,
-      'đăng ký': 'Để đăng ký nhập học tại EPath, quý phụ huynh vui lòng liên hệ trực tiếp bộ phận tư vấn. Chúng tôi sẽ hỗ trợ các bước đăng ký và sắp xếp lịch kiểm tra đầu vào cho con.',
+      'đăng ký': 'Để đăng ký nhập học tại EPath, quý phụ huynh vui lòng liên hệ trực tiếp bộ phận tư vấn. Cô sẽ hỗ trợ các bước đăng ký và sắp xếp lịch kiểm tra đầu vào cho con.',
       'liên hệ': 'Quý phụ huynh có thể liên hệ bộ phận tư vấn của EPath để được hỗ trợ chi tiết.',
     }
 
@@ -415,6 +629,79 @@ export function Chatbot() {
   }
 
   const CONTACT_INTENT_REGEX = /(đăng\s*ký|đăng\s*kí|nhập\s*học|ghi\s*danh|tư\s*vấn|liên\s*hệ|để\s*lại\s*(sđt|sđt|số\s*điện\s*thoại|thông\s*tin)|hotline)/i
+
+  const handlePreChatSubmit = async () => {
+    const name = preChatForm.name.trim()
+    const phone = preChatForm.phone.trim()
+    if (!name || !phone) {
+      setPreChatError('Dạ anh/chị vui lòng nhập đầy đủ họ tên và số điện thoại ạ.')
+      return
+    }
+    if (!isValidVietnamPhone(phone)) {
+      setPreChatError('Số điện thoại chưa đúng định dạng. Anh/chị kiểm tra lại giúp em nhé (VD: 0912 345 678).')
+      return
+    }
+
+    setPreChatSubmitting(true)
+    setPreChatError(null)
+
+    const lead: PreChatLead = { name, phone }
+    setPreChatLead(lead)
+
+    // Pre-fill the consultation form so the parent never has to re-type
+    // the same name/phone when they later request a callback within
+    // the same chat session.
+    setContactForm((prev) => ({
+      ...prev,
+      name: prev.name || name,
+      phone: prev.phone || phone,
+    }))
+
+    // Fire the lead to the backend immediately so the sales Zalo bot
+    // gets pinged the moment the parent enters their info — they no
+    // longer have to also fill out the bigger "Đăng ký tư vấn" form.
+    // Fire-and-forget: we don't block the chat start on the network.
+    void fetch('/api/chatbot/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        email: '',
+        childAge: '',
+        program: '',
+        campus: '',
+        topicsInterested: [],
+        conversationSummary: 'Pre-chat capture (chưa có nội dung tư vấn)',
+        conversationCount: 0,
+        locale: detectedLocale,
+        source: 'chatbot-prechat',
+      } satisfies LeadPayload),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          console.warn('[chatbot] pre-chat lead POST failed:', res.status)
+        } else {
+          // Mark as notified so the later "Đăng ký tư vấn" submit
+          // (handleContactSubmit) doesn't fire a second Zalo message.
+          setPreChatLead((prev) => (prev ? { ...prev, notified: true } : prev))
+        }
+      })
+      .catch((err) => {
+        console.warn('[chatbot] pre-chat lead POST error:', err)
+      })
+
+    // Greet them by first name so the rest of the conversation feels personal.
+    const firstName = name.split(/\s+/).slice(-1)[0] || name
+    addMessage(
+      'assistant',
+      `Cảm ơn anh/chị ${firstName} đã để lại thông tin ạ! 🌷\n\nEm là Cô Hương — Cố vấn Học tập tại EPath Education. Em sẵn sàng hỗ trợ anh/chị tìm hiểu về chương trình Tiểu học – THPT, lộ trình học tập, học phí, hoặc đăng ký tư vấn 1-1 với cô tư vấn viên.\n\nAnh/chị muốn em chia sẻ về vấn đề nào trước ạ?`,
+    )
+
+    setChatStep('main')
+    setPreChatForm({ name: '', phone: '' })
+    setPreChatSubmitting(false)
+  }
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return
@@ -432,7 +719,9 @@ export function Chatbot() {
       setChatStep('contact')
       addMessage(
         'assistant',
-        'Dạ, để EPath liên hệ tư vấn chi tiết cho anh/chị, em mời điền nhanh thông tin bên dưới nhé. Chỉ cần Họ tên, Số điện thoại và một vài thông tin cơ bản ạ.'
+        preChatLead
+          ? `Dạ vâng ạ! Cô đã ghi nhận thông tin của anh/chị ${preChatLead.name} rồi. Anh/chị chỉ cần bổ sung thêm vài thông tin bên dưới để cô tư vấn viên gọi lại tư vấn chi tiết nhé ạ.`
+          : 'Dạ, để EPath liên hệ tư vấn chi tiết cho anh/chị, em mời điền nhanh thông tin bên dưới nhé. Chỉ cần Họ tên, Số điện thoại và một vài thông tin cơ bản ạ.'
       )
       return
     }
@@ -455,6 +744,8 @@ export function Chatbot() {
         body: JSON.stringify({
           message: userText,
           history: recentMessages,
+          name: preChatLead?.name,
+          phone: preChatLead?.phone,
         }),
       })
 
@@ -470,7 +761,7 @@ export function Chatbot() {
       // Graceful fallback if the API is unreachable.
       addMessage(
         'assistant',
-        'Em xin lỗi, hệ thống đang gặp chút trục trặc kỹ thuật. Anh/chị vui lòng thử lại sau hoặc để lại SĐT qua "Đăng ký tư vấn" để đội ngũ EPath liên hệ hỗ trợ trực tiếp ạ.',
+        'Dạ em xin lỗi, hệ thống đang gặp chút trục trặc kỹ thuật. Anh/chị vui lòng thử lại sau hoặc để lại SĐT qua "Đăng ký tư vấn" để đội ngũ EPath liên hệ hỗ trợ trực tiếp ạ.',
         true
       )
     } finally {
@@ -479,36 +770,49 @@ export function Chatbot() {
   }
 
   const handleQuickQuestion = (question: typeof quickQuestions[0]) => {
+    // Lock scroll so the user isn't yanked upward when topic questions animate in.
+    scrollLockRef.current = true
     addMessage('user', question.question)
     setIsTyping(true)
 
     setTimeout(() => {
       setIsTyping(false)
       addMessage('assistant', question.answer, true)
+      // Unlock after messages have been added. The existing scrollToBottom
+      // effect won't fire because of the lock; the next real scroll will
+      // be driven by user interaction or the normal effect cycle.
+      scrollLockRef.current = false
     }, 800)
   }
 
   const handleTopicClick = (topic: TopicQA) => {
-    setSelectedTopic(topic)
-    setChatStep('topic_questions')
-
     // Record interested topic without duplicates so the lead captures
     // the full breadth of questions the user asked about.
     setTopicsInterested((prev) =>
       prev.includes(topic.label) ? prev : [...prev, topic.label]
     )
 
-    const topicIntro = `📚 **${topic.label}**\n\nEm gợi ý một số câu hỏi phổ biến về ${topic.label.toLowerCase()}:\n\n`
-    const questionsList = topic.questions.slice(0, 5).map((q, i) => `${i + 1}. ${q.q}`).join('\n')
+    // Send intro message FIRST, then show topic questions buttons.
+    // This way user reads the intro before seeing the question buttons.
+    addMessage(
+      'assistant',
+      `📚 **${topic.label}**\n\nEm gợi ý một số câu hỏi phổ biến về ${topic.label.toLowerCase()}. Anh/chị chọn câu hỏi hoặc hỏi cô trực tiếp nhé!`
+    )
 
-    addMessage('assistant', topicIntro + questionsList + '\n\nBạn muốn hỏi về vấn đề nào?')
+    // Store selected topic and show buttons AFTER the message is added
+    setTimeout(() => {
+      setSelectedTopic(topic)
+      setChatStep('topic_questions')
+    }, 100)
   }
 
   const handleTopicQuestionClick = (question: { q: string; a: string }) => {
+    scrollLockRef.current = true
     addMessage('user', question.q)
 
     setTimeout(() => {
       addMessage('assistant', question.a, true)
+      scrollLockRef.current = false
     }, 600)
   }
 
@@ -520,7 +824,9 @@ export function Chatbot() {
   }, [])
 
   const handleContactSubmit = async () => {
-    if (!contactForm.phone.trim()) return
+    const name = contactForm.name.trim()
+    const phone = contactForm.phone.trim()
+    if (!phone) return
 
     setIsSubmitting(true)
     setSubmitError(null)
@@ -544,8 +850,8 @@ export function Chatbot() {
     const finalSummary = note ? `${summary}${summary ? '\n' : ''}Ghi chú: ${note}` : summary
 
     const payload: LeadPayload = {
-      name: contactForm.name,
-      phone: contactForm.phone,
+      name,
+      phone,
       email: contactForm.email,
       childAge: contactForm.childAge,
       program: contactForm.program,
@@ -577,7 +883,7 @@ export function Chatbot() {
 
       addMessage(
         'assistant',
-        `Cảm ơn ${contactForm.name || 'quý phụ huynh'}!\n\nThông tin của bạn đã được ghi nhận. Đội ngũ tư vấn EPath sẽ liên hệ qua số ${contactForm.phone} trong vòng 24 giờ để hỗ trợ chi tiết.\n\nNgoài ra, bạn có thể liên hệ trực tiếp qua hotline của EPath.`,
+        `Cảm ơn ${name || 'quý phụ huynh'}!\n\nThông tin của anh/chị đã được cô ghi nhận. Cô tư vấn viên EPath sẽ liên hệ qua số ${phone} trong vòng 24 giờ để hỗ trợ chi tiết ạ.\n\nTrong thời gian chờ, anh/chị có thể tiếp tục hỏi cô bất kỳ điều gì về chương trình nhé.`,
         true
       )
       setContactForm({
@@ -600,6 +906,10 @@ export function Chatbot() {
   }
 
   const handleBackToMain = () => {
+    // From topics / topic_questions / contact, the back arrow must always
+    // return to the pre-chat form so the user is forced to enter their
+    // name + phone before they can chat. Going straight to 'main' would
+    // let them bypass the lead capture.
     setChatStep('main')
     setSelectedTopic(null)
   }
@@ -695,15 +1005,33 @@ export function Chatbot() {
                 <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-semibold text-base sm:text-lg truncate">EPath Assistant</h3>
+                <h3 className="text-white font-semibold text-base sm:text-lg truncate">
+                  {'Cô Hương — Cố vấn Học tập'}
+                </h3>
                 <p className="text-white/80 text-xs sm:text-sm truncate">
-                  {chatStep === 'contact' ? 'Đăng ký tư vấn' : 'Tư vấn giáo dục 24/7'}
+                  {chatStep === 'contact'
+                    ? 'Đăng ký tư vấn 1-1'
+                    : preChatLead
+                    ? `Xin chào ${preChatLead.name} 👋`
+                    : 'Tư vấn giáo dục 24/7'}
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-1 shrink-0">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span className="text-white/80 text-xs">Online</span>
               </div>
+              {/* "Làm mới" button — explicitly clears the persisted session
+                  so the parent can restart fresh without clearing browser
+                  storage. Only shown when there's something worth clearing. */}
+              <button
+                onClick={handleResetSession}
+                className="hidden sm:flex text-white/80 hover:text-white p-1 shrink-0 items-center gap-1 text-xs"
+                aria-label="Làm mới hội thoại"
+                title="Làm mới hội thoại"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Làm mới</span>
+              </button>
               <button
                 onClick={() => setIsOpen(false)}
                 className="sm:hidden text-white/90 hover:text-white p-1 -mr-1 shrink-0"
@@ -832,26 +1160,40 @@ export function Chatbot() {
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-4 bg-white rounded-xl p-4 border border-[#3A53A3]/20 space-y-3"
                 >
+                  <div className="flex items-center gap-2 text-[#3A53A3]">
+                    <ShieldCheck className="w-4 h-4" />
+                    <p className="text-sm font-medium">Đăng ký tư vấn</p>
+                  </div>
                   <p className="text-sm text-[#6B6B6B] text-center">
-                    Để lại thông tin để được tư vấn trực tiếp từ EPath
+                    Để lại thông tin, cô tư vấn viên sẽ gọi lại trong 24 giờ ạ.
                   </p>
-                  <input
-                    type="text"
-                    placeholder="Họ và tên phụ huynh"
-                    value={contactForm.name}
-                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Số điện thoại *"
-                    value={contactForm.phone}
-                    onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
-                  />
+
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3A53A3]/60 pointer-events-none" />
+                    <input
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Họ và tên phụ huynh *"
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                      className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3A53A3]/60 pointer-events-none" />
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="Số điện thoại *"
+                      value={contactForm.phone}
+                      onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                      className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
+                    />
+                  </div>
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="Email (không bắt buộc)"
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -939,7 +1281,7 @@ export function Chatbot() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleContactSubmit}
-                    disabled={!contactForm.phone.trim() || isSubmitting}
+                    disabled={!(preChatLead?.phone || contactForm.phone).trim() || isSubmitting}
                     className="w-full py-3 bg-gradient-to-r from-[#3A53A3] to-[#2E4389] text-white rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
@@ -1033,7 +1375,7 @@ export function Chatbot() {
                       // message is visible above the keyboard.
                       setTimeout(scrollToBottom, 100)
                     }}
-                    placeholder="Nhập câu hỏi của bạn..."
+                    placeholder="Nhập câu hỏi cho Cô Hương..."
                     className="flex-1 px-4 py-3 rounded-full bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-base sm:text-sm"
                   />
                   <motion.button
@@ -1047,9 +1389,15 @@ export function Chatbot() {
                   </motion.button>
                 </div>
               )}
-              <p className="text-[10px] text-[#666] text-center mt-2 leading-relaxed">
-                EPath Assistant có thể không phản hồi chính xác 100%. Vui lòng liên hệ trực tiếp để được tư vấn chi tiết.
-              </p>
+              {chatStep === 'contact' ? (
+                <p className="text-[10px] text-[#666] text-center mt-1 leading-relaxed">
+                  Vui lòng điền thông tin để nhận tư vấn chi tiết từ EPath.
+                </p>
+              ) : (
+                <p className="text-[10px] text-[#666] text-center mt-2 leading-relaxed">
+                  Cô Hương có thể không phản hồi chính xác 100%. Vui lòng liên hệ trực tiếp để được tư vấn chi tiết.
+                </p>
+              )}
             </div>
           </motion.div>
         )}
@@ -1065,7 +1413,7 @@ export function Chatbot() {
           className="hidden md:block fixed bottom-6 right-24 z-[70]"
         >
           <div className="bg-white px-4 py-2 rounded-full shadow-lg border border-[#3A53A3]/20">
-            <p className="text-sm text-[#231F20]">Bạn cần tư vấn?</p>
+            <p className="text-sm text-[#231F20]">Tư vấn cùng Cô Hương?</p>
           </div>
         </motion.div>
       )}

@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/card'
 import { Eye, EyeOff, LogIn, Lock, Mail } from 'lucide-react'
 import { semanticColors, radius } from '@/lib/design-tokens'
+import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -29,18 +31,31 @@ export default function AdminLoginPage() {
     setError('')
     setIsLoading(true)
 
-    // Simulate Firebase Auth login
-    // In production, use: signInWithEmailAndPassword(auth, email, password)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    if (email === 'admin@epath.edu.vn' && password === 'admin123') {
-      // Store auth state in localStorage for demo
-      localStorage.setItem('admin_auth', 'true')
+    try {
+      if (!isFirebaseConfigured) {
+        throw new Error(
+          'Firebase chưa được cấu hình. Vui lòng thêm NEXT_PUBLIC_FIREBASE_* vào .env.local'
+        )
+      }
+      const auth = getFirebaseAuth()
+      const credential = await signInWithEmailAndPassword(auth, email, password)
+      const idToken = await credential.user.getIdToken()
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Đăng nhập thất bại')
+      }
       router.push('/admin/dashboard')
-    } else {
-      setError('Email hoặc mật khẩu không đúng')
+    } catch (err) {
+      const message = (err as Error).message || 'Đăng nhập thất bại'
+      setError(message.includes('auth/') ? 'Email hoặc mật khẩu không đúng' : message)
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   return (
@@ -150,11 +165,10 @@ export default function AdminLoginPage() {
           </form>
 
           <div
-            className="mt-6 text-center text-sm"
+            className="mt-6 text-center text-xs"
             style={{ color: semanticColors.textMuted }}
           >
-            <p>Demo credentials:</p>
-            <p className="font-mono text-xs">admin@epath.edu.vn / admin123</p>
+            <p>Đăng nhập bằng tài khoản Firebase đã được cấp quyền admin.</p>
           </div>
         </CardContent>
       </Card>

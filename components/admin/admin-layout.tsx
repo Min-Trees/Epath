@@ -10,10 +10,6 @@
  *
  * Sidebar (desktop) is fixed-width and sticky; on mobile it slides in
  * via framer-motion using the standard `transitionEnter` preset.
- *
- * The auth check is done at the page level (each page calls
- * `useRequireAdmin()`) so that login itself can render this layout
- * without redirect loops.
  */
 
 import Link from 'next/link'
@@ -31,6 +27,8 @@ import {
   Menu,
   X,
   Bell,
+  Award,
+  ListChecks,
 } from 'lucide-react'
 import { semanticColors, shadows, radius } from '@/lib/design-tokens'
 import { duration, easeOut, transitionEnter } from '@/lib/motion-presets'
@@ -44,10 +42,17 @@ export interface AdminNavItem {
 
 export const adminNavItems: AdminNavItem[] = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/page-builder', label: 'Page Builder (Home)', icon: LayoutDashboard },
   { href: '/admin/programs', label: 'Chương trình học', icon: BookOpen },
+  { href: '/admin/core-values', label: 'Giá trị cốt lõi', icon: BookOpen },
+  { href: '/admin/pathways', label: 'Lộ trình học', icon: BookOpen },
   { href: '/admin/faqs', label: 'FAQ', icon: MessageSquare },
+  { href: '/admin/achievements', label: 'Thành tích', icon: Award },
+  { href: '/admin/team', label: 'Đội ngũ', icon: Users },
+  { href: '/admin/admission-steps', label: 'Quy trình tuyển sinh', icon: ListChecks },
   { href: '/admin/testimonials', label: 'Phản hồi PH', icon: Users },
   { href: '/admin/partners', label: 'Đối tác', icon: FileText },
+  { href: '/admin/events', label: 'Sự kiện', icon: Bell },
   { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
 ]
 
@@ -61,33 +66,59 @@ interface AdminLayoutProps {
   actions?: React.ReactNode
 }
 
+export interface AdminUser {
+  uid: string
+  email: string | null
+  name: string | null
+  role: string
+}
+
 /**
- * Hook used by admin pages to redirect to /admin/login when the
- * auth flag is missing.
+ * Hook used by admin pages to fetch the current admin user and redirect
+ * to /admin/login if the session cookie is missing or expired.
  */
 export function useRequireAdmin() {
   const router = useRouter()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState<AdminUser | null | undefined>(undefined)
 
   useEffect(() => {
-    const auth = localStorage.getItem('admin_auth')
-    if (!auth) {
-      router.replace('/admin/login')
-    } else {
-      setIsLoggedIn(true)
+    let cancelled = false
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((data: { user: AdminUser | null }) => {
+        if (cancelled) return
+        if (!data.user) {
+          router.replace('/admin/login')
+        } else {
+          setUser(data.user)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) router.replace('/admin/login')
+      })
+    return () => {
+      cancelled = true
     }
   }, [router])
 
-  return isLoggedIn
+  return user
 }
 
 export function AdminLayout({ children, title, subtitle, actions }: AdminLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [user, setUser] = useState<AdminUser | null>(null)
   const pathname = usePathname()
   const router = useRouter()
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_auth')
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((data: { user: AdminUser | null }) => setUser(data.user))
+      .catch(() => setUser(null))
+  }, [])
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/admin/login')
   }
 
@@ -132,18 +163,6 @@ export function AdminLayout({ children, title, subtitle, actions }: AdminLayoutP
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="relative p-2 rounded-lg transition-colors duration-200 hover:bg-black/5"
-              style={{ color: semanticColors.textMuted }}
-              aria-label="Notifications"
-            >
-              <Bell className="w-6 h-6" />
-              <span
-                className="absolute top-1 right-1 w-2 h-2 rounded-full"
-                style={{ backgroundColor: semanticColors.cta }}
-              />
-            </button>
             <div className="flex items-center gap-2">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center"
@@ -153,10 +172,10 @@ export function AdminLayout({ children, title, subtitle, actions }: AdminLayoutP
               </div>
               <div className="hidden sm:block">
                 <div className="font-medium text-sm" style={{ color: semanticColors.text }}>
-                  Admin
+                  {user?.name || user?.email || 'Admin'}
                 </div>
                 <div className="text-xs" style={{ color: semanticColors.textMuted }}>
-                  Quản trị viên
+                  {user?.role || 'Quản trị viên'}
                 </div>
               </div>
             </div>

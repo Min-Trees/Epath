@@ -8,18 +8,63 @@ import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
+import { usePublicCms } from '@/lib/use-public-cms'
+import type { Partner } from '@/lib/cms-types'
 
-const partners = [
-  { name: 'Edmentum International', logo: 'Ed', link: 'https://www.edmentum.com' },
-  { name: 'Cambridge Assessment', logo: 'Cam', link: 'https://www.cambridgeenglish.org' },
-  { name: 'Cognia', logo: 'Cog', link: 'https://www.cognia.org' },
+const fallbackPartners: Partner[] = [
+  {
+    id: 'edmentum',
+    name: 'Edmentum International',
+    logoUrl: '',
+    website: 'https://www.edmentum.com',
+    category: 'curriculum',
+    description: { vi: '', en: '' },
+    features: [],
+    isFeatured: true,
+    order: 0,
+    isActive: true,
+  },
+  {
+    id: 'cambridge',
+    name: 'Cambridge Assessment',
+    logoUrl: '',
+    website: 'https://www.cambridgeenglish.org',
+    category: 'certification',
+    description: { vi: '', en: '' },
+    features: [],
+    isFeatured: false,
+    order: 1,
+    isActive: true,
+  },
+  {
+    id: 'cognia',
+    name: 'Cognia',
+    logoUrl: '',
+    website: 'https://www.cognia.org',
+    category: 'certification',
+    description: { vi: '', en: '' },
+    features: [],
+    isFeatured: false,
+    order: 2,
+    isActive: true,
+  },
 ]
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+}
 
 export default function PartnersPage() {
   const t = useTranslations('partnersPage')
   const tFeature = useTranslations('partnersPage.featureList')
   const params = useParams()
   const locale = (params.locale as string) || 'vi'
+  const cms = usePublicCms()
+  const partners: Partner[] = cms.partners.length > 0 ? cms.partners : fallbackPartners
 
   return (
     <>
@@ -74,16 +119,15 @@ export default function PartnersPage() {
           <div className="space-y-20">
             {partners.map((partner, index) => {
               const accent = accentCycle[index % accentCycle.length]
+              const desc = partner.description[locale as 'vi' | 'en'] || partner.description.vi
               return (
                 <motion.div
-                  key={partner.name}
+                  key={partner.id}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={inViewViewport}
                   transition={{ duration: duration.normal, ease: easeOut }}
-                  className={`grid lg:grid-cols-2 gap-12 items-center ${
-                    index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                  }`}
+                  className={`grid lg:grid-cols-2 gap-12 items-center`}
                 >
                   <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
                     <div
@@ -94,21 +138,26 @@ export default function PartnersPage() {
                         className="text-2xl font-bold"
                         style={{ color: accent.color }}
                       >
-                        {partner.logo}
+                        {initials(partner.name)}
                       </span>
                     </div>
                     <h2 className="text-3xl font-bold text-[#231F20] mb-4">
                       {partner.name}
                     </h2>
-                    <a
-                      href={partner.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-[#3A53A3] font-medium hover:text-[#2E4389] transition-colors duration-200"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      {t('visitWebsite')}
-                    </a>
+                    {desc && (
+                      <p className="text-[#6B6B6B] leading-relaxed mb-4">{desc}</p>
+                    )}
+                    {partner.website && (
+                      <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-[#3A53A3] font-medium hover:text-[#2E4389] transition-colors duration-200"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        {t('visitWebsite')}
+                      </a>
+                    )}
                   </div>
                   <div
                     className={`rounded-2xl p-8 ${index % 2 === 1 ? 'lg:order-1' : ''}`}
@@ -118,7 +167,10 @@ export default function PartnersPage() {
                       {t('features')}
                     </h3>
                     <ul className="space-y-3">
-                      {[1, 2, 3, 4].map((i) => (
+                      {(partner.features.length > 0
+                        ? partner.features
+                        : [1, 2, 3, 4].map((i) => ({ vi: tFeature(`f${i}` as 'f1' | 'f2' | 'f3' | 'f4'), en: '' }))
+                      ).map((feat, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <div
                             className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
@@ -138,9 +190,7 @@ export default function PartnersPage() {
                               />
                             </svg>
                           </div>
-                          <span className="text-[#6B6B6B]">
-                            {tFeature(`f${i}` as 'f1' | 'f2' | 'f3' | 'f4')}
-                          </span>
+                          <span className="text-[#6B6B6B]">{feat.vi}</span>
                         </li>
                       ))}
                     </ul>

@@ -4,14 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-
-const stats = [
-  { value: 10, suffix: '+', statKey: 'years' },
-  { value: 4, suffix: '', statKey: 'levels' },
-  { value: 60, suffix: '+', statKey: 'edmentum' },
-  { value: 3, suffix: '+', statKey: 'partners' },
-  { value: 100, suffix: '%', statKey: 'personalized' },
-]
+import type { Statistic } from '@/lib/cms-types'
 
 interface CounterProps {
   value: number
@@ -19,17 +12,10 @@ interface CounterProps {
   label: string
   color: string
   bgColor: string
-  /** When the parent section becomes active, start the counter. */
   active: boolean
-  /** Staggered start so the numbers appear in sequence, not at once. */
   startDelayMs: number
 }
 
-/**
- * Counter – uses rAF (no setInterval jitter) but no motion wrapper.
- * The entrance scale/fade is CSS (see .stat-cell in globals.css); we
- * only render the value itself via React state.
- */
 function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }: CounterProps) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
@@ -77,13 +63,34 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
   )
 }
 
+// Fallback stats for when CMS is empty
+const fallbackStats = [
+  { value: 10, suffix: '+', statKey: 'years' },
+  { value: 4, suffix: '', statKey: 'levels' },
+  { value: 60, suffix: '+', statKey: 'edmentum' },
+  { value: 3, suffix: '+', statKey: 'partners' },
+  { value: 100, suffix: '%', statKey: 'personalized' },
+]
+
 export function StatisticsSection() {
   const t = useTranslations('stats')
-  // Single shared observer for the whole section (was 5 before).
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.25 })
   const [active, setActive] = useState(false)
+  const [stats, setStats] = useState<Statistic[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Bridge the observer attribute into a boolean prop that children can use.
+  useEffect(() => {
+    fetch('/api/cms/statistics')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.items && data.items.length > 0) {
+          setStats(data.items.filter((s: Statistic) => s.isActive).sort((a: Statistic, b: Statistic) => a.order - b.order))
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false))
+  }, [])
+
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -94,18 +101,31 @@ export function StatisticsSection() {
     return () => io.disconnect()
   }, [sectionRef])
 
+  const displayStats = stats.length > 0 ? stats : fallbackStats
+
   return (
     <section ref={sectionRef} className="py-20 bg-white stats-section">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {stats.map((stat, index) => {
+          {displayStats.map((stat, index) => {
             const accent = accentCycle[index % accentCycle.length]
+            const isFallback = stats.length === 0
+            const statValue = isFallback
+              ? (stat as { value: number }).value
+              : parseInt((stat as Statistic).value) || 0
+            const statSuffix = isFallback
+              ? (stat as { suffix: string }).suffix
+              : (stat as Statistic).suffix || ''
+            const statLabel = isFallback
+              ? t((stat as { statKey: string }).statKey)
+              : (stat as Statistic).label?.vi || (stat as Statistic).label?.en || ''
+
             return (
               <Counter
-                key={stat.statKey}
-                value={stat.value}
-                suffix={stat.suffix}
-                label={t(stat.statKey)}
+                key={isFallback ? (stat as { statKey: string }).statKey : (stat as Statistic).id}
+                value={statValue}
+                suffix={statSuffix}
+                label={statLabel}
                 color={accent.color}
                 bgColor={accent.bg}
                 active={active}

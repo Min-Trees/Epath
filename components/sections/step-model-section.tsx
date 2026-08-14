@@ -1,12 +1,25 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { ClipboardCheck, Map, Laptop, MessageCircle, Award } from 'lucide-react'
+import { ClipboardCheck, Map, Laptop, MessageCircle, Award, ListChecks } from 'lucide-react'
 import { duration, easeOut, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
+import type { AdmissionStep } from '@/lib/cms-types'
 
-const steps = [
+// Icon mapping for admission steps
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  ClipboardCheck: ClipboardCheck,
+  Map: Map,
+  Laptop: Laptop,
+  MessageCircle: MessageCircle,
+  Award: Award,
+  ListChecks: ListChecks,
+}
+
+// Fallback steps
+const fallbackSteps = [
   { number: 1, titleKey: 'assessment', descKey: 'assessmentDesc', icon: ClipboardCheck },
   { number: 2, titleKey: 'pathway', descKey: 'pathwayDesc', icon: Map },
   { number: 3, titleKey: 'blended', descKey: 'blendedDesc', icon: Laptop },
@@ -14,26 +27,25 @@ const steps = [
   { number: 5, titleKey: 'achievement', descKey: 'achievementDesc', icon: Award },
 ]
 
-/**
- * Step-model timeline – performance-aware rebuild.
- *
- * The previous version mounted a framer-motion component for every
- * connector segment and inside every card, totalling 30+ motion
- * components on screen at once. Re-rendering any of them during
- * scroll caused jank.
- *
- * New approach:
- *   - 1 motion wrapper per step (icon + card) – entrances only.
- *   - Connector segments are PURE CSS (`step-connector` class).
- *     Their grow-in animation runs on the compositor thread via
- *     `transform: scaleX` and is started by IntersectionObserver
- *     toggling `data-active` on the section. Zero JS while playing.
- *   - Card hover uses CSS transform (no framer-motion wrapper).
- *   - Mobile uses an inline `flex` timeline with a CSS scaleY reveal.
- */
 export function StepModelSection() {
   const t = useTranslations('steps')
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
+  const [steps, setSteps] = useState<AdmissionStep[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/cms/admission-steps')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.items && data.items.length > 0) {
+          setSteps(data.items.filter((s: AdmissionStep) => s.isActive).sort((a: AdmissionStep, b: AdmissionStep) => a.order - b.order))
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  const displaySteps = steps.length > 0 ? steps : fallbackSteps
 
   return (
     <section
@@ -61,11 +73,28 @@ export function StepModelSection() {
           {/* Desktop timeline */}
           <div className="hidden lg:block">
             <div className="step-grid">
-              {steps.map((step, idx) => {
+              {displaySteps.map((step, idx) => {
                 const accent = accentCycle[idx % accentCycle.length]
-                const isLast = idx === steps.length - 1
+                const isLast = idx === displaySteps.length - 1
+                const isFromCMS = steps.length > 0
+                const cmsStep = step as AdmissionStep
+                const fallbackStep = step as typeof fallbackSteps[0]
+
+                // Get icon: from CMS (string) or fallback (component)
+                const IconComponent = isFromCMS
+                  ? (iconMap[cmsStep.icon] || ListChecks)
+                  : fallbackStep.icon
+
+                const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
+                const stepTitle = isFromCMS
+                  ? cmsStep.title?.vi || cmsStep.title?.en
+                  : t(fallbackStep.titleKey)
+                const stepDesc = isFromCMS
+                  ? cmsStep.description?.vi || cmsStep.description?.en
+                  : t(fallbackStep.descKey)
+
                 return (
-                  <div key={step.number} className="step-col">
+                  <div key={isFromCMS ? cmsStep.id : stepNumber} className="step-col">
                     {!isLast && (
                       <span
                         className="step-connector"
@@ -91,7 +120,7 @@ export function StepModelSection() {
                       className="step-icon-wrap"
                       style={{ backgroundColor: accent.color }}
                     >
-                      <step.icon className="w-8 h-8 text-white" />
+                      <IconComponent className="w-8 h-8 text-white" />
                     </motion.div>
 
                     <motion.div
@@ -107,13 +136,13 @@ export function StepModelSection() {
                       style={{ backgroundColor: accent.bg }}
                     >
                       <div className="text-4xl font-bold mb-2" style={{ color: accent.color }}>
-                        {step.number}
+                        {stepNumber}
                       </div>
                       <div className="font-bold text-lg mb-1" style={{ color: accent.color }}>
-                        {t(step.titleKey)}
+                        {stepTitle}
                       </div>
                       <p className="text-sm" style={{ color: accent.color }}>
-                        {t(step.descKey)}
+                        {stepDesc}
                       </p>
                     </motion.div>
                   </div>
@@ -126,11 +155,28 @@ export function StepModelSection() {
           <div className="lg:hidden">
             <div className="step-mobile-rail" aria-hidden />
             <div className="step-mobile-grid">
-              {steps.map((step, idx) => {
+              {displaySteps.map((step, idx) => {
                 const accent = accentCycle[idx % accentCycle.length]
-                const isLast = idx === steps.length - 1
+                const isLast = idx === displaySteps.length - 1
+                const isFromCMS = steps.length > 0
+                const cmsStep = step as AdmissionStep
+                const fallbackStep = step as typeof fallbackSteps[0]
+
+                // Get icon: from CMS (string) or fallback (component)
+                const IconComponent = isFromCMS
+                  ? (iconMap[cmsStep.icon] || ListChecks)
+                  : fallbackStep.icon
+
+                const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
+                const stepTitle = isFromCMS
+                  ? cmsStep.title?.vi || cmsStep.title?.en
+                  : t(fallbackStep.titleKey)
+                const stepDesc = isFromCMS
+                  ? cmsStep.description?.vi || cmsStep.description?.en
+                  : t(fallbackStep.descKey)
+
                 return (
-                  <div key={step.number} className="step-mobile-row">
+                  <div key={isFromCMS ? cmsStep.id : stepNumber} className="step-mobile-row">
                     {!isLast && (
                       <span
                         className="step-mobile-connector"
@@ -154,7 +200,7 @@ export function StepModelSection() {
                       className="step-icon-mobile"
                       style={{ backgroundColor: accent.color }}
                     >
-                      <step.icon className="w-5 h-5 text-white" />
+                      <IconComponent className="w-5 h-5 text-white" />
                     </motion.div>
 
                     <motion.div
@@ -174,14 +220,14 @@ export function StepModelSection() {
                           className="text-2xl font-bold"
                           style={{ color: accent.color }}
                         >
-                          {step.number}
+                          {stepNumber}
                         </span>
                         <div className="font-bold" style={{ color: accent.color }}>
-                          {t(step.titleKey)}
+                          {stepTitle}
                         </div>
                       </div>
                       <p className="text-sm" style={{ color: accent.color }}>
-                        {t(step.descKey)}
+                        {stepDesc}
                       </p>
                     </motion.div>
                   </div>
