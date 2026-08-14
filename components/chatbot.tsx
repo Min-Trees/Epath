@@ -985,18 +985,14 @@ export function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            style={
-              keyboardOpen
-                ? { top: 8, bottom: 8 }
-                : undefined
-            }
             className={cn(
-              'fixed z-[70] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#3A53A3]/20',
+              'fixed z-[70] bg-white shadow-2xl flex flex-col overflow-hidden border border-[#3A53A3]/20',
               // Mobile fullscreen sheet
               'inset-x-0 bottom-0 sm:inset-auto',
-              'h-full sm:h-auto sm:w-[420px]',
-              keyboardOpen ? 'sm:h-[650px]' : 'sm:h-[650px]',
-              'sm:bottom-24 sm:right-6 sm:rounded-2xl'
+              'sm:rounded-2xl',
+              // Mobile: full height with dvh (dynamic viewport height for iOS)
+              'h-[100dvh] sm:h-[650px] sm:w-[420px]',
+              'sm:bottom-24 sm:right-6'
             )}
           >
             {/* Header */}
