@@ -211,7 +211,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: duration.normal, ease: easeOut }}
-              className="lg:hidden overflow-hidden mt-4 pb-4 border-t border-white/20 pt-4"
+              className="lg:hidden overflow-hidden mt-4 pb-4 border-t border-white/20 pt-4 z-[65]"
             >
               <div className="flex flex-col gap-1">
                 {navItems.map((item) => (
