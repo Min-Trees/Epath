@@ -9,6 +9,7 @@ import {
   deleteDocument,
   reorderCollection,
 } from './cms-repo'
+import { logActivity } from './activity-log'
 
 interface CrudConfig<T> {
   name: string
@@ -42,6 +43,15 @@ export function makeCreateHandler<T>(config: CrudConfig<T>) {
       ? config.transform(parsed.data as T)
       : (parsed.data as Record<string, unknown>)
     const id = await createDocument(config.name, payload)
+    const label = deriveLabel(payload)
+    await logActivity({
+      action: 'create',
+      collection: config.name,
+      documentId: id,
+      documentLabel: label,
+      actor: user,
+      request: req,
+    })
     return NextResponse.json({ id })
   }
 }
@@ -68,6 +78,16 @@ export function makeUpdateHandler<T>(config: CrudConfig<T>) {
       ? (config.transform(parsed.data as T) as Record<string, unknown>)
       : (parsed.data as Record<string, unknown>)
     await updateDocument(config.name, params.id, payload)
+    const label = deriveLabel(payload, params.id)
+    await logActivity({
+      action: 'update',
+      collection: config.name,
+      documentId: params.id,
+      documentLabel: label,
+      changes: payload,
+      actor: user,
+      request: req,
+    })
     return NextResponse.json({ ok: true })
   }
 }
@@ -91,12 +111,19 @@ function makePartial(schema: ZodTypeAny): ZodTypeAny {
 
 export function makeDeleteHandler(name: string) {
   return async function DELETE(
-    _req: NextRequest,
+    req: NextRequest,
     { params }: { params: { id: string } }
   ) {
     const user = await getSessionUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     await deleteDocument(name, params.id)
+    await logActivity({
+      action: 'delete',
+      collection: name,
+      documentId: params.id,
+      actor: user,
+      request: req,
+    })
     return NextResponse.json({ ok: true })
   }
 }
@@ -111,6 +138,26 @@ export function makeReorderHandler(name: string) {
       return NextResponse.json({ error: 'ids required' }, { status: 400 })
     }
     await reorderCollection(name, ids)
+    await logActivity({
+      action: 'reorder',
+      collection: name,
+      changes: { ids, count: ids.length },
+      actor: user,
+      request: req,
+    })
     return NextResponse.json({ ok: true })
   }
+}
+
+// Best-effort label for an audit log entry. Falls back to the doc id.
+function deriveLabel(payload: Record<string, unknown>, fallback = ''): string {
+  if (!payload) return fallback
+  const t = payload.title as { vi?: string; en?: string } | string | undefined
+  if (typeof t === 'string' && t.trim()) return t
+  if (t && typeof t === 'object') return t.vi || t.en || fallback
+  const name = payload.name as string | undefined
+  if (typeof name === 'string' && name.trim()) return name
+  const slug = payload.slug as string | undefined
+  if (typeof slug === 'string' && slug.trim()) return slug
+  return fallback
 }

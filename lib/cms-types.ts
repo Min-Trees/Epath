@@ -225,9 +225,38 @@ export const CollectionNames = {
   siteSettings: 'siteSettings',
   heroContent: 'heroContent',
   aboutContent: 'aboutContent',
+  activityLogs: 'activityLogs',
 } as const
 
 export type CollectionName = (typeof CollectionNames)[keyof typeof CollectionNames]
+
+// ----------- Activity Log -----------
+export const ActivityActionSchema = z.enum([
+  'create',
+  'update',
+  'delete',
+  'reorder',
+  'login',
+  'logout',
+])
+export type ActivityAction = z.infer<typeof ActivityActionSchema>
+
+export const ActivityLogSchema = z.object({
+  id: z.string().optional(),
+  action: ActivityActionSchema,
+  collection: z.string(), // e.g. "programs", "faqs", "auth"
+  documentId: z.string().default(''),
+  documentLabel: z.string().default(''), // human-readable identifier
+  actorUid: z.string(),
+  actorEmail: z.string().default(''),
+  actorName: z.string().default(''),
+  changes: z.record(z.unknown()).optional(), // diff for updates
+  ip: z.string().default(''),
+  userAgent: z.string().default(''),
+  createdAt: z.union([z.date(), z.string()]).optional(),
+})
+export type ActivityLogInput = z.infer<typeof ActivityLogSchema>
+export type ActivityLog = Omit<ActivityLogInput, 'id'> & { id: string }
 
 // ----------- Statistics -----------
 export const StatisticSchema = z.object({
