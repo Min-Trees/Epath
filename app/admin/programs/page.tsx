@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Sparkles } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { CrudList } from '@/components/admin/crud-list'
 import { cms } from '@/lib/cms-client'
+import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import type { Program } from '@/lib/cms-types'
 import { semanticColors } from '@/lib/design-tokens'
 
@@ -25,21 +27,27 @@ const fields = [
   { key: 'shortDescription', label: 'Mô tả ngắn', kind: 'richtext' as const, multilang: true },
   { key: 'content', label: 'Nội dung chi tiết', kind: 'richtext' as const, multilang: true },
   { key: 'ageRange', label: 'Độ tuổi / lớp', kind: 'text' as const },
-  { key: 'imageUrl', label: 'URL hình ảnh', kind: 'text' as const },
-  {
-    key: 'status',
-    label: 'Trạng thái',
-    kind: 'select' as const,
-    options: [
-      { value: 'draft', label: 'Bản nháp' },
-      { value: 'published', label: 'Đã xuất bản' },
-    ],
-  },
+  { key: 'imageUrl', label: 'Hình ảnh', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'programs' },
 ]
 
 export default function AdminProgramsPage() {
   const user = useRequireAdmin()
   if (user === undefined) return null
+
+  const handleSeed = async () => {
+    if (!confirm(`Tạo ${DEFAULT_PROGRAMS.length} chương trình mẫu vào Firestore? (Bỏ qua nếu đã có)`)) return
+    for (const p of DEFAULT_PROGRAMS) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...data } = p
+        await cms.programs.create(data as never)
+      } catch (err) {
+        console.error('Seed program failed:', err)
+      }
+    }
+    alert('Đã tạo xong. Tải lại trang để thấy danh sách.')
+    location.reload()
+  }
 
   return (
     <AdminLayout
@@ -55,6 +63,25 @@ export default function AdminProgramsPage() {
         Quay lại Dashboard
       </Link>
 
+      <div
+        className="mb-4 p-4 rounded-lg flex items-center justify-between gap-3"
+        style={{ backgroundColor: semanticColors.primaryBg, border: '1px solid rgba(58,83,163,0.2)' }}
+      >
+        <div>
+          <div className="font-medium flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Chưa có chương trình nào?
+          </div>
+          <div className="text-sm" style={{ color: semanticColors.textMuted }}>
+            Tạo nhanh 4 chương trình mẫu (Kindergarten, Elementary, Middle, High) để bắt đầu.
+          </div>
+        </div>
+        <Button onClick={handleSeed}>
+          <Sparkles className="w-4 h-4 mr-2" />
+          Tạo mẫu
+        </Button>
+      </div>
+
       <CrudList<Program>
         title="Chương trình"
         fields={fields}
@@ -63,6 +90,7 @@ export default function AdminProgramsPage() {
         update={(id, d) => cms.programs.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.programs.remove}
         reorder={cms.programs.reorder}
+        reviewCollection="programs"
         renderSummary={(item) => (
           <div>
             <div

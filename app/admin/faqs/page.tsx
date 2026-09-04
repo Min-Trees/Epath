@@ -21,6 +21,7 @@ const fields = [
       { value: 'general', label: 'Chung' },
     ],
   },
+  { key: 'imageUrl', label: 'Hình nền', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'faqs' },
 ]
 
 export default function AdminFAQsPage() {
@@ -49,6 +50,7 @@ export default function AdminFAQsPage() {
         update={(id, d) => cms.faqs.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.faqs.remove}
         reorder={cms.faqs.reorder}
+        reviewCollection="faqs"
         renderSummary={(item) => (
           <div>
             <div

@@ -36,6 +36,7 @@ export default function AdminTeamPage() {
         update={(id, d) => cms.team.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.team.remove}
         reorder={cms.team.reorder}
+        reviewCollection="teamMembers"
       />
     </AdminLayout>
   )

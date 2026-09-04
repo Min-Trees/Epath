@@ -82,31 +82,68 @@ export async function sendZaloMessage(
   }
 }
 
+const SOURCE_LABELS: Record<string, string> = {
+  chatbot: 'Chatbot',
+  'contact-form': 'Form liên hệ',
+  zalo: 'Zalo',
+  manual: 'Thủ công',
+  website: 'Website',
+  events: 'Sự kiện',
+}
+
+function sourceLabel(raw: string | undefined): string {
+  if (!raw) return 'Website'
+  return SOURCE_LABELS[raw] || raw
+}
+
 /**
  * Format lead thành 1 message thân thiện để gửi qua Zalo.
  * Markdown không render được trong text gốc, dùng text thuần với emoji
  * và dòng trống để dễ đọc trên mobile.
+ *
+ * Chỉ hiển thị những trường mà phụ huynh thực sự điền/đã tương tác.
+ * Các trường rỗng sẽ bị bỏ qua hoàn toàn thay vì hiển thị placeholder
+ * "(chưa cung cấp)" – tránh kèm dữ liệu mẫu xuống sales team.
+ *
+ * `sourceOverride` (optional) lets callers override the embedded source
+ * label, e.g. when an admin manually creates a lead that should still
+ * notify sales but with a clearer origin tag like "Form liên hệ".
  */
-export function formatLeadMessage(payload: LeadPayload, timestamp: string): string {
+export function formatLeadMessage(payload: LeadPayload, timestamp: string, sourceOverride?: string): string {
+  const tag = sourceOverride ?? payload.source ?? 'website'
   const lines: string[] = [
-    '🔔 LEAD MỚI TỪ CHATBOT EPATH',
+    `🔔 LEAD MỚI TỪ ${sourceLabel(tag).toUpperCase()} EPATH`,
     '',
     `⏰ ${formatTimestamp(timestamp)}`,
     '',
     '👤 Thông tin phụ huynh',
-    `• Họ tên: ${payload.name || '(chưa cung cấp)'}`,
-    `• SĐT: ${payload.phone}`,
-    `• Email: ${payload.email || '(chưa cung cấp)'}`,
-    '',
-    '🎓 Thông tin học sinh / Quan tâm',
-    `• Độ tuổi con: ${payload.childAge || '(chưa cung cấp)'}`,
-    `• Chương trình: ${payload.program || '(chưa cung cấp)'}`,
-    `• Cơ sở: ${payload.campus || '(chưa cung cấp)'}`,
-    '',
-    '💬 Tư vấn',
-    `• Số câu đã hỏi: ${payload.conversationCount}`,
-    `• Chủ đề quan tâm: ${payload.topicsInterested.length > 0 ? payload.topicsInterested.join(', ') : '(không có)'}`,
   ]
+
+  // Chỉ liệt kê những trường phụ huynh đã điền.
+  if (payload.name) lines.push(`• Họ tên: ${payload.name}`)
+  lines.push(`• SĐT: ${payload.phone}`)
+  if (payload.email) lines.push(`• Email: ${payload.email}`)
+
+  const hasChildInfo = payload.childAge || payload.program || payload.campus
+  if (hasChildInfo) {
+    lines.push('', '🎓 Thông tin học sinh / Quan tâm')
+    if (payload.childAge) lines.push(`• Độ tuổi con: ${payload.childAge}`)
+    if (payload.program) lines.push(`• Chương trình: ${payload.program}`)
+    if (payload.campus) lines.push(`• Cơ sở: ${payload.campus}`)
+  }
+
+  // Chỉ hiển thị phần tư vấn khi user đã thực sự tương tác.
+  const hasConversation =
+    payload.conversationCount > 0 || payload.topicsInterested.length > 0
+  if (hasConversation) {
+    lines.push('', '💬 Tư vấn')
+    if (payload.conversationCount > 0) {
+      lines.push(`• Số câu đã hỏi: ${payload.conversationCount}`)
+    }
+    if (payload.topicsInterested.length > 0) {
+      lines.push(`• Chủ đề quan tâm: ${payload.topicsInterested.join(', ')}`)
+    }
+  }
 
   if (payload.conversationSummary) {
     lines.push('', '📝 Tóm tắt hội thoại')
@@ -116,7 +153,7 @@ export function formatLeadMessage(payload: LeadPayload, timestamp: string): stri
   }
 
   lines.push('', `🌐 Ngôn ngữ: ${payload.locale === 'en' ? 'English' : 'Tiếng Việt'}`)
-  lines.push(`📡 Nguồn: ${payload.source}`)
+  lines.push(`📡 Nguồn: ${sourceLabel(tag)}`)
 
   return lines.join('\n')
 }

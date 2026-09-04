@@ -12,6 +12,7 @@ const fields = [
   { key: 'icon', label: 'Icon (Lucide)', kind: 'text' as const, placeholder: 'Compass' },
   { key: 'title', label: 'Tiêu đề', kind: 'text' as const, multilang: true },
   { key: 'description', label: 'Mô tả', kind: 'richtext' as const, multilang: true },
+  { key: 'imageUrl', label: 'Hình ảnh', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'core-values' },
 ]
 
 export default function AdminCoreValuesPage() {
@@ -35,6 +36,7 @@ export default function AdminCoreValuesPage() {
         update={(id, d) => cms.coreValues.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.coreValues.remove}
         reorder={cms.coreValues.reorder}
+        reviewCollection="coreValues"
       />
     </AdminLayout>
   )

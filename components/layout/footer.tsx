@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react'
+import { MapPin, Phone, Mail, Facebook, Youtube, Instagram, Music2 } from 'lucide-react'
 import { semanticColors } from '@/lib/design-tokens'
-import type { SiteSettings } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { Locale } from '@/lib/cms-types'
 
 interface FooterProps {
   locale: string
-  // i18n fallbacks
   footerDescription?: string
   partnersList?: string[]
   contactAddress?: string
@@ -32,6 +31,11 @@ interface FooterProps {
     partners: string
     events: string
   }
+}
+
+function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
 }
 
 export function Footer({
@@ -59,26 +63,27 @@ export function Footer({
     events: 'Sự kiện',
   },
 }: FooterProps) {
-  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  // FIX: Use CMS context instead of redundant direct fetch
+  // This eliminates duplicate API calls and ensures data consistency
+  const { data: cms } = useCmsContext()
+  const settings = cms.siteSettings
 
-  useEffect(() => {
-    fetch('/api/cms/site-settings')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          setSettings(data.items[0])
-        }
-      })
-      .catch(console.error)
-  }, [])
-
-  const address = settings?.address?.vi || settings?.address?.en || contactAddress
+  const loc = locale as Locale
+  const address = pick(settings?.address, loc) || contactAddress
   const phone = settings?.phone || contactPhone
   const email = settings?.email || contactEmail
   const fbUrl = settings?.facebookUrl || 'https://facebook.com'
   const ytUrl = settings?.youtubeUrl || 'https://youtube.com'
-  const footerDesc = settings?.footerDescription?.vi || settings?.footerDescription?.en || footerDescription
+  const igUrl = settings?.instagramUrl || 'https://instagram.com'
+  const tiktokUrl = settings?.tiktokUrl || ''
+  const logoUrl = settings?.logoUrl || '/epath_logo.png'
+  const footerDesc = pick(settings?.footerDescription, loc) || footerDescription
   const copyrightText = settings?.copyrightText || copyright
+  const cmsPartnersTitle = settings?.footerPartnersTitle ? pick(settings.footerPartnersTitle, loc) : ''
+  const partnersToShow = settings?.partnersList && settings.partnersList.length > 0
+    ? settings.partnersList
+    : partnersList
+  const finalPartnersTitle = cmsPartnersTitle || partnersTitle
 
   return (
     <footer className="text-white" style={{ backgroundColor: semanticColors.primary }}>
@@ -87,8 +92,9 @@ export function Footer({
           {/* Company Info */}
           <div>
             <div className="bg-white/95 rounded-lg inline-block p-2 mb-4">
-              <Image
-                src="/epath_logo.png"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={logoUrl}
                 alt="EPath Education"
                 width={160}
                 height={50}
@@ -118,7 +124,7 @@ export function Footer({
                 <Youtube className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href={igUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
@@ -126,6 +132,17 @@ export function Footer({
               >
                 <Instagram className="w-5 h-5" />
               </a>
+              {tiktokUrl && (
+                <a
+                  href={tiktokUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
+                  aria-label="TikTok"
+                >
+                  <Music2 className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -229,7 +246,7 @@ export function Footer({
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-white shrink-0 mt-0.5" />
-                <span className="text-white/70 text-sm">
+                <span className="text-white/70 text-sm whitespace-pre-line">
                   {address}
                 </span>
               </li>
@@ -254,10 +271,10 @@ export function Footer({
             </ul>
 
             <div className="mt-8">
-              <h4 className="font-medium text-sm mb-3 text-white/70">{partnersTitle}</h4>
+              <h4 className="font-medium text-sm mb-3 text-white/70">{finalPartnersTitle}</h4>
               <ul className="space-y-2">
-                {partnersList.map((partner) => (
-                  <li key={partner} className="text-white/60 text-xs">
+                {partnersToShow.map((partner, idx) => (
+                  <li key={`${partner}-${idx}`} className="text-white/60 text-xs">
                     {partner}
                   </li>
                 ))}

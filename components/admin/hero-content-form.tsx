@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Save } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { Plus, Save, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -9,11 +9,13 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { HeroContent, PageSlug } from '@/lib/cms-types'
 import { semanticColors } from '@/lib/design-tokens'
+import { ImagePicker } from './image-picker'
 
 interface HeroContentFormProps {
   load: () => Promise<HeroContent[]>
   update: (id: string, data: Partial<HeroContent>) => Promise<unknown>
   create: (data: Partial<HeroContent>) => Promise<{ id: string }>
+  remove?: (id: string) => Promise<unknown>
 }
 
 const defaultForm: Partial<HeroContent> = {
@@ -32,41 +34,93 @@ const defaultForm: Partial<HeroContent> = {
   isActive: true,
 }
 
-export function HeroContentForm({ load, update, create }: HeroContentFormProps) {
+const PAGE_LABELS: Record<PageSlug, string> = {
+  home: 'Trang chủ (Home)',
+  about: 'Giới thiệu (About)',
+  programs: 'Chương trình (Programs)',
+  partners: 'Đối tác (Partners)',
+  admissions: 'Tuyển sinh (Admissions)',
+  events: 'Sự kiện (Events)',
+}
+
+export function HeroContentForm({ load, update, create, remove }: HeroContentFormProps) {
   const [items, setItems] = useState<HeroContent[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState<Partial<HeroContent>>(defaultForm)
+  const [activePageId, setActivePageId] = useState<PageSlug>('home')
+
+  const reload = useCallback(async () => {
+    const data = await load()
+    setItems(data)
+    return data
+  }, [load])
+
+  const loadForPage = useCallback(
+    (pageId: PageSlug, allItems: HeroContent[]) => {
+      const found = allItems.find((it) => it.pageId === pageId)
+      if (found) {
+        setForm({ ...defaultForm, ...found })
+      } else {
+        setForm({ ...defaultForm, pageId })
+      }
+    },
+    []
+  )
 
   useEffect(() => {
-    load()
-      .then((data) => {
-        setItems(data)
-        if (data.length > 0) {
-          setForm({ ...defaultForm, ...data[0] })
-        }
-      })
+    reload()
+      .then((data) => loadForPage(activePageId, data))
       .catch((err) => setError((err as Error).message))
       .finally(() => setIsLoading(false))
-  }, [load])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handlePageChange = (next: PageSlug) => {
+    setActivePageId(next)
+    loadForPage(next, items)
+  }
 
   const handleSave = async () => {
     setIsSaving(true)
     setError(null)
     setSuccess(false)
     try {
-      if (items.length > 0) {
-        await update(items[0].id, form)
+      const payload: Partial<HeroContent> = { ...form, pageId: activePageId }
+      const existing = items.find((it) => it.pageId === activePageId)
+      if (existing) {
+        await update(existing.id, payload)
       } else {
-        await create(form as HeroContent)
+        const created = await create(payload as HeroContent)
+        setItems((prev) => [...prev, { ...(payload as HeroContent), id: created.id }])
       }
-      const data = await load()
-      setItems(data)
-      if (data.length > 0) {
-        setForm({ ...defaultForm, ...data[0] })
-      }
+      const data = await reload()
+      loadForPage(activePageId, data)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    } catch (err) {
+      setError((err as Error).message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!remove) return
+    const existing = items.find((it) => it.pageId === activePageId)
+    if (!existing) {
+      setForm({ ...defaultForm, pageId: activePageId })
+      return
+    }
+    if (!confirm('Xoá cấu hình hero cho trang này?')) return
+    setIsSaving(true)
+    setError(null)
+    try {
+      await remove(existing.id)
+      const data = await reload()
+      loadForPage(activePageId, data)
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
@@ -103,6 +157,8 @@ export function HeroContentForm({ load, update, create }: HeroContentFormProps) 
     )
   }
 
+  const existingForPage = items.find((it) => it.pageId === activePageId)
+
   return (
     <div className="space-y-6">
       {error && (
@@ -120,19 +176,37 @@ export function HeroContentForm({ load, update, create }: HeroContentFormProps) 
         <CardHeader>
           <CardTitle className="text-base">Trang áp dụng</CardTitle>
         </CardHeader>
-        <CardContent>
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            value={form.pageId ?? 'home'}
-            onChange={(e) => setField('pageId', e.target.value as PageSlug)}
-          >
-            <option value="home">Trang chủ (Home)</option>
-            <option value="about">Giới thiệu (About)</option>
-            <option value="programs">Chương trình (Programs)</option>
-            <option value="admissions">Tuyển sinh (Admissions)</option>
-            <option value="events">Sự kiện (Events)</option>
-            <option value="partners">Đối tác (Partners)</option>
-          </select>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {(Object.keys(PAGE_LABELS) as PageSlug[]).map((pid) => {
+              const hasRecord = items.some((it) => it.pageId === pid)
+              const isActive = pid === activePageId
+              return (
+                <button
+                  key={pid}
+                  type="button"
+                  onClick={() => handlePageChange(pid)}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border transition-colors"
+                  style={{
+                    backgroundColor: isActive ? '#3A53A3' : 'white',
+                    color: isActive ? 'white' : '#231F20',
+                    borderColor: isActive ? '#3A53A3' : '#e5e7eb',
+                  }}
+                >
+                  {PAGE_LABELS[pid]}
+                  <span
+                    className="inline-block w-2 h-2 rounded-full"
+                    style={{ backgroundColor: hasRecord ? '#8BC53F' : '#d1d5db' }}
+                    title={hasRecord ? 'Đã cấu hình' : 'Chưa có dữ liệu'}
+                  />
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs" style={{ color: semanticColors.textMuted }}>
+            Mỗi trang có một bản ghi hero riêng. Chuyển tab để chỉnh sửa từng trang.
+            Chấm xanh = đã có dữ liệu, chấm xám = đang dùng fallback mặc định.
+          </p>
         </CardContent>
       </Card>
 
@@ -281,38 +355,52 @@ export function HeroContentForm({ load, update, create }: HeroContentFormProps) 
           <CardTitle className="text-base">Hình ảnh & Video</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <ImagePicker
+            value={form.backgroundImage ?? ''}
+            onChange={(url) => setField('backgroundImage', url)}
+            label="Background Image"
+            helperText="Ảnh nền cho phần hero. Không giới hạn dung lượng."
+            folder="hero"
+          />
           <div>
-            <Label>Background Image URL</Label>
-            <Input
-              value={form.backgroundImage ?? ''}
-              onChange={(e) => setField('backgroundImage', e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-          <div>
-            <Label>Video URL (YouTube/Vimeo)</Label>
+            <Label>Video URL (mp4 trực tiếp)</Label>
             <Input
               value={form.videoUrl ?? ''}
               onChange={(e) => setField('videoUrl', e.target.value)}
-              placeholder="https://youtube.com/embed/..."
+              placeholder="https://example.com/hero.mp4"
             />
+            <p className="text-xs mt-1" style={{ color: semanticColors.textMuted }}>
+              Hỗ trợ URL mp4 trực tiếp (kết thúc bằng .mp4 hoặc content-type video/mp4).
+              Khi có video, ảnh nền sẽ chỉ dùng làm poster khi video lỗi.
+            </p>
           </div>
-          <div>
-            <Label>Video Thumbnail URL</Label>
-            <Input
-              value={form.videoThumbnail ?? ''}
-              onChange={(e) => setField('videoThumbnail', e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
+          <ImagePicker
+            value={form.videoThumbnail ?? ''}
+            onChange={(url) => setField('videoThumbnail', url)}
+            label="Video Thumbnail"
+            helperText="Ảnh đại diện cho video. Không giới hạn dung lượng."
+            folder="hero"
+          />
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving}>
-          <Save className="w-4 h-4 mr-2" />
-          {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
-        </Button>
+      <div className="flex justify-between items-center gap-3">
+        <div className="text-xs" style={{ color: semanticColors.textMuted }}>
+          {existingForPage
+            ? `Đang chỉnh bản ghi #${existingForPage.id}`
+            : 'Chưa có bản ghi cho trang này — lưu sẽ tạo mới'}
+        </div>
+        <div className="flex gap-2">
+          {existingForPage && remove && (
+            <Button variant="outline" onClick={handleDelete} disabled={isSaving}>
+              <Trash2 className="w-4 h-4 mr-2" /> Xoá
+            </Button>
+          )}
+          <Button onClick={handleSave} disabled={isSaving}>
+            <Save className="w-4 h-4 mr-2" />
+            {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+          </Button>
+        </div>
       </div>
     </div>
   )

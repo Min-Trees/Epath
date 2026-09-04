@@ -33,55 +33,81 @@ service cloud.firestore {
     // ---------- CMS content collections ----------
     // Public, ordered, active-only queries. Adjust here when exposing
     // additional collections to the public client.
+    //
+    // Review workflow: read rule uses status === 'PUBLISHED' for CMS collections.
     match /faqs/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /coreValues/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /learningPathways/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /programs/{docId} {
-      allow read: if resource.data.isActive == true
-                   && resource.data.status == 'published';
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /partners/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /events/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /admissionSteps/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /achievements/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 
     match /teamMembers/{docId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
+    }
+
+    match /statistics/{docId} {
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
+      allow write: if false;
+    }
+
+    match /testimonials/{docId} {
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
+      allow write: if false;
+    }
+
+    match /blogPosts/{docId} {
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
+      allow write: if false;
+    }
+
+    // ---------- Review history (server-only via Admin SDK) ----------
+    match /{collection}/{docId}/reviewHistory/{eventId} {
+      allow read, write: if false;
+    }
+
+    // ---------- Backups (server-only via Admin SDK) ----------
+    match /backups/{docId} {
+      allow read, write: if false;
     }
 
     // ---------- Page sections (per-page) ----------
     match /pages/{pageId}/sections/{sectionId} {
-      allow read: if resource.data.isActive == true;
+      allow read: if resource.data.isActive == true && resource.data.status == 'PUBLISHED';
       allow write: if false;
     }
 

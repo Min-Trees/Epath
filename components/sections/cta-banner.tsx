@@ -6,6 +6,9 @@ import { useTranslations } from 'next-intl'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { semanticColors } from '@/lib/design-tokens'
+import { useCmsContext } from '@/lib/cms-context'
+import { useParams } from 'next/navigation'
+import type { Locale } from '@/lib/cms-types'
 
 /**
  * CTABanner – performance-tuned version.
@@ -28,7 +31,19 @@ import { semanticColors } from '@/lib/design-tokens'
  */
 export function CTABanner() {
   const t = useTranslations('cta')
+  const { data: cms } = useCmsContext()
+  const params = useParams()
+  const locale = ((params.locale as string) || 'vi') as Locale
   const orbContainerRef = useRef<HTMLDivElement>(null)
+
+  const settings = cms.siteSettings
+  const title = (settings?.ctaTitle?.[locale as 'vi' | 'en']) || (settings?.ctaTitle?.vi) || t('title')
+  const subtitle = (settings?.ctaSubtitle?.[locale as 'vi' | 'en']) || (settings?.ctaSubtitle?.vi) || t('subtitle')
+  const primaryLabel = (settings?.ctaPrimaryLabel?.[locale as 'vi' | 'en']) || (settings?.ctaPrimaryLabel?.vi) || t('primary')
+  const primaryUrl = settings?.ctaPrimaryUrl || '/admissions'
+  const secondaryLabel = (settings?.ctaSecondaryLabel?.[locale as 'vi' | 'en']) || (settings?.ctaSecondaryLabel?.vi) || t('secondary')
+  const secondaryUrl = settings?.ctaSecondaryUrl || '/contact'
+  const bgImage = settings?.ctaBackgroundImage || ''
 
   // IntersectionObserver toggles a `data-active` attribute the CSS uses
   // to play / pause the orb animations.
@@ -41,7 +56,7 @@ export function CTABanner() {
           el.dataset.active = entry.isIntersecting ? 'true' : 'false'
         }
       },
-      { rootMargin: '200px 0px' } // start a bit early so the orbs are moving as user scrolls to them
+      { rootMargin: '200px 0px' }
     )
     io.observe(el)
     return () => io.disconnect()
@@ -51,7 +66,9 @@ export function CTABanner() {
     <section
       className="cta-banner py-16 relative overflow-hidden"
       style={{
-        background: `linear-gradient(135deg, ${semanticColors.primary} 0%, ${semanticColors.primaryDark} 100%)`,
+        background: bgImage
+          ? `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${bgImage}) center/cover`
+          : `linear-gradient(135deg, ${semanticColors.primary} 0%, ${semanticColors.primaryDark} 100%)`,
       }}
     >
       {/* 3 CSS-driven orbs, paused when off-screen */}
@@ -79,20 +96,22 @@ export function CTABanner() {
           </motion.div>
 
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
-            {t('title')}
+            {title}
           </h2>
-          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+          {subtitle && (
+            <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+          )}
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="/admissions" className="cta-btn-primary">
-              {t('primary')}
+            <a href={primaryUrl} className="cta-btn-primary">
+              {primaryLabel}
               <span className="ml-2 cta-arrow-anim">
                 <ArrowRight className="w-5 h-5" />
               </span>
             </a>
-            <a href="/contact" className="cta-btn-outline">
-              {t('secondary')}
+            <a href={secondaryUrl} className="cta-btn-outline">
+              {secondaryLabel}
             </a>
           </div>
         </div>

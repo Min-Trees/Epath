@@ -18,6 +18,11 @@
  * `title` and `subtitle` are plain text (rendered as `<h2>`/`<p>`).
  * `body` is rich text (TipTap HTML). Other keys are passed through as-is.
  *
+ * Hero sections get extra media fields (backgroundImage, videoUrl,
+ * videoThumbnail, welcome, cta*, secondaryCta*). Those values are
+ * mirrored into the `heroContent` collection so the public `HeroSection`
+ * component picks them up without needing a second loader.
+ *
  * Drafts:
  *   - The dialog auto-saves `data` to localStorage per `sectionId` while
  *     the user is editing. A banner offers Restore / Discard if an
@@ -39,8 +44,11 @@ import {
 } from '@/components/ui/dialog'
 import { semanticColors } from '@/lib/design-tokens'
 import type { PageSection, SectionType } from '@/lib/pages-repo'
-import { RichTextEditor, RichTextEditorMultilang } from './rich-text-editor'
+import { RichTextEditorMultilang } from './rich-text-editor'
+import { ImagePicker } from './image-picker'
 import { useDraft } from '@/lib/use-draft'
+import { cms } from '@/lib/cms-client'
+import type { HeroContent } from '@/lib/cms-types'
 
 const SECTION_LABELS: Record<SectionType, string> = {
   hero: 'Hero / Banner',
@@ -74,6 +82,17 @@ interface SectionData {
   title?: { vi: string; en: string }
   subtitle?: { vi: string; en: string }
   body?: { vi: string; en: string }
+  // Hero-only fields. These mirror the `heroContent` collection schema
+  // and are synced to it on save so the public HeroSection picks them up.
+  welcome?: { vi: string; en: string }
+  description?: { vi: string; en: string }
+  ctaLabel?: { vi: string; en: string }
+  ctaUrl?: string
+  secondaryCtaLabel?: { vi: string; en: string }
+  secondaryCtaUrl?: string
+  backgroundImage?: string
+  videoUrl?: string
+  videoThumbnail?: string
 }
 
 function emptyLocalized(): { vi: string; en: string } {
@@ -174,7 +193,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-lg font-bold" style={{ color: semanticColors.text }}>
             {title}
@@ -213,7 +232,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
             return (
               <Card key={section.id}>
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="font-medium" style={{ color: semanticColors.text }}>
                         {SECTION_LABELS[section.type]}
@@ -223,7 +242,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
                         {hasContent ? ' • Đã có nội dung' : ' • Trống'}
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 flex-wrap justify-end">
                       <Button
                         variant="outline"
                         size="icon"
@@ -238,6 +257,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
                         size="icon"
                         onClick={() => handleMove(index, -1)}
                         disabled={index === 0}
+                        aria-label="Move up"
                       >
                         <ArrowUp className="w-4 h-4" />
                       </Button>
@@ -246,6 +266,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
                         size="icon"
                         onClick={() => handleMove(index, 1)}
                         disabled={index === sections.length - 1}
+                        aria-label="Move down"
                       >
                         <ArrowDown className="w-4 h-4" />
                       </Button>
@@ -283,7 +304,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
 
       {/* Add section dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle>Thêm section mới</DialogTitle>
             <DialogDescription>
@@ -291,9 +312,11 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <Label>Loại section</Label>
+            <Label htmlFor="section-type-select">Loại section</Label>
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              id="section-type-select"
+              className="flex h-11 w-full rounded-lg border bg-background px-3 py-2 text-sm"
+              style={{ borderColor: 'rgba(35,31,32,0.15)' }}
               value={draftType}
               onChange={(e) => setDraftType(e.target.value as SectionType)}
             >
@@ -304,7 +327,7 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
               ))}
             </select>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setIsAddOpen(false)}>
               Hủy
             </Button>
@@ -335,13 +358,25 @@ function SectionContentDialog({
 }: {
   section: PageSection
   onClose: () => void
-  onSave: (data: SectionData) => Promise<void>
+  onSave: (data: SectionData, syncHero?: boolean) => Promise<void>
 }) {
   const initial = (section.data ?? {}) as SectionData
   const [title, setTitle] = useState<SectionData['title']>(initial.title ?? emptyLocalized())
   const [subtitle, setSubtitle] = useState<SectionData['subtitle']>(initial.subtitle ?? emptyLocalized())
   const [body, setBody] = useState<SectionData['body']>(initial.body ?? emptyLocalized())
   const [saving, setSaving] = useState(false)
+
+  // Hero-only state
+  const isHero = section.type === 'hero'
+  const [welcome, setWelcome] = useState<SectionData['welcome']>(initial.welcome ?? emptyLocalized())
+  const [description, setDescription] = useState<SectionData['description']>(initial.description ?? emptyLocalized())
+  const [ctaLabel, setCtaLabel] = useState<SectionData['ctaLabel']>(initial.ctaLabel ?? emptyLocalized())
+  const [ctaUrl, setCtaUrl] = useState<string>(initial.ctaUrl ?? '#programs')
+  const [secondaryCtaLabel, setSecondaryCtaLabel] = useState<SectionData['secondaryCtaLabel']>(initial.secondaryCtaLabel ?? emptyLocalized())
+  const [secondaryCtaUrl, setSecondaryCtaUrl] = useState<string>(initial.secondaryCtaUrl ?? '#contact')
+  const [backgroundImage, setBackgroundImage] = useState<string>(initial.backgroundImage ?? '')
+  const [videoUrl, setVideoUrl] = useState<string>(initial.videoUrl ?? '')
+  const [videoThumbnail, setVideoThumbnail] = useState<string>(initial.videoThumbnail ?? '')
 
   // Draft key tied to this specific section's body field.
   // (We only draft the rich-text body because title/subtitle are short
@@ -377,10 +412,57 @@ function SectionContentDialog({
     setBody(next)
   }
 
+  const syncHeroContent = async (next: SectionData) => {
+    if (!isHero) return
+    try {
+      const items = await cms.heroContent.list()
+      const existing = items.find((it) => (it as HeroContent).pageId === section.pageId)
+      const payload: Partial<HeroContent> = {
+        pageId: section.pageId as HeroContent['pageId'],
+        welcome: next.welcome ?? emptyLocalized(),
+        title: next.title ?? emptyLocalized(),
+        subtitle: next.subtitle ?? emptyLocalized(),
+        description: next.description ?? emptyLocalized(),
+        ctaLabel: next.ctaLabel ?? emptyLocalized(),
+        ctaUrl: next.ctaUrl,
+        secondaryCtaLabel: next.secondaryCtaLabel ?? emptyLocalized(),
+        secondaryCtaUrl: next.secondaryCtaUrl,
+        videoUrl: next.videoUrl,
+        videoThumbnail: next.videoThumbnail,
+        backgroundImage: next.backgroundImage,
+        isActive: true,
+      }
+      if (existing) {
+        await cms.heroContent.update(existing.id, payload)
+      } else {
+        await cms.heroContent.create(payload as HeroContent)
+      }
+    } catch (err) {
+      // Surface the error so the admin knows the hero didn't sync.
+      console.warn('Failed to sync heroContent from page builder:', err)
+      throw err
+    }
+  }
+
   const handleSave = async () => {
     setSaving(true)
     try {
-      await onSave({ title, subtitle, body })
+      const data: SectionData = {
+        title,
+        subtitle,
+        body,
+        welcome,
+        description,
+        ctaLabel,
+        ctaUrl,
+        secondaryCtaLabel,
+        secondaryCtaUrl,
+        backgroundImage,
+        videoUrl,
+        videoThumbnail,
+      }
+      await onSave(data, isHero)
+      if (isHero) await syncHeroContent(data)
       draftBody.markSaved()
     } finally {
       setSaving(false)
@@ -394,17 +476,38 @@ function SectionContentDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && handleCancel()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl w-[calc(100vw-2rem)] max-h-[90vh] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b shrink-0" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
           <DialogTitle>
             Sửa nội dung: {SECTION_LABELS[section.type]}
           </DialogTitle>
           <DialogDescription>
             Mỗi field có bản nháp riêng, tự động lưu vào trình duyệt. Bấm Lưu để ghi vào CMS.
+            {isHero && ' Các trường media cũng sẽ được đồng bộ sang Hero Content để hiển thị trên trang.'}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0">
+          {isHero && (
+            <>
+              <div>
+                <Label>Welcome</Label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <Input
+                    placeholder="Tiếng Việt"
+                    value={welcome?.vi ?? ''}
+                    onChange={(e) => setWelcome((p) => ({ ...(p ?? emptyLocalized()), vi: e.target.value }))}
+                  />
+                  <Input
+                    placeholder="English"
+                    value={welcome?.en ?? ''}
+                    onChange={(e) => setWelcome((p) => ({ ...(p ?? emptyLocalized()), en: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
           <div>
             <Label>Tiêu đề</Label>
             <div className="grid grid-cols-2 gap-2 mt-1">
@@ -437,6 +540,119 @@ function SectionContentDialog({
             </div>
           </div>
 
+          {isHero && (
+            <>
+              <div>
+                <Label>Mô tả</Label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <TextareaCompact
+                    placeholder="Tiếng Việt"
+                    value={description?.vi ?? ''}
+                    onChange={(v) => setDescription((p) => ({ ...(p ?? emptyLocalized()), vi: v }))}
+                  />
+                  <TextareaCompact
+                    placeholder="English"
+                    value={description?.en ?? ''}
+                    onChange={(v) => setDescription((p) => ({ ...(p ?? emptyLocalized()), en: v }))}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>CTA chính - Label</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <Input
+                      placeholder="Tiếng Việt"
+                      value={ctaLabel?.vi ?? ''}
+                      onChange={(e) => setCtaLabel((p) => ({ ...(p ?? emptyLocalized()), vi: e.target.value }))}
+                    />
+                    <Input
+                      placeholder="English"
+                      value={ctaLabel?.en ?? ''}
+                      onChange={(e) => setCtaLabel((p) => ({ ...(p ?? emptyLocalized()), en: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>CTA chính - URL</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="#programs"
+                    value={ctaUrl}
+                    onChange={(e) => setCtaUrl(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>CTA phụ - Label</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <Input
+                      placeholder="Tiếng Việt"
+                      value={secondaryCtaLabel?.vi ?? ''}
+                      onChange={(e) => setSecondaryCtaLabel((p) => ({ ...(p ?? emptyLocalized()), vi: e.target.value }))}
+                    />
+                    <Input
+                      placeholder="English"
+                      value={secondaryCtaLabel?.en ?? ''}
+                      onChange={(e) => setSecondaryCtaLabel((p) => ({ ...(p ?? emptyLocalized()), en: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>CTA phụ - URL</Label>
+                  <Input
+                    className="mt-1"
+                    placeholder="#contact"
+                    value={secondaryCtaUrl}
+                    onChange={(e) => setSecondaryCtaUrl(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Background Image</Label>
+                <div className="mt-1 min-w-0">
+                  <ImagePicker
+                    value={backgroundImage}
+                    onChange={setBackgroundImage}
+                    label="Ảnh nền hero"
+                    helperText="Ảnh nền tĩnh cho hero. Sẽ làm poster khi video lỗi."
+                    folder={`hero-${section.pageId}`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Video URL (mp4 trực tiếp)</Label>
+                <Input
+                  className="mt-1"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="https://example.com/hero.mp4"
+                />
+                <p className="text-xs mt-1" style={{ color: semanticColors.textMuted }}>
+                  Hỗ trợ URL mp4/webm trực tiếp hoặc URL embed YouTube/Vimeo.
+                </p>
+              </div>
+
+              <div>
+                <Label>Video Thumbnail</Label>
+                <div className="mt-1 min-w-0">
+                  <ImagePicker
+                    value={videoThumbnail}
+                    onChange={setVideoThumbnail}
+                    label="Ảnh đại diện video"
+                    helperText="Ảnh hiển thị trước khi video play hoặc khi video lỗi."
+                    folder={`hero-${section.pageId}`}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
           <div>
             <Label>Nội dung (TipTap - multilang)</Label>
             <div className="mt-1">
@@ -451,7 +667,7 @@ function SectionContentDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="px-6 py-4 border-t shrink-0 gap-2" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
           <Button variant="outline" onClick={handleCancel} disabled={saving}>
             Hủy
           </Button>
@@ -462,5 +678,24 @@ function SectionContentDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function TextareaCompact({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+}) {
+  return (
+    <textarea
+      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+    />
   )
 }

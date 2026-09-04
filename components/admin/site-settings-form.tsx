@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { SiteSettings } from '@/lib/cms-types'
 import { semanticColors } from '@/lib/design-tokens'
+import { ImagePicker } from './image-picker'
 
 interface SiteSettingsFormProps {
   load: () => Promise<SiteSettings[]>
@@ -100,6 +101,28 @@ export function SiteSettingsForm({ load, update }: SiteSettingsFormProps) {
           Đã lưu thành công!
         </div>
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Logo & Favicon</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ImagePicker
+            value={form.logoUrl ?? ''}
+            onChange={(url) => setField('logoUrl', url)}
+            label="Logo"
+            helperText="Logo hiển thị trong header và footer. SVG/PNG, không giới hạn dung lượng."
+            folder="site"
+          />
+          <ImagePicker
+            value={form.faviconUrl ?? ''}
+            onChange={(url) => setField('faviconUrl', url)}
+            label="Favicon"
+            helperText="Icon hiển thị trên tab trình duyệt. ICO/PNG, không giới hạn dung lượng."
+            folder="site"
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -251,6 +274,21 @@ export function SiteSettingsForm({ load, update }: SiteSettingsFormProps) {
               placeholder="© 2024 EPath Education. All rights reserved."
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">CTA Banner</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ImagePicker
+            value={form.ctaBackgroundImage ?? ''}
+            onChange={(url) => setField('ctaBackgroundImage', url)}
+            label="CTA Background Image"
+            helperText="Ảnh nền cho banner kêu gọi hành động. Không giới hạn dung lượng."
+            folder="site"
+          />
         </CardContent>
       </Card>
 

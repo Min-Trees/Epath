@@ -11,7 +11,8 @@ import { semanticColors } from '@/lib/design-tokens'
 const fields = [
   { key: 'title', label: 'Tiêu đề', kind: 'text' as const, multilang: true },
   { key: 'description', label: 'Mô tả', kind: 'richtext' as const, multilang: true },
-  { key: 'images', label: 'URL hình ảnh (mỗi dòng một URL)', kind: 'textarea' as const },
+  { key: 'coverImage', label: 'Ảnh bìa', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'achievements' },
+  { key: 'images', label: 'URL hình ảnh bổ sung (mỗi dòng một URL)', kind: 'textarea' as const },
 ]
 
 export default function AdminAchievementsPage() {
@@ -35,6 +36,7 @@ export default function AdminAchievementsPage() {
         update={(id, d) => cms.achievements.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.achievements.remove}
         reorder={cms.achievements.reorder}
+        reviewCollection="achievements"
       />
     </AdminLayout>
   )

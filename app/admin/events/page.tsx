@@ -58,6 +58,7 @@ export default function AdminEventsPage() {
         update={(id, d) => cms.events.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.events.remove}
         reorder={cms.events.reorder}
+        reviewCollection="events"
         renderSummary={(item) => (
           <div>
             <div className="flex items-center gap-2 mb-1">

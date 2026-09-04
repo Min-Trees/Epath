@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import { usePublicCms } from '@/lib/use-public-cms'
+import { useCmsContext } from '@/lib/cms-context'
 import type { Program } from '@/lib/cms-types'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
@@ -28,8 +28,9 @@ export default function ProgramsPage(_: ProgramsPageProps) {
   const t = useTranslations('programs')
   const params = useParams()
   const locale = params.locale as string || 'vi'
-  const cms = usePublicCms()
+  const { data: cms } = useCmsContext()
   const cmsPrograms = cms.programs
+  const programsHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).programs as Record<string, unknown>) || {}
 
   const [selectedLevel, setSelectedLevel] = useState<string>('all')
 
@@ -41,13 +42,35 @@ export default function ProgramsPage(_: ProgramsPageProps) {
     return cmsPrograms.filter((p) => p.level === levelId)
   }
 
+  const heroProgramsImage = (programsHero?.backgroundImage as string) || ''
+  const heroWelcomeText = (((programsHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((programsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
+  const heroMainTitle = (((programsHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((programsHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
+  const heroSubtitle = (((programsHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((programsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
+
   return (
     <>
-      <section className="pt-32 pb-20 bg-gradient-to-br from-[#3A53A3] via-[#3A53A3] to-[#2E4389]">
+      <section
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={
+          heroProgramsImage
+            ? {
+                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroProgramsImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : { background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }
+        }
+      >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('hero.title')}</h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
+            {heroWelcomeText && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
+                <Sparkles className="w-4 h-4" />
+                {heroWelcomeText}
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{heroMainTitle}</h1>
+            <p className="text-xl text-white/90">{heroSubtitle}</p>
           </div>
         </div>
       </section>
@@ -177,19 +200,32 @@ export default function ProgramsPage(_: ProgramsPageProps) {
                       </Link>
                     </div>
                   ) : (
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {levelPrograms.map((p) => (
-                        <div key={p.id} className="rounded-xl border-2 p-6 transition-all hover:shadow-lg bg-white" style={{ borderColor: level.color }}>
-                          <h3 className="text-xl font-bold mb-2" style={{ color: level.color }}>
-                            {p.title[locale as 'vi' | 'en'] || p.title.vi}
-                          </h3>
-                          <div className="text-[#6B6B6B] mb-4 line-clamp-3">
-                            <RichTextRenderer html={p.shortDescription[locale as 'vi' | 'en'] || p.shortDescription.vi} compact />
-                          </div>
-                          <Link href={`/${locale}/admissions?program=${p.slug}`} className="inline-flex items-center gap-2 font-medium" style={{ color: level.color }}>
-                            {t('register')}<ArrowRight className="w-4 h-4" />
-                          </Link>
+                        <div key={p.id} className="rounded-xl border-2 overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 bg-white" style={{ borderColor: level.color }}>
+                      {p.imageUrl && (
+                        <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={p.imageUrl}
+                            alt={p.title[locale as 'vi' | 'en'] || p.title.vi}
+                            className="w-full h-full object-contain transition-transform hover:scale-105"
+                            loading="lazy"
+                          />
                         </div>
+                      )}
+                      <div className="p-5">
+                        <h3 className="text-lg font-bold mb-2" style={{ color: level.color }}>
+                          {p.title[locale as 'vi' | 'en'] || p.title.vi}
+                        </h3>
+                        <div className="text-[#6B6B6B] mb-4 text-sm line-clamp-3">
+                          <RichTextRenderer html={p.shortDescription[locale as 'vi' | 'en'] || p.shortDescription.vi} compact />
+                        </div>
+                        <Link href={`/${locale}/admissions?program=${p.slug}`} className="inline-flex items-center gap-2 font-medium text-sm" style={{ color: level.color }}>
+                          {t('register')}<ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
                       ))}
                     </div>
                   )}

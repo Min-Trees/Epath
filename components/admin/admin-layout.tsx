@@ -29,6 +29,12 @@ import {
   Bell,
   Award,
   ListChecks,
+  History,
+  Inbox,
+  Newspaper,
+  ImageIcon,
+  ClipboardCheck,
+  HardDriveDownload,
 } from 'lucide-react'
 import { semanticColors, shadows, radius } from '@/lib/design-tokens'
 import { duration, easeOut, transitionEnter } from '@/lib/motion-presets'
@@ -53,6 +59,12 @@ export const adminNavItems: AdminNavItem[] = [
   { href: '/admin/testimonials', label: 'Phản hồi PH', icon: Users },
   { href: '/admin/partners', label: 'Đối tác', icon: FileText },
   { href: '/admin/events', label: 'Sự kiện', icon: Bell },
+  { href: '/admin/activity-logs', label: 'Lịch sử hoạt động', icon: History },
+  { href: '/admin/leads', label: 'Hộp thư liên hệ', icon: Inbox },
+  { href: '/admin/posts', label: 'Bài viết', icon: Newspaper },
+  { href: '/admin/media', label: 'Thư viện Media', icon: ImageIcon },
+  { href: '/admin/review-queue', label: 'Hàng chờ duyệt', icon: ClipboardCheck },
+  { href: '/admin/backups', label: 'Backup dữ liệu', icon: HardDriveDownload },
   { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
 ]
 

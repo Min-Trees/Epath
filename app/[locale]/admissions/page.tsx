@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Phone, Mail, Clock, CheckCircle } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, CheckCircle, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,12 +15,22 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
+import { useCmsContext } from '@/lib/cms-context'
+import { getSettingLocalized, getSettingStr } from '@/lib/settings-helpers'
 
 export default function AdmissionsPage() {
   const t = useTranslations('admissions')
   const tFooter = useTranslations('footer')
   const params = useParams()
   const locale = (params.locale as string) || 'vi'
+  const { data: cms } = useCmsContext()
+  const admissionsHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).admissions as Record<string, unknown>) || {}
+  const settings = cms.siteSettings
+
+  const heroImage = (admissionsHero?.backgroundImage as string) || ''
+  const welcomeText = (((admissionsHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((admissionsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
+  const mainTitle = (((admissionsHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((admissionsHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
+  const heroSubtitle = (((admissionsHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((admissionsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,8 +55,16 @@ export default function AdmissionsPage() {
     <>
       <section
         id="contact"
-        className="pt-32 pb-20"
-        style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={
+          heroImage
+            ? {
+                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : { background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }
+        }
       >
         <div className="container mx-auto px-4">
           <motion.div
@@ -55,8 +73,14 @@ export default function AdmissionsPage() {
             transition={{ duration: duration.normal, ease: easeOut }}
             className="max-w-3xl mx-auto text-center text-white"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('hero.title')}</h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
+            {welcomeText && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
+                <Sparkles className="w-4 h-4" />
+                {welcomeText}
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{mainTitle}</h1>
+            <p className="text-xl text-white/90">{heroSubtitle}</p>
           </motion.div>
         </div>
       </section>
@@ -144,7 +168,9 @@ export default function AdmissionsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20]">{t('contact.address')}</h3>
-                    <p className="text-[#6B6B6B]">{tFooter('contact.address')}</p>
+                    <p className="text-[#6B6B6B]">
+                      {getSettingLocalized(settings as Record<string, unknown>, 'addressVi', 'addressEn', locale) || tFooter('contact.address')}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -153,7 +179,7 @@ export default function AdmissionsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20]">{t('contact.hotline')}</h3>
-                    <p className="text-[#6B6B6B]">{tFooter('contact.phone')}</p>
+                    <p className="text-[#6B6B6B]">{getSettingStr(settings as Record<string, unknown>, 'hotline') || tFooter('contact.phone')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -162,7 +188,7 @@ export default function AdmissionsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20]">{t('contact.emailLabel')}</h3>
-                    <p className="text-[#6B6B6B]">{tFooter('contact.email')}</p>
+                    <p className="text-[#6B6B6B]">{getSettingStr(settings as Record<string, unknown>, 'contactEmail') || tFooter('contact.email')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -171,7 +197,9 @@ export default function AdmissionsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20]">{t('contact.hours')}</h3>
-                    <p className="text-[#6B6B6B]">{t('contact.hoursValue')}</p>
+                    <p className="text-[#6B6B6B]">
+                      {getSettingLocalized(settings as Record<string, unknown>, 'workingHoursVi', 'workingHoursEn', locale) || t('contact.hoursValue')}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -179,6 +207,62 @@ export default function AdmissionsPage() {
           </div>
         </div>
       </section>
+
+      {cms.admissionSteps && cms.admissionSteps.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-[#231F20] mb-4">{t('steps.title') || 'Quy trình tuyển sinh'}</h2>
+              <p className="text-[#6B6B6B] max-w-2xl mx-auto">
+                {t('steps.subtitle') || 'Các bước đơn giản để nhập học tại Epath'}
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {cms.admissionSteps
+                .filter((s) => s.isActive)
+                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                .map((step, idx) => {
+                  const accentColors = ['#3A53A3', '#8BC53F', '#F05A28', '#1A7F5A']
+                  const color = accentColors[idx % accentColors.length]
+                  const stepTitle = step.title[locale as 'vi' | 'en'] || step.title.vi
+                  const stepDesc = step.description[locale as 'vi' | 'en'] || step.description.vi
+                  return (
+                    <motion.div
+                      key={step.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={inViewViewport}
+                      transition={{ duration: duration.normal, delay: idx * 0.08, ease: easeOut }}
+                      className="surface-alt rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                    >
+                      {step.imageUrl && (
+                        <div className="w-full h-32 overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={step.imageUrl}
+                            alt={stepTitle}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                      <div className="p-6">
+                        <div
+                          className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 font-bold text-white"
+                          style={{ backgroundColor: color }}
+                        >
+                          {String(step.stepNumber || idx + 1).padStart(2, '0')}
+                        </div>
+                        <h3 className="text-lg font-bold text-[#231F20] mb-2">{stepTitle}</h3>
+                        <p className="text-sm text-[#6B6B6B] leading-relaxed">{stepDesc}</p>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="faq" className="py-20 bg-white">
         <div className="container mx-auto px-4">

@@ -1,34 +1,32 @@
 'use client'
 
+/**
+ * PartnersSection – the homepage card row of partner logos.
+ *
+ * Source of truth: the CMS `partners` collection (logoUrl + featured
+ * flag). When the CMS is empty we fall back to the i18n strings so
+ * visitors never see a blank row.
+ * Uses consistent data source from CMS context to prevent duplicate rendering.
+ */
 import { useTranslations } from 'next-intl'
 import { ExternalLink } from 'lucide-react'
 import { useSectionActive } from '@/lib/motion-presets'
+import { useCmsContext } from '@/lib/cms-context'
 
-const partners = [
-  { name: 'Edmentum International', descriptionKey: 'edmentumDesc' as const },
-  { name: 'Cambridge Assessment', descriptionKey: 'cambridgeDesc' as const },
-  { name: 'Cognia', descriptionKey: 'cogniaDesc' as const },
-  { name: 'WASC', descriptionKey: 'wascDesc' as const },
-  { name: 'FabLab EIU', descriptionKey: 'fablabDesc' as const },
-  { name: 'EdOptions Academy', descriptionKey: 'edoptionsDesc' as const },
-]
-
-const certifications = [
-  { name: 'Cognia Certified', descriptionKey: 'cognia' as const },
-  { name: 'WASC Accredited', descriptionKey: 'wasc' as const },
-  { name: 'Edmentum Partner', descriptionKey: 'edmentumPartner' as const },
-]
-
-/**
- * Performance rebuild:
- *   - Removed all framer-motion wrappers.
- *   - Stagger via CSS animation-delay (nth-child rules) so we get
- *     smooth staggering without JS.
- *   - Hover lift uses CSS transform on a GPU-promoted layer.
- */
 export function PartnersSection() {
   const t = useTranslations('partners')
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.1 })
+  const { data: cms } = useCmsContext()
+  const partners = (cms.partners || [])
+    .filter((p) => p.isActive !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+
+  const displayPartners = partners
+  const certs = [
+    { name: 'Cognia Certified', descriptionKey: 'cognia' as const },
+    { name: 'WASC Accredited', descriptionKey: 'wasc' as const },
+    { name: 'Edmentum Partner', descriptionKey: 'edmentumPartner' as const },
+  ]
 
   return (
     <section ref={sectionRef} className="partners-section py-20 surface-alt overflow-hidden">
@@ -42,26 +40,42 @@ export function PartnersSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-          {partners.map((partner, idx) => (
-            <div
-              key={partner.name}
-              className="partner-card"
-              style={{ ['--reveal-delay' as string]: `${idx * 0.06}s` }}
-            >
-              <div className="w-16 h-16 mx-auto mb-3 bg-[#3A53A3]/10 rounded-lg flex items-center justify-center partner-icon">
-                <span className="text-[#3A53A3] font-bold text-xs">
-                  {partner.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}
-                </span>
+        {displayPartners.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
+            {displayPartners.slice(0, 6).map((partner, idx) => (
+              <div
+                key={partner.id}
+                className="partner-card"
+                style={{ ['--reveal-delay' as string]: `${idx * 0.06}s` }}
+              >
+                <div className="w-16 h-16 mx-auto mb-3 bg-white rounded-lg flex items-center justify-center partner-icon overflow-hidden">
+                  {partner.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={partner.logoUrl}
+                      alt={partner.name}
+                      className="w-full h-full object-contain p-2"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="text-[#3A53A3] font-bold text-xs">
+                      {partner.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-semibold text-sm text-[#231F20] mb-1 line-clamp-2">
+                  {partner.name}
+                </h3>
+                <p className="text-xs text-[#6B6B6B] line-clamp-3">
+                  {partner.description?.vi || partner.description?.en || ''}
+                </p>
               </div>
-              <h3 className="font-semibold text-sm text-[#231F20] mb-1">{partner.name}</h3>
-              <p className="text-xs text-[#6B6B6B]">{t(partner.descriptionKey)}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-wrap justify-center gap-4">
-          {certifications.map((cert, idx) => (
+          {certs.map((cert, idx) => (
             <div
               key={cert.name}
               className="cert-pill"

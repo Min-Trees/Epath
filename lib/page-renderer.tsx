@@ -1,5 +1,5 @@
 import 'server-only'
-import { getPageSections, type PageSection } from '@/lib/pages-repo'
+import { getPageSections, type PageSection, type PageSlug } from '@/lib/pages-repo'
 import { HeroSection } from '@/components/sections/hero-section'
 import { CoreValuesSection } from '@/components/sections/core-values-section'
 import { LearningPathwaysSection } from '@/components/sections/learning-pathways-section'
@@ -11,11 +11,15 @@ import { FAQSection } from '@/components/sections/faq-section'
 import { CTABanner } from '@/components/sections/cta-banner'
 import { AchievementsSection } from '@/components/sections/achievements-section'
 
-export type SectionComponent = () => React.JSX.Element
+type SectionComponent = () => React.JSX.Element
 
-const SECTION_RENDERERS: Record<string, SectionComponent> = {
+// Map each section type to its underlying component. We expose a single
+// canonical component per visual block so duplicate section types (e.g.
+// 'hero' + 'intro', 'vision' + 'mission', 'whyEdmentum') automatically
+// share the same renderer and dedupe correctly downstream.
+const SECTION_COMPONENT: Record<string, SectionComponent> = {
   hero: () => <HeroSection />,
-  intro: () => <HeroSection />, // intro fallback uses hero until a dedicated section is built
+  intro: () => <HeroSection />,
   coreValues: () => <CoreValuesSection />,
   learningPathways: () => <LearningPathwaysSection />,
   stepModel: () => <StepModelSection />,
@@ -25,8 +29,6 @@ const SECTION_RENDERERS: Record<string, SectionComponent> = {
   partners: () => <PartnersSection />,
   faqs: () => <FAQSection />,
   cta: () => <CTABanner />,
-  // Sections without a dedicated component yet — fall back to a related one
-  // so admin can still reorder freely without breaking the home page.
   vision: () => <CoreValuesSection />,
   mission: () => <CoreValuesSection />,
   whyEdmentum: () => <PartnersSection />,
@@ -35,57 +37,110 @@ const SECTION_RENDERERS: Record<string, SectionComponent> = {
   team: () => <TestimonialsSection />,
 }
 
-// Default order used when the admin hasn't configured anything yet (or when
-// Firestore isn't configured at all). Keeps parity with the previous hardcoded
-// layout in `app/[locale]/page.tsx`.
-const DEFAULT_HOME_SECTIONS: { type: keyof typeof SECTION_RENDERERS; id: string }[] = [
-  { type: 'hero', id: 'default-hero' },
-  { type: 'coreValues', id: 'default-core-values' },
-  { type: 'learningPathways', id: 'default-pathways' },
-  { type: 'stepModel', id: 'default-steps' },
-  { type: 'statistics', id: 'default-statistics' },
-  { type: 'achievements', id: 'default-achievements' },
-  { type: 'testimonials', id: 'default-testimonials' },
-  { type: 'partners', id: 'default-partners' },
-  { type: 'faqs', id: 'default-faqs' },
-  { type: 'cta', id: 'default-cta' },
-]
+// Canonical key for each visual block. Multiple section types that share
+// the same renderer collapse to the same key.
+const SECTION_DEDUP_KEY: Record<string, string> = {
+  hero: 'hero',
+  intro: 'hero',
+  coreValues: 'coreValues',
+  vision: 'coreValues',
+  mission: 'coreValues',
+  learningPathways: 'learningPathways',
+  stepModel: 'stepModel',
+  admissionSteps: 'stepModel',
+  statistics: 'statistics',
+  achievements: 'achievements',
+  testimonials: 'testimonials',
+  team: 'testimonials',
+  partners: 'partners',
+  whyEdmentum: 'partners',
+  faqs: 'faqs',
+  cta: 'cta',
+  pricing: 'cta',
+}
+
+const DEFAULT_SECTIONS: Record<PageSlug, string[]> = {
+  home: [
+    'hero',
+    'coreValues',
+    'learningPathways',
+    'stepModel',
+    'statistics',
+    'achievements',
+    'testimonials',
+    'partners',
+    'faqs',
+    'cta',
+  ],
+  about: ['hero', 'coreValues', 'statistics', 'cta'],
+  programs: ['hero', 'learningPathways', 'testimonials', 'faq' as never, 'cta'],
+  partners: ['hero', 'partners', 'testimonials', 'cta'],
+  admissions: ['hero', 'stepModel', 'faqs', 'cta'],
+  events: ['hero', 'cta'],
+}
 
 /**
  * Fetches the active page sections from Page Builder. Falls back to the
  * default order when Firestore isn't reachable or no sections have been
  * configured yet.
  */
-export async function getActivePageSections(
-  pageId: 'home'
-): Promise<{ type: string; id: string }[]> {
+export async function getActivePageSections(pageId: PageSlug): Promise<string[]> {
   try {
     const sections = await getPageSections(pageId)
     const active = sections
       .filter((s: PageSection) => s.isActive)
       .sort((a: PageSection, b: PageSection) => a.order - b.order)
-    if (active.length === 0) return DEFAULT_HOME_SECTIONS
-    return active.map((s) => ({ type: s.type, id: s.id }))
+    if (active.length === 0) return DEFAULT_SECTIONS[pageId] ?? []
+    return active.map((s) => s.type)
   } catch (err) {
     console.warn(`[page-renderer] failed to load sections for ${pageId}:`, (err as Error).message)
-    return DEFAULT_HOME_SECTIONS
+    return DEFAULT_SECTIONS[pageId] ?? []
   }
 }
 
 /**
- * Renders the home page sections according to Page Builder configuration.
- * Unknown / not-yet-implemented section types are silently dropped so that
- * admins can experiment without breaking the public site.
+ * Generic renderer. Unknown section types are silently dropped so admins
+ * can experiment without breaking the public site.
+ *
+ * IMPORTANT: To prevent duplicate sections (e.g., multiple HeroSections or
+ * CoreValuesSections), we deduplicate by the *visual block key*. This
+ * collapses aliases that point at the same component, e.g.:
+ *   - 'hero' and 'intro' both render HeroSection
+ *   - 'vision' and 'mission' both render CoreValuesSection
+ *   - 'whyEdmentum' renders PartnersSection
+ *   - 'admissionSteps' renders StepModelSection
+ *   - 'team' renders TestimonialsSection
+ *   - 'pricing' renders CTABanner
  */
-export async function HomeSectionsRenderer() {
-  const sections = await getActivePageSections('home')
+export async function PageSectionsRenderer({ pageId }: { pageId: PageSlug }) {
+  const types = await getActivePageSections(pageId)
+
+  const seenKeys = new Set<string>()
+  const uniqueTypes: string[] = []
+
+  for (const type of types) {
+    const Renderer = SECTION_COMPONENT[type]
+    if (!Renderer) continue
+    const dedupKey = SECTION_DEDUP_KEY[type] ?? type
+    if (seenKeys.has(dedupKey)) continue
+    seenKeys.add(dedupKey)
+    uniqueTypes.push(type)
+  }
+
   return (
     <>
-      {sections.map(({ type, id }) => {
-        const Renderer = SECTION_RENDERERS[type]
+      {uniqueTypes.map((type, idx) => {
+        const Renderer = SECTION_COMPONENT[type]
         if (!Renderer) return null
-        return <Renderer key={id} />
+        return <Renderer key={`${pageId}-${type}-${idx}`} />
       })}
     </>
   )
+}
+
+/**
+ * Backwards-compatible alias for the home page.
+ */
+export async function HomeSectionsRenderer() {
+  return <PageSectionsRenderer pageId="home" />
 }

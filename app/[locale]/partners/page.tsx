@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import { usePublicCms } from '@/lib/use-public-cms'
+import { useCmsContext } from '@/lib/cms-context'
 import type { Partner } from '@/lib/cms-types'
 
 const fallbackPartners: Partner[] = [
@@ -23,6 +23,18 @@ const fallbackPartners: Partner[] = [
     isFeatured: true,
     order: 0,
     isActive: true,
+    status: 'PUBLISHED' as const,
+    rejectionReason: '',
+    scheduledAt: '',
+    publishedAt: '',
+    createdByUid: '',
+    createdByEmail: '',
+    createdByName: '',
+    lastReviewerUid: '',
+    lastReviewerEmail: '',
+    lastReviewerName: '',
+    submittedAt: '',
+    reviewedAt: '',
   },
   {
     id: 'cambridge',
@@ -35,6 +47,18 @@ const fallbackPartners: Partner[] = [
     isFeatured: false,
     order: 1,
     isActive: true,
+    status: 'PUBLISHED' as const,
+    rejectionReason: '',
+    scheduledAt: '',
+    publishedAt: '',
+    createdByUid: '',
+    createdByEmail: '',
+    createdByName: '',
+    lastReviewerUid: '',
+    lastReviewerEmail: '',
+    lastReviewerName: '',
+    submittedAt: '',
+    reviewedAt: '',
   },
   {
     id: 'cognia',
@@ -47,6 +71,18 @@ const fallbackPartners: Partner[] = [
     isFeatured: false,
     order: 2,
     isActive: true,
+    status: 'PUBLISHED' as const,
+    rejectionReason: '',
+    scheduledAt: '',
+    publishedAt: '',
+    createdByUid: '',
+    createdByEmail: '',
+    createdByName: '',
+    lastReviewerUid: '',
+    lastReviewerEmail: '',
+    lastReviewerName: '',
+    submittedAt: '',
+    reviewedAt: '',
   },
 ]
 
@@ -63,19 +99,39 @@ export default function PartnersPage() {
   const tFeature = useTranslations('partnersPage.featureList')
   const params = useParams()
   const locale = (params.locale as string) || 'vi'
-  const cms = usePublicCms()
+  const { data: cms } = useCmsContext()
+  const partnersHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).partners as Record<string, unknown>) || {}
   const partners: Partner[] = cms.partners.length > 0 ? cms.partners : fallbackPartners
+
+  const heroPartnersImage = (partnersHero?.backgroundImage as string) || ''
+  const heroWelcomeText = (((partnersHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
+  const heroMainTitle = (((partnersHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
+  const heroSubtitle = (((partnersHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
 
   return (
     <>
       <section
-        className="pt-32 pb-20"
-        style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={
+          heroPartnersImage
+            ? {
+                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroPartnersImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : { background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }
+        }
       >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('hero.title')}</h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
+            {heroWelcomeText && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
+                <Award className="w-4 h-4" />
+                {heroWelcomeText}
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{heroMainTitle}</h1>
+            <p className="text-xl text-white/90">{heroSubtitle}</p>
           </div>
         </div>
       </section>
@@ -131,15 +187,25 @@ export default function PartnersPage() {
                 >
                   <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
                     <div
-                      className="w-32 h-32 rounded-2xl flex items-center justify-center mb-6"
+                      className="w-32 h-32 rounded-2xl flex items-center justify-center mb-6 overflow-hidden"
                       style={{ backgroundColor: accent.bg }}
                     >
-                      <span
-                        className="text-2xl font-bold"
-                        style={{ color: accent.color }}
-                      >
-                        {initials(partner.name)}
-                      </span>
+                      {partner.logoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={partner.logoUrl}
+                          alt={partner.name}
+                          className="w-full h-full object-contain p-3"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span
+                          className="text-2xl font-bold"
+                          style={{ color: accent.color }}
+                        >
+                          {initials(partner.name)}
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-3xl font-bold text-[#231F20] mb-4">
                       {partner.name}

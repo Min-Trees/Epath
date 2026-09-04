@@ -12,6 +12,7 @@ const fields = [
   { key: 'title', label: 'Tiêu đề', kind: 'text' as const, multilang: true },
   { key: 'description', label: 'Mô tả', kind: 'richtext' as const, multilang: true },
   { key: 'icon', label: 'Icon (Lucide)', kind: 'text' as const },
+  { key: 'imageUrl', label: 'Hình ảnh', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'admission-steps' },
 ]
 
 export default function AdminAdmissionStepsPage() {
@@ -35,6 +36,7 @@ export default function AdminAdmissionStepsPage() {
         update={(id, d) => cms.admissionSteps.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.admissionSteps.remove}
         reorder={cms.admissionSteps.reorder}
+        reviewCollection="admissionSteps"
       />
     </AdminLayout>
   )

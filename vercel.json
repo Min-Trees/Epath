@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/publish-scheduled",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/backup/run",
+      "schedule": "0 19 * * 0"
+    },
+    {
+      "path": "/api/cron/backup/prune",
+      "schedule": "0 3 * * 1"
+    }
+  ]
+}

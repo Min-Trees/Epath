@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { AboutContent } from '@/lib/cms-types'
 import { semanticColors } from '@/lib/design-tokens'
+import { ImagePicker } from './image-picker'
 
 interface Milestone {
   year: string
@@ -156,14 +157,13 @@ export function AboutContentForm({ load, update, create }: AboutContentFormProps
           <CardTitle className="text-base">Hình ảnh Hero</CardTitle>
         </CardHeader>
         <CardContent>
-          <div>
-            <Label>Hero Image URL</Label>
-            <Input
-              value={form.heroImage ?? ''}
-              onChange={(e) => setField('heroImage', e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
+          <ImagePicker
+            value={form.heroImage ?? ''}
+            onChange={(url) => setField('heroImage', url)}
+            label="Hero Image"
+            helperText="Ảnh hiển thị phía bên phải của phần giới thiệu. Không giới hạn dung lượng."
+            folder="about"
+          />
         </CardContent>
       </Card>
 

@@ -13,6 +13,7 @@ const fields = [
   { key: 'label', label: 'Nhãn', kind: 'text' as const, multilang: true },
   { key: 'suffix', label: 'Hậu tố', kind: 'text' as const, placeholder: '+' },
   { key: 'icon', label: 'Icon (Lucide)', kind: 'text' as const, placeholder: 'TrendingUp' },
+  { key: 'imageUrl', label: 'Hình ảnh', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'statistics' },
 ]
 
 export default function AdminStatisticsPage() {
@@ -36,6 +37,7 @@ export default function AdminStatisticsPage() {
         update={(id, d) => cms.statistics.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.statistics.remove}
         reorder={cms.statistics.reorder}
+        reviewCollection="statistics"
       />
     </AdminLayout>
   )

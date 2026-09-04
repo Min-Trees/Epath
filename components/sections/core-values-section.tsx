@@ -1,15 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+/**
+ * CoreValuesSection – renders the homepage's "giá trị cốt lõi" grid.
+ *
+ * Source of truth is the CMS `coreValues` collection from the shared CMS context.
+ * When the CMS collection is empty, we fall back to i18n strings.
+ * Uses consistent data source to prevent duplicate rendering.
+ */
 import { useTranslations } from 'next-intl'
-import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network, BookOpen } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, staggerContainer, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import type { CoreValue } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { Locale } from '@/lib/cms-types'
 
-// Icon mapping
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Route: Route,
   Award: Award,
@@ -19,7 +25,6 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Network: Network,
 }
 
-// Fallback values for when CMS is empty
 const fallbackValues = [
   { number: '01', key: 'continuousPath', icon: Route },
   { number: '02', key: 'usStandard', icon: Award },
@@ -29,27 +34,23 @@ const fallbackValues = [
   { number: '06', key: 'ecosystem', icon: Network },
 ]
 
+function pick(v: { vi?: string; en?: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
+}
+
 export function CoreValuesSection() {
   const t = useTranslations('values')
   const params = useParams()
-  const locale = (params.locale as string) || 'vi'
+  const locale = ((params.locale as string) || 'vi') as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
-  const [coreValues, setCoreValues] = useState<CoreValue[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: cms } = useCmsContext()
+  const cmsValues = cms.coreValues || []
+  const coreValues = cmsValues.filter((v) => v.isActive !== false)
 
-  useEffect(() => {
-    fetch('/api/cms/core-values')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          setCoreValues(data.items.filter((v: CoreValue) => v.isActive).sort((a: CoreValue, b: CoreValue) => a.order - b.order))
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false))
-  }, [])
-
-  const displayValues = coreValues.length > 0 ? coreValues : fallbackValues
+  // Use ONLY ONE data source: CMS if available, otherwise fallback
+  const isUsingFallback = coreValues.length === 0
+  const displayValues = isUsingFallback ? fallbackValues : coreValues
 
   return (
     <section ref={sectionRef} className="values-section py-20 surface-alt">
@@ -78,18 +79,28 @@ export function CoreValuesSection() {
         >
           {displayValues.map((value, index) => {
             const accent = accentCycle[index % accentCycle.length]
-            const isFromCMS = coreValues.length > 0
-            const cmsValue = value as CoreValue
-            const fallbackValue = value as typeof fallbackValues[0]
+            const cmsValue = isUsingFallback ? null : value as { id?: string; icon?: string; title?: { vi?: string; en?: string }; description?: { vi?: string; en?: string }; imageUrl?: string }
+            const fallbackValue = isUsingFallback ? value as typeof fallbackValues[0] : null
 
-            // Get icon: from CMS (string) or fallback (component)
-            const IconComponent = isFromCMS
-              ? (iconMap[cmsValue.icon] || Route)
-              : fallbackValue.icon
+            const IconComponent = !isUsingFallback && cmsValue?.icon
+              ? iconMap[cmsValue.icon] || Route
+              : fallbackValue?.icon || Route
+
+            const title = !isUsingFallback && cmsValue?.title
+              ? pick(cmsValue.title, locale)
+              : fallbackValue ? t(fallbackValue.key) : ''
+
+            const description = !isUsingFallback && cmsValue?.description
+              ? pick(cmsValue.description, locale)
+              : fallbackValue ? t(`${fallbackValue.key}Desc`) : ''
+
+            const itemKey = !isUsingFallback && cmsValue?.id
+              ? cmsValue.id
+              : fallbackValue?.number || `fallback-${index}`
 
             return (
               <motion.div
-                key={isFromCMS ? cmsValue.id : fallbackValue.number}
+                key={itemKey}
                 variants={{
                   hidden: { opacity: 0, y: 24 },
                   visible: {
@@ -104,8 +115,19 @@ export function CoreValuesSection() {
                   ['--accent' as string]: accent.color,
                   ['--reveal-delay' as string]: `${0.08 * index}s`,
                 }}
-                className="values-card group p-6 rounded-xl border-2 cursor-pointer"
+                className="values-card group p-6 rounded-xl border-2 cursor-pointer overflow-hidden"
               >
+                {!isUsingFallback && cmsValue?.imageUrl && (
+                  <div className="aspect-video rounded-lg overflow-hidden mb-4 bg-white/60">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={cmsValue.imageUrl || ''}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="flex items-start gap-4">
                   <div className="values-icon w-14 h-14 rounded-lg flex items-center justify-center shrink-0">
                     <IconComponent className="w-7 h-7 text-white" />
@@ -113,13 +135,13 @@ export function CoreValuesSection() {
 
                   <div className="flex-1">
                     <div className="values-number text-sm font-semibold mb-1">
-                      {isFromCMS ? String(index + 1).padStart(2, '0') : fallbackValue.number}
+                      {fallbackValue?.number || String(index + 1).padStart(2, '0')}
                     </div>
                     <h3 className="text-xl font-semibold text-[#231F20] mb-2">
-                      {isFromCMS ? cmsValue.title?.vi || cmsValue.title?.en : t(fallbackValue.key)}
+                      {title}
                     </h3>
                     <p className="values-desc text-sm leading-relaxed">
-                      {isFromCMS ? cmsValue.description?.vi || cmsValue.description?.en : t(`${fallbackValue.key}Desc`)}
+                      {description}
                     </p>
                   </div>
                 </div>
@@ -138,7 +160,6 @@ export function CoreValuesSection() {
             href={`/${locale}/programs`}
             className="inline-flex items-center gap-2 text-[#3A53A3] font-semibold hover:text-[#2E4389] transition-colors duration-200"
           >
-            <BookOpen className="w-5 h-5" />
             {t('viewAll')}
             <ArrowRight className="w-5 h-5" />
           </a>

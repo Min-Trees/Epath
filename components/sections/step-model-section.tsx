@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { ClipboardCheck, Map, Laptop, MessageCircle, Award, ListChecks } from 'lucide-react'
 import { duration, easeOut, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import type { AdmissionStep } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { AdmissionStep, Locale } from '@/lib/cms-types'
 
 // Icon mapping for admission steps
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -16,6 +17,11 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   MessageCircle: MessageCircle,
   Award: Award,
   ListChecks: ListChecks,
+}
+
+function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
 }
 
 // Fallback steps
@@ -30,20 +36,10 @@ const fallbackSteps = [
 export function StepModelSection() {
   const t = useTranslations('steps')
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
-  const [steps, setSteps] = useState<AdmissionStep[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/cms/admission-steps')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          setSteps(data.items.filter((s: AdmissionStep) => s.isActive).sort((a: AdmissionStep, b: AdmissionStep) => a.order - b.order))
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false))
-  }, [])
+  const { data: cms } = useCmsContext()
+  const steps = cms.admissionSteps
+    .filter((s) => s.isActive)
+    .sort((a, b) => a.order - b.order)
 
   const displaySteps = steps.length > 0 ? steps : fallbackSteps
 
@@ -87,10 +83,10 @@ export function StepModelSection() {
 
                 const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
                 const stepTitle = isFromCMS
-                  ? cmsStep.title?.vi || cmsStep.title?.en
+                  ? pick(cmsStep.title, 'vi' as Locale) || pick(cmsStep.title, 'en' as Locale)
                   : t(fallbackStep.titleKey)
                 const stepDesc = isFromCMS
-                  ? cmsStep.description?.vi || cmsStep.description?.en
+                  ? pick(cmsStep.description, 'vi' as Locale) || pick(cmsStep.description, 'en' as Locale)
                   : t(fallbackStep.descKey)
 
                 return (
@@ -117,7 +113,7 @@ export function StepModelSection() {
                         ease: easeOut,
                         delay: idx * 0.12,
                       }}
-                      className="step-icon-wrap"
+                      className="step-icon-wrap relative"
                       style={{ backgroundColor: accent.color }}
                     >
                       <IconComponent className="w-8 h-8 text-white" />
@@ -132,9 +128,20 @@ export function StepModelSection() {
                         ease: easeOut,
                         delay: idx * 0.12 + 0.1,
                       }}
-                      className="step-card"
+                      className="step-card relative overflow-hidden"
                       style={{ backgroundColor: accent.bg }}
                     >
+                      {isFromCMS && cmsStep.imageUrl && (
+                        <div className="w-full h-24 -mx-px -mt-px mb-3 overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={cmsStep.imageUrl}
+                            alt={stepTitle}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
                       <div className="text-4xl font-bold mb-2" style={{ color: accent.color }}>
                         {stepNumber}
                       </div>
@@ -169,10 +176,10 @@ export function StepModelSection() {
 
                 const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
                 const stepTitle = isFromCMS
-                  ? cmsStep.title?.vi || cmsStep.title?.en
+                  ? pick(cmsStep.title, 'vi' as Locale) || pick(cmsStep.title, 'en' as Locale)
                   : t(fallbackStep.titleKey)
                 const stepDesc = isFromCMS
-                  ? cmsStep.description?.vi || cmsStep.description?.en
+                  ? pick(cmsStep.description, 'vi' as Locale) || pick(cmsStep.description, 'en' as Locale)
                   : t(fallbackStep.descKey)
 
                 return (

@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
+import { useCmsContext } from '@/lib/cms-context'
 import type { Testimonial } from '@/lib/cms-types'
 
 interface TestimonialData {
@@ -22,30 +23,21 @@ export function TestimonialsSection() {
   const locale = (params.locale as string) || 'vi'
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState(0)
-  const [testimonials, setTestimonials] = useState<TestimonialData[]>([])
+  const { data: cms } = useCmsContext()
 
-  useEffect(() => {
-    fetch('/api/cms/testimonials')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          const items = data.items.filter((t: Testimonial) => t.isActive)
-            .sort((a: Testimonial, b: Testimonial) => {
-              if (a.isFeatured !== b.isFeatured) return b.isFeatured ? 1 : -1
-              return a.order - b.order
-            })
-            .map((item: Testimonial) => ({
-              name: item.name,
-              role: item.role || 'Phụ huynh học sinh',
-              quote: item.content?.vi || item.content?.en || '',
-              rating: item.rating || 5,
-              avatarUrl: item.avatarUrl,
-            }))
-          setTestimonials(items)
-        }
-      })
-      .catch(console.error)
-  }, [])
+  const testimonials = cms.testimonials
+    .filter((t) => t.isActive)
+    .sort((a, b) => {
+      if (a.isFeatured !== b.isFeatured) return b.isFeatured ? 1 : -1
+      return a.order - b.order
+    })
+    .map((item) => ({
+      name: item.name,
+      role: item.role || 'Phụ huynh học sinh',
+      quote: item.content?.vi || item.content?.en || '',
+      rating: item.rating || 5,
+      avatarUrl: item.avatarUrl,
+    }))
 
   // Use i18n fallback if CMS is empty
   const i18nList = t.raw('list') as TestimonialData[]

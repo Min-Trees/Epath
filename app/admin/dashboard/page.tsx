@@ -23,6 +23,8 @@ interface DashboardData {
     team: number
     pathways: number
     admissionSteps: number
+    posts: number
+    leads: number
   }
   recent: { type: string; label: string; when: string }[]
 }
@@ -45,8 +47,10 @@ export default function AdminDashboardPage() {
       fetch('/api/cms/team').then((r) => r.json()),
       fetch('/api/cms/pathways').then((r) => r.json()),
       fetch('/api/cms/admission-steps').then((r) => r.json()),
+      fetch('/api/cms/blog-posts').then((r) => r.json()),
+      fetch('/api/cms/leads').then((r) => r.json()),
     ])
-      .then(([programs, partners, events, faqs, statistics, testimonials, coreValues, team, pathways, admissionSteps]) => ({
+      .then(([programs, partners, events, faqs, statistics, testimonials, coreValues, team, pathways, admissionSteps, posts, leads]) => ({
         counts: {
           programs: programs.items?.length ?? 0,
           partners: partners.items?.length ?? 0,
@@ -58,6 +62,8 @@ export default function AdminDashboardPage() {
           team: team.items?.length ?? 0,
           pathways: pathways.items?.length ?? 0,
           admissionSteps: admissionSteps.items?.length ?? 0,
+          posts: posts.items?.length ?? 0,
+          leads: leads.items?.length ?? 0,
         },
         recent: [],
       }))
@@ -192,6 +198,8 @@ export default function AdminDashboardPage() {
           <QuickLink href="/admin/pathways" label="Lộ trình học" />
           <QuickLink href="/admin/achievements" label="Thành tích" />
           <QuickLink href="/admin/admission-steps" label="Bước nhập học" />
+          <QuickLink href="/admin/posts" label="Bài viết" />
+          <QuickLink href="/admin/media" label="Thư viện Media" />
         </div>
       </div>
 
@@ -218,6 +226,9 @@ export default function AdminDashboardPage() {
           <QuickLink href="/admin/site-settings" label="Thông tin liên hệ" />
           <QuickLink href="/admin/hero-content" label="Nội dung Hero" />
           <QuickLink href="/admin/about-content" label="Nội dung About" />
+          <QuickLink href="/admin/pages" label="Page Builder" />
+          <QuickLink href="/admin/leads" label="Hộp thư liên hệ" />
+          <QuickLink href="/admin/activity-logs" label="Lịch sử hoạt động" />
         </div>
       </div>
     </AdminLayout>

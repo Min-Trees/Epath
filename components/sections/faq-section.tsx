@@ -9,12 +9,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
-import { usePublicCms } from '@/lib/use-public-cms'
+import { useCmsContext } from '@/lib/cms-context'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 export function FAQSection() {
   const t = useTranslations('faq')
-  const cms = usePublicCms()
+  const { data: cms } = useCmsContext()
   const faqs = cms.faqs
 
   // Merge static (i18n) and CMS faqs. CMS takes priority if present.
@@ -91,7 +91,18 @@ export function FAQSection() {
   }
 
   return (
-    <section className="py-20 surface-alt">
+    <section
+      className="py-20 surface-alt relative overflow-hidden"
+      style={
+        faqs.length > 0 && faqs[0]?.imageUrl
+          ? {
+              backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url(${faqs[0].imageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }
+          : undefined
+      }
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

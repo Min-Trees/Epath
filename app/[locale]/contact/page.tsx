@@ -3,16 +3,34 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { MapPin, Phone, Mail, Clock, Send, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { duration, easeOut } from '@/lib/motion-presets'
+import { useCmsContext } from '@/lib/cms-context'
 
 export default function ContactPage() {
   const t = useTranslations('contact')
   const tFooter = useTranslations('footer')
+  const params = useParams()
+  const locale = (params.locale as string) || 'vi'
+  const { data: cms } = useCmsContext()
+  const contactHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).contact as Record<string, unknown>) || {}
+  const heroImage = contactHero?.backgroundImage as string || ''
+  const welcomeText = ((contactHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] || (contactHero?.welcomeTitle as Record<string, string | undefined> || {})?.vi || ''
+  const mainTitle = ((contactHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] || (contactHero?.title as Record<string, string | undefined> || {})?.vi || t('hero.title')
+  const heroSubtitle = ((contactHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] || (contactHero?.subtitle as Record<string, string | undefined> || {})?.vi || t('hero.subtitle')
+
+  const settings = cms.siteSettings
+  const address = (settings?.addressVi as string) || (settings?.addressEn as string) || tFooter('contact.address')
+  const hotline = settings?.hotline as string || tFooter('contact.phone')
+  const email = settings?.contactEmail as string || tFooter('contact.email')
+  const workingHours = (settings?.workingHoursVi as string) || (settings?.workingHoursEn as string) || t('info.hoursValue')
+  const mapEmbedUrl = settings?.mapEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.4854754843906!2d106.6573!3d10.9802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d60b6f0b1e1f%3A0x1c9a0f0b1c9a0f0b!2zMzggVHLhuqFuIFBow6o!5e0!3m2!1sen!2s!4v1234567890'
+
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -28,15 +46,29 @@ export default function ContactPage() {
   return (
     <>
       <section
-        className="pt-32 pb-20"
-        style={{
-          background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)',
-        }}
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={
+          heroImage
+            ? {
+                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : {
+                background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)',
+              }
+        }
       >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('hero.title')}</h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
+            {welcomeText && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
+                <Sparkles className="w-4 h-4" />
+                {welcomeText}
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{mainTitle}</h1>
+            <p className="text-xl text-white/90">{heroSubtitle}</p>
           </div>
         </div>
       </section>
@@ -53,7 +85,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20] mb-1">{t('info.address')}</h3>
-                    <p className="text-[#6B6B6B]">{tFooter('contact.address')}</p>
+                    <p className="text-[#6B6B6B]">{address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -63,7 +95,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-[#231F20] mb-1">{t('info.phone')}</h3>
                     <p className="text-[#6B6B6B]">
-                      Hotline: {tFooter('contact.phone')}
+                      Hotline: {hotline}
                     </p>
                   </div>
                 </div>
@@ -73,7 +105,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#231F20] mb-1">{t('info.email')}</h3>
-                    <p className="text-[#6B6B6B]">{tFooter('contact.email')}</p>
+                    <p className="text-[#6B6B6B]">{email}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -83,14 +115,14 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-[#231F20] mb-1">{t('info.hours')}</h3>
                     <p className="text-[#6B6B6B]">
-                      {t('info.hoursValue')}
+                      {workingHours}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="aspect-video bg-white rounded-2xl overflow-hidden border border-[#3A53A3]/20">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.4854754843906!2d106.6573!3d10.9802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d60b6f0b1e1f%3A0x1c9a0f0b1c9a0f0b!2zMzggVHLhuqFuIFBow6o!5e0!3m2!1sen!2s!4v1234567890"
+                  src={mapEmbedUrl}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

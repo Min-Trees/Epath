@@ -22,6 +22,7 @@ const fields = [
   },
   { key: 'title', label: 'Tiêu đề', kind: 'text' as const, multilang: true },
   { key: 'description', label: 'Mô tả', kind: 'richtext' as const, multilang: true },
+  { key: 'imageUrl', label: 'Hình ảnh', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'pathways' },
 ]
 
 export default function AdminPathwaysPage() {
@@ -45,6 +46,7 @@ export default function AdminPathwaysPage() {
         update={(id, d) => cms.pathways.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.pathways.remove}
         reorder={cms.pathways.reorder}
+        reviewCollection="learningPathways"
       />
     </AdminLayout>
   )

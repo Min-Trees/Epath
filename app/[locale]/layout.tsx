@@ -3,6 +3,7 @@ import { getMessages } from 'next-intl/server'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { ChatbotMount } from '@/components/chatbot-mount'
+import { CmsLayoutWrapper } from '@/components/cms-layout-wrapper'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
@@ -31,6 +32,9 @@ interface LocaleLayoutProps {
  * and so it is lazy-loaded once instead of being part of every page's
  * JS bundle. This is the main fix for the perceived "delay when
  * switching pages".
+ *
+ * CmsLayoutWrapper provides a Context-based CMS data layer to avoid
+ * duplicate fetches across multiple components on the same page.
  */
 export default async function LocaleLayout({
   children,
@@ -41,12 +45,14 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} key={locale}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer locale={locale} />
-        <ChatbotMount />
-      </div>
+      <CmsLayoutWrapper>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer locale={locale} />
+          <ChatbotMount />
+        </div>
+      </CmsLayoutWrapper>
     </NextIntlClientProvider>
   )
 }

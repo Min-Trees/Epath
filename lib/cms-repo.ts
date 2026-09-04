@@ -11,6 +11,7 @@ import {
   AdmissionStep,
   Achievement,
   TeamMember,
+  Media,
   CollectionNames,
 } from './cms-types'
 
@@ -23,17 +24,50 @@ function toObject<T extends { id?: string }>(doc: FirebaseFirestore.QueryDocumen
   return { id: doc.id, ...(data as Omit<T, 'id'>) } as T
 }
 
-export async function listCollection<T extends { id: string }>(name: string): Promise<T[]> {
-  const snap = await coll(name).orderBy('order', 'asc').get()
-  return snap.docs.map((d) => toObject<T>(d))
+export async function listCollection<T extends { id: string; order?: number }>(name: string): Promise<T[]> {
+  // Read all docs and sort by `order` on the client. Avoids needing a
+  // composite Firestore index while the collection is small.
+  const snap = await coll(name).get()
+  const items = snap.docs.map((d) => toObject<T>(d))
+  items.sort((a, b) => ((a as Record<string, unknown>).order as number ?? 0) - ((b as Record<string, unknown>).order as number ?? 0))
+  return items
 }
 
-export async function listActiveCollection<T extends { id: string }>(name: string): Promise<T[]> {
-  const snap = await coll(name)
-    .where('isActive', '==', true)
-    .orderBy('order', 'asc')
-    .get()
-  return snap.docs.map((d) => toObject<T>(d))
+export async function listActiveCollection<T extends { id: string; isActive?: boolean; order?: number }>(name: string): Promise<T[]> {
+  const snap = await coll(name).get()
+  const items = snap.docs
+    .map((d) => toObject<T>(d))
+    .filter((it) => it.isActive !== false)
+  items.sort((a, b) => ((a as Record<string, unknown>).order as number ?? 0) - ((b as Record<string, unknown>).order as number ?? 0))
+  return items
+}
+
+/**
+ * Lọc document theo review status + isActive cho public website.
+ * - status === 'PUBLISHED'
+ * - HOẶC status === 'SCHEDULED' && scheduledAt <= now
+ */
+export async function listPublishedCollection<T extends {
+  id: string
+  isActive?: boolean
+  status?: string
+  scheduledAt?: string
+}>(name: string, now: Date = new Date()): Promise<T[]> {
+  const snap = await coll(name).get()
+  const items = snap.docs
+    .map((d) => toObject<T>(d))
+    .filter((it) => {
+      if (it.isActive === false) return false
+      const status = it.status || 'DRAFT'
+      if (status === 'PUBLISHED') return true
+      if (status === 'SCHEDULED' && it.scheduledAt) {
+        const t = new Date(it.scheduledAt).getTime()
+        if (!Number.isNaN(t) && t <= now.getTime()) return true
+      }
+      return false
+    })
+  items.sort((a, b) => ((a as Record<string, unknown>).order as number ?? 0) - ((b as Record<string, unknown>).order as number ?? 0))
+  return items
 }
 
 export async function createDocument<T extends Record<string, unknown>>(
@@ -75,6 +109,7 @@ export async function reorderCollection(
 export const FaqsRepo = {
   list: () => listCollection<FAQ>(CollectionNames.faqs),
   listActive: () => listActiveCollection<FAQ>(CollectionNames.faqs),
+  listPublished: () => listPublishedCollection<FAQ>(CollectionNames.faqs),
   create: (data: Omit<FAQ, 'id'>) => createDocument(CollectionNames.faqs, data),
   update: (id: string, data: Partial<FAQ>) => updateDocument(CollectionNames.faqs, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.faqs, id),
@@ -84,6 +119,7 @@ export const FaqsRepo = {
 export const CoreValuesRepo = {
   list: () => listCollection<CoreValue>(CollectionNames.coreValues),
   listActive: () => listActiveCollection<CoreValue>(CollectionNames.coreValues),
+  listPublished: () => listPublishedCollection<CoreValue>(CollectionNames.coreValues),
   create: (data: Omit<CoreValue, 'id'>) => createDocument(CollectionNames.coreValues, data),
   update: (id: string, data: Partial<CoreValue>) => updateDocument(CollectionNames.coreValues, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.coreValues, id),
@@ -93,6 +129,7 @@ export const CoreValuesRepo = {
 export const PathwaysRepo = {
   list: () => listCollection<LearningPathway>(CollectionNames.learningPathways),
   listActive: () => listActiveCollection<LearningPathway>(CollectionNames.learningPathways),
+  listPublished: () => listPublishedCollection<LearningPathway>(CollectionNames.learningPathways),
   create: (data: Omit<LearningPathway, 'id'>) => createDocument(CollectionNames.learningPathways, data),
   update: (id: string, data: Partial<LearningPathway>) => updateDocument(CollectionNames.learningPathways, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.learningPathways, id),
@@ -102,6 +139,7 @@ export const PathwaysRepo = {
 export const ProgramsRepo = {
   list: () => listCollection<Program>(CollectionNames.programs),
   listActive: () => listActiveCollection<Program>(CollectionNames.programs),
+  listPublished: () => listPublishedCollection<Program>(CollectionNames.programs),
   create: (data: Omit<Program, 'id'>) => createDocument(CollectionNames.programs, data),
   update: (id: string, data: Partial<Program>) => updateDocument(CollectionNames.programs, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.programs, id),
@@ -111,6 +149,7 @@ export const ProgramsRepo = {
 export const PartnersRepo = {
   list: () => listCollection<Partner>(CollectionNames.partners),
   listActive: () => listActiveCollection<Partner>(CollectionNames.partners),
+  listPublished: () => listPublishedCollection<Partner>(CollectionNames.partners),
   create: (data: Omit<Partner, 'id'>) => createDocument(CollectionNames.partners, data),
   update: (id: string, data: Partial<Partner>) => updateDocument(CollectionNames.partners, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.partners, id),
@@ -120,6 +159,7 @@ export const PartnersRepo = {
 export const EventsRepo = {
   list: () => listCollection<CmsEvent>(CollectionNames.events),
   listActive: () => listActiveCollection<CmsEvent>(CollectionNames.events),
+  listPublished: () => listPublishedCollection<CmsEvent>(CollectionNames.events),
   create: (data: Omit<CmsEvent, 'id'>) => createDocument(CollectionNames.events, data),
   update: (id: string, data: Partial<CmsEvent>) => updateDocument(CollectionNames.events, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.events, id),
@@ -129,6 +169,7 @@ export const EventsRepo = {
 export const AdmissionStepsRepo = {
   list: () => listCollection<AdmissionStep>(CollectionNames.admissionSteps),
   listActive: () => listActiveCollection<AdmissionStep>(CollectionNames.admissionSteps),
+  listPublished: () => listPublishedCollection<AdmissionStep>(CollectionNames.admissionSteps),
   create: (data: Omit<AdmissionStep, 'id'>) => createDocument(CollectionNames.admissionSteps, data),
   update: (id: string, data: Partial<AdmissionStep>) => updateDocument(CollectionNames.admissionSteps, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.admissionSteps, id),
@@ -138,6 +179,7 @@ export const AdmissionStepsRepo = {
 export const AchievementsRepo = {
   list: () => listCollection<Achievement>(CollectionNames.achievements),
   listActive: () => listActiveCollection<Achievement>(CollectionNames.achievements),
+  listPublished: () => listPublishedCollection<Achievement>(CollectionNames.achievements),
   create: (data: Omit<Achievement, 'id'>) => createDocument(CollectionNames.achievements, data),
   update: (id: string, data: Partial<Achievement>) => updateDocument(CollectionNames.achievements, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.achievements, id),
@@ -147,8 +189,16 @@ export const AchievementsRepo = {
 export const TeamMembersRepo = {
   list: () => listCollection<TeamMember>(CollectionNames.teamMembers),
   listActive: () => listActiveCollection<TeamMember>(CollectionNames.teamMembers),
+  listPublished: () => listPublishedCollection<TeamMember>(CollectionNames.teamMembers),
   create: (data: Omit<TeamMember, 'id'>) => createDocument(CollectionNames.teamMembers, data),
   update: (id: string, data: Partial<TeamMember>) => updateDocument(CollectionNames.teamMembers, id, data),
   remove: (id: string) => deleteDocument(CollectionNames.teamMembers, id),
   reorder: (ids: string[]) => reorderCollection(CollectionNames.teamMembers, ids),
+}
+
+export const MediaRepo = {
+  list: () => listCollection<Media>(CollectionNames.media),
+  create: (data: Omit<Media, 'id'>) => createDocument(CollectionNames.media, data),
+  update: (id: string, data: Partial<Media>) => updateDocument(CollectionNames.media, id, data),
+  remove: (id: string) => deleteDocument(CollectionNames.media, id),
 }

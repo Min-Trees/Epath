@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Target, Eye, Heart, Users, BookOpen, Sparkles, GraduationCap, Compass, Layers, Award, Network } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -9,7 +8,8 @@ import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import type { CoreValue, AboutContent } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { Locale } from '@/lib/cms-types'
 
 interface MilestoneItem {
   year: string
@@ -26,41 +26,34 @@ const fallbackMilestones = [
   { year: '2024', titleKey: 'm5Title', descKey: 'm5Desc' },
 ]
 
+function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
+}
+
 export default function AboutPage() {
   const t = useTranslations('about')
   const params = useParams()
-  const locale = (params.locale as string) || 'vi'
+  const locale = ((params.locale as string) || 'vi') as Locale
 
-  const [aboutContent, setAboutContent] = useState<AboutContent | null>(null)
-  const [coreValues, setCoreValues] = useState<CoreValue[]>([])
-  const [milestones, setMilestones] = useState<MilestoneItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // FIX: Use shared CMS context instead of redundant direct fetches
+  // This eliminates duplicate API calls and ensures data consistency
+  const { data: cms } = useCmsContext()
+  const aboutContent = cms.aboutContent
+  const coreValues = cms.coreValues
 
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/cms/about-content').then((r) => r.json()),
-      fetch('/api/cms/core-values').then((r) => r.json()),
-    ])
-      .then(([aboutData, coreValuesData]) => {
-        if (aboutData.items && aboutData.items.length > 0) {
-          const item = aboutData.items[0]
-          setAboutContent(item)
-          try {
-            const parsedMilestones = JSON.parse(item.milestones || '[]')
-            if (parsedMilestones.length > 0) {
-              setMilestones(parsedMilestones)
-            }
-          } catch {
-            // Use fallback milestones
-          }
-        }
-        if (coreValuesData.items && coreValuesData.items.length > 0) {
-          setCoreValues(coreValuesData.items.filter((v: CoreValue) => v.isActive).sort((a: CoreValue, b: CoreValue) => a.order - b.order))
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false))
-  }, [])
+  // Parse milestones from CMS or use fallback
+  let milestones: MilestoneItem[] = []
+  if (aboutContent?.milestones) {
+    try {
+      const parsedMilestones = JSON.parse(aboutContent.milestones)
+      if (parsedMilestones.length > 0) {
+        milestones = parsedMilestones
+      }
+    } catch {
+      // Use fallback milestones
+    }
+  }
 
   // Intro paragraphs
   const introParagraphs = aboutContent?.introContent?.vi?.split('\n\n').filter(Boolean) ||
@@ -77,10 +70,12 @@ export default function AboutPage() {
   // Use CMS core values or i18n fallback
   const displayValues = coreValues.length > 0 ? coreValues : []
 
+  const heroImage = aboutContent?.heroImage || ''
+
   return (
     <>
       <section
-        className="pt-32 pb-20"
+        className="pt-32 pb-20 relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
       >
         <div className="container mx-auto px-4">
@@ -91,7 +86,7 @@ export default function AboutPage() {
             className="max-w-3xl mx-auto text-center text-white"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {aboutContent?.introTitle?.vi || aboutContent?.introTitle?.en || t('hero.title')}
+              {(locale === 'vi' ? aboutContent?.introTitle?.vi : aboutContent?.introTitle?.en) || aboutContent?.introTitle?.vi || t('hero.title')}
             </h1>
             <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
           </motion.div>
@@ -141,9 +136,21 @@ export default function AboutPage() {
               transition={{ duration: duration.normal, ease: easeOut }}
               className="relative"
             >
-              <div className="aspect-square bg-gradient-to-br from-[#3A53A3]/10 to-[#8BC53F]/10 rounded-2xl flex items-center justify-center">
-                <BookOpen className="w-32 h-32 text-[#3A53A3]/20" />
-              </div>
+              {heroImage ? (
+                <div className="aspect-square rounded-2xl flex items-center justify-center overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={heroImage}
+                    alt={pick(aboutContent?.introTitle, locale) || t('hero.title')}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-square bg-gradient-to-br from-[#3A53A3]/10 to-[#8BC53F]/10 rounded-2xl flex items-center justify-center">
+                  <BookOpen className="w-32 h-32 text-[#3A53A3]/20" />
+                </div>
+              )}
               <div className="absolute -bottom-6 -right-6 bg-[#F05A28] text-white rounded-xl p-6 shadow-lg">
                 <div className="text-4xl font-bold">60+</div>
                 <div className="text-sm">{t('stats.edmentum')}</div>

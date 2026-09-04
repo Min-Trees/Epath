@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { ArrowRight, Sprout, Book, GraduationCap, Trophy } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import type { LearningPathway } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { LearningPathway, Locale } from '@/lib/cms-types'
 
-// Default pathways if CMS is empty
 const defaultPathways: Array<{ id: string; level: string }> = [
   { id: 'kindergarten', level: 'kindergarten' },
   { id: 'elementary', level: 'elementary' },
@@ -24,26 +23,24 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; style?: 
   high: Trophy,
 }
 
+function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
+}
+
 export function LearningPathwaysSection() {
   const t = useTranslations('pathways')
   const tNav = useTranslations('nav')
   const tLevels = useTranslations('programs.levels')
   const params = useParams()
-  const locale = (params.locale as string) || 'vi'
+  const locale = ((params.locale as string) || 'vi') as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.1 })
-  const [pathways, setPathways] = useState<LearningPathway[]>([])
+  const { data: cms } = useCmsContext()
+  const pathways = (cms.pathways || [])
+    .filter((p) => p.isActive !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
-  useEffect(() => {
-    fetch('/api/cms/pathways')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          setPathways(data.items.filter((p: LearningPathway) => p.isActive).sort((a: LearningPathway, b: LearningPathway) => a.order - b.order))
-        }
-      })
-      .catch(console.error)
-  }, [])
-
+  // Use ONLY ONE data source: CMS if available, otherwise fallback
   const displayPathways = pathways.length > 0 ? pathways : defaultPathways
 
   return (
@@ -61,31 +58,33 @@ export function LearningPathwaysSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayPathways.map((pathway, index) => {
             const accent = accentCycle[index % accentCycle.length]
-            const level = 'level' in pathway ? pathway.level : (pathway as { id: string }).id
-            const isCMS = 'title' in pathway
             const cmsPathway = pathway as LearningPathway
+            const isCMS = 'title' in pathway && (pathway as LearningPathway).title !== undefined
+
+            const level = isCMS
+              ? cmsPathway.level
+              : (pathway as { level: string }).level
 
             const IconComponent = iconMap[level] || Sprout
 
-            const levelTitle = isCMS && cmsPathway.title
-              ? (cmsPathway.title?.vi || cmsPathway.title?.en)
+            const levelTitle = isCMS
+              ? pick(cmsPathway.title, locale)
               : tLevels(level as 'kindergarten' | 'elementary' | 'middle' | 'high')
 
-            const levelLabel = isCMS && cmsPathway.title
-              ? (cmsPathway.title?.vi || cmsPathway.title?.en)
+            const levelLabel = isCMS
+              ? pick(cmsPathway.title, locale)
               : tNav(level as 'kindergarten' | 'elementary' | 'middle' | 'high')
 
-            const description = isCMS && cmsPathway.description
-              ? (cmsPathway.description?.vi || cmsPathway.description?.en)
+            const description = isCMS
+              ? pick(cmsPathway.description, locale)
               : t(`${level}Desc`)
 
             const objectives = isCMS ? cmsPathway.objectives : []
-
-            const pathwayKey = 'id' in pathway ? pathway.id : `default-${level}`
+            const pathwayImage = isCMS ? cmsPathway.imageUrl : ''
 
             return (
               <div
-                key={pathwayKey}
+                key={isCMS ? cmsPathway.id : `default-${level}`}
                 className="pathway-card-wrap"
                 style={{ ['--reveal-delay' as string]: `${index * 0.08}s` }}
               >
@@ -104,6 +103,19 @@ export function LearningPathwaysSection() {
                     <div className="pathway-watermark absolute top-4 right-4" style={{ color: accent.color }}>
                       <IconComponent className="w-24 h-24" />
                     </div>
+
+                    {/* Optional CMS image */}
+                    {pathwayImage && (
+                      <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={pathwayImage}
+                          alt={levelTitle}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
 
                     {/* Icon badge */}
                     <div className="relative w-16 h-16 mb-4">
@@ -131,15 +143,20 @@ export function LearningPathwaysSection() {
                           {t('curriculum')}
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {objectives.slice(0, 4).map((obj, i) => (
-                            <span
-                              key={i}
-                              className="text-xs px-2 py-1 rounded-full bg-white/60"
-                              style={{ color: accent.color }}
-                            >
-                              {typeof obj === 'string' ? obj : obj.vi || obj.en}
-                            </span>
-                          ))}
+                          {objectives.slice(0, 4).map((obj, i) => {
+                            const text = typeof obj === 'string'
+                              ? obj
+                              : pick(obj, locale) || (obj as { vi: string }).vi || (obj as { en: string }).en
+                            return (
+                              <span
+                                key={i}
+                                className="text-xs px-2 py-1 rounded-full bg-white/60"
+                                style={{ color: accent.color }}
+                              >
+                                {text}
+                              </span>
+                            )
+                          })}
                         </div>
                       </div>
                     )}

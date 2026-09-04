@@ -12,10 +12,18 @@
  *   - `next/dynamic` with `ssr: false` defers loading until after
  *     first paint so route navigation feels instant.
  *   - The import itself is then cached for subsequent navigations.
+ *
+ * Also mounts ChatInvite — a gentle browsing invite that appears
+ * after 45s of genuine browsing time (non-intrusive, auto-hides).
+ * Both components coordinate via sessionStorage so clicking the
+ * invite opens the chat bubble.
  */
 
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
+import { ChatInvite } from './chat-invite'
+
+const OPEN_CHAT_KEY = 'epath-wants-chat-open'
 
 const Chatbot = dynamic(
   () => import('./chatbot').then((m) => m.Chatbot),
@@ -38,13 +46,23 @@ export function ChatbotMount() {
   // initial route has finished its critical work.
   const [ready, setReady] = useState(false)
   useEffect(() => {
-    // requestIdleCallback would be nicer, but Safari doesn't support
-    // it without polyfill. setTimeout(0) is a safe universal fallback
-    // that still runs after paint.
     const id = window.setTimeout(() => setReady(true), 50)
     return () => window.clearTimeout(id)
   }, [])
 
+  const handleInviteOpenChat = () => {
+    // Signal the chatbot (once it's mounted) to open itself.
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(OPEN_CHAT_KEY, '1')
+      window.dispatchEvent(new CustomEvent('epath-open-chat'))
+    }
+  }
+
   if (!ready) return null
-  return <Chatbot />
+  return (
+    <>
+      <ChatInvite onStartChat={handleInviteOpenChat} />
+      <Chatbot />
+    </>
+  )
 }

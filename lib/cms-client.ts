@@ -19,6 +19,11 @@ import type {
   SiteSettingsInput,
   HeroContentInput,
   AboutContentInput,
+  LeadInput,
+  BlogPostInput,
+  Lead,
+  LeadStatus,
+  BlogPost,
   FAQ,
   Program,
   Partner,
@@ -57,6 +62,23 @@ function listUrl(name: string) {
 
 export interface CmsListResponse<T> {
   items: T[]
+}
+
+export type { Lead, LeadStatus, BlogPost } from './cms-types'
+
+export interface ActivityLog {
+  id: string
+  action: 'create' | 'update' | 'delete' | 'reorder' | 'login' | 'logout'
+  collection: string
+  documentId: string
+  documentLabel: string
+  actorUid: string
+  actorEmail: string
+  actorName: string
+  changes?: Record<string, unknown> | null
+  ip: string
+  userAgent: string
+  createdAt?: Date | string
 }
 
 export const cms = {
@@ -240,5 +262,56 @@ export const cms = {
       request<{ ok: true }>(`${listUrl('about-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) =>
       request<{ ok: true }>(`${listUrl('about-content')}/${id}`, { method: 'DELETE' }),
+  },
+  activityLogs: {
+    list: (params: { collection?: string; action?: string; limit?: number } = {}) => {
+      const search = new URLSearchParams()
+      if (params.collection) search.set('collection', params.collection)
+      if (params.action) search.set('action', params.action)
+      if (params.limit) search.set('limit', String(params.limit))
+      const qs = search.toString()
+      return request<CmsListResponse<ActivityLog>>(
+        `${listUrl('activity-logs')}${qs ? `?${qs}` : ''}`
+      ).then((r) => r.items)
+    },
+  },
+  leads: {
+    list: (params: { status?: LeadStatus; source?: string; limit?: number } = {}) => {
+      const search = new URLSearchParams()
+      if (params.status) search.set('status', params.status)
+      if (params.source) search.set('source', params.source)
+      if (params.limit) search.set('limit', String(params.limit))
+      const qs = search.toString()
+      return request<CmsListResponse<Lead>>(
+        `${listUrl('leads')}${qs ? `?${qs}` : ''}`
+      ).then((r) => r.items)
+    },
+    update: (id: string, data: Partial<LeadInput>) =>
+      request<{ ok: true }>(`${listUrl('leads')}/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('leads')}/${id}`, { method: 'DELETE' }),
+  },
+  blogPosts: {
+    list: () => request<CmsListResponse<BlogPost>>(listUrl('blog-posts')).then((r) => r.items),
+    create: (data: BlogPostInput) =>
+      request<{ id: string }>(listUrl('blog-posts'), {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<BlogPostInput>) =>
+      request<{ ok: true }>(`${listUrl('blog-posts')}/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('blog-posts')}/${id}`, { method: 'DELETE' }),
+    reorder: (ids: string[]) =>
+      request<{ ok: true }>(`${listUrl('blog-posts')}/reorder`, {
+        method: 'POST',
+        body: JSON.stringify({ ids }),
+      }),
   },
 }

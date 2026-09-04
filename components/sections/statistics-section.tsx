@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import type { Statistic } from '@/lib/cms-types'
+import { useCmsContext } from '@/lib/cms-context'
+import type { Statistic, Locale } from '@/lib/cms-types'
 
 interface CounterProps {
   value: number
@@ -25,6 +26,7 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
     let raf = 0
     let timeoutId: ReturnType<typeof setTimeout>
     const begin = (timestamp: number) => {
+      beginTimestamp = timestamp
       const tick = (now: number) => {
         const elapsed = now - beginTimestamp
         const progress = Math.min(elapsed / 1500, 1)
@@ -32,7 +34,6 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
         setCount(Math.round(value * eased))
         if (progress < 1) raf = requestAnimationFrame(tick)
       }
-      beginTimestamp = timestamp
       raf = requestAnimationFrame(tick)
     }
     let beginTimestamp = 0
@@ -46,7 +47,7 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
   return (
     <div ref={ref} className="stat-cell text-center">
       <div
-        className="inline-flex items-baseline justify-center px-6 py-4 rounded-xl"
+        className="inline-flex items-baseline justify-center px-6 py-4 rounded-xl overflow-hidden relative"
         style={{ backgroundColor: bgColor }}
       >
         <span className="text-4xl md:text-5xl font-bold tabular-nums" style={{ color }}>
@@ -63,7 +64,6 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
   )
 }
 
-// Fallback stats for when CMS is empty
 const fallbackStats = [
   { value: 10, suffix: '+', statKey: 'years' },
   { value: 4, suffix: '', statKey: 'levels' },
@@ -72,24 +72,20 @@ const fallbackStats = [
   { value: 100, suffix: '%', statKey: 'personalized' },
 ]
 
+function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+  if (!v) return ''
+  return v[locale] || v.vi || v.en || ''
+}
+
 export function StatisticsSection() {
   const t = useTranslations('stats')
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.25 })
   const [active, setActive] = useState(false)
-  const [stats, setStats] = useState<Statistic[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/cms/statistics')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.items && data.items.length > 0) {
-          setStats(data.items.filter((s: Statistic) => s.isActive).sort((a: Statistic, b: Statistic) => a.order - b.order))
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false))
-  }, [])
+  const { data: cms } = useCmsContext()
+  const cmsStats = cms.statistics || []
+  const stats = cmsStats
+    .filter((s) => s.isActive !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
   useEffect(() => {
     const el = sectionRef.current
@@ -101,7 +97,21 @@ export function StatisticsSection() {
     return () => io.disconnect()
   }, [sectionRef])
 
-  const displayStats = stats.length > 0 ? stats : fallbackStats
+  // Use ONLY ONE data source: CMS if available, otherwise fallback
+  // Defensive dedup: collapse stats that share the same value+suffix so a
+  // messy Firestore collection never produces duplicate tiles on the page.
+  const displayStats = (() => {
+    if (stats.length === 0) return fallbackStats
+    const seen = new Set<string>()
+    const out: Statistic[] = []
+    for (const s of stats) {
+      const key = `${String((s as Statistic).value).trim()}__${((s as Statistic).suffix || '').trim()}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      out.push(s)
+    }
+    return out
+  })()
 
   return (
     <section ref={sectionRef} className="py-20 bg-white stats-section">
@@ -109,28 +119,41 @@ export function StatisticsSection() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {displayStats.map((stat, index) => {
             const accent = accentCycle[index % accentCycle.length]
-            const isFallback = stats.length === 0
-            const statValue = isFallback
+            const isUsingFallback = stats.length === 0
+
+            const statValue = isUsingFallback
               ? (stat as { value: number }).value
               : parseInt((stat as Statistic).value) || 0
-            const statSuffix = isFallback
+            const statSuffix = isUsingFallback
               ? (stat as { suffix: string }).suffix
               : (stat as Statistic).suffix || ''
-            const statLabel = isFallback
+            const statLabel = isUsingFallback
               ? t((stat as { statKey: string }).statKey)
-              : (stat as Statistic).label?.vi || (stat as Statistic).label?.en || ''
+              : pick((stat as Statistic).label, 'vi' as Locale) || pick((stat as Statistic).label, 'en' as Locale)
 
             return (
-              <Counter
-                key={isFallback ? (stat as { statKey: string }).statKey : (stat as Statistic).id}
-                value={statValue}
-                suffix={statSuffix}
-                label={statLabel}
-                color={accent.color}
-                bgColor={accent.bg}
-                active={active}
-                startDelayMs={index * 80}
-              />
+              <div key={isUsingFallback ? (stat as { statKey: string }).statKey : (stat as Statistic).id} className="relative">
+                {!isUsingFallback && (stat as Statistic).imageUrl && (
+                  <div className="aspect-square w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-4" style={{ borderColor: accent.color }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={(stat as Statistic).imageUrl}
+                      alt={statLabel}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <Counter
+                  value={statValue}
+                  suffix={statSuffix}
+                  label={statLabel}
+                  color={accent.color}
+                  bgColor={accent.bg}
+                  active={active}
+                  startDelayMs={index * 80}
+                />
+              </div>
             )
           })}
         </div>

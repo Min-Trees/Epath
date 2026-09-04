@@ -25,6 +25,7 @@ export default function AdminHeroContentPage() {
         load={cms.heroContent.list}
         update={cms.heroContent.update as (id: string, data: Partial<HeroContent>) => Promise<unknown>}
         create={cms.heroContent.create as (data: Partial<HeroContent>) => Promise<{ id: string }>}
+        remove={cms.heroContent.remove}
       />
     </AdminLayout>
   )

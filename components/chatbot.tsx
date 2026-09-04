@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from 'next-intl'
 import {
   MessageCircle, X, Send, Bot, User, ChevronRight, GraduationCap,
   DollarSign, Clock, Award, Phone, Mail, Check, ThumbsUp, ThumbsDown,
@@ -9,7 +10,8 @@ import {
   Loader2, Building2, Heart, TrendingUp, Maximize2, Baby, ShieldCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { extractTopics, summarizeConversation, type LeadPayload } from '@/lib/google-sheets'
+import { summarizeConversation, type LeadPayload } from '@/lib/google-sheets'
+import * as content from '@/lib/chatbot-content'
 
 interface Message {
   id: string
@@ -270,18 +272,19 @@ function isValidVietnamPhone(phone: string): boolean {
 }
 
 export function Chatbot() {
+  const locale = useLocale()
+  const l = content.pickLocale(locale)
+
+  // Derive the initial greeting with the locale already resolved
+  const initialGreeting = useMemo(() => ({ content: content.greeting[l], timestamp: new Date() }), [l])
+
   const [isOpen, setIsOpen] = useState(false)
   const [preChatLead, setPreChatLead] = useState<PreChatLead | null>(null)
   const [preChatForm, setPreChatForm] = useState<PreChatLead>({ name: '', phone: '' })
   const [preChatError, setPreChatError] = useState<string | null>(null)
   const [preChatSubmitting, setPreChatSubmitting] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Xin chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath Education.\n\nEm có thể hỗ trợ anh/chị tìm hiểu về:\n• Giới thiệu EPath & các lộ trình học tập\n• Độ tuổi & chương trình phù hợp cho con\n• Lịch học, học phí & chính sách\n• Đánh giá năng lực đầu vào & đăng ký tư vấn\n\nAnh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi cô bất cứ điều gì nhé! 😊',
-      timestamp: new Date(),
-    },
+    { id: '1', role: 'assistant' as const, ...initialGreeting },
   ])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -456,6 +459,24 @@ export function Chatbot() {
     STORAGE_KEY,
   ])
 
+  // -----------------------------------------------------------------
+  // Respond to external open-chat signals (from ChatInvite):
+  //   1. sessionStorage carries the intent across navigations.
+  //   2. The live 'epath-open-chat' event handles the mounted case.
+  // -----------------------------------------------------------------
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const openChat = () => {
+      setIsOpen(true)
+      sessionStorage.removeItem('epath-wants-chat-open')
+    }
+    if (sessionStorage.getItem('epath-wants-chat-open') === '1') {
+      openChat()
+    }
+    window.addEventListener('epath-open-chat', openChat)
+    return () => window.removeEventListener('epath-open-chat', openChat)
+  }, [])
+
   // Listener so other tabs / a manual clear in DevTools stay in sync.
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -484,12 +505,7 @@ export function Chatbot() {
     setInputValue('')
     setIsTyping(false)
     setMessages([
-      {
-        id: '1',
-        role: 'assistant',
-        content: 'Xin chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath Education.\n\nEm có thể hỗ trợ anh/chị tìm hiểu về:\n• Giới thiệu EPath & các lộ trình học tập\n• Độ tuổi & chương trình phù hợp cho con\n• Lịch học, học phí & chính sách\n• Đánh giá năng lực đầu vào & đăng ký tư vấn\n\nAnh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi cô bất cứ điều gì nhé! 😊',
-        timestamp: new Date(),
-      },
+      { id: '1', role: 'assistant' as const, content: content.greeting[l], timestamp: new Date() },
     ])
     setContactForm({
       name: '',
@@ -542,11 +558,7 @@ export function Chatbot() {
         setCtaReminderSent(true)
         // Use setTimeout so this is added after the current batch renders.
         setTimeout(() => {
-          addMessage(
-            'assistant',
-            'Nếu anh/chị muốn được tư vấn chi tiết hơn về lộ trình cho con, có thể để lại SĐT — cô tư vấn viên sẽ gọi lại trong 24h ạ.',
-            false
-          )
+          addMessage('assistant', content.ctaReminder[l], false)
         }, 100)
       }
       return next
@@ -643,11 +655,11 @@ export function Chatbot() {
     const name = preChatForm.name.trim()
     const phone = preChatForm.phone.trim()
     if (!name || !phone) {
-      setPreChatError('Dạ anh/chị vui lòng nhập đầy đủ họ tên và số điện thoại ạ.')
+      setPreChatError(l === 'vi' ? 'Dạ anh/chị vui lòng nhập đầy đủ họ tên và số điện thoại ạ.' : 'Please enter your name and phone number.')
       return
     }
     if (!isValidVietnamPhone(phone)) {
-      setPreChatError('Số điện thoại chưa đúng định dạng. Anh/chị kiểm tra lại giúp em nhé (VD: 0912 345 678).')
+      setPreChatError(content.preChatForm[l].phoneFormatError)
       return
     }
 
@@ -666,10 +678,11 @@ export function Chatbot() {
       phone: prev.phone || phone,
     }))
 
-    // Fire the lead to the backend immediately so the sales Zalo bot
-    // gets pinged the moment the parent enters their info — they no
-    // longer have to also fill out the bigger "Đăng ký tư vấn" form.
-    // Fire-and-forget: we don't block the chat start on the network.
+    // Lưu lead vào Firestore để admin thấy, nhưng KHÔNG bắn Zalo vội —
+    // phụ huynh chỉ vừa nhập tên + SĐT, chưa có nội dung tương tác
+    // thực sự. Backend sẽ tự skip Zalo khi nhận payload không có signal
+    // (count/topics/summary/form đều trống). Zalo chỉ bắn khi phụ huynh
+    // thực sự hỏi gì đó hoặc submit form "Đăng ký tư vấn" đầy đủ.
     void fetch('/api/chatbot/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -681,7 +694,7 @@ export function Chatbot() {
         program: '',
         campus: '',
         topicsInterested: [],
-        conversationSummary: 'Pre-chat capture (chưa có nội dung tư vấn)',
+        conversationSummary: '',
         conversationCount: 0,
         locale: detectedLocale,
         source: 'chatbot-prechat',
@@ -690,11 +703,15 @@ export function Chatbot() {
       .then(async (res) => {
         if (!res.ok) {
           console.warn('[chatbot] pre-chat lead POST failed:', res.status)
-        } else {
-          // Mark as notified so the later "Đăng ký tư vấn" submit
-          // (handleContactSubmit) doesn't fire a second Zalo message.
-          setPreChatLead((prev) => (prev ? { ...prev, notified: true } : prev))
+          return
         }
+        const data = await res.json().catch(() => null)
+        // Zalo chỉ thực sự fire khi parent đã tương tác. Nếu backend báo
+        // `zalo.ok === true` thì mới mark `notified`, ngược lại để false
+        // để "Đăng ký tư vấn" submit sau vẫn bắn Zalo đúng 1 lần khi
+        // parent đã thực sự tương tác.
+        const notified = Boolean(data?.zalo?.ok)
+        setPreChatLead((prev) => (prev ? { ...prev, notified } : prev))
       })
       .catch((err) => {
         console.warn('[chatbot] pre-chat lead POST error:', err)
@@ -702,10 +719,7 @@ export function Chatbot() {
 
     // Greet them by first name so the rest of the conversation feels personal.
     const firstName = name.split(/\s+/).slice(-1)[0] || name
-    addMessage(
-      'assistant',
-      `Cảm ơn anh/chị ${firstName} đã để lại thông tin ạ! 🌷\n\nEm là Cô Hương — Cố vấn Học tập tại EPath Education. Em sẵn sàng hỗ trợ anh/chị tìm hiểu về chương trình Tiểu học – THPT, lộ trình học tập, học phí, hoặc đăng ký tư vấn 1-1 với cô tư vấn viên.\n\nAnh/chị muốn em chia sẻ về vấn đề nào trước ạ?`,
-    )
+    addMessage('assistant', content.preChatGreeting[l](firstName))
 
     setChatStep('main')
     setPreChatForm({ name: '', phone: '' })
@@ -729,8 +743,8 @@ export function Chatbot() {
       addMessage(
         'assistant',
         preChatLead
-          ? `Dạ vâng ạ! Cô đã ghi nhận thông tin của anh/chị ${preChatLead.name} rồi. Anh/chị chỉ cần bổ sung thêm vài thông tin bên dưới để cô tư vấn viên gọi lại tư vấn chi tiết nhé ạ.`
-          : 'Dạ, để EPath liên hệ tư vấn chi tiết cho anh/chị, em mời điền nhanh thông tin bên dưới nhé. Chỉ cần Họ tên, Số điện thoại và một vài thông tin cơ bản ạ.'
+          ? content.contactForm[l].preChatAck(preChatLead.name)
+          : content.contactForm[l].noPreChatAck
       )
       return
     }
@@ -803,10 +817,7 @@ export function Chatbot() {
 
     // Send intro message FIRST, then show topic questions buttons.
     // This way user reads the intro before seeing the question buttons.
-    addMessage(
-      'assistant',
-      `📚 **${topic.label}**\n\nEm gợi ý một số câu hỏi phổ biến về ${topic.label.toLowerCase()}. Anh/chị chọn câu hỏi hoặc hỏi cô trực tiếp nhé!`
-    )
+    addMessage('assistant', content.topicPrompt[l](topic.label))
 
     // Store selected topic and show buttons AFTER the message is added
     setTimeout(() => {
@@ -844,20 +855,19 @@ export function Chatbot() {
       messages.map((m) => ({ role: m.role, content: m.content }))
     )
 
-    // Build final topic list: combine user-clicked topics (high signal)
-    // with keyword-extracted topics (covers free-form typing).
-    const keywordTopics = extractTopics(
-      messages.map((m) => ({ role: m.role, content: m.content }))
-    )
-    const combinedTopics = Array.from(
-      new Set([...topicsInterested, ...keywordTopics])
-    )
+    // Chỉ ghi nhận những chủ đề user đã chủ động bấm vào (high signal).
+    // KHÔNG dùng extractTopics (heuristic keyword matcher) vì nó sẽ
+    // tự suy ra topic từ 1 từ khoá trong câu thoại — đó là dữ liệu
+    // suy đoán, không phải dữ liệu user thực sự tương tác. Sales
+    // team không nên nhận "topic" mà phụ huynh chưa từng hỏi rõ.
 
     // Merge the optional "note" into summary so it lands in the same
     // column instead of forcing a 14th sheet column.
     const note = contactForm.note.trim()
     const finalSummary = note ? `${summary}${summary ? '\n' : ''}Ghi chú: ${note}` : summary
 
+    // Chỉ gửi các trường phụ huynh thực sự điền — bỏ qua các trường rỗng
+    // để không kèm dữ liệu mẫu/template xuống backend.
     const payload: LeadPayload = {
       name,
       phone,
@@ -865,7 +875,7 @@ export function Chatbot() {
       childAge: contactForm.childAge,
       program: contactForm.program,
       campus: contactForm.campus,
-      topicsInterested: combinedTopics,
+      topicsInterested: topicsInterested,
       conversationSummary: finalSummary,
       conversationCount: userQuestionCount,
       locale: detectedLocale,
@@ -884,17 +894,13 @@ export function Chatbot() {
       if (!response.ok || !data.success) {
         const message =
           (typeof data?.error === 'string' && data.error) ||
-          'Không thể gửi thông tin lúc này. Quý phụ huynh vui lòng thử lại sau.'
+          content.contactForm[l].errorDefault
         setSubmitError(message)
         setIsSubmitting(false)
         return
       }
 
-      addMessage(
-        'assistant',
-        `Cảm ơn ${name || 'quý phụ huynh'}!\n\nThông tin của anh/chị đã được cô ghi nhận. Cô tư vấn viên EPath sẽ liên hệ qua số ${phone} trong vòng 24 giờ để hỗ trợ chi tiết ạ.\n\nTrong thời gian chờ, anh/chị có thể tiếp tục hỏi cô bất kỳ điều gì về chương trình nhé.`,
-        true
-      )
+      addMessage('assistant', content.contactForm[l].successTitle(name || (l === 'vi' ? 'quý phụ huynh' : 'parent')), true)
       setContactForm({
         name: '',
         phone: '',
@@ -1024,10 +1030,10 @@ export function Chatbot() {
                 </h3>
                 <p className="text-white/80 text-xs sm:text-sm truncate">
                   {chatStep === 'contact'
-                    ? 'Đăng ký tư vấn 1-1'
+                    ? content.chatHeaderStatus[l].contact
                     : preChatLead
-                    ? `Xin chào ${preChatLead.name} 👋`
-                    : 'EPath Education'}
+                    ? content.chatHeaderStatus[l].welcomeBack(preChatLead.name)
+                    : content.chatHeaderStatus[l].default}
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-1 shrink-0">
@@ -1038,11 +1044,11 @@ export function Chatbot() {
               <button
                 onClick={handleResetSession}
                 className="hidden sm:flex text-white/80 hover:text-white p-1 shrink-0 items-center gap-1 text-xs"
-                aria-label="Làm mới hội thoại"
-                title="Làm mới hội thoại"
+                aria-label={content.resetSession[l]}
+                title={content.resetSession[l]}
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Làm mới</span>
+                <span>{content.resetSession[l].split(' ')[0]}</span>
               </button>
               <button
                 onClick={() => setIsOpen(false)}
@@ -1207,10 +1213,12 @@ export function Chatbot() {
                 >
                   <div className="flex items-center gap-2 text-[#3A53A3]">
                     <ShieldCheck className="w-4 h-4" />
-                    <p className="text-sm font-medium">Đăng ký tư vấn</p>
+                    <p className="text-sm font-medium">{content.contactForm[l].header}</p>
                   </div>
                   <p className="text-sm text-[#6B6B6B] text-center">
-                    Để lại thông tin, cô tư vấn viên sẽ gọi lại trong 24 giờ ạ.
+                    {l === 'vi'
+                      ? 'Để lại thông tin, cô tư vấn viên sẽ gọi lại trong 24 giờ ạ.'
+                      : 'Leave your details and our advisor will call you back within 24 hours.'}
                   </p>
 
                   <div className="relative">
@@ -1218,7 +1226,7 @@ export function Chatbot() {
                     <input
                       type="text"
                       autoComplete="name"
-                      placeholder="Họ và tên phụ huynh *"
+                      placeholder={content.contactForm[l].nameLabel}
                       value={contactForm.name}
                       onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1230,7 +1238,7 @@ export function Chatbot() {
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
-                      placeholder="Số điện thoại *"
+                      placeholder={content.contactForm[l].phoneLabel}
                       value={contactForm.phone}
                       onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1238,7 +1246,7 @@ export function Chatbot() {
                   </div>
                   <input
                     type="email"
-                    placeholder="Email (không bắt buộc)"
+                    placeholder={content.contactForm[l].emailLabel}
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1250,12 +1258,10 @@ export function Chatbot() {
                       onChange={(e) => setContactForm({ ...contactForm, childAge: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                     >
-                      <option value="">Độ tuổi của con</option>
-                      <option value="3-5 tuổi (Mầm non)">3-5 tuổi (Mầm non)</option>
-                      <option value="6-10 tuổi (Tiểu học)">6-10 tuổi (Tiểu học)</option>
-                      <option value="11-14 tuổi (THCS)">11-14 tuổi (THCS)</option>
-                      <option value="15-17 tuổi (THPT)">15-17 tuổi (THPT)</option>
-                      <option value="Trên 18 tuổi">Trên 18 tuổi</option>
+                      <option value="">{content.contactForm[l].childAgePlaceholder}</option>
+                      {content.childAgeOptions[l].map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <select
@@ -1263,36 +1269,23 @@ export function Chatbot() {
                     onChange={(e) => setContactForm({ ...contactForm, program: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                   >
-                    <option value="">Chương trình quan tâm</option>
-                    <option value="Chương trình tiêu chuẩn (Semi-Homeschool)">
-                      Tiêu chuẩn (Semi-Homeschool)
-                    </option>
-                    <option value="Chương trình Quốc tế (Homeschool)">
-                      Quốc tế (Homeschool)
-                    </option>
-                    <option value="Song bằng / Dual Diploma">Song bằng / Dual Diploma</option>
-                    <option value="Chương trình Tiếng Anh">Chương trình Tiếng Anh</option>
-                    <option value="Luyện thi chứng chỉ (SAT/ACT/IELTS)">
-                      Luyện thi chứng chỉ (SAT/ACT/IELTS)
-                    </option>
-                    <option value="Chưa xác định">Chưa xác định</option>
+                    <option value="">{content.contactForm[l].programPlaceholder}</option>
+                    {content.programOptions[l].map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                   <select
                     value={contactForm.campus}
                     onChange={(e) => setContactForm({ ...contactForm, campus: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                   >
-                    <option value="">Cơ sở quan tâm</option>
-                    <option value="EPath Campus (Trần Phú, Thủ Dầu Một)">
-                      EPath Campus (Trần Phú)
-                    </option>
-                    <option value="Little People Lào Cai">Little People Lào Cai</option>
-                    <option value="Little People Lái Thiêu">Little People Lái Thiêu</option>
-                    <option value="Học Online">Học Online</option>
-                    <option value="Chưa xác định">Chưa xác định</option>
+                    <option value="">{content.contactForm[l].campusPlaceholder}</option>
+                    {content.campusOptions[l].map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                   <textarea
-                    placeholder="Ghi chú thêm (không bắt buộc)"
+                    placeholder={content.contactForm[l].noteLabel}
                     value={contactForm.note}
                     onChange={(e) => setContactForm({ ...contactForm, note: e.target.value })}
                     rows={2}
@@ -1303,7 +1296,7 @@ export function Chatbot() {
                   {topicsInterested.length > 0 && (
                     <div className="pt-1">
                       <p className="text-[11px] text-[#6B6B6B] mb-1.5">
-                        Chủ đề bạn đã quan tâm:
+                        {content.contactForm[l].topicsLabel}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {topicsInterested.map((t) => (
@@ -1332,17 +1325,19 @@ export function Chatbot() {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        Đang gửi...
+                        {content.contactForm[l].submittingButton}
                       </>
                     ) : (
                       <>
                         <Phone className="w-4 h-4" />
-                        Gửi thông tin tư vấn
+                        {content.contactForm[l].submitButton}
                       </>
                     )}
                   </motion.button>
                   <p className="text-[10px] text-[#999] text-center leading-relaxed">
-                    Bằng việc gửi thông tin, bạn đồng ý để EPath liên hệ tư vấn qua số điện thoại và email đã cung cấp.
+                    {l === 'vi'
+                      ? 'Bằng việc gửi thông tin, bạn đồng ý để EPath liên hệ tư vấn qua số điện thoại và email đã cung cấp.'
+                      : 'By submitting, you agree to let EPath contact you at the phone number and email provided.'}
                   </p>
                 </motion.div>
               )}
@@ -1397,24 +1392,28 @@ export function Chatbot() {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setChatStep('topics')
-                      addMessage('assistant', 'Dưới đây là các chủ đề EPath có thể hỗ trợ quý phụ huynh:')
+                      addMessage('assistant', l === 'vi'
+                        ? 'Dưới đây là các chủ đề EPath có thể hỗ trợ quý phụ huynh:'
+                        : 'Below are the topics EPath can help you with:')
                     }}
                     className="flex-1 flex items-center justify-center gap-1.5 bg-[#3A53A3]/10 px-3 py-2.5 rounded-xl text-xs text-[#3A53A3] whitespace-nowrap hover:bg-[#3A53A3]/20 transition-colors duration-150 font-medium"
                   >
                     <BookOpen className="w-3.5 h-3.5" />
-                    Xem tất cả chủ đề
+                    {l === 'vi' ? 'Xem tất cả chủ đề' : 'View all topics'}
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setChatStep('contact')
-                      addMessage('assistant', 'Vui lòng điền thông tin để EPath liên hệ tư vấn trực tiếp cho bạn:')
+                      addMessage('assistant', l === 'vi'
+                        ? 'Vui lòng điền thông tin để EPath liên hệ tư vấn trực tiếp cho bạn:'
+                        : 'Please fill in your details so EPath can contact you directly:')
                     }}
                     className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#F05A28] to-[#E04D1A] px-3 py-2.5 rounded-xl text-xs text-white whitespace-nowrap hover:shadow-lg hover:shadow-[#F05A28]/20 transition-all duration-150 font-medium"
                   >
                     <Phone className="w-3.5 h-3.5" />
-                    Đăng ký tư vấn
+                    {content.quickActions[l].bookConsultation}
                   </motion.button>
                 </div>
               </div>
@@ -1456,7 +1455,7 @@ export function Chatbot() {
                     onFocus={() => {
                       setTimeout(scrollToBottom, 100)
                     }}
-                    placeholder="Nhập câu hỏi cho Cô Hương..."
+                    placeholder={content.inputPlaceholder[l]}
                     className="flex-1 px-4 py-3 rounded-2xl bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:ring-2 focus:ring-[#3A53A3]/10 focus:outline-none text-sm transition-all"
                   />
                   <motion.button
@@ -1472,11 +1471,13 @@ export function Chatbot() {
               )}
               {chatStep === 'contact' ? (
                 <p className="text-[10px] text-[#666] text-center mt-1 leading-relaxed">
-                  Vui lòng điền thông tin để nhận tư vấn chi tiết từ EPath.
+                  {l === 'vi'
+                    ? 'Vui lòng điền thông tin để nhận tư vấn chi tiết từ EPath.'
+                    : 'Please fill in the form above to receive a detailed consultation from EPath.'}
                 </p>
               ) : (
                 <p className="text-[10px] text-[#666] text-center mt-2 leading-relaxed">
-                  Cô Hương có thể không phản hồi chính xác 100%. Vui lòng liên hệ trực tiếp để được tư vấn chi tiết.
+                  {content.chatFooter[l].statusOffline}
                 </p>
               )}
             </div>
@@ -1495,7 +1496,7 @@ export function Chatbot() {
         >
           <div className="bg-white px-4 py-2.5 rounded-full shadow-xl border border-[#3A53A3]/20 flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <p className="text-sm text-[#231F20] font-medium">Cô Hương đang online</p>
+            <p className="text-sm text-[#231F20] font-medium">{content.chatFooter[l].statusOnline}</p>
           </div>
         </motion.div>
       )}

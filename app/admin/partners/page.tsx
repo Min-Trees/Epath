@@ -10,7 +10,7 @@ import { semanticColors } from '@/lib/design-tokens'
 
 const fields = [
   { key: 'name', label: 'Tên đối tác', kind: 'text' as const },
-  { key: 'logoUrl', label: 'URL Logo', kind: 'text' as const },
+  { key: 'logoUrl', label: 'Logo', kind: 'image' as const, placeholder: 'SVG/PNG, không giới hạn dung lượng', folder: 'partners' },
   { key: 'website', label: 'Website', kind: 'text' as const },
   {
     key: 'category',
@@ -53,6 +53,7 @@ export default function AdminPartnersPage() {
         update={(id, d) => cms.partners.update(id, d as never) as unknown as Promise<unknown>}
         remove={cms.partners.remove}
         reorder={cms.partners.reorder}
+        reviewCollection="partners"
         renderSummary={(item) => (
           <div>
             <div className="flex items-center gap-2 mb-1">

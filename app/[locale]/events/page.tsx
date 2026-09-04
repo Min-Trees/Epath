@@ -3,31 +3,51 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
-import { Calendar, MapPin, ArrowRight } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
-import { usePublicCms } from '@/lib/use-public-cms'
+import { useCmsContext } from '@/lib/cms-context'
 import type { CmsEvent } from '@/lib/cms-types'
 
 export default function EventsPage() {
   const t = useTranslations('events')
   const params = useParams()
   const locale = (params.locale as string) || 'vi'
-  const cms = usePublicCms()
+  const { data: cms } = useCmsContext()
   const events = cms.events
+  const eventsHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).events as Record<string, unknown>) || {}
+
+  const heroImage = (eventsHero?.backgroundImage as string) || ''
+  const welcomeText = (((eventsHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
+  const mainTitle = (((eventsHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
+  const heroSubtitle = (((eventsHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
 
   return (
     <>
       <section
-        className="pt-32 pb-20"
-        style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
+        className="pt-32 pb-20 relative overflow-hidden"
+        style={
+          heroImage
+            ? {
+                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : { background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }
+        }
       >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{t('hero.title')}</h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
+            {welcomeText && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
+                <Sparkles className="w-4 h-4" />
+                {welcomeText}
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{mainTitle}</h1>
+            <p className="text-xl text-white/90">{heroSubtitle}</p>
           </div>
         </div>
       </section>
@@ -53,10 +73,20 @@ export default function EventsPage() {
                     className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-shadow duration-200"
                   >
                     <div
-                      className="aspect-video flex items-center justify-center"
+                      className="aspect-video flex items-center justify-center overflow-hidden"
                       style={{ backgroundColor: accent.bg }}
                     >
-                      <Calendar className="w-16 h-16" style={{ color: accent.color, opacity: 0.3 }} />
+                      {event.coverImage || event.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={event.coverImage || event.imageUrl}
+                          alt={title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <Calendar className="w-16 h-16" style={{ color: accent.color, opacity: 0.3 }} />
+                      )}
                     </div>
                     <div className="p-6">
                       <span
