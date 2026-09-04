@@ -118,8 +118,8 @@ export function Header() {
               <Image
                 src="/epath_logo.png"
                 alt="EPath Education"
-                width={120}
-                height={35}
+                width={235}
+                height={102}
                 className="logo-img"
                 priority
               />

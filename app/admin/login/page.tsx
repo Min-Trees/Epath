@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
             src="/epath_logo.png"
             alt="EPath Education"
             width={200}
-            height={60}
+            height={86}
             className="h-14 w-auto mx-auto mb-4"
           />
           <CardTitle

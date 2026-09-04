@@ -97,8 +97,8 @@ export function Footer({
                 src={logoUrl}
                 alt="EPath Education"
                 width={160}
-                height={50}
-                className="h-10 w-auto"
+                height={69}
+                className="h-12 w-auto"
               />
             </div>
             <p className="text-white/80 text-sm mb-6 leading-relaxed">
