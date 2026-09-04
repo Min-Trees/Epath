@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { summarizeConversation, type LeadPayload } from '@/lib/google-sheets'
-import * as content from '@/lib/chatbot-content'
+import * as chatbotContent from '@/lib/chatbot-content'
 
 interface Message {
   id: string
@@ -273,10 +273,10 @@ function isValidVietnamPhone(phone: string): boolean {
 
 export function Chatbot() {
   const locale = useLocale()
-  const l = content.pickLocale(locale)
+  const l = chatbotContent.pickLocale(locale)
 
   // Derive the initial greeting with the locale already resolved
-  const initialGreeting = useMemo(() => ({ content: content.greeting[l], timestamp: new Date() }), [l])
+  const initialGreeting = useMemo(() => ({ content: chatbotContent.greeting[l], timestamp: new Date() }), [l])
 
   const [isOpen, setIsOpen] = useState(false)
   const [preChatLead, setPreChatLead] = useState<PreChatLead | null>(null)
@@ -505,7 +505,7 @@ export function Chatbot() {
     setInputValue('')
     setIsTyping(false)
     setMessages([
-      { id: '1', role: 'assistant' as const, content: content.greeting[l], timestamp: new Date() },
+      { id: '1', role: 'assistant' as const, content: chatbotContent.greeting[l], timestamp: new Date() },
     ])
     setContactForm({
       name: '',
@@ -558,7 +558,7 @@ export function Chatbot() {
         setCtaReminderSent(true)
         // Use setTimeout so this is added after the current batch renders.
         setTimeout(() => {
-          addMessage('assistant', content.ctaReminder[l], false)
+          addMessage('assistant', chatbotContent.ctaReminder[l], false)
         }, 100)
       }
       return next
@@ -659,7 +659,7 @@ export function Chatbot() {
       return
     }
     if (!isValidVietnamPhone(phone)) {
-      setPreChatError(content.preChatForm[l].phoneFormatError)
+      setPreChatError(chatbotContent.preChatForm[l].phoneFormatError)
       return
     }
 
@@ -719,7 +719,7 @@ export function Chatbot() {
 
     // Greet them by first name so the rest of the conversation feels personal.
     const firstName = name.split(/\s+/).slice(-1)[0] || name
-    addMessage('assistant', content.preChatGreeting[l](firstName))
+    addMessage('assistant', chatbotContent.preChatGreeting[l](firstName))
 
     setChatStep('main')
     setPreChatForm({ name: '', phone: '' })
@@ -743,8 +743,8 @@ export function Chatbot() {
       addMessage(
         'assistant',
         preChatLead
-          ? content.contactForm[l].preChatAck(preChatLead.name)
-          : content.contactForm[l].noPreChatAck
+          ? chatbotContent.contactForm[l].preChatAck(preChatLead.name)
+          : chatbotContent.contactForm[l].noPreChatAck
       )
       return
     }
@@ -817,7 +817,7 @@ export function Chatbot() {
 
     // Send intro message FIRST, then show topic questions buttons.
     // This way user reads the intro before seeing the question buttons.
-    addMessage('assistant', content.topicPrompt[l](topic.label))
+    addMessage('assistant', chatbotContent.topicPrompt[l](topic.label))
 
     // Store selected topic and show buttons AFTER the message is added
     setTimeout(() => {
@@ -894,13 +894,13 @@ export function Chatbot() {
       if (!response.ok || !data.success) {
         const message =
           (typeof data?.error === 'string' && data.error) ||
-          content.contactForm[l].errorDefault
+          chatbotContent.contactForm[l].errorDefault
         setSubmitError(message)
         setIsSubmitting(false)
         return
       }
 
-      addMessage('assistant', content.contactForm[l].successTitle(name || (l === 'vi' ? 'quý phụ huynh' : 'parent')), true)
+      addMessage('assistant', chatbotContent.contactForm[l].successTitle(name || (l === 'vi' ? 'quý phụ huynh' : 'parent')), true)
       setContactForm({
         name: '',
         phone: '',
@@ -1030,10 +1030,10 @@ export function Chatbot() {
                 </h3>
                 <p className="text-white/80 text-xs sm:text-sm truncate">
                   {chatStep === 'contact'
-                    ? content.chatHeaderStatus[l].contact
+                    ? chatbotContent.chatHeaderStatus[l].contact
                     : preChatLead
-                    ? content.chatHeaderStatus[l].welcomeBack(preChatLead.name)
-                    : content.chatHeaderStatus[l].default}
+                    ? chatbotContent.chatHeaderStatus[l].welcomeBack(preChatLead.name)
+                    : chatbotContent.chatHeaderStatus[l].default}
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-1 shrink-0">
@@ -1044,11 +1044,11 @@ export function Chatbot() {
               <button
                 onClick={handleResetSession}
                 className="hidden sm:flex text-white/80 hover:text-white p-1 shrink-0 items-center gap-1 text-xs"
-                aria-label={content.resetSession[l]}
-                title={content.resetSession[l]}
+                aria-label={chatbotContent.resetSession[l]}
+                title={chatbotContent.resetSession[l]}
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{content.resetSession[l].split(' ')[0]}</span>
+                <span>{chatbotContent.resetSession[l].split(' ')[0]}</span>
               </button>
               <button
                 onClick={() => setIsOpen(false)}
@@ -1213,7 +1213,7 @@ export function Chatbot() {
                 >
                   <div className="flex items-center gap-2 text-[#3A53A3]">
                     <ShieldCheck className="w-4 h-4" />
-                    <p className="text-sm font-medium">{content.contactForm[l].header}</p>
+                    <p className="text-sm font-medium">{chatbotContent.contactForm[l].header}</p>
                   </div>
                   <p className="text-sm text-[#6B6B6B] text-center">
                     {l === 'vi'
@@ -1226,7 +1226,7 @@ export function Chatbot() {
                     <input
                       type="text"
                       autoComplete="name"
-                      placeholder={content.contactForm[l].nameLabel}
+                      placeholder={chatbotContent.contactForm[l].nameLabel}
                       value={contactForm.name}
                       onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1238,7 +1238,7 @@ export function Chatbot() {
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
-                      placeholder={content.contactForm[l].phoneLabel}
+                      placeholder={chatbotContent.contactForm[l].phoneLabel}
                       value={contactForm.phone}
                       onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1246,7 +1246,7 @@ export function Chatbot() {
                   </div>
                   <input
                     type="email"
-                    placeholder={content.contactForm[l].emailLabel}
+                    placeholder={chatbotContent.contactForm[l].emailLabel}
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm"
@@ -1258,8 +1258,8 @@ export function Chatbot() {
                       onChange={(e) => setContactForm({ ...contactForm, childAge: e.target.value })}
                       className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                     >
-                      <option value="">{content.contactForm[l].childAgePlaceholder}</option>
-                      {content.childAgeOptions[l].map((opt) => (
+                      <option value="">{chatbotContent.contactForm[l].childAgePlaceholder}</option>
+                      {chatbotContent.childAgeOptions[l].map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
@@ -1269,8 +1269,8 @@ export function Chatbot() {
                     onChange={(e) => setContactForm({ ...contactForm, program: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                   >
-                    <option value="">{content.contactForm[l].programPlaceholder}</option>
-                    {content.programOptions[l].map((opt) => (
+                    <option value="">{chatbotContent.contactForm[l].programPlaceholder}</option>
+                    {chatbotContent.programOptions[l].map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
@@ -1279,13 +1279,13 @@ export function Chatbot() {
                     onChange={(e) => setContactForm({ ...contactForm, campus: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-lg bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:outline-none text-sm appearance-none"
                   >
-                    <option value="">{content.contactForm[l].campusPlaceholder}</option>
-                    {content.campusOptions[l].map((opt) => (
+                    <option value="">{chatbotContent.contactForm[l].campusPlaceholder}</option>
+                    {chatbotContent.campusOptions[l].map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                   <textarea
-                    placeholder={content.contactForm[l].noteLabel}
+                    placeholder={chatbotContent.contactForm[l].noteLabel}
                     value={contactForm.note}
                     onChange={(e) => setContactForm({ ...contactForm, note: e.target.value })}
                     rows={2}
@@ -1296,7 +1296,7 @@ export function Chatbot() {
                   {topicsInterested.length > 0 && (
                     <div className="pt-1">
                       <p className="text-[11px] text-[#6B6B6B] mb-1.5">
-                        {content.contactForm[l].topicsLabel}
+                        {chatbotContent.contactForm[l].topicsLabel}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {topicsInterested.map((t) => (
@@ -1325,12 +1325,12 @@ export function Chatbot() {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        {content.contactForm[l].submittingButton}
+                        {chatbotContent.contactForm[l].submittingButton}
                       </>
                     ) : (
                       <>
                         <Phone className="w-4 h-4" />
-                        {content.contactForm[l].submitButton}
+                        {chatbotContent.contactForm[l].submitButton}
                       </>
                     )}
                   </motion.button>
@@ -1413,7 +1413,7 @@ export function Chatbot() {
                     className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#F05A28] to-[#E04D1A] px-3 py-2.5 rounded-xl text-xs text-white whitespace-nowrap hover:shadow-lg hover:shadow-[#F05A28]/20 transition-all duration-150 font-medium"
                   >
                     <Phone className="w-3.5 h-3.5" />
-                    {content.quickActions[l].bookConsultation}
+                    {chatbotContent.quickActions[l].bookConsultation}
                   </motion.button>
                 </div>
               </div>
@@ -1455,7 +1455,7 @@ export function Chatbot() {
                     onFocus={() => {
                       setTimeout(scrollToBottom, 100)
                     }}
-                    placeholder={content.inputPlaceholder[l]}
+                    placeholder={chatbotContent.inputPlaceholder[l]}
                     className="flex-1 px-4 py-3 rounded-2xl bg-[#F8F9FA] border border-[#3A53A3]/20 focus:border-[#3A53A3] focus:ring-2 focus:ring-[#3A53A3]/10 focus:outline-none text-sm transition-all"
                   />
                   <motion.button
@@ -1477,7 +1477,7 @@ export function Chatbot() {
                 </p>
               ) : (
                 <p className="text-[10px] text-[#666] text-center mt-2 leading-relaxed">
-                  {content.chatFooter[l].statusOffline}
+                  {chatbotContent.chatFooter[l].statusOffline}
                 </p>
               )}
             </div>
@@ -1496,7 +1496,7 @@ export function Chatbot() {
         >
           <div className="bg-white px-4 py-2.5 rounded-full shadow-xl border border-[#3A53A3]/20 flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <p className="text-sm text-[#231F20] font-medium">{content.chatFooter[l].statusOnline}</p>
+            <p className="text-sm text-[#231F20] font-medium">{chatbotContent.chatFooter[l].statusOnline}</p>
           </div>
         </motion.div>
       )}

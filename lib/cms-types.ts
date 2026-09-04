@@ -392,7 +392,7 @@ export const REVIEWABLE_COLLECTIONS: CollectionName[] = [
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'archived'] as const
 export type LeadStatus = (typeof LEAD_STATUSES)[number]
 
-export const LeadSourceEnum = z.enum(['chatbot', 'contact-form', 'zalo', 'manual'])
+export const LeadSourceEnum = z.enum(['chatbot', 'contact-form', 'zalo', 'manual', 'website', 'events'])
 export type LeadSource = z.infer<typeof LeadSourceEnum>
 
 export const LeadSchema = z.object({
