@@ -172,3 +172,5 @@ Response:
 - ✅ Đã chạy thực tế – 76 documents mới, `errors: []`
 - ⚠️ Chưa reset collection cũ
 - ⚠️ Cần upload ảnh/logo sau khi seed
+
+<!-- Last updated: 2026-09-04 - manual redeploy trigger -->
