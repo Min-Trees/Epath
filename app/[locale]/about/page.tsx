@@ -1,11 +1,9 @@
 'use client'
 
-import { Target, Eye, Heart, Users, BookOpen, Sparkles, GraduationCap, Compass, Layers, Award, Network } from 'lucide-react'
+import { Target, Eye, Heart, Users, BookOpen, Sparkles, GraduationCap, Award, ArrowRight, CheckCircle2, Globe2, Trophy, Cpu, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
@@ -26,18 +24,83 @@ const fallbackMilestones = [
   { year: '2024', titleKey: 'm5Title', descKey: 'm5Desc' },
 ]
 
-function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
+// Fallback Faculty & Academic Board
+const fallbackFaculty = [
+  {
+    id: 'international-teachers',
+    name: { vi: '50% Giáo viên Quốc tế', en: '50% International Teachers' },
+    tag: { vi: 'Giảng dạy bằng Tiếng Anh 100%', en: '100% English Instruction' },
+    role: { vi: 'Giáo viên Quốc tế', en: 'International Faculty' },
+    bio: {
+      vi: 'Ưu tiên có bằng Cử nhân Giáo dục Tiểu học hoặc Trung học (Elementary / Secondary Education), dày dặn kinh nghiệm giảng dạy các môn học thuật (Academic Subjects) theo chuẩn giáo dục Hoa Kỳ và Cambridge.',
+      en: 'Prioritised with Bachelor of Elementary or Secondary Education, extensive experience teaching academic subjects under US and Cambridge standards.',
+    },
+    point1: {
+      vi: 'Trực tiếp giảng dạy các tiết học trực tuyến và trực tiếp về Toán, Khoa học, Ngữ văn Anh (ELA).',
+      en: 'Directly teaches online and in-person lessons in Math, Science, and English Language Arts (ELA).',
+    },
+    point2: {
+      vi: 'Hình thành phản xạ ngôn ngữ tự nhiên, ngữ âm chuẩn xác và tư duy phản biện cho học sinh.',
+      en: 'Cultivates natural language reflexes, accurate phonics, and critical thinking skills for students.',
+    },
+    avatarUrl: '/images/about/faculty-international.jpg',
+    order: 0,
+    isActive: true,
+  },
+  {
+    id: 'bilingual-teachers',
+    name: { vi: '50% Giáo viên Song ngữ', en: '50% Bilingual Teachers' },
+    tag: { vi: 'IELTS 7.0+ & Chuyên môn Sư phạm', en: 'IELTS 7.0+ & Pedagogical Expertise' },
+    role: { vi: 'Giáo viên Song ngữ', en: 'Bilingual Faculty' },
+    bio: {
+      vi: 'Đội ngũ thầy cô Việt Nam sở hữu chứng chỉ IELTS từ 7.0 trở lên, có năng lực tiếng Anh học thuật xuất sắc và thấu hiểu sâu sắc đặc điểm tâm lý, rào cản ngôn ngữ của học sinh Việt Nam.',
+      en: "Vietnamese faculty holding IELTS 7.0+, possessing excellent academic English proficiency and deep empathy for Vietnamese learners' language barriers.",
+    },
+    point1: {
+      vi: 'Đồng hành hướng dẫn, giải thích các khái niệm học thuật khó và củng cố kiến thức cho từng bạn.',
+      en: 'Accompanies learners, explains complex academic concepts, and reinforces key knowledge.',
+    },
+    point2: {
+      vi: 'Hỗ trợ cá nhân hóa việc học, tổ chức các buổi phụ đạo (tutor) nhằm lấp đầy lỗ hổng kiến thức kịp thời.',
+      en: 'Supports personalised learning, providing tutoring sessions to bridge knowledge gaps promptly.',
+    },
+    avatarUrl: '/images/about/faculty-bilingual.jpg',
+    order: 1,
+    isActive: true,
+  },
+  {
+    id: 'academic-advisors',
+    name: { vi: 'Cố vấn Học thuật (Academic Advisor)', en: 'Academic Advisors' },
+    tag: { vi: 'Đồng hành Cá nhân hóa 1:1', en: '1:1 Personalised Mentorship' },
+    role: { vi: 'Cố vấn Học thuật', en: 'Academic Advisor' },
+    bio: {
+      vi: 'Mỗi học sinh tại EPath được phân công riêng một Cố vấn Học thuật theo sát toàn bộ quá trình học tập, quản lý tiến độ hoàn thành bài học trên hệ thống Edmentum, và là cầu nối vững chắc với phụ huynh.',
+      en: 'Each EPath student is assigned a dedicated Academic Advisor to oversee their learning pathway, manage Edmentum progress, and maintain close partnership with parents.',
+    },
+    point1: {
+      vi: 'Đánh giá năng lực định kỳ, phát hiện điểm mạnh và tư vấn lựa chọn môn học / môn AP phù hợp.',
+      en: 'Periodic capability assessments, identifying strengths, and advising on course / AP subject selection.',
+    },
+    point2: {
+      vi: 'Đại diện phụ huynh theo dõi tiến trình học thuật và xây dựng hồ sơ ứng tuyển đại học quốc tế.',
+      en: 'Represents parents in tracking academic milestones and crafting competitive global university portfolios.',
+    },
+    avatarUrl: '/images/about/faculty-advisors.jpg',
+    order: 2,
+    isActive: true,
+  },
+]
+
+function pick(v: { vi?: string; en?: string } | string | undefined, locale: Locale): string {
   if (!v) return ''
+  if (typeof v === 'string') return v
   return v[locale] || v.vi || v.en || ''
 }
 
 export default function AboutPage() {
   const t = useTranslations('about')
-  const params = useParams()
-  const locale = ((params.locale as string) || 'vi') as Locale
+  const locale = useLocale() as Locale
 
-  // FIX: Use shared CMS context instead of redundant direct fetches
-  // This eliminates duplicate API calls and ensures data consistency
   const { data: cms } = useCmsContext()
   const aboutContent = cms.aboutContent
   const coreValues = cms.coreValues
@@ -56,9 +119,10 @@ export default function AboutPage() {
   }
 
   // Intro paragraphs
-  const introParagraphs = aboutContent?.introContent?.vi?.split('\n\n').filter(Boolean) ||
-    aboutContent?.introContent?.en?.split('\n\n').filter(Boolean) ||
-    [t('intro.p1'), t('intro.p2'), t('intro.p3'), t('intro.p4'), t('intro.p5')]
+  const introText = pick(aboutContent?.introContent, locale)
+  const introParagraphs = introText
+    ? introText.split('\n\n').filter(Boolean)
+    : [t('intro.p1'), t('intro.p2'), t('intro.p3'), t('intro.p4'), t('intro.p5')]
 
   // Use CMS milestones or fallback
   const displayMilestones = milestones.length > 0 ? milestones : fallbackMilestones.map(m => ({
@@ -67,140 +131,209 @@ export default function AboutPage() {
     description: { vi: t(m.descKey), en: t(m.descKey) },
   }))
 
-  // Use CMS core values or i18n fallback
-  const displayValues = coreValues.length > 0 ? coreValues : []
+  // Deduplicate and cap CMS core values to the canonical 6 values
+  const uniqueCoreValues = (coreValues || [])
+    .filter((v) => v.isActive !== false)
+    .reduce<typeof coreValues>((acc, curr) => {
+      const title = (curr.title?.vi || curr.title?.en || '').trim().toLowerCase()
+      if (!acc.some((item) => (item.title?.vi || item.title?.en || '').trim().toLowerCase() === title)) {
+        acc.push(curr)
+      }
+      return acc
+    }, [])
+    .slice(0, 6)
 
+  const displayValues = uniqueCoreValues.length > 0 ? uniqueCoreValues : []
   const heroImage = aboutContent?.heroImage || ''
+
+  // Team / Faculty members from CMS
+  const teamMembers = (cms.teamMembers || []).filter(m => m.isActive !== false)
+  const displayFaculty = teamMembers.length > 0 ? teamMembers : fallbackFaculty
+  const facultySectionTitle = pick(aboutContent?.facultyTitle, locale) || t('faculty.title')
+  const facultySectionSubtitle = pick(aboutContent?.facultySubtitle, locale) || t('faculty.subtitle')
+
+  const facultyIcons = [Globe2, GraduationCap, ShieldCheck]
+  const facultyAccents = [
+    { color: '#2E4A9E', borderHover: 'hover:border-[#2E4A9E]/40', badgeBg: 'bg-[#2E4A9E]' },
+    { color: '#5C9024', borderHover: 'hover:border-[#8DC63F]/50', badgeBg: 'bg-[#8DC63F]' },
+    { color: '#F26522', borderHover: 'hover:border-[#F26522]/40', badgeBg: 'bg-[#F26522]' },
+  ]
 
   return (
     <>
+      {/* ─────────────────────────────────────────────────────────────
+          HERO BANNER – Navy gradient, ambient glow, staggered reveal
+      ─────────────────────────────────────────────────────────────── */}
       <section
-        className="pt-32 pb-20 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
+        className="pt-24 sm:pt-28 pb-10 sm:pb-12 relative overflow-hidden"
+        style={{
+          backgroundImage: 'linear-gradient(135deg, rgba(30,53,112,0.92) 0%, rgba(46,74,158,0.88) 100%), url(/images/about/about-story.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
       >
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.normal, ease: easeOut }}
-            className="max-w-3xl mx-auto text-center text-white"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+        {/* Ambient subtle glow */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#8DC63F]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-2xl mx-auto text-center text-white">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: duration.normal, ease: easeOut }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium text-xs uppercase tracking-wider mb-3 shadow-xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
+              {t('intro.title')}
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
+              className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight leading-tight text-white"
+            >
               {(locale === 'vi' ? aboutContent?.introTitle?.vi : aboutContent?.introTitle?.en) || aboutContent?.introTitle?.vi || t('hero.title')}
-            </h1>
-            <p className="text-xl text-white/90">{t('hero.subtitle')}</p>
-          </motion.div>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
+              className="text-sm sm:text-base text-white/90 leading-relaxed font-normal max-w-xl mx-auto"
+            >
+              {t('hero.subtitle')}
+            </motion.p>
+          </div>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      {/* ─────────────────────────────────────────────────────────────
+          INTRO & STATS – Interactive cards & image zoom
+      ─────────────────────────────────────────────────────────────── */}
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={inViewViewport}
-              transition={{ duration: duration.normal, ease: easeOut }}
+              transition={{ duration: duration.slow, ease: easeOut }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3A53A3]/10 text-[#3A53A3] text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-semibold mb-4">
+                <Sparkles className="w-3.5 h-3.5" />
                 {t('intro.title')}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-6">
-                {aboutContent?.introTitle?.vi || aboutContent?.introTitle?.en || t('hero.title')}
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-4 leading-tight">
+                {pick(aboutContent?.introTitle, locale) || t('hero.title')}
               </h2>
-              <div className="space-y-4 text-[#6B6B6B] leading-relaxed">
+              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
                 {introParagraphs.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-4 mt-8">
-                <div className="surface-alt rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-[#3A53A3]">10+</div>
-                  <div className="text-sm text-[#6B6B6B]">{t('stats.years')}</div>
-                </div>
-                <div className="surface-alt rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-[#8BC53F]">4</div>
-                  <div className="text-sm text-[#6B6B6B]">{t('stats.levels')}</div>
-                </div>
-                <div className="surface-alt rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-[#F05A28]">60+</div>
-                  <div className="text-sm text-[#6B6B6B]">{t('stats.edmentum')}</div>
-                </div>
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                <motion.div
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  transition={{ duration: 0.35, ease: easeOut }}
+                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#2E4A9E]/30 transition-all cursor-default"
+                >
+                  <div className="text-3xl sm:text-4xl font-black text-[#2E4A9E] mb-0.5">10+</div>
+                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.years')}</div>
+                </motion.div>
+                <motion.div
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  transition={{ duration: 0.35, ease: easeOut }}
+                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#8DC63F]/50 transition-all cursor-default"
+                >
+                  <div className="text-3xl sm:text-4xl font-black text-[#5C9024] mb-0.5">4</div>
+                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.levels')}</div>
+                </motion.div>
+                <motion.div
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  transition={{ duration: 0.35, ease: easeOut }}
+                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#F26522]/30 transition-all cursor-default"
+                >
+                  <div className="text-3xl sm:text-4xl font-black text-[#F26522] mb-0.5">60+</div>
+                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.edmentum')}</div>
+                </motion.div>
               </div>
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={inViewViewport}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="relative"
+              transition={{ duration: duration.slow, ease: easeOut }}
+              className="relative group max-w-md mx-auto lg:max-w-none"
             >
-              {heroImage ? (
-                <div className="aspect-square rounded-2xl flex items-center justify-center overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={heroImage}
-                    alt={pick(aboutContent?.introTitle, locale) || t('hero.title')}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-square bg-gradient-to-br from-[#3A53A3]/10 to-[#8BC53F]/10 rounded-2xl flex items-center justify-center">
-                  <BookOpen className="w-32 h-32 text-[#3A53A3]/20" />
-                </div>
-              )}
-              <div className="absolute -bottom-6 -right-6 bg-[#F05A28] text-white rounded-xl p-6 shadow-lg">
-                <div className="text-4xl font-bold">60+</div>
-                <div className="text-sm">{t('stats.edmentum')}</div>
+              <div className="aspect-4/3 sm:aspect-square rounded-2xl shadow-lg overflow-hidden border border-[#DEDDD6] relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={heroImage || '/images/about/about-story.jpg'}
+                  alt={pick(aboutContent?.introTitle, locale) || t('hero.title')}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
               </div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.35, ease: easeOut }}
+                className="absolute -bottom-4 -right-4 bg-[#F26522] hover:bg-[#C94F16] text-white rounded-xl p-4 shadow-xl transition-colors duration-300"
+              >
+                <div className="text-2xl sm:text-3xl font-black">60+</div>
+                <div className="text-xs font-medium">{t('stats.edmentum')}</div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      <section id="vision" className="py-20 surface-alt">
+      {/* ─────────────────────────────────────────────────────────────
+          VISION & MISSION – Luxury rounded cards with hover elevation
+      ─────────────────────────────────────────────────────────────── */}
+      <section id="vision" className="py-12 sm:py-16 bg-[#F6F5F1]">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="bg-white rounded-2xl p-8 shadow-sm"
+              transition={{ duration: duration.slow, ease: easeOut }}
+              className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group"
             >
-              <div className="w-16 h-16 bg-[#3A53A3]/10 rounded-xl flex items-center justify-center mb-6">
-                <Eye className="w-8 h-8 text-[#3A53A3]" />
+              <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
+                <Eye className="w-6 h-6 text-[#2E4A9E]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#231F20] mb-4">
-                {aboutContent?.visionTitle?.vi || aboutContent?.visionTitle?.en || t('vision')}
+              <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-3">
+                {pick(aboutContent?.visionTitle, locale) || t('vision')}
               </h3>
-              <div className="space-y-3 text-[#6B6B6B] leading-relaxed">
-                <p>{aboutContent?.visionContent?.vi || aboutContent?.visionContent?.en || t('visionText')}</p>
+              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
+                <p>{pick(aboutContent?.visionContent, locale) || t('visionText')}</p>
                 <p>{t('visionP2')}</p>
-                <p className="p-4 rounded-lg bg-[#3A53A3]/5 border-l-4 border-[#3A53A3] text-[#231F20]">
-                  <strong>{t('vision')}: </strong>
+                <p className="p-4 rounded-xl bg-[#2E4A9E]/5 border-l-4 border-[#2E4A9E] text-[#20242B] font-medium leading-relaxed text-sm">
+                  <strong className="text-[#2E4A9E]">{t('vision')}: </strong>
                   {t('visionHighlight')}
                 </p>
               </div>
             </motion.div>
+
             <motion.div
               id="mission"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
-              transition={{ duration: duration.normal, delay: 0.1, ease: easeOut }}
-              className="bg-white rounded-2xl p-8 shadow-sm"
+              transition={{ duration: duration.slow, delay: 0.12, ease: easeOut }}
+              className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group"
             >
-              <div className="w-16 h-16 bg-[#8BC53F]/10 rounded-xl flex items-center justify-center mb-6">
-                <Target className="w-8 h-8 text-[#8BC53F]" />
+              <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
+                <Target className="w-6 h-6 text-[#5C9024]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#231F20] mb-4">
-                {aboutContent?.missionTitle?.vi || aboutContent?.missionTitle?.en || t('mission')}
+              <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-3">
+                {pick(aboutContent?.missionTitle, locale) || t('mission')}
               </h3>
-              <div className="space-y-3 text-[#6B6B6B] leading-relaxed">
-                <p>{aboutContent?.missionContent?.vi || aboutContent?.missionContent?.en || t('missionText')}</p>
+              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
+                <p>{pick(aboutContent?.missionContent, locale) || t('missionText')}</p>
                 <p>{t('missionP2')}</p>
               </div>
             </motion.div>
@@ -208,135 +341,107 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section id="values" className="py-20 bg-white">
+      {/* ─────────────────────────────────────────────────────────────
+          CORE VALUES – Staggered interactive cards
+      ─────────────────────────────────────────────────────────────── */}
+      <section id="values" className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.normal, ease: easeOut }}
-            className="text-center mb-16"
+            className="text-center mb-10 max-w-2xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#8BC53F]/10 text-[#1A7F5A] text-sm font-medium mb-4">
-              <Award className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#8DC63F]/15 text-[#5C9024] text-xs font-semibold mb-3">
+              <Award className="w-3.5 h-3.5" />
               {t('coreValues.title')}
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
               {t('coreValues.title')}
             </h2>
-            <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-[#5C6069]">
               {t('coreValues.subtitle')}
             </p>
           </motion.div>
 
-          {displayValues.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayValues.map((value, index) => {
-                const accent = accentCycle[index % accentCycle.length]
-                return (
-                  <motion.div
-                    key={value.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={inViewViewport}
-                    transition={{ duration: duration.normal, delay: index * 0.06, ease: easeOut }}
-                    className="surface-alt rounded-xl p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: accent.bg }}
-                      >
-                        <Award className="w-6 h-6" style={{ color: accent.color }} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-baseline gap-2 mb-2">
-                          <span
-                            className="text-xs font-bold tracking-wider uppercase"
-                            style={{ color: accent.color }}
-                          >
-                            0{index + 1}
-                          </span>
-                          <h3 className="text-lg font-bold text-[#231F20]">
-                            {value.title?.vi || value.title?.en}
-                          </h3>
-                        </div>
-                        <p className="text-sm text-[#6B6B6B] leading-relaxed">
-                          {value.description?.vi || value.description?.en}
-                        </p>
-                      </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {(displayValues.length > 0
+              ? displayValues
+              : [0, 1, 2, 3, 4, 5].map((idx) => ({
+                  id: `v-${idx}`,
+                  title: { vi: t(`coreValues.items.v${idx + 1}.title`), en: t(`coreValues.items.v${idx + 1}.title`) },
+                  description: { vi: t(`coreValues.items.v${idx + 1}.desc`), en: t(`coreValues.items.v${idx + 1}.desc`) },
+                }))
+            ).map((value, index) => {
+              const accent = accentCycle[index % accentCycle.length]
+              const valTitle = pick(value.title, locale)
+              const valDesc = pick(value.description, locale)
+
+              return (
+                <motion.div
+                  key={value.id}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={inViewViewport}
+                  transition={{ duration: duration.slow, delay: index * 0.06, ease: easeOut }}
+                  className="bg-[#F6F5F1] hover:bg-white rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
+                >
+                  <div className="flex items-start gap-3.5">
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-108 shadow-xs"
+                      style={{ backgroundColor: accent.bg }}
+                    >
+                      <Award className="w-5 h-5" style={{ color: accent.color }} />
                     </div>
-                  </motion.div>
-                )
-              })}
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[0, 1, 2, 3, 4, 5].map((index) => {
-                const accent = accentCycle[index % accentCycle.length]
-                const valueKeys = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'] as const
-                const key = valueKeys[index]
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={inViewViewport}
-                    transition={{ duration: duration.normal, delay: index * 0.06, ease: easeOut }}
-                    className="surface-alt rounded-xl p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: accent.bg }}
-                      >
-                        <Award className="w-6 h-6" style={{ color: accent.color }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span
+                          className="text-[11px] font-black tracking-wider uppercase"
+                          style={{ color: accent.color }}
+                        >
+                          0{index + 1}
+                        </span>
+                        <h3 className="text-base font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300">
+                          {valTitle}
+                        </h3>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-baseline gap-2 mb-2">
-                          <span
-                            className="text-xs font-bold tracking-wider uppercase"
-                            style={{ color: accent.color }}
-                          >
-                            0{index + 1}
-                          </span>
-                          <h3 className="text-lg font-bold text-[#231F20]">
-                            {t(`coreValues.items.${key}.title`)}
-                          </h3>
-                        </div>
-                        <p className="text-sm text-[#6B6B6B] leading-relaxed">
-                          {t(`coreValues.items.${key}.desc`)}
-                        </p>
-                      </div>
+                      <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
+                        {valDesc}
+                      </p>
                     </div>
-                  </motion.div>
-                )
-              })}
-            </div>
-          )}
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
+      {/* ─────────────────────────────────────────────────────────────
+          MILESTONES TIMELINE – Smooth animated nodes & Navy depth
+      ─────────────────────────────────────────────────────────────── */}
       <section
-        className="py-20"
-        style={{ background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)' }}
+        className="py-12 sm:py-16 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }}
       >
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.normal, ease: easeOut }}
-            className="text-center mb-16"
+            className="text-center mb-10 max-w-2xl mx-auto"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               {t('milestones.title')}
             </h2>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-white/80">
               {t('milestones.subtitle')}
             </p>
           </motion.div>
-          <div className="grid md:grid-cols-5 gap-4">
+
+          <div className="grid md:grid-cols-5 gap-4 sm:gap-5 max-w-6xl mx-auto">
             {displayMilestones.map((milestone, index) => {
               const accent = accentCycle[index % accentCycle.length]
               return (
@@ -345,17 +450,22 @@ export default function AboutPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={inViewViewport}
-                  transition={{ duration: duration.normal, delay: index * 0.08, ease: easeOut }}
-                  className="text-center"
+                  transition={{ duration: duration.slow, delay: index * 0.06, ease: easeOut }}
+                  whileHover={{ y: -4 }}
+                  className="text-center group"
                 >
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                    className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md border-2 border-white/20 transition-transform duration-300 group-hover:scale-110"
                     style={{ backgroundColor: accent.color }}
                   >
-                    <span className="text-white font-bold">{milestone.year}</span>
+                    <span className="text-white font-bold text-sm">{milestone.year}</span>
                   </div>
-                  <h4 className="font-bold text-white mb-2">{milestone.title?.vi || milestone.title?.en}</h4>
-                  <p className="text-sm text-white/70">{milestone.description?.vi || milestone.description?.en}</p>
+                  <h4 className="font-bold text-white text-sm sm:text-base mb-1.5 group-hover:text-[#8DC63F] transition-colors duration-300">
+                    {pick(milestone.title, locale)}
+                  </h4>
+                  <p className="text-xs sm:text-sm text-white/75 leading-relaxed">
+                    {pick(milestone.description, locale)}
+                  </p>
                 </motion.div>
               )
             })}
@@ -363,54 +473,285 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-20 surface-alt">
+      {/* ─────────────────────────────────────────────────────────────
+          FACULTY & ACADEMIC BOARD – 50/50 Model + Academic Advisors
+      ─────────────────────────────────────────────────────────────── */}
+      <section className="py-12 sm:py-16 bg-[#F6F5F1]">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.normal, ease: easeOut }}
-            className="max-w-4xl mx-auto"
+            className="text-center mb-10 max-w-2xl mx-auto"
           >
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F05A28]/10 text-[#F05A28] text-sm font-medium mb-4">
-                <Award className="w-4 h-4" />
-                {t('achievements.title')}
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
-                {t('achievements.title')}
-              </h2>
-              <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
-                {t('achievements.subtitle')}
-              </p>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-semibold mb-3">
+              <Users className="w-3.5 h-3.5" />
+              {facultySectionTitle}
             </div>
-            <div className="bg-white rounded-2xl p-8 shadow-sm border-2 border-[#3A53A3]/10">
-              <p className="text-[#231F20] leading-relaxed mb-6">{t('achievements.desc')}</p>
-              <div className="rounded-xl border-2 border-dashed border-[#3A53A3]/30 bg-gradient-to-br from-[#3A53A3]/5 to-[#8BC53F]/5 p-10 text-center">
-                <div className="flex justify-center gap-4 mb-3">
-                  <Users className="w-12 h-12 text-[#3A53A3]/40" />
-                  <Heart className="w-12 h-12 text-[#F05A28]/40" />
-                  <GraduationCap className="w-12 h-12 text-[#8BC53F]/40" />
-                </div>
-                <p className="text-sm text-[#6B6B6B] italic">{t('achievements.imageNote')}</p>
-              </div>
-            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
+              {facultySectionTitle}
+            </h2>
+            <p className="text-sm sm:text-base text-[#5C6069]">
+              {facultySectionSubtitle}
+            </p>
           </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {displayFaculty.map((item, idx) => {
+              const IconComponent = facultyIcons[idx % facultyIcons.length] || Users
+              const theme = facultyAccents[idx % facultyAccents.length] || facultyAccents[0]
+
+              const cardTitle = pick(item.name as { vi?: string; en?: string } | string, locale)
+              const cardTag = pick(item.tag as { vi?: string; en?: string } | string, locale) ||
+                pick(item.role as { vi?: string; en?: string } | string, locale)
+              const cardBio = pick(item.bio as { vi?: string; en?: string } | string, locale)
+              const cardP1 = pick(item.point1 as { vi?: string; en?: string } | string, locale)
+              const cardP2 = pick(item.point2 as { vi?: string; en?: string } | string, locale)
+              const cardImg = item.avatarUrl || (
+                idx === 0 ? '/images/about/faculty-international.jpg' :
+                idx === 1 ? '/images/about/faculty-bilingual.jpg' :
+                '/images/about/faculty-advisors.jpg'
+              )
+
+              return (
+                <motion.div
+                  key={item.id || idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={inViewViewport}
+                  transition={{ duration: duration.slow, delay: 0.06 * idx, ease: easeOut }}
+                  className={`bg-white rounded-2xl border border-[#DEDDD6] ${theme.borderHover} hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group overflow-hidden`}
+                >
+                  <div>
+                    <div className="h-44 sm:h-48 w-full overflow-hidden relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={cardImg}
+                        alt={cardTitle}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div
+                        className="absolute top-3 left-3 w-10 h-10 rounded-xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-sm"
+                        style={{ color: theme.color }}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      {cardTag && (
+                        <span className={`absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${theme.badgeBg} text-white shadow-xs`}>
+                          {cardTag}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-lg font-bold text-[#20242B] mb-2.5">
+                        {cardTitle}
+                      </h3>
+                      {cardBio && (
+                        <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-4">
+                          {cardBio}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="px-6 pb-6">
+                    <div className="space-y-2 pt-4 border-t border-[#DEDDD6]/60">
+                      {cardP1 && (
+                        <div className="flex items-start gap-2 text-xs text-[#20242B]">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: theme.color }} />
+                          <span>{cardP1}</span>
+                        </div>
+                      )}
+                      {cardP2 && (
+                        <div className="flex items-start gap-2 text-xs text-[#20242B]">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: theme.color }} />
+                          <span>{cardP2}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
+      {/* ─────────────────────────────────────────────────────────────
+          ACHIEVEMENTS – Verified Academic Metrics & Olympiad Records
+      ─────────────────────────────────────────────────────────────── */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={inViewViewport}
+            transition={{ duration: duration.normal, ease: easeOut }}
+            className="text-center mb-10 max-w-2xl mx-auto"
+          >
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#F26522]/10 text-[#F26522] text-xs font-semibold mb-3">
+              <Trophy className="w-3.5 h-3.5" />
+              {t('achievements.title')}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
+              {t('achievements.title')}
+            </h2>
+            <p className="text-sm sm:text-base text-[#5C6069]">
+              {t('achievements.subtitle')}
+            </p>
+          </motion.div>
+
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* 4 Major Academic Metrics */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={inViewViewport}
+                transition={{ duration: duration.slow, delay: 0.05, ease: easeOut }}
+                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:shadow-md transition-all text-center"
+              >
+                <div className="text-3xl sm:text-4xl font-black text-[#2E4A9E] mb-1">
+                  {t('achievements.stat1Number')}
+                </div>
+                <h4 className="font-bold text-[#20242B] text-sm mb-1">
+                  {t('achievements.stat1Label')}
+                </h4>
+                <p className="text-xs text-[#5C6069] leading-relaxed">
+                  {t('achievements.stat1Desc')}
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={inViewViewport}
+                transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
+                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#5C9024]/40 hover:shadow-md transition-all text-center"
+              >
+                <div className="text-3xl sm:text-4xl font-black text-[#5C9024] mb-1">
+                  {t('achievements.stat2Number')}
+                </div>
+                <h4 className="font-bold text-[#20242B] text-sm mb-1">
+                  {t('achievements.stat2Label')}
+                </h4>
+                <p className="text-xs text-[#5C6069] leading-relaxed">
+                  {t('achievements.stat2Desc')}
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={inViewViewport}
+                transition={{ duration: duration.slow, delay: 0.15, ease: easeOut }}
+                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#F26522]/30 hover:shadow-md transition-all text-center"
+              >
+                <div className="text-3xl sm:text-4xl font-black text-[#F26522] mb-1">
+                  {t('achievements.stat3Number')}
+                </div>
+                <h4 className="font-bold text-[#20242B] text-sm mb-1">
+                  {t('achievements.stat3Label')}
+                </h4>
+                <p className="text-xs text-[#5C6069] leading-relaxed">
+                  {t('achievements.stat3Desc')}
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={inViewViewport}
+                transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
+                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#1E3570]/30 hover:shadow-md transition-all text-center"
+              >
+                <div className="text-3xl sm:text-4xl font-black text-[#1E3570] mb-1">
+                  {t('achievements.stat4Number')}
+                </div>
+                <h4 className="font-bold text-[#20242B] text-sm mb-1">
+                  {t('achievements.stat4Label')}
+                </h4>
+                <p className="text-xs text-[#5C6069] leading-relaxed">
+                  {t('achievements.stat4Desc')}
+                </p>
+              </motion.div>
+            </div>
+
+            {/* Olympiad & STEAM Maker Highlight Banner with Image */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={inViewViewport}
+              transition={{ duration: duration.slow, delay: 0.25, ease: easeOut }}
+              className="rounded-3xl border border-[#2E4A9E]/20 bg-gradient-to-br from-[#1E3570]/5 via-white to-[#8DC63F]/5 shadow-md overflow-hidden grid md:grid-cols-12 gap-0 items-stretch"
+            >
+              <div className="md:col-span-5 relative min-h-[220px] md:min-h-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/about/about-achievements.jpg"
+                  alt={t('achievements.olympiadTitle')}
+                  className="w-full h-full object-cover absolute inset-0"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 via-black/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#20242B] text-xs font-bold shadow-md">
+                  <Trophy className="w-4 h-4 text-[#F26522]" />
+                  <span>SASMO • AMC • TIMO • Vanda</span>
+                </div>
+              </div>
+              <div className="md:col-span-7 p-6 sm:p-8 flex flex-col justify-center">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-bold mb-3 w-fit">
+                  <Trophy className="w-3.5 h-3.5 text-[#2E4A9E]" />
+                  <span>{locale === 'vi' ? 'Dấu Ấn Xuất Sắc' : 'Outstanding Milestone'}</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-2.5 leading-snug">
+                  {t('achievements.olympiadTitle')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-6">
+                  {t('achievements.olympiadDesc')}
+                </p>
+                <div className="flex items-center gap-4">
+                  <Link
+                    href={`/${locale}/programs`}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2E4A9E] text-white font-bold text-xs shadow-md hover:bg-[#1E3570] transition-colors"
+                  >
+                    <span>{locale === 'vi' ? 'Xem Lộ Trình Học Thuật' : 'Explore Academic Pathways'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          BOTTOM CTA
+      ─────────────────────────────────────────────────────────────── */}
       <section
-        className="py-20"
-        style={{ background: 'linear-gradient(135deg, #F05A28 0%, #E04D1A 100%)' }}
+        className="py-12 sm:py-16"
+        style={{ background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }}
       >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">{t('cta.title')}</h2>
-          <p className="text-white/90 mb-8 max-w-xl mx-auto">{t('cta.subtitle')}</p>
-          <Link href={`/${locale}/contact`}>
-            <Button size="lg" className="bg-white text-[#F05A28] hover:bg-white/90">
-              {t('cta.button')}
-            </Button>
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={inViewViewport}
+            transition={{ duration: duration.normal, ease: easeOut }}
+            className="max-w-lg mx-auto"
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2.5">{t('cta.title')}</h2>
+            <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">{t('cta.subtitle')}</p>
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span>{t('cta.button')}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
         </div>
       </section>
     </>

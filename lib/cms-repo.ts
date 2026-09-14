@@ -58,9 +58,9 @@ export async function listPublishedCollection<T extends {
     .map((d) => toObject<T>(d))
     .filter((it) => {
       if (it.isActive === false) return false
-      const status = it.status || 'DRAFT'
-      if (status === 'PUBLISHED') return true
-      if (status === 'SCHEDULED' && it.scheduledAt) {
+      const rawStatus = (it.status || '').toUpperCase()
+      if (rawStatus === 'PUBLISHED' || rawStatus === 'UPCOMING' || rawStatus === 'ONGOING' || !it.status) return true
+      if (rawStatus === 'SCHEDULED' && it.scheduledAt) {
         const t = new Date(it.scheduledAt).getTime()
         if (!Number.isNaN(t) && t <= now.getTime()) return true
       }

@@ -7,8 +7,8 @@ export function SchemaMarkup() {
     name: 'EPath Education',
     description: 'EPath Education cung cấp lộ trình học thuật quốc tế xuyên suốt từ Tiểu học đến Trung học Phổ thông. Blended Learning với Edmentum International (Cognia & WASC).',
     url: 'https://www.epath.edu.vn',
-    logo: 'https://www.epath.edu.vn/epath_logo.png',
-    image: 'https://www.epath.edu.vn/epath_logo.png',
+    logo: 'https://www.epath.edu.vn/epath-logo-title.png',
+    image: 'https://www.epath.edu.vn/epath-logo-title.png',
     foundingDate: '2020',
     areaServed: {
       '@type': 'State',

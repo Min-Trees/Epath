@@ -15,6 +15,7 @@ import {
 import { CollectionNames } from '@/lib/cms-types'
 import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import { getAdminDb } from '@/lib/firebase-admin'
+import { toPlainObject } from '@/lib/cms-data'
 
 async function loadSingleton<T>(name: string): Promise<T | null> {
   try {
@@ -199,22 +200,29 @@ export async function GET() {
 
     const programsOut = programs.length > 0 ? programs : DEFAULT_PROGRAMS
 
+    // Strip Firestore-specific classes (Timestamp, DocumentReference, etc.)
+    // from every payload so the JSON response can be safely consumed by
+    // client-side code (and later passed through React props without
+    // triggering "Classes or null prototypes are not supported").
+    const sanitize = <T,>(v: T): T => toPlainObject(v) as T
+
     const response = NextResponse.json({
       configured: true,
-      [CollectionNames.faqs]: faqs,
-      [CollectionNames.coreValues]: coreValues,
-      [CollectionNames.learningPathways]: pathways,
-      [CollectionNames.programs]: programsOut,
-      [CollectionNames.partners]: partners,
-      [CollectionNames.events]: events,
-      [CollectionNames.admissionSteps]: admissionSteps,
-      [CollectionNames.achievements]: achievements,
-      [CollectionNames.teamMembers]: teamMembers,
-      [CollectionNames.statistics]: statistics,
-      [CollectionNames.testimonials]: testimonials,
-      [CollectionNames.heroContent]: heroContent,
-      [CollectionNames.aboutContent]: aboutContent,
-      [CollectionNames.siteSettings]: siteSettings,
+      [CollectionNames.faqs]: sanitize(faqs),
+      [CollectionNames.coreValues]: sanitize(coreValues),
+      [CollectionNames.learningPathways]: sanitize(pathways),
+      pathways: sanitize(pathways),
+      [CollectionNames.programs]: sanitize(programsOut),
+      [CollectionNames.partners]: sanitize(partners),
+      [CollectionNames.events]: sanitize(events),
+      [CollectionNames.admissionSteps]: sanitize(admissionSteps),
+      [CollectionNames.achievements]: sanitize(achievements),
+      [CollectionNames.teamMembers]: sanitize(teamMembers),
+      [CollectionNames.statistics]: sanitize(statistics),
+      [CollectionNames.testimonials]: sanitize(testimonials),
+      [CollectionNames.heroContent]: sanitize(heroContent),
+      [CollectionNames.aboutContent]: sanitize(aboutContent),
+      [CollectionNames.siteSettings]: sanitize(siteSettings),
     })
 
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')

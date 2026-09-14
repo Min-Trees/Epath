@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
       >
         <CardHeader className="text-center">
           <Image
-            src="/epath_logo.png"
+            src="/epath-logo-title.png"
             alt="EPath Education"
             width={200}
             height={86}

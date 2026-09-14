@@ -25,6 +25,7 @@ interface DashboardData {
     admissionSteps: number
     posts: number
     leads: number
+    achievements: number
   }
   recent: { type: string; label: string; when: string }[]
 }
@@ -49,8 +50,9 @@ export default function AdminDashboardPage() {
       fetch('/api/cms/admission-steps').then((r) => r.json()),
       fetch('/api/cms/blog-posts').then((r) => r.json()),
       fetch('/api/cms/leads').then((r) => r.json()),
+      fetch('/api/cms/achievements').then((r) => r.json()),
     ])
-      .then(([programs, partners, events, faqs, statistics, testimonials, coreValues, team, pathways, admissionSteps, posts, leads]) => ({
+      .then(([programs, partners, events, faqs, statistics, testimonials, coreValues, team, pathways, admissionSteps, posts, leads, achievements]) => ({
         counts: {
           programs: programs.items?.length ?? 0,
           partners: partners.items?.length ?? 0,
@@ -64,6 +66,7 @@ export default function AdminDashboardPage() {
           admissionSteps: admissionSteps.items?.length ?? 0,
           posts: posts.items?.length ?? 0,
           leads: leads.items?.length ?? 0,
+          achievements: achievements.items?.length ?? 0,
         },
         recent: [],
       }))
@@ -100,13 +103,18 @@ export default function AdminDashboardPage() {
 
   const stats = [
     { label: 'Chương trình học', value: data?.counts.programs ?? '—', accent: 'primary' as const },
+    { label: 'Lộ trình học', value: data?.counts.pathways ?? '—', accent: 'primary' as const },
+    { label: 'Giảng viên & Cố vấn', value: data?.counts.team ?? '—', accent: 'dark' as const },
+    { label: 'Giá trị cốt lõi', value: data?.counts.coreValues ?? '—', accent: 'cta' as const },
+    { label: 'Hộp thư liên hệ', value: data?.counts.leads ?? '—', accent: 'accent' as const },
     { label: 'Đối tác', value: data?.counts.partners ?? '—', accent: 'accent' as const },
     { label: 'Sự kiện', value: data?.counts.events ?? '—', accent: 'cta' as const },
     { label: 'FAQ', value: data?.counts.faqs ?? '—', accent: 'dark' as const },
-    { label: 'Thống kê', value: data?.counts.statistics ?? '—', accent: 'primary' as const },
+    { label: 'Bài viết', value: data?.counts.posts ?? '—', accent: 'primary' as const },
+    { label: 'Thành tích', value: data?.counts.achievements ?? '—', accent: 'primary' as const },
+    { label: 'Thống kê', value: data?.counts.statistics ?? '—', accent: 'dark' as const },
     { label: 'Testimonials', value: data?.counts.testimonials ?? '—', accent: 'accent' as const },
-    { label: 'Giá trị cốt lõi', value: data?.counts.coreValues ?? '—', accent: 'cta' as const },
-    { label: 'Team', value: data?.counts.team ?? '—', accent: 'dark' as const },
+    { label: 'Quy trình tuyển sinh', value: data?.counts.admissionSteps ?? '—', accent: 'cta' as const },
   ]
 
   return (
@@ -194,7 +202,7 @@ export default function AdminDashboardPage() {
           <QuickLink href="/admin/statistics" label="Thống kê" />
           <QuickLink href="/admin/testimonials" label="Testimonials" />
           <QuickLink href="/admin/core-values" label="Giá trị cốt lõi" />
-          <QuickLink href="/admin/team" label="Team" />
+          <QuickLink href="/admin/team" label="Giảng viên & Cố vấn" />
           <QuickLink href="/admin/pathways" label="Lộ trình học" />
           <QuickLink href="/admin/achievements" label="Thành tích" />
           <QuickLink href="/admin/admission-steps" label="Bước nhập học" />

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { ClipboardCheck, Map, Laptop, MessageCircle, Award, ListChecks } from 'lucide-react'
 import { duration, easeOut, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
@@ -35,19 +35,37 @@ const fallbackSteps = [
 
 export function StepModelSection() {
   const t = useTranslations('steps')
+  const locale = useLocale() as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
   const { data: cms } = useCmsContext()
-  const steps = cms.admissionSteps
-    .filter((s) => s.isActive)
-    .sort((a, b) => a.order - b.order)
+  const rawSteps = (cms.admissionSteps || [])
+    .filter((s) => s.isActive !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
+  // Deduplicate steps by stepNumber or title
+  const uniqueSteps = rawSteps.reduce<typeof rawSteps>((acc, step) => {
+    const key = (step.stepNumber !== undefined ? `num-${step.stepNumber}` : null) ||
+                (step.title?.vi || step.title?.en || '').trim().toLowerCase() ||
+                `order-${step.order}`
+    if (!acc.some((s) => {
+      const sKey = (s.stepNumber !== undefined ? `num-${s.stepNumber}` : null) ||
+                   (s.title?.vi || s.title?.en || '').trim().toLowerCase() ||
+                   `order-${s.order}`
+      return sKey === key
+    })) {
+      acc.push(step)
+    }
+    return acc
+  }, [])
+
+  const steps = uniqueSteps.slice(0, 5)
   const displaySteps = steps.length > 0 ? steps : fallbackSteps
 
   return (
     <section
       ref={sectionRef}
       id="step-timeline"
-      className="py-20 surface-alt overflow-hidden step-section"
+      className="py-20 bg-[#F6F5F1] overflow-hidden step-section"
     >
       <div className="container mx-auto px-4">
         <motion.div
@@ -57,10 +75,10 @@ export function StepModelSection() {
           transition={{ duration: duration.normal, ease: easeOut }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#20242B] mb-4">
             {t('title')}
           </h2>
-          <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+          <p className="text-lg text-[#5C6069] max-w-2xl mx-auto">
             {t('subtitle')}
           </p>
         </motion.div>
@@ -83,10 +101,10 @@ export function StepModelSection() {
 
                 const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
                 const stepTitle = isFromCMS
-                  ? pick(cmsStep.title, 'vi' as Locale) || pick(cmsStep.title, 'en' as Locale)
+                  ? pick(cmsStep.title, locale) || pick(cmsStep.title, 'vi' as Locale)
                   : t(fallbackStep.titleKey)
                 const stepDesc = isFromCMS
-                  ? pick(cmsStep.description, 'vi' as Locale) || pick(cmsStep.description, 'en' as Locale)
+                  ? pick(cmsStep.description, locale) || pick(cmsStep.description, 'vi' as Locale)
                   : t(fallbackStep.descKey)
 
                 return (
@@ -176,10 +194,10 @@ export function StepModelSection() {
 
                 const stepNumber = isFromCMS ? idx + 1 : fallbackStep.number
                 const stepTitle = isFromCMS
-                  ? pick(cmsStep.title, 'vi' as Locale) || pick(cmsStep.title, 'en' as Locale)
+                  ? pick(cmsStep.title, locale) || pick(cmsStep.title, 'vi' as Locale)
                   : t(fallbackStep.titleKey)
                 const stepDesc = isFromCMS
-                  ? pick(cmsStep.description, 'vi' as Locale) || pick(cmsStep.description, 'en' as Locale)
+                  ? pick(cmsStep.description, locale) || pick(cmsStep.description, 'vi' as Locale)
                   : t(fallbackStep.descKey)
 
                 return (
@@ -245,14 +263,14 @@ export function StepModelSection() {
         </div>
 
         <div className="text-center mt-16">
-          <div className="inline-flex items-center gap-4 bg-white rounded-xl p-6 shadow-sm">
+          <div className="inline-flex items-center gap-4 bg-white rounded-xl p-6 shadow-sm border border-[#DEDDD6]">
             <div className="text-right">
-              <p className="text-[#231F20] font-medium">{t('ctaText')}</p>
-              <p className="text-sm text-[#6B6B6B]">{t('ctaSubtext')}</p>
+              <p className="text-[#20242B] font-medium">{t('ctaText')}</p>
+              <p className="text-sm text-[#5C6069]">{t('ctaSubtext')}</p>
             </div>
             <a
               href="/admissions"
-              className="inline-flex items-center justify-center bg-[#F05A28] text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 whitespace-nowrap hover:bg-[#E04D1A] hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center bg-[#F26522] text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 whitespace-nowrap hover:bg-[#C94F16] hover:-translate-y-0.5"
             >
               {t('register')}
             </a>

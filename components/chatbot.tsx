@@ -940,8 +940,11 @@ export function Chatbot() {
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: 'spring', stiffness: 200 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-6 z-[70] w-14 h-14 sm:w-14 sm:h-14 bg-gradient-to-br from-[#3A53A3] to-[#2E4389] rounded-full shadow-xl flex items-center justify-center hover:shadow-2xl transition-shadow"
-        style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        className="chat-fab fixed bottom-4 right-4 sm:bottom-5 sm:right-6 lg:bottom-6 lg:right-6 lg:left-auto z-[70] w-14 h-14 sm:w-14 sm:h-14 rounded-full shadow-xl flex items-center justify-center hover:shadow-2xl transition-shadow"
+        style={{
+          background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)',
+          marginBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
         aria-label="Open chat"
       >
         <AnimatePresence mode="wait">
@@ -973,7 +976,7 @@ export function Chatbot() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-4 h-4 bg-[#F05A28] rounded-full border-2 border-white"
+            className="absolute -top-1 -right-1 w-4 h-4 bg-[#F26522] rounded-full border-2 border-white"
           />
         )}
       </motion.button>
@@ -992,7 +995,7 @@ export function Chatbot() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3 }}
             className={cn(
-              'fixed z-[70] bg-white shadow-2xl flex flex-col overflow-hidden border border-[#3A53A3]/20',
+              'chat-panel fixed z-[70] bg-white shadow-2xl flex flex-col overflow-hidden border border-[#DEDDD6]',
               // Mobile fullscreen sheet
               'inset-x-0 bottom-0 sm:inset-auto',
               'sm:rounded-2xl',
@@ -1002,7 +1005,10 @@ export function Chatbot() {
             )}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#3A53A3] to-[#2E4389] p-3 sm:p-4 flex items-center gap-3 shrink-0">
+            <div 
+              className="p-3 sm:p-4 flex items-center gap-3 shrink-0"
+              style={{ background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }}
+            >
               {chatStep !== 'main' && (
                 <button
                   onClick={handleBackToMain}
@@ -1026,7 +1032,7 @@ export function Chatbot() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-white font-semibold text-base sm:text-lg truncate">
-                  {'Cô Hương — Cố vấn Học tập'}
+                  {chatbotContent.chatHeaderStatus[l].advisor}
                 </h3>
                 <p className="text-white/80 text-xs sm:text-sm truncate">
                   {chatStep === 'contact'
@@ -1040,16 +1046,6 @@ export function Chatbot() {
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span className="text-white/80 text-xs">Online</span>
               </div>
-              {/* "Làm mới" button */}
-              <button
-                onClick={handleResetSession}
-                className="hidden sm:flex text-white/80 hover:text-white p-1 shrink-0 items-center gap-1 text-xs"
-                aria-label={chatbotContent.resetSession[l]}
-                title={chatbotContent.resetSession[l]}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>{chatbotContent.resetSession[l].split(' ')[0]}</span>
-              </button>
               <button
                 onClick={() => setIsOpen(false)}
                 className="sm:hidden text-white/90 hover:text-white p-1 -mr-1 shrink-0"
@@ -1059,7 +1055,7 @@ export function Chatbot() {
               </button>
             </div>
             {/* Messages */}
-            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F8F9FA]">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F6F5F1]">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -1069,7 +1065,7 @@ export function Chatbot() {
                 >
                   <div className={`flex gap-2 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                      message.role === 'user' ? 'bg-[#F05A28]' : 'bg-[#3A53A3]'
+                      message.role === 'user' ? 'bg-[#F26522]' : 'bg-[#2E4A9E]'
                     }`}>
                       {message.role === 'user' ? (
                         <User className="w-4 h-4 text-white" />
@@ -1079,14 +1075,23 @@ export function Chatbot() {
                     </div>
                     <div className={`rounded-2xl px-4 py-3 max-w-full ${
                       message.role === 'user'
-                        ? 'bg-gradient-to-br from-[#F05A28] to-[#E04D1A] text-white rounded-br-sm shadow-lg shadow-[#F05A28]/20'
-                        : 'bg-white text-[#231F20] rounded-bl-sm shadow-md'
-                    }`}>
+                        ? 'text-white rounded-br-sm shadow-lg'
+                        : 'bg-white text-[#20242B] rounded-bl-sm shadow-md border border-[#DEDDD6]'
+                    }`}
+                      style={
+                        message.role === 'user'
+                          ? {
+                              background: 'linear-gradient(135deg, #F26522 0%, #C94F16 100%)',
+                              boxShadow: '0 8px 20px -6px rgba(242, 101, 34, 0.4)',
+                            }
+                          : undefined
+                      }
+                    >
                       <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                       
                       {/* Rating */}
                       {message.showRating && message.role === 'assistant' && (
-                        <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#3A53A3]/10">
+                        <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#DEDDD6]">
                           <span className="text-xs text-[#666]">Câu trả lời này có hữu ích không?</span>
                           <div className="flex gap-1">
                             <button

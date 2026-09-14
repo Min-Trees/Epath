@@ -55,34 +55,50 @@ export default function AdminPartnersPage() {
         reorder={cms.partners.reorder}
         reviewCollection="partners"
         renderSummary={(item) => (
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div
-                className="text-xs px-2 py-1 rounded"
-                style={{
-                  color: semanticColors.primary,
-                  backgroundColor: semanticColors.primaryBg,
-                }}
-              >
-                {item.category}
+          <div className="flex items-start gap-3">
+            {item.logoUrl ? (
+              <div className="w-16 h-12 rounded-lg border border-[#DEDDD6] overflow-hidden bg-white shrink-0 flex items-center justify-center p-1">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.logoUrl}
+                  alt={item.name}
+                  className="w-full h-full object-cover rounded"
+                />
               </div>
-              {item.isFeatured && (
-                <span
-                  className="text-xs px-2 py-1 rounded"
+            ) : (
+              <div className="w-16 h-12 rounded-lg border border-[#DEDDD6] bg-[#F6F5F1] shrink-0 flex items-center justify-center text-xs text-[#5C6069] font-bold">
+                PARTNER
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <div
+                  className="text-xs px-2 py-0.5 rounded font-medium"
                   style={{
-                    color: '#fff',
-                    backgroundColor: semanticColors.cta,
+                    color: semanticColors.primary,
+                    backgroundColor: semanticColors.primaryBg,
                   }}
                 >
-                  Nổi bật
-                </span>
-              )}
-            </div>
-            <div className="font-medium" style={{ color: semanticColors.text }}>
-              {item.name}
-            </div>
-            <div className="text-sm line-clamp-2" style={{ color: semanticColors.textMuted }}>
-              {item.description.vi}
+                  {item.category}
+                </div>
+                {item.isFeatured && (
+                  <span
+                    className="text-xs px-2 py-0.5 rounded font-bold"
+                    style={{
+                      color: '#fff',
+                      backgroundColor: semanticColors.cta,
+                    }}
+                  >
+                    Nổi bật
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold text-sm truncate" style={{ color: semanticColors.text }}>
+                {item.name}
+              </div>
+              <div className="text-xs line-clamp-2 mt-0.5" style={{ color: semanticColors.textMuted }}>
+                {item.description.vi || item.description.en}
+              </div>
             </div>
           </div>
         )}

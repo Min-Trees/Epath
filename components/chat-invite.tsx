@@ -98,13 +98,17 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
             aria-hidden
           />
 
-          {/* The card — centered with framer-motion spring for a
-              satisfying, lightweight feel. */}
+          {/* The card — anchored to bottom-LEFT so it sits BELOW the
+              text column and ABOVE the floating chat bubble (which is
+              at bottom-right). It never covers the character
+              illustration on the right or the chat launch icon. The
+              card only takes up the left ~40% of the screen at most,
+              so the hero illustration stays fully visible. */}
           <motion.div
             key="chat-invite-card"
             role="dialog"
             aria-modal="false"
-            aria-label={l === 'vi' ? 'Gợi ý trò chuyện với Cô Hương' : 'Invite to chat with Ms. Huong'}
+            aria-label={l === 'vi' ? 'Gợi ý trò chuyện với Bộ phận Học vụ' : 'Invite to chat with the Academic Department'}
             initial={{ opacity: 0, scale: 0.88, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 10 }}
@@ -113,13 +117,14 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
               scale: { type: 'spring', stiffness: 260, damping: 22 },
               y: { type: 'spring', stiffness: 260, damping: 22 },
             }}
-            className="fixed inset-0 z-[65] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed z-[65] pointer-events-none left-3 right-3 bottom-24 sm:left-6 sm:right-auto sm:bottom-28 flex sm:justify-start justify-center"
           >
             <div
-              className="pointer-events-auto w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-[#3A53A3]/15 border border-[#3A53A3]/10 overflow-hidden"
+              className="pointer-events-auto w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-[#DEDDD6] overflow-hidden"
+              style={{ boxShadow: '0 20px 60px -12px rgba(30, 53, 112, 0.2)' }}
             >
               {/* Colored top accent */}
-              <div className="h-1.5 bg-gradient-to-r from-[#3A53A3] via-[#5B7BD4] to-[#3A53A3]/50" />
+              <div className="h-1.5 bg-gradient-to-r from-[#2E4A9E] via-[#8DC63F] to-[#F26522]" />
 
               <div className="px-6 py-5">
                 {/* Header row */}
@@ -127,8 +132,14 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
                   <div className="flex items-center gap-3">
                     {/* Avatar with subtle glow */}
                     <div className="relative">
-                      <div className="absolute inset-0 rounded-full bg-[#3A53A3]/30 blur-md" />
-                      <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-[#3A53A3] to-[#2E4389] flex items-center justify-center shadow-lg shadow-[#3A53A3]/25">
+                      <div className="absolute inset-0 rounded-full bg-[#2E4A9E]/30 blur-md" />
+                      <div 
+                        className="relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                        style={{
+                          background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)',
+                          boxShadow: '0 8px 20px -6px rgba(46, 74, 158, 0.4)',
+                        }}
+                      >
                         <Bot className="w-6 h-6 text-white" />
                       </div>
                       {/* Online pulse */}
@@ -140,7 +151,7 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
                     </div>
 
                     <div>
-                      <p className="text-[15px] font-semibold text-[#231F20] leading-tight">
+                      <p className="text-[15px] font-semibold text-[#20242B] leading-tight">
                         {c.title}
                       </p>
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -149,7 +160,7 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
                           animate={{ opacity: [1, 0.4, 1] }}
                           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                         />
-                        <span className="text-xs text-[#6B6B6B]">{c.online}</span>
+                        <span className="text-xs text-[#5C6069]">{c.online}</span>
                       </div>
                     </div>
                   </div>
@@ -158,14 +169,14 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
                   <button
                     onClick={handleDismiss}
                     aria-label={l === 'vi' ? 'Đóng' : 'Close'}
-                    className="shrink-0 p-2 rounded-full text-[#6B6B6B] hover:text-[#231F20] hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                    className="shrink-0 p-2 rounded-full text-[#5C6069] hover:text-[#20242B] hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
                 {/* Body */}
-                <p className="text-sm text-[#4A4A4A] leading-relaxed mb-5 whitespace-pre-line">
+                <p className="text-sm text-[#5C6069] leading-relaxed mb-5 whitespace-pre-line">
                   {c.subtitle}
                 </p>
 
@@ -173,14 +184,18 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={handleAccept}
-                    className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-[#3A53A3] to-[#2E4389] hover:from-[#2E4389] hover:to-[#1E3060] shadow-lg shadow-[#3A53A3]/20 transition-all duration-200 active:scale-95 cursor-pointer"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-sm font-semibold text-white transition-all duration-200 active:scale-95 cursor-pointer hover:opacity-95"
+                    style={{
+                      background: 'linear-gradient(135deg, #F26522 0%, #C94F16 100%)',
+                      boxShadow: '0 8px 20px -6px rgba(242, 101, 34, 0.45)',
+                    }}
                   >
                     <MessageCircle className="w-4 h-4" />
                     {c.cta}
                   </button>
                   <button
                     onClick={handleDismiss}
-                    className="py-2.5 px-4 rounded-xl text-sm text-[#6B6B6B] hover:text-[#231F20] hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                    className="py-2.5 px-4 rounded-full text-sm text-[#5C6069] hover:text-[#20242B] hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
                   >
                     {c.dismiss}
                   </button>
@@ -191,7 +206,8 @@ export function ChatInvite({ onStartChat }: ChatInviteProps) {
               <div className="h-0.5 bg-gray-100">
                 <motion.div
                   key="progress"
-                  className="h-full bg-gradient-to-r from-[#3A53A3] to-[#5B7BD4]"
+                  className="h-full"
+                  style={{ background: 'linear-gradient(90deg, #2E4A9E 0%, #F26522 100%)' }}
                   initial={{ width: '100%' }}
                   animate={{ width: '0%' }}
                   transition={{ duration: AUTO_HIDE_MS / 1000, ease: 'linear' }}

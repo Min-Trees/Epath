@@ -8,29 +8,29 @@ import type { Variants, Transition } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 
 // -----------------------------------------------------------
-// Easing curves
+// Easing curves – buttery smooth, organic, luxury deceleration
 // -----------------------------------------------------------
 
-/** Standard ease-out, ideal for entrance animations. */
-export const easeOut: [number, number, number, number] = [0, 0, 0.2, 1]
+/** Ultra-smooth deceleration curve (quintic ease-out, Apple/Stripe standard). */
+export const easeOut: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 /** Symmetric ease-in-out, ideal for ambient / loop animations. */
-export const easeInOut: [number, number, number, number] = [0.4, 0, 0.2, 1]
+export const easeInOut: [number, number, number, number] = [0.65, 0, 0.35, 1]
 
 /** Soft deceleration for non-jarring entrances. */
-export const easeStandard: [number, number, number, number] = [0.4, 0, 0.6, 1]
+export const easeStandard: [number, number, number, number] = [0.25, 1, 0.5, 1]
 
 // -----------------------------------------------------------
-// Durations (seconds)
+// Durations (seconds) – relaxed, elegant, non-abrupt timing
 // -----------------------------------------------------------
 
 export const duration = {
-  instant: 0.12,
-  fast: 0.18,
-  normal: 0.25,
-  slow: 0.35,
-  slower: 0.5,
-  page: 0.2,
+  instant: 0.15,
+  fast: 0.35,
+  normal: 0.65,
+  slow: 0.85,
+  slower: 1.1,
+  page: 0.45,
 } as const
 
 // -----------------------------------------------------------
@@ -52,6 +52,21 @@ export const transitionPage: Transition = {
   ease: easeStandard,
 }
 
+/** Physics-based spring transitions for organic, bounce-free settle. */
+export const springGentle: Transition = {
+  type: 'spring',
+  damping: 24,
+  stiffness: 100,
+  mass: 0.8,
+}
+
+export const springSmooth: Transition = {
+  type: 'spring',
+  damping: 28,
+  stiffness: 90,
+  mass: 1,
+}
+
 // -----------------------------------------------------------
 // Reusable variants
 // -----------------------------------------------------------
@@ -63,8 +78,8 @@ export const inViewViewport = {
   margin: '0px 0px -10% 0px',
 } as const
 
-/** Container that staggers its direct children. */
-export const staggerContainer = (stagger = 0.08, delay = 0): Variants => ({
+/** Container that staggers its direct children with fluid cascade. */
+export const staggerContainer = (stagger = 0.1, delay = 0.05): Variants => ({
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -81,52 +96,63 @@ export const fadeIn: Variants = {
   visible: { opacity: 1, transition: transitionEnter },
 }
 
-/** Fade + translate from below. */
+/** Fade + translate from below with smooth organic settle. */
 export const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: transitionSlowEnter },
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: duration.slow,
+      ease: easeOut,
+    },
+  },
 }
 
 /** Fade + translate from above. */
 export const fadeInDown: Variants = {
-  hidden: { opacity: 0, y: -20 },
+  hidden: { opacity: 0, y: -24 },
   visible: { opacity: 1, y: 0, transition: transitionSlowEnter },
 }
 
 /** Fade + translate from left. */
 export const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -30 },
+  hidden: { opacity: 0, x: -32 },
   visible: { opacity: 1, x: 0, transition: transitionSlowEnter },
 }
 
 /** Fade + translate from right. */
 export const fadeInRight: Variants = {
-  hidden: { opacity: 0, x: 30 },
+  hidden: { opacity: 0, x: 32 },
   visible: { opacity: 1, x: 0, transition: transitionSlowEnter },
 }
 
-/** Subtle scale-in, no bounce. */
+/** Subtle scale-in, smooth settle. */
 export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.96 },
+  hidden: { opacity: 0, scale: 0.95 },
   visible: { opacity: 1, scale: 1, transition: transitionEnter },
 }
 
-/** Card/panel hover: lift with soft shadow. */
+/** Card/panel hover: smooth floating lift with soft shadow. */
 export const hoverLift = {
-  rest: { y: 0, boxShadow: '0 4px 16px -4px rgba(35, 31, 32, 0.08)' },
-  hover: {
-    y: -4,
-    boxShadow: '0 12px 28px -8px rgba(35, 31, 32, 0.18)',
-    transition: { duration: duration.fast, ease: easeOut },
+  rest: {
+    y: 0,
+    boxShadow: '0 4px 16px -4px rgba(30, 53, 112, 0.06)',
+    transition: { duration: 0.45, ease: easeOut },
   },
-  tap: { y: -1, transition: { duration: duration.instant } },
+  hover: {
+    y: -6,
+    boxShadow: '0 20px 40px -12px rgba(30, 53, 112, 0.15)',
+    transition: { duration: 0.45, ease: easeOut },
+  },
+  tap: { y: -2, transition: { duration: 0.15 } },
 } satisfies Variants
 
-/** Plain hover scale. */
+/** Plain hover scale with organic spring. */
 export const hoverScale = {
-  rest: { scale: 1 },
-  hover: { scale: 1.04, transition: { duration: duration.fast, ease: easeOut } },
-  tap: { scale: 0.97, transition: { duration: duration.instant } },
+  rest: { scale: 1, transition: { duration: 0.4, ease: easeOut } },
+  hover: { scale: 1.04, transition: { duration: 0.4, ease: easeOut } },
+  tap: { scale: 0.98, transition: { duration: 0.15 } },
 } satisfies Variants
 
 // -----------------------------------------------------------

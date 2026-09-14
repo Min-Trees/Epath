@@ -1,5 +1,6 @@
 import 'server-only'
 import { getPageSections, type PageSection, type PageSlug } from '@/lib/pages-repo'
+import { loadHeroContentForPage } from '@/lib/cms-data'
 import { HeroSection } from '@/components/sections/hero-section'
 import { CoreValuesSection } from '@/components/sections/core-values-section'
 import { LearningPathwaysSection } from '@/components/sections/learning-pathways-section'
@@ -11,15 +12,15 @@ import { FAQSection } from '@/components/sections/faq-section'
 import { CTABanner } from '@/components/sections/cta-banner'
 import { AchievementsSection } from '@/components/sections/achievements-section'
 
-type SectionComponent = () => React.JSX.Element
+type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }) => React.JSX.Element
 
 // Map each section type to its underlying component. We expose a single
 // canonical component per visual block so duplicate section types (e.g.
 // 'hero' + 'intro', 'vision' + 'mission', 'whyEdmentum') automatically
 // share the same renderer and dedupe correctly downstream.
 const SECTION_COMPONENT: Record<string, SectionComponent> = {
-  hero: () => <HeroSection />,
-  intro: () => <HeroSection />,
+  hero: ({ initialHero }) => <HeroSection initialHero={initialHero ?? null} />,
+  intro: ({ initialHero }) => <HeroSection initialHero={initialHero ?? null} />,
   coreValues: () => <CoreValuesSection />,
   learningPathways: () => <LearningPathwaysSection />,
   stepModel: () => <StepModelSection />,
@@ -115,6 +116,14 @@ export async function getActivePageSections(pageId: PageSlug): Promise<string[]>
 export async function PageSectionsRenderer({ pageId }: { pageId: PageSlug }) {
   const types = await getActivePageSections(pageId)
 
+  // Pre-fetch hero content server-side so the HeroSection renders with
+  // the correct video/image on the first paint instead of flashing the
+  // gradient fallback while the client-side CMS context catches up.
+  const hasHero = types.some(
+    (t) => SECTION_DEDUP_KEY[t] === 'hero'
+  )
+  const initialHero = hasHero ? await loadHeroContentForPage(pageId) : null
+
   const seenKeys = new Set<string>()
   const uniqueTypes: string[] = []
 
@@ -132,7 +141,7 @@ export async function PageSectionsRenderer({ pageId }: { pageId: PageSlug }) {
       {uniqueTypes.map((type, idx) => {
         const Renderer = SECTION_COMPONENT[type]
         if (!Renderer) return null
-        return <Renderer key={`${pageId}-${type}-${idx}`} />
+        return <Renderer key={`${pageId}-${type}-${idx}`} initialHero={initialHero} />
       })}
     </>
   )

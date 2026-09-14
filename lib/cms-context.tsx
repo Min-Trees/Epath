@@ -23,6 +23,7 @@ export interface PublicCmsBundle {
   faqs: FAQ[]
   coreValues: CoreValue[]
   pathways: LearningPathway[]
+  learningPathways?: LearningPathway[]
   programs: Program[]
   partners: Partner[]
   events: CmsEvent[]
@@ -87,7 +88,15 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch(`/api/public/cms?_=${now}&k=${refreshKey}`)
         const result = await response.json()
         if (!cancelled) {
-          setData({ ...EMPTY, ...(result as Partial<PublicCmsBundle>), heroContent: normalizeHeroContent((result as { heroContent?: unknown }).heroContent) })
+          const raw = result as Record<string, unknown>
+          const pathways = ((raw.pathways || raw.learningPathways || []) as LearningPathway[])
+          setData({
+            ...EMPTY,
+            ...(result as Partial<PublicCmsBundle>),
+            pathways,
+            learningPathways: pathways,
+            heroContent: normalizeHeroContent((result as { heroContent?: unknown }).heroContent),
+          })
           setLoading(false)
         }
       } catch (error) {

@@ -1,28 +1,33 @@
 'use client'
 
 /**
- * CoreValuesSection – renders the homepage's "giá trị cốt lõi" grid.
+ * CoreValuesSection – iSchool template implementation.
+ * Matches: "Online Courses – iSchool.html" (Features / sc_icons section)
  *
- * Source of truth is the CMS `coreValues` collection from the shared CMS context.
- * When the CMS collection is empty, we fall back to i18n strings.
- * Uses consistent data source to prevent duplicate rendering.
+ * Characteristics:
+ * - Transparent / borderless column layout on #F6F5F1 background (no card borders/box fills)
+ * - Large subtle watermark numbers (01..06) behind the icon + title header
+ * - Colorful icon box + bold title
+ * - Clean description text
+ * - Interactive round arrow button with expanding "Tìm hiểu thêm" / "Read More" label on hover
  */
-import { useTranslations } from 'next-intl'
+
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network, type LucideIcon } from 'lucide-react'
 import { duration, easeOut, staggerContainer, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Route: Route,
-  Award: Award,
-  Laptop: Laptop,
-  Shield: Shield,
-  FileText: FileText,
-  Network: Network,
+const iconMap: Record<string, LucideIcon> = {
+  Route,
+  Award,
+  Laptop,
+  Shield,
+  FileText,
+  Network,
 }
 
 const fallbackValues = [
@@ -41,129 +46,135 @@ function pick(v: { vi?: string; en?: string } | undefined, locale: Locale): stri
 
 export function CoreValuesSection() {
   const t = useTranslations('values')
-  const params = useParams()
-  const locale = ((params.locale as string) || 'vi') as Locale
-  const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
+  const locale = useLocale() as Locale
+  const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.1 })
   const { data: cms } = useCmsContext()
-  const cmsValues = cms.coreValues || []
-  const coreValues = cmsValues.filter((v) => v.isActive !== false)
 
-  // Use ONLY ONE data source: CMS if available, otherwise fallback
-  const isUsingFallback = coreValues.length === 0
-  const displayValues = isUsingFallback ? fallbackValues : coreValues
+  // Use CMS core values if available, otherwise use fallback (capped at 6 items to match iSchool 3x2 grid)
+  const cmsValues = (cms.coreValues || []).filter((v) => v.isActive !== false)
+  const isUsingCMS = cmsValues.length >= 6
+  const displayValues = isUsingCMS ? cmsValues.slice(0, 6) : fallbackValues
 
   return (
-    <section ref={sectionRef} className="values-section py-20 surface-alt">
-      <div className="container mx-auto px-4">
+    <section
+      ref={sectionRef}
+      id="core-values"
+      className="py-20 sm:py-24 bg-[#F6F5F1] relative overflow-hidden"
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Section Header – Left-aligned matching iSchool */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: duration.normal, ease: easeOut }}
-          className="text-center mb-16"
+          className="mb-14 sm:mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+          <span className="block text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2E4A9E] mb-2 sm:mb-3">
+            {locale === 'en' ? 'Features' : 'Giá trị cốt lõi'}
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#20242B] tracking-tight max-w-3xl leading-[1.15]">
             {t('title')}
           </h2>
-          <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+          <p className="mt-3 text-base sm:text-lg text-[#5C6069] max-w-2xl">
             {t('subtitle')}
           </p>
         </motion.div>
 
+        {/* 3-Column Grid matching iSchool sc_icons */}
         <motion.div
           variants={staggerContainer(0.08)}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 lg:gap-x-12 gap-y-12 sm:gap-y-16"
         >
           {displayValues.map((value, index) => {
             const accent = accentCycle[index % accentCycle.length]
-            const cmsValue = isUsingFallback ? null : value as { id?: string; icon?: string; title?: { vi?: string; en?: string }; description?: { vi?: string; en?: string }; imageUrl?: string }
-            const fallbackValue = isUsingFallback ? value as typeof fallbackValues[0] : null
+            const isCMSItem = isUsingCMS && 'title' in value
+            const cmsItem = isCMSItem ? (value as { id?: string; icon?: string; title?: { vi?: string; en?: string }; description?: { vi?: string; en?: string } }) : null
+            const fallbackItem = !isCMSItem ? (value as typeof fallbackValues[0]) : null
 
-            const IconComponent = !isUsingFallback && cmsValue?.icon
-              ? iconMap[cmsValue.icon] || Route
-              : fallbackValue?.icon || Route
+            const IconComponent = isCMSItem && cmsItem?.icon && iconMap[cmsItem.icon]
+              ? iconMap[cmsItem.icon]
+              : fallbackItem?.icon || Route
 
-            const title = !isUsingFallback && cmsValue?.title
-              ? pick(cmsValue.title, locale)
-              : fallbackValue ? t(fallbackValue.key) : ''
+            const title = isCMSItem && cmsItem?.title
+              ? pick(cmsItem.title, locale)
+              : fallbackItem ? t(fallbackItem.key) : ''
 
-            const description = !isUsingFallback && cmsValue?.description
-              ? pick(cmsValue.description, locale)
-              : fallbackValue ? t(`${fallbackValue.key}Desc`) : ''
+            const description = isCMSItem && cmsItem?.description
+              ? pick(cmsItem.description, locale)
+              : fallbackItem ? t(`${fallbackItem.key}Desc`) : ''
 
-            const itemKey = !isUsingFallback && cmsValue?.id
-              ? cmsValue.id
-              : fallbackValue?.number || `fallback-${index}`
+            const numStr = String(index + 1).padStart(2, '0')
+            const itemKey = isCMSItem && cmsItem?.id ? cmsItem.id : `core-val-${index}`
 
             return (
               <motion.div
                 key={itemKey}
                 variants={{
-                  hidden: { opacity: 0, y: 24 },
+                  hidden: { opacity: 0, y: 32 },
                   visible: {
                     opacity: 1,
                     y: 0,
                     transition: { duration: duration.slow, ease: easeOut },
                   },
                 }}
-                style={{
-                  backgroundColor: accent.bg,
-                  borderColor: accent.color,
-                  ['--accent' as string]: accent.color,
-                  ['--reveal-delay' as string]: `${0.08 * index}s`,
-                }}
-                className="values-card group p-6 rounded-xl border-2 cursor-pointer overflow-hidden"
+                className="relative group cursor-pointer"
               >
-                {!isUsingFallback && cmsValue?.imageUrl && (
-                  <div className="aspect-video rounded-lg overflow-hidden mb-4 bg-white/60">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={cmsValue.imageUrl || ''}
-                      alt={title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-                <div className="flex items-start gap-4">
-                  <div className="values-icon w-14 h-14 rounded-lg flex items-center justify-center shrink-0">
-                    <IconComponent className="w-7 h-7 text-white" />
+                {/* Giant watermark number sitting behind icon + title */}
+                <span
+                  className="absolute -top-8 sm:-top-10 lg:-top-12 -left-1 text-[5.5rem] sm:text-[7rem] lg:text-[8rem] xl:text-[9rem] font-black leading-none tracking-tighter select-none pointer-events-none transition-transform duration-700 ease-out group-hover:scale-105"
+                  style={{
+                    color: accent.color,
+                    opacity: 0.1,
+                  }}
+                  aria-hidden="true"
+                >
+                  {numStr}
+                </span>
+
+                {/* Header row: Icon + Title */}
+                <div className="relative z-10 flex items-center gap-4 mb-3.5">
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: accent.bg,
+                      color: accent.color,
+                    }}
+                  >
+                    <IconComponent className="w-7 h-7" />
                   </div>
 
-                  <div className="flex-1">
-                    <div className="values-number text-sm font-semibold mb-1">
-                      {fallbackValue?.number || String(index + 1).padStart(2, '0')}
-                    </div>
-                    <h3 className="text-xl font-semibold text-[#231F20] mb-2">
-                      {title}
-                    </h3>
-                    <p className="values-desc text-sm leading-relaxed">
-                      {description}
-                    </p>
-                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 tracking-tight">
+                    {title}
+                  </h3>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 values-cta opacity-0 group-hover:opacity-100">
-                  <span className="text-sm font-medium">{t('learnMore')}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </div>
+                {/* Description */}
+                <p className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 min-h-[48px]">
+                  {description}
+                </p>
+
+                {/* iSchool expanding More button */}
+                <Link
+                  href={`/${locale}/about#values`}
+                  className="relative z-10 inline-flex items-center text-sm font-semibold text-[#20242B]"
+                >
+                  <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
+                    {locale === 'en' ? 'More' : 'Tìm hiểu thêm'}
+                  </span>
+                  <span
+                    className="w-9 h-9 rounded-full border border-[#DEDDD6] bg-white/70 flex items-center justify-center text-[#20242B] transition-all duration-500 ease-out group-hover:bg-[#2E4A9E] group-hover:border-[#2E4A9E] group-hover:text-white group-hover:scale-105 shadow-sm"
+                  >
+                    <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
               </motion.div>
             )
           })}
         </motion.div>
-
-        <div className="text-center mt-12">
-          <a
-            href={`/${locale}/programs`}
-            className="inline-flex items-center gap-2 text-[#3A53A3] font-semibold hover:text-[#2E4389] transition-colors duration-200"
-          >
-            {t('viewAll')}
-            <ArrowRight className="w-5 h-5" />
-          </a>
-        </div>
       </div>
     </section>
   )

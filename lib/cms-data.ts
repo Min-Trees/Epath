@@ -157,3 +157,104 @@ export function t(localized: { vi: string; en: string } | undefined, locale: Loc
   if (!localized) return ''
   return localized[locale] || localized.vi
 }
+
+/**
+ * Recursively converts Firestore special types (Timestamp, DocumentReference,
+ * GeoPoint, Blob, FieldValue, etc.) to plain JavaScript equivalents so the
+ * result can safely be serialised and passed as a React prop from a Server
+ * Component to a Client Component (or returned from an API route).
+ */
+export function toPlainObject(value: unknown): unknown {
+  if (value === null || value === undefined) return value
+
+  // Firestore Timestamp → ISO string
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    '__datastore_type' in (value as Record<string, unknown>)
+  ) {
+    const t = value as Record<string, unknown>
+    if (t.toDate && typeof t.toDate === 'function') {
+      return (t.toDate as () => Date)().toISOString()
+    }
+  }
+
+  // Firestore Timestamp (check constructor name for robustness)
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    (value as Record<string, unknown>).constructor?.name === 'Timestamp'
+  ) {
+    const t = value as { toDate?: () => Date }
+    if (t.toDate) {
+      try {
+        return t.toDate().toISOString()
+      } catch {
+        return null
+      }
+    }
+  }
+
+  // Plain array
+  if (Array.isArray(value)) {
+    return value.map(toPlainObject)
+  }
+
+  // Plain object (but not a class instance)
+  if (
+    typeof value === 'object' &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = toPlainObject(v)
+    }
+    return out
+  }
+
+  // Primitives and unknown non-plain objects (DocumentReference, GeoPoint,
+  // Blob, FieldValue, etc.) → stringify or drop
+  if (typeof value !== 'object' || value === null) return value
+  try {
+    return JSON.parse(JSON.stringify(value))
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Load hero content records for a specific page server-side.
+ *
+ * Mirrors the logic in `app/api/public/cms/route.ts` so the SSR pass can
+ * include the hero video/image without waiting for the client-side
+ * CmsProvider round-trip. Returns the raw record (or null) for the
+ * requested pageId; falls back to the legacy single-record hero if no
+ * pageId-specific record exists.
+ *
+ * The result is sanitised through `toPlainObject` so it contains only
+ * JSON-serialisable values and can safely be passed as a prop to
+ * Client Components.
+ */
+export async function loadHeroContentForPage(
+  pageId: string
+): Promise<Record<string, unknown> | null> {
+  try {
+    const db = getAdminDb()
+    const snap = await db.collection(CollectionNames.heroContent).get()
+    let pageMatch: Record<string, unknown> | null = null
+    let legacyHome: Record<string, unknown> | null = null
+    for (const doc of snap.docs) {
+      const raw = doc.data()
+      const data = toPlainObject({ id: doc.id, ...raw }) as Record<string, unknown>
+      if (data.isActive === false) continue
+      const status = (data.status as string | undefined) ?? 'PUBLISHED'
+      if (status !== 'PUBLISHED') continue
+      const recordPageId = (data.pageId as string | undefined) || 'home'
+      if (recordPageId === pageId && !pageMatch) pageMatch = data
+      if (recordPageId === 'home') legacyHome = legacyHome ?? data
+    }
+    return pageMatch ?? legacyHome ?? null
+  } catch {
+    return null
+  }
+}

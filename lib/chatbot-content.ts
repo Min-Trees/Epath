@@ -17,7 +17,7 @@ export type Locale = 'vi' | 'en'
 // Core greeting — shown as the first assistant message when chat opens.
 // ---------------------------------------------------------------------------
 export const greeting = {
-  vi: `Xin chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath Education.
+  vi: `Xin chào anh/chị! 👋 Em đến từ Bộ phận Học vụ tại EPath Education.
 
 Em có thể hỗ trợ anh/chị tìm hiểu về:
 • Giới thiệu EPath & các lộ trình học tập
@@ -25,9 +25,9 @@ Em có thể hỗ trợ anh/chị tìm hiểu về:
 • Lịch học, học phí & chính sách
 • Đánh giá năng lực đầu vào & đăng ký tư vấn
 
-Anh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi cô bất cứ điều gì nhé! 😊`,
+Anh/chị muốn em hỗ trợ về vấn đề nào trước ạ? Cứ hỏi em bất cứ điều gì nhé! 😊`,
 
-  en: `Hello! 👋 I'm Ms. Huong — Academic Advisor at EPath Education.
+  en: `Hello! 👋 I'm from the Academic Department at EPath Education.
 
 I can help you learn about:
 • EPath introduction & learning pathways
@@ -43,7 +43,7 @@ What would you like to know first? Feel free to ask me anything! 😊`,
 // ---------------------------------------------------------------------------
 export const preChatForm = {
   vi: {
-    title: 'Để lại thông tin, Cô Hương sẽ tư vấn riêng cho anh/chị!',
+    title: 'Để lại thông tin, Bộ phận Học vụ sẽ tư vấn riêng cho anh/chị!',
     namePlaceholder: 'Họ và tên phụ huynh',
     phonePlaceholder: 'Số điện thoại (Zalo)',
     submitButton: 'Gửi thông tin',
@@ -67,9 +67,9 @@ export const preChatForm = {
 // ---------------------------------------------------------------------------
 export const preChatGreeting = {
   vi: (name: string) =>
-    `Cảm ơn anh/chị ${name} đã để lại thông tin ạ! 🌷\n\nEm là Cô Hương — Cố vấn Học tập tại EPath Education. Em sẵn sàng hỗ trợ anh/chị tìm hiểu về chương trình Tiểu học – THPT, lộ trình học tập, học phí, hoặc đăng ký tư vấn 1-1 với cô tư vấn viên.\n\nAnh/chị muốn em chia sẻ về vấn đề nào trước ạ?`,
+    `Cảm ơn anh/chị ${name} đã để lại thông tin ạ! 🌷\n\nEm đến từ Bộ phận Học vụ tại EPath Education. Em sẵn sàng hỗ trợ anh/chị tìm hiểu về chương trình Tiểu học – THPT, lộ trình học tập, học phí, hoặc đăng ký tư vấn 1-1 với đội ngũ tư vấn viên.\n\nAnh/chị muốn em chia sẻ về vấn đề nào trước ạ?`,
   en: (name: string) =>
-    `Thank you, ${name}! 🌷\n\nI'm Ms. Huong — Academic Advisor at EPath Education. I'm happy to help you explore Elementary – High School programs, learning pathways, tuition, or arrange a 1-on-1 consultation with our advisor.\n\nWhat would you like to know first?`,
+    `Thank you, ${name}! 🌷\n\nI'm from the Academic Department at EPath Education. I'm happy to help you explore Elementary – High School programs, learning pathways, tuition, or arrange a 1-on-1 consultation with our team.\n\nWhat would you like to know first?`,
 } as const
 
 // ---------------------------------------------------------------------------
@@ -100,9 +100,9 @@ export const contactForm = {
     submittingButton: 'Đang gửi...',
     errorDefault: 'Không thể gửi thông tin lúc này. Quý phụ huynh vui lòng thử lại sau.',
     topicsLabel: 'Chủ đề đã hỏi:',
-    topicAlreadySubmittedNote: 'Cô tư vấn viên đã nhận được thông tin từ buổi trò chuyện bên trên.',
+    topicAlreadySubmittedNote: 'Bộ phận Tư vấn đã nhận được thông tin từ buổi trò chuyện bên trên.',
     successTitle: (name: string) =>
-      `Cảm ơn ${name}!\n\nThông tin của anh/chị đã được cô ghi nhận. Cô tư vấn viên EPath sẽ liên hệ qua số đã cung cấp trong vòng 24 giờ để hỗ trợ chi tiết ạ.\n\nTrong thời gian chờ, anh/chị có thể tiếp tục hỏi cô bất kỳ điều gì về chương trình nhé.`,
+      `Cảm ơn ${name}!\n\nThông tin của anh/chị đã được em ghi nhận. Bộ phận Tư vấn của EPath sẽ liên hệ qua số đã cung cấp trong vòng 24 giờ để hỗ trợ chi tiết ạ.\n\nTrong thời gian chờ, anh/chị có thể tiếp tục hỏi em bất kỳ điều gì về chương trình nhé.`,
     // Pre-chat lead present
     preChatAck: (name: string) =>
       `Dạ vâng ạ! Cô đã ghi nhận thông tin của anh/chị ${name} rồi. Anh/chị chỉ cần bổ sung thêm vài thông tin bên dưới để cô tư vấn viên gọi lại tư vấn chi tiết nhé ạ.`,
@@ -128,7 +128,7 @@ export const contactForm = {
     topicsLabel: 'Topics asked about:',
     topicAlreadySubmittedNote: 'Our advisor has already received the context from your conversation above.',
     successTitle: (name: string) =>
-      `Thank you, ${name}!\n\nYour information has been received. An EPath advisor will contact you at the number provided within 24 hours.\n\nWhile you wait, feel free to ask me anything else about our programs.`,
+      `Thank you, ${name}!\n\nYour information has been received. An EPath academic advisor will contact you at the number provided within 24 hours.\n\nWhile you wait, feel free to ask me anything else about our programs.`,
     preChatAck: (name: string) =>
       `Great! I've already noted your information, ${name}. Please fill in a few more details below so our advisor can give you a thorough consultation call.`,
     noPreChatAck:
@@ -151,12 +151,12 @@ export const topicPrompt = {
 // ---------------------------------------------------------------------------
 export const chatFooter = {
   vi: {
-    statusOnline: 'Cô Hương đang online',
-    statusOffline: 'Cô Hương có thể không phản hồi chính xác 100%. Vui lòng liên hệ trực tiếp để được tư vấn chi tiết.',
+    statusOnline: 'Bộ phận Học vụ đang online',
+    statusOffline: 'Bộ phận Học vụ có thể không phản hồi chính xác 100%. Vui lòng liên hệ trực tiếp để được tư vấn chi tiết.',
   },
   en: {
-    statusOnline: 'Ms. Huong is online',
-    statusOffline: 'Ms. Huong\'s responses may not always be 100% accurate. Please contact us directly for detailed advice.',
+    statusOnline: 'Academic Department is online',
+    statusOffline: 'Academic Department responses may not always be 100% accurate. Please contact us directly for detailed advice.',
   },
 } as const
 
@@ -168,13 +168,13 @@ export const chatHeaderStatus = {
     contact: 'Đăng ký tư vấn 1-1',
     welcomeBack: (name: string) => `Xin chào ${name} 👋`,
     default: 'EPath Education',
-    advisor: 'Cô Hương — Cố vấn Học tập',
+    advisor: 'Bộ phận Học vụ — EPath',
   },
   en: {
     contact: 'Request Consultation',
     welcomeBack: (name: string) => `Hello ${name} 👋`,
     default: 'EPath Education',
-    advisor: 'Ms. Huong — Academic Advisor',
+    advisor: 'Academic Department — EPath',
   },
 } as const
 
@@ -182,8 +182,8 @@ export const chatHeaderStatus = {
 // Input placeholder.
 // ---------------------------------------------------------------------------
 export const inputPlaceholder = {
-  vi: 'Nhập câu hỏi cho Cô Hương...',
-  en: 'Ask Ms. Huong anything...',
+  vi: 'Nhập câu hỏi cho Bộ phận Học vụ...',
+  en: 'Ask the Academic Department anything...',
 } as const
 
 // ---------------------------------------------------------------------------
@@ -267,15 +267,15 @@ export const quickActions = {
 // ---------------------------------------------------------------------------
 export const chatInviteContent = {
   vi: {
-    title: 'Cô Hương — EPath',
-    subtitle: 'Chào anh/chị! 👋 Em là Cô Hương — Cố vấn Học tập tại EPath.\nNếu anh/chị có câu hỏi về chương trình, học phí hay lộ trình phù hợp cho con, cô sẵn sàng tư vấn ngay ạ.',
+    title: 'Bộ phận Học vụ — EPath',
+    subtitle: 'Chào anh/chị! 👋 Em đến từ Bộ phận Học vụ tại EPath.\nNếu anh/chị có câu hỏi về chương trình, học phí hay lộ trình phù hợp cho con, em sẵn sàng tư vấn ngay ạ.',
     online: 'Đang trực tuyến',
     cta: 'Bắt đầu trò chuyện',
     dismiss: 'Để sau',
   },
   en: {
-    title: 'Ms. Huong — EPath',
-    subtitle: `Hello! 👋 I'm Ms. Huong — Academic Advisor at EPath.\nIf you have questions about our programs, tuition, or the right pathway for your child, I'm here to help!`,
+    title: 'Academic Department — EPath',
+    subtitle: `Hello! 👋 I'm from the Academic Department at EPath.\nIf you have questions about our programs, tuition, or the right pathway for your child, I'm here to help!`,
     online: 'Online now',
     cta: 'Start a conversation',
     dismiss: 'Maybe later',

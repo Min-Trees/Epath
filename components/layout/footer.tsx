@@ -2,13 +2,14 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslations, useLocale } from 'next-intl'
 import { MapPin, Phone, Mail, Facebook, Youtube, Instagram, Music2 } from 'lucide-react'
 import { semanticColors } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
 
 interface FooterProps {
-  locale: string
+  locale?: string
   footerDescription?: string
   partnersList?: string[]
   contactAddress?: string
@@ -20,16 +21,16 @@ interface FooterProps {
   contactTitle?: string
   partnersTitle?: string
   navLabels?: {
-    kindergarten: string
-    elementary: string
-    middle: string
-    high: string
-    aboutUs: string
-    vision: string
-    mission: string
-    values: string
-    partners: string
-    events: string
+    kindergarten?: string
+    elementary?: string
+    middle?: string
+    high?: string
+    aboutUs?: string
+    vision?: string
+    mission?: string
+    values?: string
+    partners?: string
+    events?: string
   }
 }
 
@@ -38,55 +39,71 @@ function pick(v: { vi: string; en: string } | undefined, locale: Locale): string
   return v[locale] || v.vi || v.en || ''
 }
 
-export function Footer({
-  locale,
-  footerDescription = 'EPath Education - Nơi khơi nguồn tương lai',
-  partnersList = ['Edmentum International', 'Cambridge Assessment', 'Cognia & WASC', 'FabLab EIU'],
-  contactAddress = '123 Nguyễn Trãi, Q1, TP.HCM',
-  contactPhone = '0912 345 678',
-  contactEmail = 'contact@epath.edu.vn',
-  copyright = '© 2024 EPath Education. All rights reserved.',
-  programsTitle = 'Chương trình học',
-  quickLinksTitle = 'Liên kết nhanh',
-  contactTitle = 'Liên hệ',
-  partnersTitle = 'Đối tác',
-  navLabels = {
-    kindergarten: 'Mầm non',
-    elementary: 'Tiểu học',
-    middle: 'THCS',
-    high: 'THPT',
-    aboutUs: 'Về chúng tôi',
-    vision: 'Tầm nhìn',
-    mission: 'Sứ mệnh',
-    values: 'Giá trị cốt lõi',
-    partners: 'Đối tác',
-    events: 'Sự kiện',
-  },
-}: FooterProps) {
+export function Footer(props: FooterProps) {
+  const currentLocale = useLocale()
+  const locale = ((currentLocale || props.locale || 'vi') as Locale)
+  const isVi = locale === 'vi'
+  const t = useTranslations('footer')
+  const tNav = useTranslations('nav')
+
   // FIX: Use CMS context instead of redundant direct fetch
   // This eliminates duplicate API calls and ensures data consistency
   const { data: cms } = useCmsContext()
   const settings = cms.siteSettings
 
-  const loc = locale as Locale
-  const address = pick(settings?.address, loc) || contactAddress
-  const phone = settings?.phone || contactPhone
-  const email = settings?.email || contactEmail
+  // Bilingual fallbacks
+  const defaultDesc = isVi
+    ? 'EPath Education - Nơi khơi nguồn tương lai'
+    : 'EPath Education - Where the Future Begins'
+  const defaultAddress = isVi
+    ? '38 Trần Phú, Phường Chánh Nghĩa, TP. Thủ Dầu Một, Bình Dương'
+    : '38 Tran Phu Street, Chanh Nghia Ward, Thu Dau Mot City, Binh Duong'
+
+  const address = pick(settings?.address, locale) || props.contactAddress || t('contact.address') || defaultAddress
+  const phone = settings?.phone || props.contactPhone || '0937 514 896'
+  const email = settings?.email || props.contactEmail || 'infor@epath.edu.vn'
   const fbUrl = settings?.facebookUrl || 'https://facebook.com'
   const ytUrl = settings?.youtubeUrl || 'https://youtube.com'
   const igUrl = settings?.instagramUrl || 'https://instagram.com'
   const tiktokUrl = settings?.tiktokUrl || ''
-  const logoUrl = settings?.logoUrl || '/epath_logo.png'
-  const footerDesc = pick(settings?.footerDescription, loc) || footerDescription
-  const copyrightText = settings?.copyrightText || copyright
-  const cmsPartnersTitle = settings?.footerPartnersTitle ? pick(settings.footerPartnersTitle, loc) : ''
+  const logoUrl = settings?.logoUrl || '/epath-logo-title.png'
+  const footerDesc = pick(settings?.footerDescription, locale) || props.footerDescription || defaultDesc
+  const copyrightText = settings?.copyrightText || props.copyright || t('copyright', { year: new Date().getFullYear() })
+
+  const programsTitle = props.programsTitle || t('programsTitle') || (isVi ? 'Chương trình học' : 'Programs')
+  const quickLinksTitle = props.quickLinksTitle || (isVi ? 'Liên kết nhanh' : 'Quick Links')
+  const contactTitle = props.contactTitle || t('contactTitle') || (isVi ? 'Liên hệ' : 'Contact')
+  const cmsPartnersTitle = settings?.footerPartnersTitle ? pick(settings.footerPartnersTitle, locale) : ''
+  const finalPartnersTitle = cmsPartnersTitle || props.partnersTitle || t('partnersTitle') || (isVi ? 'Đối tác' : 'Partners')
+
   const partnersToShow = settings?.partnersList && settings.partnersList.length > 0
     ? settings.partnersList
-    : partnersList
-  const finalPartnersTitle = cmsPartnersTitle || partnersTitle
+    : (props.partnersList || ['Edmentum International', 'Cambridge Assessment', 'Cognia & WASC', 'FabLab EIU'])
+
+  const navLabels = {
+    kindergarten: props.navLabels?.kindergarten || tNav('kindergarten') || (isVi ? 'Mầm non' : 'Kindergarten'),
+    elementary: props.navLabels?.elementary || tNav('elementary') || (isVi ? 'Tiểu học' : 'Elementary'),
+    middle: props.navLabels?.middle || tNav('middle') || (isVi ? 'THCS' : 'Middle School'),
+    high: props.navLabels?.high || tNav('high') || (isVi ? 'THPT' : 'High School'),
+    aboutUs: props.navLabels?.aboutUs || tNav('aboutUs') || (isVi ? 'Về chúng tôi' : 'About Us'),
+    vision: props.navLabels?.vision || tNav('vision') || (isVi ? 'Tầm nhìn' : 'Vision'),
+    mission: props.navLabels?.mission || tNav('mission') || (isVi ? 'Sứ mệnh' : 'Mission'),
+    values: props.navLabels?.values || tNav('values') || (isVi ? 'Giá trị cốt lõi' : 'Core Values'),
+    partners: props.navLabels?.partners || tNav('partners') || (isVi ? 'Đối tác' : 'Partners'),
+    events: props.navLabels?.events || tNav('events') || (isVi ? 'Sự kiện' : 'Events'),
+  }
 
   return (
-    <footer className="text-white" style={{ backgroundColor: semanticColors.primary }}>
+    <footer 
+      className="text-white" 
+      style={{ backgroundColor: '#1E3570' }}
+    >
+      {/* Top gradient overlay */}
+      <div 
+        className="h-2 w-full" 
+        style={{ background: 'linear-gradient(90deg, #8DC63F 0%, #2E4A9E 50%, #F26522 100%)' }} 
+      />
+      
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
@@ -109,7 +126,7 @@ export function Footer({
                 href={fbUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#F26522] hover:text-white transition-all duration-200 hover:-translate-y-1"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -118,7 +135,7 @@ export function Footer({
                 href={ytUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#F26522] hover:text-white transition-all duration-200 hover:-translate-y-1"
                 aria-label="YouTube"
               >
                 <Youtube className="w-5 h-5" />
@@ -127,7 +144,7 @@ export function Footer({
                 href={igUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-1"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -137,7 +154,7 @@ export function Footer({
                   href={tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-[#3A53A3] transition-colors duration-200"
+                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-1"
                   aria-label="TikTok"
                 >
                   <Music2 className="w-5 h-5" />
@@ -293,16 +310,16 @@ export function Footer({
             </p>
             <div className="flex gap-6">
               <Link
-                href="/privacy"
+                href={`/${locale}/privacy`}
                 className="text-white/60 hover:text-white transition-colors duration-200 text-sm"
               >
-                Privacy Policy
+                {t('privacy') || 'Privacy Policy'}
               </Link>
               <Link
-                href="/terms"
+                href={`/${locale}/terms`}
                 className="text-white/60 hover:text-white transition-colors duration-200 text-sm"
               >
-                Terms of Service
+                {t('terms') || 'Terms of Service'}
               </Link>
             </div>
           </div>

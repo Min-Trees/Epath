@@ -1,9 +1,8 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
 import { ArrowRight, Sprout, Book, GraduationCap, Trophy } from 'lucide-react'
-import { useParams } from 'next/navigation'
 import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
@@ -32,11 +31,10 @@ export function LearningPathwaysSection() {
   const t = useTranslations('pathways')
   const tNav = useTranslations('nav')
   const tLevels = useTranslations('programs.levels')
-  const params = useParams()
-  const locale = ((params.locale as string) || 'vi') as Locale
+  const locale = useLocale() as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.1 })
   const { data: cms } = useCmsContext()
-  const pathways = (cms.pathways || [])
+  const pathways = (cms.pathways || cms.learningPathways || [])
     .filter((p) => p.isActive !== false)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
@@ -47,10 +45,10 @@ export function LearningPathwaysSection() {
     <section ref={sectionRef} className="pathways-section py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 pathways-header">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#20242B] mb-4">
             {t('title')}
           </h2>
-          <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+          <p className="text-lg text-[#5C6069] max-w-2xl mx-auto">
             {t('subtitle')}
           </p>
         </div>
@@ -76,10 +74,16 @@ export function LearningPathwaysSection() {
               : tNav(level as 'kindergarten' | 'elementary' | 'middle' | 'high')
 
             const description = isCMS
-              ? pick(cmsPathway.description, locale)
+              ? pick(cmsPathway.subtitle, locale) || pick(cmsPathway.description, locale)
               : t(`${level}Desc`)
 
-            const objectives = isCMS ? cmsPathway.objectives : []
+            const badgesList: string[] = isCMS
+              ? (typeof cmsPathway.badges === 'string' && cmsPathway.badges.trim()
+                  ? cmsPathway.badges.split(',').map((s) => s.trim()).filter(Boolean)
+                  : Array.isArray(cmsPathway.badges) && cmsPathway.badges.length > 0
+                  ? (cmsPathway.badges as string[])
+                  : (cmsPathway.objectives || []).map((o) => (typeof o === 'string' ? o : pick(o, locale))).filter(Boolean))
+              : []
             const pathwayImage = isCMS ? cmsPathway.imageUrl : ''
 
             return (
@@ -133,30 +137,25 @@ export function LearningPathwaysSection() {
                       </span>
                     </div>
 
-                    <p className="text-sm text-[#6B6B6B] mb-4">
+                    <p className="text-sm text-[#5C6069] mb-4">
                       {description}
                     </p>
 
-                    {objectives.length > 0 && (
+                    {badgesList.length > 0 && (
                       <div className="space-y-2 mb-4">
                         <div className="text-xs font-semibold uppercase tracking-wide opacity-70">
                           {t('curriculum')}
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {objectives.slice(0, 4).map((obj, i) => {
-                            const text = typeof obj === 'string'
-                              ? obj
-                              : pick(obj, locale) || (obj as { vi: string }).vi || (obj as { en: string }).en
-                            return (
-                              <span
-                                key={i}
-                                className="text-xs px-2 py-1 rounded-full bg-white/60"
-                                style={{ color: accent.color }}
-                              >
-                                {text}
-                              </span>
-                            )
-                          })}
+                          {badgesList.slice(0, 4).map((text, i) => (
+                            <span
+                              key={i}
+                              className="text-xs px-2 py-1 rounded-full bg-white/60"
+                              style={{ color: accent.color }}
+                            >
+                              {text}
+                            </span>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -174,7 +173,8 @@ export function LearningPathwaysSection() {
         <div className="text-center mt-12">
           <Link
             href={`/${locale}/programs`}
-            className="inline-flex items-center gap-2 bg-[#F05A28] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#E04D1A] transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-[#F26522] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#C94F16] transition-all duration-200 hover:-translate-y-1 shadow-lg"
+            style={{ boxShadow: '0 8px 20px -6px rgba(242, 101, 34, 0.45)' }}
           >
             {t('viewAll')}
             <ArrowRight className="w-5 h-5" />

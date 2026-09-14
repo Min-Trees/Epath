@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { Header } from '@/components/layout/header'
@@ -8,6 +9,42 @@ import { CmsLayoutWrapper } from '@/components/cms-layout-wrapper'
 interface LocaleLayoutProps {
   children: React.ReactNode
   params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const isVi = locale === 'vi'
+
+  return {
+    title: {
+      default: isVi
+        ? 'EPath Education - Lộ trình học thuật quốc tế'
+        : 'EPath Education - International Academic Pathways',
+      template: '%s | EPath Education',
+    },
+    description: isVi
+      ? 'EPath Education cung cấp lộ trình học thuật quốc tế xuyên suốt từ Tiểu học đến Trung học Phổ thông. Blended Learning - Edmentum International (Cognia & WASC) - Cá nhân hóa lộ trình.'
+      : 'EPath Education provides comprehensive international academic pathways from Elementary to High School. Blended Learning - Edmentum International (Cognia & WASC) - Personalized learning.',
+    openGraph: {
+      title: isVi
+        ? 'EPath Education - Lộ trình học thuật quốc tế'
+        : 'EPath Education - International Academic Pathways',
+      description: isVi
+        ? 'Lộ trình học thuật quốc tế xuyên suốt từ Tiểu học đến Trung học Phổ thông. Blended Learning với Edmentum International.'
+        : 'Comprehensive international academic pathways from Elementary to High School. Blended Learning with Edmentum International.',
+      locale: isVi ? 'vi_VN' : 'en_US',
+    },
+    alternates: {
+      languages: {
+        vi: '/vi',
+        en: '/en',
+      },
+    },
+  }
 }
 
 /**

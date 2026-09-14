@@ -152,10 +152,16 @@ export type CoreValue = Omit<CoreValueInput, 'id'> & { id: string }
 export const LearningPathwaySchema = z.object({
   id: z.string().optional(),
   level: z.enum(['kindergarten', 'elementary', 'middle', 'high']),
+  step: z.string().default('01'),
   title: LocalizedStringSchema,
-  description: LocalizedStringSchema,
-  objectives: z.array(LocalizedStringSchema).default([]),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  subtitle: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  description: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  modelTag: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  badges: z.string().or(z.array(z.string())).optional().default(''),
+  objectives: z.array(LocalizedStringSchema).or(z.array(z.string())).default([]),
+  outcomes: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  imageUrl: z.string().default(''),
+  ctaUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -262,13 +268,17 @@ export const AchievementSchema = z.object({
 export type AchievementInput = z.infer<typeof AchievementSchema>
 export type Achievement = Omit<AchievementInput, 'id'> & { id: string }
 
-// ----------- Team Member -----------
+// ----------- Team Member / Faculty -----------
 export const TeamMemberSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1),
-  role: LocalizedStringSchema,
-  bio: LocalizedStringSchema,
-  avatarUrl: z.string().url().or(z.literal('')).default(''),
+  name: LocalizedStringSchema.or(z.string().min(1)),
+  role: LocalizedStringSchema.or(z.string()).default({ vi: '', en: '' }),
+  tag: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  bio: LocalizedStringSchema.or(z.string()).default({ vi: '', en: '' }),
+  avatarUrl: z.string().default(''),
+  point1: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  point2: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  highlights: z.array(LocalizedStringSchema).or(z.array(z.string())).optional().default([]),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -596,6 +606,9 @@ export const AboutContentSchema = z.object({
   // Mission
   missionTitle: LocalizedStringSchema,
   missionContent: LocalizedStringSchema,
+  // Faculty & Academic Board
+  facultyTitle: LocalizedStringSchema.optional(),
+  facultySubtitle: LocalizedStringSchema.optional(),
   // Milestones (stored as JSON string of array)
   milestones: z.string().default('[]'), // JSON array of { year, title, description }
   // About Hero Image

@@ -2,47 +2,37 @@
 
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { semanticColors } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
-import { useParams } from 'next/navigation'
 import type { Locale } from '@/lib/cms-types'
 
 /**
  * CTABanner – performance-tuned version.
  *
- * Old problems:
- *   - 5 `motion.div` rendered as `blur-3xl` (96px+ blur radius) each
- *     running an infinite x/y loop independently.
- *     -> 5 separate compositor layers, 5 GPU paint passes per frame.
- *
- * Optimisations applied:
- *   - Down to 3 orbs (still visually rich, half the GPU work).
- *   - Blur radius dropped from `blur-3xl` (64px) to `blur-2xl` (40px).
- *   - Animations PAUSE when the section is off-screen via
- *     `animation-play-state: paused` toggled by IntersectionObserver,
- *     so a user scrolling past at the bottom of the page drops these
- *     layers to zero GPU cost.
- *   - Orbs use the CSS `cta-orb` class (see globals.css) so animations
- *     run on the compositor thread at native 60 fps, no JS overhead.
- *   - `prefers-reduced-motion` users get static gradients instead.
+ * Design: Purple gradient background with white orbs,
+ * orange CTA buttons with fully rounded style.
  */
 export function CTABanner() {
   const t = useTranslations('cta')
   const { data: cms } = useCmsContext()
-  const params = useParams()
-  const locale = ((params.locale as string) || 'vi') as Locale
+  const locale = useLocale() as Locale
   const orbContainerRef = useRef<HTMLDivElement>(null)
 
   const settings = cms.siteSettings
   const title = (settings?.ctaTitle?.[locale as 'vi' | 'en']) || (settings?.ctaTitle?.vi) || t('title')
   const subtitle = (settings?.ctaSubtitle?.[locale as 'vi' | 'en']) || (settings?.ctaSubtitle?.vi) || t('subtitle')
   const primaryLabel = (settings?.ctaPrimaryLabel?.[locale as 'vi' | 'en']) || (settings?.ctaPrimaryLabel?.vi) || t('primary')
-  const primaryUrl = settings?.ctaPrimaryUrl || '/admissions'
   const secondaryLabel = (settings?.ctaSecondaryLabel?.[locale as 'vi' | 'en']) || (settings?.ctaSecondaryLabel?.vi) || t('secondary')
-  const secondaryUrl = settings?.ctaSecondaryUrl || '/contact'
+
+  const resolveUrl = (url: string) => {
+    if (url.startsWith('http') || url.startsWith('#')) return url
+    return url.startsWith(`/${locale}`) ? url : `/${locale}${url.startsWith('/') ? '' : '/'}${url}`
+  }
+  const primaryUrl = resolveUrl(settings?.ctaPrimaryUrl || '/admissions')
+  const secondaryUrl = resolveUrl(settings?.ctaSecondaryUrl || '/contact')
   const bgImage = settings?.ctaBackgroundImage || ''
 
   // IntersectionObserver toggles a `data-active` attribute the CSS uses
@@ -64,11 +54,11 @@ export function CTABanner() {
 
   return (
     <section
-      className="cta-banner py-16 relative overflow-hidden"
+      className="cta-banner py-20 md:py-24 relative overflow-hidden"
       style={{
         background: bgImage
-          ? `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${bgImage}) center/cover`
-          : `linear-gradient(135deg, ${semanticColors.primary} 0%, ${semanticColors.primaryDark} 100%)`,
+          ? `linear-gradient(135deg, rgba(30, 53, 112, 0.92) 0%, rgba(46, 74, 158, 0.88) 100%), url(${bgImage}) center/cover`
+          : `linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)`,
       }}
     >
       {/* 3 CSS-driven orbs, paused when off-screen */}
@@ -104,10 +94,14 @@ export function CTABanner() {
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-4">
-            <a href={primaryUrl} className="cta-btn-primary">
-              {primaryLabel}
-              <span className="ml-2 cta-arrow-anim">
-                <ArrowRight className="w-5 h-5" />
+            <a href={primaryUrl} className="cta-btn-primary pulse-ripple-btn pulse-ripple-btn--orange relative">
+              <span className="pulse-ripple-ring ring-1" aria-hidden="true" />
+              <span className="pulse-ripple-ring ring-2" aria-hidden="true" />
+              <span className="relative z-10 inline-flex items-center">
+                {primaryLabel}
+                <span className="ml-2 cta-arrow-anim">
+                  <ArrowRight className="w-5 h-5" />
+                </span>
               </span>
             </a>
             <a href={secondaryUrl} className="cta-btn-outline">

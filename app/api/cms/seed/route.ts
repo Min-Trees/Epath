@@ -432,6 +432,102 @@ const seedData = {
   ],
 
   // ----------------------------------------------------------
+  // TEAM MEMBERS / FACULTY & ACADEMIC BOARD
+  // ----------------------------------------------------------
+  teamMembers: [
+    {
+      name: {
+        vi: '50% Giáo viên Quốc tế',
+        en: '50% International Teachers',
+      },
+      tag: {
+        vi: 'Giảng dạy bằng Tiếng Anh 100%',
+        en: '100% English Instruction',
+      },
+      role: {
+        vi: 'Giáo viên Quốc tế',
+        en: 'International Faculty',
+      },
+      bio: {
+        vi: 'Ưu tiên có bằng Cử nhân Giáo dục Tiểu học hoặc Trung học (Elementary / Secondary Education), dày dặn kinh nghiệm giảng dạy các môn học thuật (Academic Subjects) theo chuẩn giáo dục Hoa Kỳ và Cambridge.',
+        en: 'Prioritised with Bachelor of Elementary or Secondary Education, extensive experience teaching academic subjects under US and Cambridge standards.',
+      },
+      point1: {
+        vi: 'Trực tiếp giảng dạy các tiết học trực tuyến và trực tiếp về Toán, Khoa học, Ngữ văn Anh (ELA).',
+        en: 'Directly teaches online and in-person lessons in Math, Science, and English Language Arts (ELA).',
+      },
+      point2: {
+        vi: 'Hình thành phản xạ ngôn ngữ tự nhiên, ngữ âm chuẩn xác và tư duy phản biện cho học sinh.',
+        en: 'Cultivates natural language reflexes, accurate phonics, and critical thinking skills for students.',
+      },
+      avatarUrl: '/images/about/faculty-international.jpg',
+      order: 0,
+      isActive: true,
+      status: 'PUBLISHED',
+    },
+    {
+      name: {
+        vi: '50% Giáo viên Song ngữ',
+        en: '50% Bilingual Teachers',
+      },
+      tag: {
+        vi: 'IELTS 7.0+ & Chuyên môn Sư phạm',
+        en: 'IELTS 7.0+ & Pedagogical Expertise',
+      },
+      role: {
+        vi: 'Giáo viên Song ngữ',
+        en: 'Bilingual Faculty',
+      },
+      bio: {
+        vi: 'Đội ngũ thầy cô Việt Nam sở hữu chứng chỉ IELTS từ 7.0 trở lên, có năng lực tiếng Anh học thuật xuất sắc và thấu hiểu sâu sắc đặc điểm tâm lý, rào cản ngôn ngữ của học sinh Việt Nam.',
+        en: "Vietnamese faculty holding IELTS 7.0+, possessing excellent academic English proficiency and deep empathy for Vietnamese learners' language barriers.",
+      },
+      point1: {
+        vi: 'Đồng hành hướng dẫn, giải thích các khái niệm học thuật khó và củng cố kiến thức cho từng bạn.',
+        en: 'Accompanies learners, explains complex academic concepts, and reinforces key knowledge.',
+      },
+      point2: {
+        vi: 'Hỗ trợ cá nhân hóa việc học, tổ chức các buổi phụ đạo (tutor) nhằm lấp đầy lỗ hổng kiến thức kịp thời.',
+        en: 'Supports personalised learning, providing tutoring sessions to bridge knowledge gaps promptly.',
+      },
+      avatarUrl: '/images/about/faculty-bilingual.jpg',
+      order: 1,
+      isActive: true,
+      status: 'PUBLISHED',
+    },
+    {
+      name: {
+        vi: 'Cố vấn Học thuật (Academic Advisor)',
+        en: 'Academic Advisors',
+      },
+      tag: {
+        vi: 'Đồng hành Cá nhân hóa 1:1',
+        en: '1:1 Personalised Mentorship',
+      },
+      role: {
+        vi: 'Cố vấn Học thuật',
+        en: 'Academic Advisor',
+      },
+      bio: {
+        vi: 'Mỗi học sinh tại EPath được phân công riêng một Cố vấn Học thuật theo sát toàn bộ quá trình học tập, quản lý tiến độ hoàn thành bài học trên hệ thống Edmentum, và là cầu nối vững chắc với phụ huynh.',
+        en: 'Each EPath student is assigned a dedicated Academic Advisor to oversee their learning pathway, manage Edmentum progress, and maintain close partnership with parents.',
+      },
+      point1: {
+        vi: 'Đánh giá năng lực định kỳ, phát hiện điểm mạnh và tư vấn lựa chọn môn học / môn AP phù hợp.',
+        en: 'Periodic capability assessments, identifying strengths, and advising on course / AP subject selection.',
+      },
+      point2: {
+        vi: 'Đại diện phụ huynh theo dõi tiến trình học thuật và xây dựng hồ sơ ứng tuyển đại học quốc tế.',
+        en: 'Represents parents in tracking academic milestones and crafting competitive global university portfolios.',
+      },
+      avatarUrl: '/images/about/faculty-advisors.jpg',
+      order: 2,
+      isActive: true,
+      status: 'PUBLISHED',
+    },
+  ],
+
+  // ----------------------------------------------------------
   // STATISTICS
   // ----------------------------------------------------------
   statistics: [
@@ -498,67 +594,77 @@ const seedData = {
   admissionSteps: [
     {
       title: {
-        vi: 'Đánh giá năng lực (Assessment)',
-        en: 'Assessment',
+        vi: 'Tiếp Nhận & Tư Vấn Định Hướng',
+        en: 'Enquiry & Initial Consultation',
       },
       description: {
-        vi: 'Học sinh được đánh giá đầu vào nhằm xác định trình độ hiện tại, điểm mạnh và những nội dung cần phát triển theo khung chuẩn phổ thông Mỹ.',
-        en: 'An entry assessment identifies each student\'s current level, strengths and growth areas against the US Common Core standards.',
+        vi: 'Chuyên viên học vụ lắng nghe mục tiêu của gia đình, phân tích nguyện vọng học thuật và gợi ý lộ trình phù hợp theo từng độ tuổi (Phản hồi trong 24h).',
+        en: 'Advisors understand family academic goals and recommend tailored educational pathways for each age group (Within 24 hours).',
       },
-      icon: 'ClipboardCheck',
+      icon: 'PhoneCall',
+      imageUrl: '/images/admissions/admissions-consultation.jpg',
       order: 0,
+      stepNumber: 1,
       isActive: true,
     },
     {
       title: {
-        vi: 'Tư vấn lộ trình học tập cá nhân hóa',
-        en: 'Personalised Pathway Planning',
+        vi: 'Đánh Giá Năng Lực Chuẩn Quốc Tế',
+        en: 'International Diagnostic Test',
       },
       description: {
-        vi: 'Đội ngũ EPath xây dựng lộ trình học tập phù hợp với năng lực, mục tiêu và định hướng phát triển của từng học sinh.',
-        en: 'The EPath team designs a learning pathway tailored to each student\'s ability, goals and long-term direction.',
+        vi: 'Học sinh thực hiện bài khảo sát năng lực (Exact Path Diagnostic) đo lường chính xác trình độ tiếng Anh học thuật và tư duy số học chuẩn Mỹ (Khảo sát 45 - 60 phút).',
+        en: 'Learners complete the Exact Path test objectively measuring academic English and US Common Core mathematics (45-60 min test).',
       },
-      icon: 'Map',
+      icon: 'FileCheck2',
+      imageUrl: '/images/admissions/admissions-assessment.jpg',
       order: 1,
+      stepNumber: 2,
       isActive: true,
     },
     {
       title: {
-        vi: 'Mô hình học tập kết hợp (Blended Learning)',
-        en: 'Blended Learning Model',
+        vi: 'Thiết Kế Lộ Trình & Thời Khóa Biểu',
+        en: 'Curriculum & Schedule Customization',
       },
       description: {
-        vi: 'Học sinh học tập thông qua mô hình Blended Learning, kết hợp giữa học trực tuyến, học trực tiếp tại Campus và hệ thống học liệu số quốc tế. Mỗi học sinh được cấp tài khoản Edmentum có thời hạn 12 tháng.',
-        en: 'Students learn via Blended Learning — combining online study, on-campus sessions and international digital resources. Each student is granted a 12-month Edmentum account.',
+        vi: 'Ban học vụ xây dựng thời khóa biểu kết hợp (Online + Onsite Campus), cân đối số giờ học, phân bổ môn học và chọn chứng chỉ mục tiêu.',
+        en: 'Academic Board plans an optimal blended schedule balancing school subjects, workload, and credential targets.',
+      },
+      icon: 'GraduationCap',
+      imageUrl: '/images/programs/program-dual-diploma.jpg',
+      order: 2,
+      stepNumber: 3,
+      isActive: true,
+    },
+    {
+      title: {
+        vi: 'Học Thử & Kích Hoạt Tài Khoản',
+        en: 'Campus Trial & Account Activation',
+      },
+      description: {
+        vi: 'Học sinh trải nghiệm lớp học trực tuyến trên hệ thống Edmentum và cơ sở vật chất campus, nhận tài khoản học tập chính thức (Kích hoạt tức thì).',
+        en: 'Students experience digital lessons on the Edmentum platform and campus facilities, receiving official credentials (Instant activation).',
       },
       icon: 'Laptop',
-      order: 2,
-      isActive: true,
-    },
-    {
-      title: {
-        vi: 'Cố vấn học tập đồng hành xuyên suốt',
-        en: 'Continuous Academic Advising',
-      },
-      description: {
-        vi: 'Học sinh được theo dõi thường xuyên bởi đội ngũ Academic Advisors, đồng thời phụ huynh được cập nhật tiến độ và phối hợp xây dựng mục tiêu học tập dài hạn.',
-        en: 'Academic Advisors monitor progress continuously. Parents receive regular updates and partner with EPath to set long-term learning goals.',
-      },
-      icon: 'MessageCircle',
+      imageUrl: '/images/admissions/admissions-campus.jpg',
       order: 3,
+      stepNumber: 4,
       isActive: true,
     },
     {
       title: {
-        vi: 'Đánh giá liên tục & Ghi nhận thành tích',
-        en: 'Continuous Assessment & Achievement',
+        vi: 'Đồng Hành Học Thuật & Bằng Tú Tài Mỹ',
+        en: 'Academic Mentorship & US Diploma',
       },
       description: {
-        vi: 'Thông qua các bài đánh giá định kỳ, dự án học tập, hoạt động trải nghiệm và các kỳ thi học thuật, học sinh liên tục được ghi nhận sự tiến bộ và điều chỉnh lộ trình phù hợp.',
-        en: 'Through periodic assessments, learning projects, experiential activities and academic competitions, progress is documented and pathways are adjusted.',
+        vi: 'Cố vấn học thuật theo sát 1:1, báo cáo tiến độ định kỳ cho phụ huynh, hướng dẫn tích lũy tín chỉ và nhận Bằng Tú tài Mỹ Cognia & WASC.',
+        en: '1:1 Academic Advisor oversees progress, provides regular reports to parents, and guides students towards the Cognia & WASC US Diploma.',
       },
       icon: 'Award',
+      imageUrl: '/images/about/about-achievements.jpg',
       order: 4,
+      stepNumber: 5,
       isActive: true,
     },
   ],
@@ -569,75 +675,127 @@ const seedData = {
   learningPathways: [
     {
       level: 'kindergarten',
+      step: '01',
       title: {
-        vi: 'Mầm non (Little People)',
-        en: 'Kindergarten (Little People)',
+        vi: 'Giai đoạn Mầm non (3 – 6 tuổi)',
+        en: 'Kindergarten Stage (Ages 3–6)',
+      },
+      subtitle: {
+        vi: 'Khởi đầu tự nhiên – Thẩm thấu ngôn ngữ & Tư duy sớm',
+        en: 'Natural Start – Language Immersion & Early Thinking',
       },
       description: {
-        vi: 'Chương trình Mầm non hình thành nền tảng tiếng Anh theo chuẩn Cambridge, kết hợp hoạt động phát triển ngôn ngữ, tư duy toán sớm và trải nghiệm kỹ năng — tạo nền móng vững chắc để sẵn sàng bước vào môi trường học tập bằng tiếng Anh.',
-        en: 'Our Kindergarten programme builds a Cambridge-aligned English foundation combined with early numeracy, language development and skill-building experiences — preparing children to enter English-medium learning with confidence.',
+        vi: 'Khởi đầu tự nhiên – Thẩm thấu ngôn ngữ & Tư duy sớm',
+        en: 'Natural Start – Language Immersion & Early Thinking',
       },
-      objectives: [
-        { vi: 'SpeedUp English Programme', en: 'SpeedUp English Programme' },
-        { vi: 'Nền tảng Toán – Khoa học sớm', en: 'Early Math & Science Foundations' },
-        { vi: 'CLIL & Đọc viết sớm (Early Literacy)', en: 'CLIL & Early Literacy' },
-      ],
+      modelTag: {
+        vi: 'Mô hình: Song ngữ tương tác · Phonics & Toán sớm · Chuẩn bị Lớp 1',
+        en: 'Model: Interactive Bilingual · Phonics & Early Math · Grade 1 Ready',
+      },
+      badges: 'Cambridge English, Topic-based Learning, Early Literacy, Early Math',
+      objectives: ['Cambridge English', 'Topic-based Learning', 'Early Literacy', 'Early Math'],
+      outcomes: {
+        vi: 'Làm quen tiếng Anh tự nhiên như ngôn ngữ thứ hai\nPhát triển phát âm, ngữ âm Phonics chuẩn xác\nLàm quen tư duy số học, hình khối, logic cơ bản\nHình thành sự tự tin trong giao tiếp môi trường song ngữ',
+        en: 'Acquire English naturally as a second language\nDevelop standard phonics and pronunciation\nIntroduction to early numeracy and logical thinking\nBuild confidence in bilingual communication',
+      },
+      imageUrl: '/images/programs/program-kindy.jpg',
+      ctaUrl: '/vi/admissions?program=kindergarten',
       order: 0,
       isActive: true,
+      status: 'PUBLISHED',
     },
     {
       level: 'elementary',
+      step: '02',
       title: {
-        vi: 'Tiểu học (Elementary)',
-        en: 'Elementary',
+        vi: 'Giai đoạn Tiểu học (Lớp 1 – 5)',
+        en: 'Elementary Stage (Grades 1–5)',
+      },
+      subtitle: {
+        vi: 'Nền tảng Học thuật – Toán & Khoa học bằng Tiếng Anh',
+        en: 'Academic Foundation – Math & Science in English',
       },
       description: {
-        vi: 'Chương trình Tiểu học theo chuẩn Common Core (Mỹ) thông qua hệ sinh thái Edmentum, gồm hai lộ trình: Foundation (Base Path) và Advanced (Prime Path) nhằm đáp ứng năng lực và định hướng quốc tế của từng học sinh.',
-        en: 'The Elementary programme follows US Common Core standards via the Edmentum ecosystem, with two tracks — Base Path and Prime Path — that fit different ability levels and international aspirations.',
+        vi: 'Nền tảng Học thuật – Toán & Khoa học bằng Tiếng Anh',
+        en: 'Academic Foundation – Math & Science in English',
       },
-      objectives: [
-        { vi: 'Base Path (Foundation)', en: 'Base Path (Foundation)' },
-        { vi: 'Prime Path (Advanced)', en: 'Prime Path (Advanced)' },
-        { vi: 'SpeedUp English Programme', en: 'SpeedUp English Programme' },
-        { vi: 'Academic Foundation Programme (ELA + Math + Science + Social Studies)', en: 'Academic Foundation Programme (ELA + Math + Science + Social Studies)' },
-      ],
+      modelTag: {
+        vi: 'Mô hình: 5 giờ/tuần (Online + Onsite) · 50% GV Quốc tế + 50% GV Song ngữ',
+        en: "Model: 5 hrs/wk (Online + Onsite) · 50% Int'l + 50% Bilingual Faculty",
+      },
+      badges: 'Edmentum Core, Cambridge Primary, STEM & Robotics, Academic Reading',
+      objectives: ['Edmentum Core', 'Cambridge Primary', 'STEM & Robotics', 'Academic Reading'],
+      outcomes: {
+        vi: 'Tiếng Anh học thuật chuẩn khung Cambridge Primary\nToán và Khoa học chuẩn Mỹ (US Common Core Standards)\nPhương pháp học tập độc lập & làm việc nhóm\nĐạt chứng chỉ Cambridge Starters / Movers / Flyers',
+        en: 'Academic English aligned with Cambridge Primary framework\nUS Common Core-aligned Math and Science\nIndependent learning habits and collaborative teamwork\nAchieve Cambridge Starters / Movers / Flyers certifications',
+      },
+      imageUrl: '/images/programs/program-elementary.jpg',
+      ctaUrl: '/vi/admissions?program=elementary',
       order: 1,
       isActive: true,
+      status: 'PUBLISHED',
     },
     {
       level: 'middle',
+      step: '03',
       title: {
-        vi: 'Trung học Cơ sở (Middle School)',
-        en: 'Middle School',
+        vi: 'Giai đoạn THCS (Lớp 6 – 8)',
+        en: 'Middle School Stage (Grades 6–8)',
+      },
+      subtitle: {
+        vi: 'Tư duy Phản biện & Kỹ năng Nghiên cứu Học thuật',
+        en: 'Critical Thinking & Academic Research Skills',
       },
       description: {
-        vi: 'Chương trình THCS giúp học sinh chuyển từ "học bằng tiếng Anh" sang "tư duy và học tập độc lập bằng tiếng Anh", hướng đến IELTS 5.5+ và chuẩn bị cho các lộ trình quốc tế ở bậc THPT.',
-        en: 'Middle School shifts students from "learning in English" to "thinking and studying independently in English", targeting IELTS 5.5+ and preparing them for international High School pathways.',
+        vi: 'Tư duy Phản biện & Kỹ năng Nghiên cứu Học thuật',
+        en: 'Critical Thinking & Academic Research Skills',
       },
-      objectives: [
-        { vi: 'Base Path (US Middle School)', en: 'Base Path (US Middle School)' },
-        { vi: 'Prime Path (Advanced)', en: 'Prime Path (Advanced)' },
-        { vi: 'IELTS Preparation 5.5+', en: 'IELTS Preparation 5.5+' },
-      ],
+      modelTag: {
+        vi: 'Mô hình: 5–6 giờ/tuần · Chinh phục IELTS 5.5+ · Tích lũy tín chỉ Tú tài Mỹ',
+        en: 'Model: 5–6 hrs/wk · IELTS 5.5+ Target · Accumulate US Credits from Grade 8',
+      },
+      badges: 'Edmentum Middle School, KET / PET / IELTS Foundation, Critical Thinking',
+      objectives: ['Edmentum Middle School', 'KET / PET / IELTS Foundation', 'Critical Thinking'],
+      outcomes: {
+        vi: 'Đọc hiểu và viết luận học thuật chuyên sâu\nTư duy phản biện, giải quyết vấn đề và thuyết trình\nSẵn sàng tích lũy tín chỉ THPT quốc tế\nXây dựng Student Portfolio cá nhân hóa',
+        en: 'Advanced academic reading comprehension and essay writing\nCritical thinking, problem-solving, and presentation skills\nReadiness for US high school credit accumulation\nDevelop an individualized Student Portfolio',
+      },
+      imageUrl: '/images/programs/program-middle.jpg',
+      ctaUrl: '/vi/admissions?program=middle',
       order: 2,
       isActive: true,
+      status: 'PUBLISHED',
     },
     {
       level: 'high',
+      step: '04',
       title: {
-        vi: 'Trung học Phổ thông (High School)',
-        en: 'High School',
+        vi: 'Giai đoạn THPT (Lớp 9 – 12)',
+        en: 'High School Stage (Grades 9–12)',
+      },
+      subtitle: {
+        vi: 'Song bằng Hoa Kỳ & Định hướng Đại học Toàn cầu',
+        en: 'US Dual Diploma & Global University Pathways',
       },
       description: {
-        vi: 'Chương trình THPT với hai lựa chọn chính: Dual Diploma (Song bằng Việt – Mỹ) và Fulltime Homeschool (chương trình Tú tài Mỹ toàn thời gian) thông qua EdOptions Academy, giúp học sinh chuẩn bị hồ sơ du học và đại học quốc tế.',
-        en: 'High School offers two main paths: Dual Diploma (Vietnamese – US) and Fulltime Homeschool (US Diploma) via EdOptions Academy — fully preparing students for international university applications.',
+        vi: 'Song bằng Hoa Kỳ & Định hướng Đại học Toàn cầu',
+        en: 'US Dual Diploma & Global University Pathways',
       },
-      objectives: [
-        { vi: 'US Dual High School Diploma (Song bằng)', en: 'US Dual High School Diploma' },
-        { vi: 'US High School Diploma (Fulltime Homeschool)', en: 'US High School Diploma (Fulltime Homeschool)' },
-      ],
+      modelTag: {
+        vi: 'Mô hình: Bằng Tú tài Mỹ Cognia & WASC · Tín chỉ AP College Board · IELTS 7.0+',
+        en: 'Model: Cognia & WASC US Diploma · AP College Board Credits · IELTS 7.0+',
+      },
+      badges: 'EdOptions Academy, US High School Diploma, Cognia & WASC, AP Courses',
+      objectives: ['EdOptions Academy', 'US High School Diploma', 'Cognia & WASC', 'AP Courses'],
+      outcomes: {
+        vi: 'Nhận Bằng tốt nghiệp THPT Hoa Kỳ kiểm định Cognia & WASC\nTích lũy tín chỉ đại học sớm (Advanced Placement - AP)\nHồ sơ du học cạnh tranh vào các đại học hàng đầu thế giới\nThành thạo phương pháp tự học và tư duy đại học chuẩn Mỹ',
+        en: 'Earn Cognia & WASC accredited US High School Diploma\nEarn early college credits via Advanced Placement (AP)\nCompetitive college applications to top global universities\nMaster US university-level autonomous learning skills',
+      },
+      imageUrl: '/images/programs/program-high.jpg',
+      ctaUrl: '/vi/admissions?program=high',
       order: 3,
       isActive: true,
+      status: 'PUBLISHED',
     },
   ],
 
@@ -914,27 +1072,29 @@ const seedData = {
       slug: 'high-dual-diploma',
       level: 'high',
       title: {
-        vi: 'US Dual High School Diploma – Chương trình Song bằng',
-        en: 'US Dual High School Diploma',
+        vi: 'Dual Diploma — Song bằng THPT Việt Nam & Hoa Kỳ',
+        en: 'Dual Diploma — Vietnam & US High School Dual Diploma',
       },
       shortDescription: {
-        vi: 'Học sinh nhận đồng thời bằng THPT Việt Nam và bằng THPT Hoa Kỳ thông qua EdOptions Academy.',
-        en: 'Earn both the Vietnamese High School Diploma and the US High School Diploma via EdOptions Academy.',
+        vi: '1.1 Lựa chọn Dual Diploma (Song bằng) — Học sinh theo học đồng thời chương trình THPT tại Việt Nam và chương trình THPT Hoa Kỳ thông qua EdOptions Academy để nhận 2 bằng tốt nghiệp.',
+        en: '1.1 Dual Diploma Option — Study concurrently in Vietnam and US curriculum via EdOptions Academy to earn both high school diplomas.',
       },
       content: {
-        vi: '<p>Dual Diploma là lộ trình học tập cho phép học sinh theo học đồng thời chương trình THPT Việt Nam và chương trình THPT Hoa Kỳ thông qua EdOptions Academy. Học sinh tiếp tục học tại trường hiện tại (Công lập / Tư thục) đồng thời hoàn thành các môn học và tín chỉ theo yêu cầu của Hoa Kỳ trên nền tảng học trực tuyến.</p><p>Sau khi hoàn thành yêu cầu của cả hai hệ thống, học sinh nhận <strong>Bằng THPT Việt Nam</strong> và <strong>Bằng THPT Hoa Kỳ</strong>.</p><p>Lộ trình đặc biệt phù hợp với học sinh muốn chuẩn bị hồ sơ du học hoặc mở rộng cơ hội xét tuyển đại học quốc tế trong tương lai.</p>',
-        en: '<p>The Dual Diploma lets students pursue the Vietnamese High School Diploma and the US High School Diploma at the same time through EdOptions Academy. They stay enrolled in their current school (public or private) while earning US credits online.</p><p>On completion, students receive <strong>the Vietnamese High School Diploma</strong> and <strong>the US High School Diploma</strong>.</p><p>Ideal for students preparing international university applications or study-abroad portfolios.</p>',
+        vi: '<p>Lộ trình học tập lý tưởng cho học sinh vừa hoàn thành trọn vẹn chương trình THPT Việt Nam, vừa tích lũy 5.0 tín chỉ chuẩn Mỹ và 1.0 tín chỉ nâng cao AP® qua EdOptions Academy. Các môn học quốc tế được bố trí chủ yếu vào kỳ hè và linh hoạt trong năm học để không làm gián đoạn việc học chính khóa trong nước.</p><p><strong>Bằng cấp đạt được:</strong> Bằng tốt nghiệp THPT Việt Nam + Bằng Tú tài Mỹ (U.S. High School Diploma) kiểm định bởi Cognia & WASC + Chứng chỉ IELTS 7.0+ và chứng nhận môn AP của College Board.</p><p>Mở rộng cánh cửa vào các đại học quốc tế tại Việt Nam (nhận học bổng cao) và xét tuyển thẳng vào các trường đại học hàng đầu thế giới.</p>',
+        en: '<p>Concurrent pathway earning both Vietnamese High School Diploma and Cognia & WASC accredited U.S. High School Diploma via EdOptions Academy. Coursework arranged during summer terms and flexible evening hours (5 standard credits + 1 AP credit).</p><p>Includes IELTS 7.0+ preparation and College Board AP® credits for maximum global university admissions advantages.</p>',
       },
-      ageRange: '15 – 18 tuổi',
+      ageRange: '15 – 18 tuổi (Lớp 9 – 12)',
       objectives: [
-        { vi: 'Nhận song bằng Việt – Mỹ', en: 'Earn both Vietnamese & US diplomas' },
-        { vi: 'Hồ sơ du học & đại học quốc tế', en: 'Study-abroad & international university portfolio' },
+        { vi: 'Nhận song bằng THPT Việt Nam & Hoa Kỳ', en: 'Earn dual Vietnamese & US high school diplomas' },
+        { vi: 'Tích lũy tín chỉ nâng cao AP® College Board', en: 'Earn College Board approved AP® credits' },
+        { vi: 'Chinh phục chứng chỉ IELTS Academic 7.0+', en: 'Achieve IELTS Academic 7.0+' },
       ],
       highlights: [
-        { vi: 'Học song song tại trường hiện tại', en: 'Concurrent study at current school' },
-        { vi: 'EdOptions Academy (Edmentum)', en: 'EdOptions Academy (Edmentum)' },
+        { vi: '1.1 Lựa chọn Dual Diploma (Song bằng)', en: '1.1 Dual Diploma Pathway' },
+        { vi: 'Bằng tốt nghiệp U.S. High School Diploma kiểm định Cognia & WASC', en: 'Cognia & WASC accredited U.S. High School Diploma' },
+        { vi: 'Lịch học linh hoạt, không làm gián đoạn học chính khóa', en: 'Flexible schedule without local school disruption' },
       ],
-      imageUrl: '',
+      imageUrl: '/images/programs/program-dual-diploma.jpg',
       ctaLabel: { vi: 'Tư vấn lộ trình', en: 'Advise me' },
       ctaUrl: '/contact',
       order: 8,
@@ -945,27 +1105,29 @@ const seedData = {
       slug: 'high-fulltime-homeschool',
       level: 'high',
       title: {
-        vi: 'US High School Diploma – Fulltime Homeschool (Chương trình Tú tài Mỹ)',
-        en: 'US High School Diploma – Fulltime Homeschool',
+        vi: 'Fulltime Homeschool — Học toàn thời gian chương trình THPT Hoa Kỳ',
+        en: 'Fulltime Homeschool — Full-Time US High School Diploma',
       },
       shortDescription: {
-        vi: 'Học toàn thời gian chương trình THPT Hoa Kỳ thông qua EdOptions Academy.',
-        en: 'Fulltime US High School Diploma via EdOptions Academy.',
+        vi: '1.2 Lựa chọn Fulltime Homeschool (Homeschool toàn phần) — Học toàn thời gian 100% chương trình THPT Hoa Kỳ qua EdOptions Academy, tích lũy 21.5 tín chỉ và tốt nghiệp như học sinh bản xứ.',
+        en: '1.2 Fulltime Homeschool Option — 100% full-time US High School curriculum via EdOptions Academy, earning 21.5 credits.',
       },
       content: {
-        vi: '<p>Học sinh học tập, tích lũy tín chỉ và hoàn thành yêu cầu tốt nghiệp hoàn toàn theo chương trình EdOptions Academy. Toàn bộ nội dung học tập, đánh giá và quản lý tiến độ được thực hiện theo tiêu chuẩn của hệ thống giáo dục Hoa Kỳ.</p><p>Phù hợp với gia đình theo đuổi giáo dục Hoa Kỳ toàn diện, cần sự linh hoạt về thời gian và địa điểm, có kế hoạch du học hoặc chuyển tiếp quốc tế.</p>',
-        en: '<p>Students earn credits and graduate entirely through EdOptions Academy. Content, assessment and progress tracking all follow US education standards.</p><p>Ideal for families seeking a fully US-aligned education, with flexibility of time and place, and plans for study abroad or international transfer.</p>',
+        vi: '<p>Dành cho học sinh đã xác định mục tiêu du học hoặc ứng tuyển các trường đại học top đầu thế giới có mức độ cạnh tranh cao. Học sinh học tập toàn thời gian theo đúng khung chương trình của trường trung học Hoa Kỳ thông qua EdOptions Academy.</p><p>Học sinh tích lũy đầy đủ 21.5 tín chỉ chuẩn Mỹ (bao gồm ELA, Math, Science, Social Studies, Ngoại ngữ, Nghệ thuật và Tự chọn). Học sinh có thể tốt nghiệp sớm hơn thời hạn nếu đẩy nhanh tiến độ hoàn thành tín chỉ.</p><p>Kết hợp ôn luyện chuyên sâu SAT/ACT và các môn AP®, được các trường đại học công nhận như một học sinh bản địa Mỹ – lợi thế vượt trội so với diện học sinh quốc tế thông thường.</p>',
+        en: '<p>Comprehensive full-time US high school education via EdOptions Academy. Students earn all 21.5 credits according to US graduation requirements, including AP® courses and SAT/ACT prep.</p><p>Graduates apply to global universities with the status of native US high school graduates, dramatically elevating admission competitiveness.</p>',
       },
-      ageRange: '15 – 18 tuổi',
+      ageRange: '15 – 18 tuổi (Lớp 9 – 12)',
       objectives: [
-        { vi: 'Tốt nghiệp THPT Hoa Kỳ', en: 'Graduate with a US High School Diploma' },
-        { vi: 'Phát triển khả năng tự học & tự quản lý', en: 'Build strong self-learning & self-management skills' },
+        { vi: 'Tốt nghiệp Bằng THPT Hoa Kỳ (21.5 Tín chỉ)', en: 'Graduate with US High School Diploma (21.5 credits)' },
+        { vi: 'Tư cách tuyển sinh như học sinh bản địa Mỹ', en: 'Native US student applicant status for top universities' },
+        { vi: 'Luyện thi SAT/ACT và tín chỉ đại học sớm AP®', en: 'SAT/ACT prep and early College Board AP® credits' },
       ],
       highlights: [
-        { vi: 'Học 100% trực tuyến', en: '100% online learning' },
-        { vi: 'Linh hoạt thời gian & địa điểm', en: 'Flexible time & place' },
+        { vi: '1.2 Lựa chọn Fulltime Homeschool (Homeschool toàn phần)', en: '1.2 Fulltime Homeschool Pathway' },
+        { vi: 'Được các đại học xét tuyển như học sinh bản xứ Hoa Kỳ', en: 'Evaluated by universities with US native applicant status' },
+        { vi: 'Tích lũy 21.5 tín chỉ chuẩn Mỹ và các môn nâng cao AP®', en: 'Complete 21.5 US credits and College Board AP® courses' },
       ],
-      imageUrl: '',
+      imageUrl: '/images/programs/program-high.jpg',
       ctaLabel: { vi: 'Tư vấn lộ trình', en: 'Advise me' },
       ctaUrl: '/contact',
       order: 9,
@@ -1009,62 +1171,83 @@ const seedData = {
   ],
 
   // ----------------------------------------------------------
-  // PARTNERS  (Edmentum, Cambridge, FabLab EIU)
+  // PARTNERS  (Edmentum, Cambridge, FabLab EIU, Cognia)
   // ----------------------------------------------------------
   partners: [
     {
-      name: 'Edmentum International',
+      name: 'Edmentum International & EdOptions Academy',
       logoUrl: '',
       website: 'https://www.edmentum.com',
       category: 'curriculum',
       description: {
-        vi: 'Edmentum International là tổ chức giáo dục hàng đầu đến từ Hoa Kỳ với hơn 60 năm phát triển trong lĩnh vực công nghệ giáo dục (EdTech), cung cấp hệ sinh thái học tập toàn diện cho học sinh từ Mầm non đến hết Trung học phổ thông (K–12). Hệ thống bao gồm: Chương trình học (Curriculum); Hệ thống đánh giá năng lực & cá nhân hóa bằng AI (Exact Path); Dịch vụ giảng dạy & hỗ trợ (Instructional Services – EdOptions Academy). Được kiểm định bởi Cognia và WASC.',
-        en: 'Edmentum International is a leading US education organisation with 60+ years in EdTech. Its ecosystem covers Curriculum, AI-driven personalised assessment (Exact Path), and instructional services (EdOptions Academy) for K–12 learners. Accredited by Cognia and WASC.',
+        vi: 'Tổ chức giáo dục K-12 hàng đầu Hoa Kỳ với hơn 60 năm kinh nghiệm, phục vụ 5.2 triệu học sinh mỗi năm trên 100 quốc gia. Trường trực tuyến EdOptions Academy được kiểm định toàn diện bởi Cognia và WASC, cấp bằng Tú tài Mỹ (U.S. High School Diploma) và cung cấp hơn 400 khóa học chuẩn quốc tế gồm các môn Tín chỉ nâng cao AP® được College Board phê duyệt.',
+        en: 'Leading US K-12 digital curriculum and accredited online schooling provider with 60+ years of educational excellence, serving 5.2 million students annually across 100+ countries. EdOptions Academy is fully accredited by Cognia and WASC, awarding the official U.S. High School Diploma with 400+ courses including College Board approved AP® courses.',
       },
       features: [
-        { vi: 'Common Core chuẩn Mỹ', en: 'US Common Core standards' },
-        { vi: 'AI cá nhân hóa (Exact Path)', en: 'AI personalisation (Exact Path)' },
-        { vi: 'EdOptions Academy – Dual Diploma', en: 'EdOptions Academy – Dual Diploma' },
-        { vi: 'Kiểm định Cognia & WASC', en: 'Cognia & WASC accredited' },
+        { vi: 'Kiểm định chất lượng giáo dục bởi Cognia và WASC', en: 'Accredited by Cognia and WASC' },
+        { vi: 'Chương trình AP® được College Board phê duyệt & NCAA công nhận', en: 'College Board approved AP® courses and NCAA eligible' },
+        { vi: 'Hơn 400 khóa học chuẩn Hoa Kỳ từ lớp 6 đến lớp 12', en: '400+ US curriculum courses from Grade 6 to Grade 12' },
+        { vi: '92% học sinh hoàn tất đỗ vào các trường đại học uy tín tại Hoa Kỳ', en: '92% of graduates accepted into leading universities' },
       ],
       isFeatured: true,
       order: 0,
       isActive: true,
     },
     {
-      name: 'Cambridge Assessment English (ESOL)',
+      name: 'Cambridge Assessment English',
       logoUrl: '',
       website: 'https://www.cambridgeenglish.org',
       category: 'certification',
       description: {
-        vi: 'Cambridge Assessment English (Đại học Cambridge, Vương quốc Anh) là tổ chức hàng đầu thế giới trong đánh giá và chứng nhận năng lực tiếng Anh, với hệ thống chứng chỉ được công nhận rộng rãi toàn cầu. EPath tích hợp khung năng lực Cambridge vào chương trình, giúp xác định trình độ, theo dõi tiến trình, định hướng các cột mốc Starters – Movers – Flyers và sẵn sàng học các môn quốc tế.',
-        en: 'Cambridge Assessment English (University of Cambridge, UK) is the world\'s leading English assessment and certification body. EPath embeds the Cambridge framework to identify level, track progress, target Starters – Movers – Flyers milestones and prepare learners for international subjects.',
+        vi: 'Hội đồng Khảo thí tiếng Anh thuộc Đại học Cambridge (Vương quốc Anh) – tổ chức hàng đầu thế giới trong đánh giá năng lực ngôn ngữ. Khung năng lực Cambridge English Qualifications được tích hợp xuyên suốt tại EPath, xác định chính xác trình độ và chuẩn bị nền tảng tiếng Anh học thuật để học sinh tự tin học các môn phổ thông quốc tế.',
+        en: 'World-renowned English language assessment organization part of the University of Cambridge (UK). The Cambridge English Qualifications framework is integrated throughout EPath tracks, setting clear benchmarks from Young Learners to IELTS Academic.',
       },
       features: [
-        { vi: 'Chứng chỉ quốc tế công nhận toàn cầu', en: 'Globally recognised certifications' },
-        { vi: 'Starters – Movers – Flyers – KET – PET – IELTS', en: 'Starters – Movers – Flyers – KET – PET – IELTS' },
-        { vi: 'Khung năng lực chuẩn quốc tế', en: 'International competency framework' },
+        { vi: 'Đánh giá khách quan theo khung Cambridge English Qualifications', en: 'Standardized assessment on Cambridge English Qualifications' },
+        { vi: 'Lộ trình chuẩn hóa từ Starters, Movers, Flyers đến IELTS', en: 'Structured progression from Young Learners to IELTS' },
+        { vi: 'Xây dựng tiếng Anh học thuật như một công cụ học tập đa môn', en: 'Develops academic English as a multidisciplinary study tool' },
+        { vi: 'Rút ngắn lộ trình nền tảng, tối ưu thời gian và chi phí cho gia đình', en: 'Streamlined foundational pathway saving time and investment' },
       ],
       isFeatured: true,
       order: 1,
       isActive: true,
     },
     {
-      name: 'FabLab EIU',
+      name: 'FabLab EIU – Trường Đại học Quốc tế Miền Đông',
       logoUrl: '',
       website: 'https://eiu.edu.vn',
       category: 'lab',
       description: {
-        vi: 'FabLab EIU là không gian sáng tạo (makerspace) trực thuộc Trường Đại học Quốc tế Miền Đông (EIU), nơi học sinh tiếp cận trực tiếp với các công nghệ hiện đại như thiết kế 3D, in 3D, lập trình, robotics và chế tạo sản phẩm. EPath hợp tác cùng FabLab EIU mang đến trải nghiệm ứng dụng cao trong lĩnh vực khoa học và công nghệ, giúp học sinh "biết làm" chứ không chỉ "hiểu bài".',
-        en: 'FabLab EIU is the makerspace of East International University (EIU). Students get hands-on access to 3D design, 3D printing, programming, robotics and product fabrication. EPath partners with FabLab EIU so learners experience applied STEM and build 21st-century skills.',
+        vi: 'Không gian sáng tạo (makerspace) công nghệ cao trực thuộc Trường Đại học Quốc tế Miền Đông (EIU). EPath hợp tác cùng FabLab EIU mang đến cho học sinh môi trường thực hành sáng tạo với công nghệ in 3D, thiết kế CAD, lập trình Robotics và các dự án STEAM thực nghiệm, kết nối lý thuyết học thuật với ứng dụng thực tế.',
+        en: 'State-of-the-art makerspace affiliated with Eastern International University (EIU). EPath partners with FabLab EIU to provide hands-on STEM education, 3D printing, CAD design, robotics, and applied STEAM innovation projects.',
       },
       features: [
-        { vi: 'Thiết kế & in 3D', en: '3D design & printing' },
-        { vi: 'Lập trình & Robotics', en: 'Programming & Robotics' },
-        { vi: 'Chế tạo sản phẩm', en: 'Product fabrication' },
+        { vi: 'Makerspace hiện đại với máy in 3D, máy cắt laser và xưởng Robotics', en: 'Modern makerspace equipped with 3D printers and robotics labs' },
+        { vi: 'Trực tiếp trải nghiệm và ứng dụng kiến thức khoa học vào thực tế', en: 'Hands-on application of scientific principles to real projects' },
+        { vi: 'Phát triển tư duy sáng tạo, giải quyết vấn đề và kỹ năng thực hành', en: 'Fosters creative problem-solving and maker engineering skills' },
+        { vi: 'Nuôi dưỡng năng lực công nghệ và tinh thần đổi mới sáng tạo thế kỷ 21', en: 'Nurtures 21st-century technological fluency and innovation' },
+      ],
+      isFeatured: true,
+      order: 2,
+      isActive: true,
+    },
+    {
+      name: 'Cognia & WASC Accreditation',
+      logoUrl: '',
+      website: 'https://www.cognia.org',
+      category: 'certification',
+      description: {
+        vi: 'Hai tổ chức kiểm định giáo dục uy tín bậc nhất Hoa Kỳ và toàn cầu. Chứng nhận kiểm định đảm bảo giá trị pháp lý quốc tế của Bằng tốt nghiệp Phổ thông Mỹ (U.S. High School Diploma) và bảng điểm (transcript) để học sinh EPath được công nhận và xét tuyển thẳng vào các trường đại học hàng đầu thế giới.',
+        en: 'Two of the most recognized educational accrediting organizations globally. Their accreditation guarantees full international recognition and academic rigor for the U.S. High School Diploma and transcripts for direct admission to top global universities.',
+      },
+      features: [
+        { vi: 'Tổ chức kiểm định chất lượng giáo dục hàng đầu của Hoa Kỳ', en: 'Premier education accreditation agencies in the United States' },
+        { vi: 'Bằng Tú tài Mỹ và bảng điểm được công nhận trên toàn thế giới', en: 'US High School Diploma and transcripts recognized worldwide' },
+        { vi: 'Bảo đảm tính liên thông và chuẩn mực học thuật quốc tế cao nhất', en: 'Ensures highest international academic standards and transferability' },
+        { vi: 'Mở rộng cơ hội săn học bổng và xét tuyển thẳng vào đại học danh tiếng', en: 'Maximizes scholarship opportunities at world-ranked universities' },
       ],
       isFeatured: false,
-      order: 2,
+      order: 3,
       isActive: true,
     },
   ],
@@ -1680,6 +1863,11 @@ export async function POST() {
     // 1) Seed flat collections (existing behaviour)
     for (const [collectionName, items] of Object.entries(seedData)) {
       try {
+        const existing = await db.collection(collectionName).limit(1).get()
+        if (!existing.empty) {
+          results.created.push(`${collectionName}: already populated, skipping duplicate seed`)
+          continue
+        }
         for (const item of items as Record<string, unknown>[]) {
           const docRef = await db.collection(collectionName).add({
             ...item,

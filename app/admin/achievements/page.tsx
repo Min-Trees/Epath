@@ -37,6 +37,32 @@ export default function AdminAchievementsPage() {
         remove={cms.achievements.remove}
         reorder={cms.achievements.reorder}
         reviewCollection="achievements"
+        renderSummary={(item) => (
+          <div className="flex items-start gap-3">
+            {item.coverImage ? (
+              <div className="w-16 h-12 rounded-lg border border-[#DEDDD6] overflow-hidden bg-white shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.coverImage}
+                  alt={item.title.vi || item.title.en}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-16 h-12 rounded-lg border border-[#DEDDD6] bg-[#F6F5F1] shrink-0 flex items-center justify-center text-xs text-[#5C6069] font-bold">
+                AWARD
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-sm truncate" style={{ color: semanticColors.text }}>
+                {item.title.vi || item.title.en}
+              </div>
+              <div className="text-xs line-clamp-2 mt-0.5" style={{ color: semanticColors.textMuted }}>
+                {item.description.vi || item.description.en}
+              </div>
+            </div>
+          </div>
+        )}
       />
     </AdminLayout>
   )

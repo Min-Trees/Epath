@@ -34,6 +34,7 @@
     "personalized": "Cá nhân hóa"
   },
   "values": {
+    "eyebrow": "GIÁ TRỊ CỐT LÕI",
     "title": "Tại sao phụ huynh chọn EPath?",
     "subtitle": "6 giá trị cốt lõi tạo nên sự khác biệt của EPath Education",
     "continuousPath": "Lộ trình liên tục",
@@ -171,18 +172,63 @@
       "subtitle": "Liên hệ ngay để được tư vấn về lộ trình học tập phù hợp nhất cho con bạn",
       "button": "Liên hệ tư vấn"
     },
-    "objective": { "title": "Mục tiêu", "desc": "Đồng hành cùng học sinh xây dựng lộ trình học tập cá nhân hóa." },
-    "team": { "title": "Đội ngũ", "desc": "Đội ngũ giáo viên quốc tế và Việt Nam giàu kinh nghiệm." },
+    "objective": {
+      "title": "Mục tiêu",
+      "desc": "Đồng hành cùng học sinh xây dựng lộ trình học tập cá nhân hóa."
+    },
+    "team": {
+      "title": "Đội ngũ",
+      "desc": "Đội ngũ giáo viên quốc tế và Việt Nam giàu kinh nghiệm."
+    },
     "achievements": {
-      "title": "Thành tích vượt trội (Achievements)",
-      "subtitle": "Khẳng định năng lực học thuật và khả năng thích ứng trong môi trường giáo dục toàn cầu",
-      "desc": "Trong suốt quá trình học tập tại EPath, học sinh đã đạt được nhiều thành tích nổi bật trong các kỳ thi và chứng chỉ quốc tế. Những kết quả này là minh chứng cho sự phát triển toàn diện về tư duy, kỹ năng học tập và mức độ sẵn sàng trong môi trường giáo dục quốc tế.",
-      "imageNote": "(Hình ảnh học sinh và thành tích)"
+      "title": "Thành tích Vượt trội & Kết quả Đào tạo",
+      "subtitle": "Minh chứng cho chất lượng đào tạo chuẩn hóa và năng lực hội nhập toàn cầu của học sinh EPath",
+      "desc": "Trong suốt quá trình học tập tại EPath, học sinh liên tục ghi dấu ấn với những kết quả học thuật nổi bật tại các kỳ thi chuẩn hóa quốc tế và đấu trường học thuật uy tín.",
+      "stat1Number": "92%",
+      "stat1Label": "Đỗ Đại học Mỹ Uy Tín",
+      "stat1Desc": "Tỷ lệ học sinh tốt nghiệp chương trình EdOptions Academy trúng tuyển vào các trường đại học tại Hoa Kỳ.",
+      "stat2Number": "100%",
+      "stat2Label": "Đạt Chuẩn Ngôn Ngữ",
+      "stat2Desc": "Học sinh hoàn thành lớp 8 đạt IELTS 5.5+ và học sinh THPT đạt IELTS 7.0+ mở rộng cơ hội học bổng.",
+      "stat3Number": "21.5",
+      "stat3Label": "Tín Chỉ Tú Tài Mỹ",
+      "stat3Desc": "Tích lũy trọn vẹn theo khung kiểm định Cognia & WASC để tốt nghiệp với tư cách học sinh bản xứ Hoa Kỳ.",
+      "stat4Number": "400+",
+      "stat4Label": "Khóa Học Chuẩn Quốc Tế",
+      "stat4Desc": "Kho học liệu số hóa của Edmentum bao gồm các môn nâng cao AP® được College Board phê duyệt.",
+      "olympiadTitle": "Đấu trường Học thuật & Trải nghiệm Công nghệ",
+      "olympiadDesc": "Học sinh EPath thường xuyên thử thách và đạt giải cao tại các kỳ thi Olympic quốc tế như IMEC, STEMCO, GMEC, TIMO; đồng thời trực tiếp sáng tạo các dự án Robotics, thiết kế in 3D thực nghiệm tại Makerspace FabLab EIU."
     },
     "stats": {
       "years": "Năm kinh nghiệm",
       "levels": "Cấp học",
       "edmentum": "Năm Edmentum"
+    },
+    "faculty": {
+      "title": "Đội ngũ Giảng viên & Cố vấn Học thuật",
+      "subtitle": "Mô hình kết hợp 50% Giáo viên Quốc tế và 50% Giáo viên Song ngữ chuyên môn cao",
+      "desc": "Tại EPath Education, chất lượng đào tạo được đảm bảo bởi sự kết hợp hài hòa giữa giảng viên quốc tế giàu kinh nghiệm sư phạm và giảng viên song ngữ tận tâm, tạo môi trường học tập chuẩn quốc tế nhưng luôn gần gũi và nâng đỡ từng học sinh.",
+      "international": {
+        "title": "50% Giáo viên Quốc tế",
+        "tag": "Giảng dạy bằng Tiếng Anh 100%",
+        "desc": "Ưu tiên có bằng Cử nhân Giáo dục Tiểu học hoặc Trung học (Elementary / Secondary Education), dày dặn kinh nghiệm giảng dạy các môn học thuật (Academic Subjects) theo chuẩn giáo dục Hoa Kỳ và Cambridge.",
+        "p1": "Trực tiếp giảng dạy các tiết học trực tuyến và trực tiếp về Toán, Khoa học, Ngữ văn Anh (ELA).",
+        "p2": "Hình thành phản xạ ngôn ngữ tự nhiên, ngữ âm chuẩn xác và tư duy phản biện cho học sinh."
+      },
+      "bilingual": {
+        "title": "50% Giáo viên Song ngữ",
+        "tag": "IELTS 7.0+ & Chuyên môn Sư phạm",
+        "desc": "Đội ngũ thầy cô Việt Nam sở hữu chứng chỉ IELTS từ 7.0 trở lên, có năng lực tiếng Anh học thuật xuất sắc và thấu hiểu sâu sắc đặc điểm tâm lý, rào cản ngôn ngữ của học sinh Việt Nam.",
+        "p1": "Đồng hành hướng dẫn, giải thích các khái niệm học thuật khó và củng cố kiến thức cho từng bạn.",
+        "p2": "Hỗ trợ cá nhân hóa việc học, tổ chức các buổi phụ đạo (tutor) nhằm lấp đầy lỗ hổng kiến thức kịp thời."
+      },
+      "advisor": {
+        "title": "Cố vấn Học thuật (Academic Advisor)",
+        "tag": "Đồng hành Cá nhân hóa 1:1",
+        "desc": "Mỗi học sinh tại EPath được phân công riêng một Cố vấn Học thuật theo sát toàn bộ quá trình học tập, quản lý tiến độ hoàn thành bài học trên hệ thống Edmentum, và là cầu nối vững chắc với phụ huynh.",
+        "p1": "Đánh giá năng lực định kỳ, phát hiện điểm mạnh và tư vấn lựa chọn môn học / môn AP phù hợp.",
+        "p2": "Đại diện phụ huynh theo dõi tiến trình học thuật và xây dựng hồ sơ ứng tuyển đại học quốc tế."
+      }
     }
   },
   "programs": {
@@ -313,13 +359,45 @@
       "consult": "Tư vấn ngay"
     },
     "faq": {
-      "title": "Câu hỏi thường gặp",
-      "q1": "Quy trình đăng ký như thế nào?",
-      "a1": "Bước 1: Liên hệ tư vấn. Bước 2: Đặt lịch đánh giá năng lực miễn phí.",
-      "q2": "Cần chuẩn bị gì cho buổi đánh giá năng lực?",
-      "a2": "Phụ huynh cần mang theo học bạ và CMND.",
-      "q3": "Chính sách hoàn học phí như thế nào?",
-      "a3": "Hoàn 100% nếu rút trước 15 ngày khai giảng."
+      "title": "Câu hỏi thường gặp (FAQ)",
+      "subtitle": "Giải đáp chi tiết về định hướng giáo dục, chương trình và lộ trình học tập tại EPath Education",
+      "q1": "EPath Education dành cho học sinh ở độ tuổi nào?",
+      "a1": "EPath Education cung cấp các chương trình học tập dành cho học sinh từ Mầm non đến Trung học Phổ thông, với lộ trình được thiết kế theo từng giai đoạn phát triển. Học sinh có thể bắt đầu từ chương trình Tiếng Anh Bứt Phá, Nền tảng Học thuật Quốc tế và tiếp tục phát triển theo các lộ trình học tập quốc tế ở bậc Tiểu học, Trung học Cơ sở và Trung học Phổ thông.",
+      "q2": "Học sinh chưa có nền tảng tiếng Anh có thể học tại EPath Education không?",
+      "a2": "Có. Học sinh được đánh giá năng lực đầu vào trước khi bắt đầu chương trình. Kết quả đánh giá giúp EPath xác định trình độ hiện tại và tư vấn cấp độ, chương trình phù hợp thay vì áp dụng một lộ trình giống nhau cho tất cả học sinh.",
+      "q3": "Chương trình Tiếng Anh Bứt Phá khác gì so với các khóa học tiếng Anh thông thường?",
+      "a3": "Tiếng Anh Bứt Phá không chỉ tập trung vào việc phát triển khả năng giao tiếp mà hướng đến xây dựng năng lực tiếng Anh học thuật theo từng giai đoạn. Chương trình được xây dựng dựa trên hệ thống giáo trình của Cambridge University Press và bám sát khung năng lực Cambridge English Qualifications, giúp học sinh từng bước phát triển Nghe – Nói – Đọc – Viết và sử dụng tiếng Anh như một công cụ cho học tập.",
+      "q4": "Học tiếng Anh tại EPath có phải để chuẩn bị cho chương trình học bằng tiếng Anh không?",
+      "a4": "Đúng. Một trong những định hướng của chương trình là giúp học sinh từng bước chuyển từ “học tiếng Anh” sang “học bằng tiếng Anh”. Bên cạnh năng lực ngôn ngữ, học sinh được phát triển vốn từ vựng học thuật, đọc hiểu, viết, tư duy và khả năng tiếp cận các nội dung môn học bằng tiếng Anh. Đây là nền tảng để học sinh có thể tiếp tục các chương trình Song ngữ, Quốc tế hoặc các lộ trình học tập theo hệ thống giáo dục Mỹ.",
+      "q5": "Foundation Track là gì và phù hợp với học sinh nào?",
+      "a5": "Foundation Track – Nền tảng Học thuật Quốc tế được thiết kế cho học sinh muốn xây dựng nền tảng kiến thức học thuật bằng tiếng Anh trước khi tiếp cận các chương trình quốc tế chuyên sâu. Tùy theo độ tuổi, học sinh được phát triển các môn học như ELA (English Language Arts), Mathematics và Science, đồng thời rèn luyện khả năng đọc hiểu, tư duy và sử dụng tiếng Anh trong quá trình học tập.",
+      "q6": "Semi-Homeschooling có phải là học tại nhà hoàn toàn không?",
+      "a6": "Không. Semi-Homeschooling là mô hình kết hợp giữa học trực tuyến và học trực tiếp, giúp học sinh tiếp cận chương trình học thuật quốc tế nhưng vẫn duy trì môi trường tương tác, hỗ trợ và trải nghiệm học tập trực tiếp. Mô hình được xây dựng theo từng cấp độ và lộ trình học tập, phù hợp với học sinh có nhu cầu phát triển kiến thức học thuật bằng tiếng Anh nhưng cần một hình thức học linh hoạt.",
+      "q7": "Dual Diploma Pathway và U.S. Diploma Pathway khác nhau như thế nào?",
+      "a7": "Dual Diploma Pathway dành cho học sinh muốn duy trì chương trình giáo dục Việt Nam đồng thời hoàn thành lộ trình chương trình Mỹ để hướng đến bằng tốt nghiệp THPT Việt Nam và U.S. High School Diploma (5 tín chỉ tiêu chuẩn + 1 tín chỉ AP). Trong khi đó, U.S. Diploma Pathway tập trung vào việc hoàn thành toàn thời gian chương trình và các yêu cầu 21.5 tín chỉ theo hệ thống giáo dục Mỹ để nhận bằng Tú tài Mỹ như một học sinh bản địa. Việc lựa chọn pathway nào phụ thuộc vào mục tiêu học tập, kế hoạch sau THPT và định hướng của từng học sinh.",
+      "q8": "U.S. High School Diploma được cấp bởi đơn vị nào?",
+      "a8": "Trong các lộ trình sử dụng chương trình EdOptions Academy, học sinh hoàn thành các yêu cầu của chương trình theo quy định để hướng đến U.S. High School Diploma. EdOptions Academy là trường trực tuyến K–12 của Edmentum International và được kiểm định toàn diện bởi Cognia và WASC, được College Board phê duyệt môn AP và NCAA công nhận.",
+      "q9": "Học sinh có thể thay đổi lộ trình học tập trong quá trình học không?",
+      "a9": "Có thể. Lộ trình học tập được xây dựng dựa trên năng lực, mục tiêu và sự phát triển thực tế của từng học sinh. EPath Education thực hiện đánh giá và tư vấn định kỳ để phụ huynh và học sinh có cơ sở điều chỉnh chương trình, cấp độ hoặc định hướng học tập khi cần thiết.",
+      "q10": "EPath Education có tư vấn lộ trình học tập quốc tế cho từng học sinh không?",
+      "a10": "Có. Dịch vụ Cố vấn Lộ trình Học tập Quốc tế hỗ trợ học sinh và phụ huynh xác định mục tiêu, đánh giá năng lực hiện tại và lựa chọn chương trình phù hợp. Lộ trình bao gồm việc phát triển tiếng Anh học thuật, lựa chọn chương trình quốc tế, chuẩn bị chứng chỉ, tích lũy tín chỉ và định hướng học tập sau THPT.",
+      "q11": "Giáo viên tại EPath Education gồm những ai?",
+      "a11": "Tùy từng chương trình, EPath Education kết hợp 50% giáo viên quốc tế và 50% giáo viên song ngữ. Giáo viên quốc tế ưu tiên có bằng Cử nhân Giáo dục Tiểu học/Trung học (Elementary/Secondary Education) và kinh nghiệm giảng dạy các môn học thuật bằng tiếng Anh. Giáo viên song ngữ có năng lực IELTS từ 7.0+, hỗ trợ học sinh Việt Nam tiếp cận kiến thức, củng cố nội dung và cá nhân hóa việc học.",
+      "q12": "Phụ huynh có được theo dõi quá trình học tập của con không?",
+      "a12": "Có. Phụ huynh được cập nhật liên tục về quá trình học tập, kết quả đánh giá và sự tiến bộ của học sinh qua cổng thông tin và các báo cáo định kỳ. Các thông tin này là cơ sở để EPath Education phối hợp cùng gia đình trong việc điều chỉnh và xây dựng lộ trình học tập tối ưu cho con."
+    },
+    "financial": {
+      "title": "Chính Sách Học Phí & Đầu Tư Giáo Dục Bền Vững",
+      "subtitle": "Tiếp cận chương trình giáo dục quốc tế chuẩn Hoa Kỳ với mức chi phí chưa đến 1/3 so với các trường quốc tế truyền thống",
+      "advantageTitle": "Vì sao lộ trình tại EPath tối ưu chi phí cho gia đình?",
+      "advantageDesc": "Thông qua mô hình học tập kết hợp (Blended Learning) trên nền tảng số hóa của Edmentum International cùng sự đồng hành của đội ngũ giáo viên tại Campus, EPath loại bỏ những chi phí cơ sở vật chất cồng kềnh không cần thiết, tập trung toàn bộ nguồn lực vào chất lượng giảng dạy, cố vấn học thuật 1:1 và chứng nhận quốc tế.",
+      "points": [
+        "Mức đầu tư học phí chỉ bằng 1/3 so với các trường Quốc tế Song ngữ tại Việt Nam.",
+        "Cấp tài khoản Edmentum International chính hãng thời hạn 12 tháng với kho bài giảng số hóa chuẩn Mỹ.",
+        "Học sinh hoàn thành trọn vẹn chương trình phổ thông Việt Nam song song với việc tích lũy tín chỉ Tú tài Mỹ.",
+        "Nhiều gói học tập linh hoạt: Foundation Track (5h/tuần), Advanced Track (6.5-7h/tuần), Dual Diploma và Fulltime Homeschooling.",
+        "Chính sách học bổng học thuật dành cho các học sinh có năng lực tiếng Anh và thành tích xuất sắc."
+      ]
     }
   },
   "contact": {
@@ -375,16 +453,72 @@
       "title": "Bạn muốn nhận thông tin sự kiện sớm nhất?",
       "subtitle": "Đăng ký email để nhận thông tin về các sự kiện mới nhất của EPath",
       "button": "Đăng ký nhận tin"
-    }
+    },
+    "featuredEvents": [
+      {
+        "id": "event-open-house-2025",
+        "title": "Ngày Hội Open House: Khám Phá Lộ Trình Học Thuật Quốc Tế EPath",
+        "date": "15 Tháng 10, 2025",
+        "time": "08:30 - 11:30",
+        "location": "Campus EPath Education, 38 Trần Phú, TP. Thủ Dầu Một, Bình Dương",
+        "format": "Onsite",
+        "target": "Phụ huynh & Học sinh Mầm non - THPT",
+        "description": "Cơ hội trải nghiệm trực tiếp mô hình lớp học Blended Learning, gặp gỡ đội ngũ Giáo viên Quốc tế và Song ngữ, đồng thời nhận đánh giá năng lực tiếng Anh học thuật miễn phí cho học sinh.",
+        "badge": "Sự kiện nổi bật"
+      },
+      {
+        "id": "event-edmentum-symposium",
+        "title": "Hội Thảo Chuyên Đề Edmentum: Lộ Trình Song Bằng & Bằng Tú Tài Mỹ",
+        "date": "28 Tháng 10, 2025",
+        "time": "14:00 - 16:30",
+        "location": "Hội trường Campus EPath & Livestream Trực Tuyến",
+        "format": "Hybrid",
+        "target": "Phụ huynh & Học sinh Lớp 6 - 11",
+        "description": "Phân tích chi tiết lộ trình Dual Diploma (5 tín chỉ chuẩn + 1 tín chỉ AP) và Fulltime Homeschool (21.5 tín chỉ) cùng chuyên gia học vụ từ EdOptions Academy và EPath Education.",
+        "badge": "Hội thảo học vụ"
+      },
+      {
+        "id": "event-cambridge-talk",
+        "title": "Tọa Đàm Cambridge: Chuyển Từ 'Học Tiếng Anh' Sang 'Học Bằng Tiếng Anh'",
+        "date": "12 Tháng 11, 2025",
+        "time": "09:00 - 11:00",
+        "location": "Campus EPath Education, 38 Trần Phú, TP. Thủ Dầu Một",
+        "format": "Onsite",
+        "target": "Phụ huynh có con từ 5 - 12 tuổi",
+        "description": "Chia sẻ phương pháp phát triển năng lực ngôn ngữ theo khung Cambridge Qualifications (Starters, Movers, Flyers) và cách ứng dụng CLIL để tiếp thu Toán & Khoa học bằng tiếng Anh.",
+        "badge": "Định hướng phụ huynh"
+      },
+      {
+        "id": "event-fablab-workshop",
+        "title": "Workshop Sáng Tạo STEAM & Robotics Tại FabLab EIU",
+        "date": "29 Tháng 11, 2025",
+        "time": "08:30 - 12:00",
+        "location": "FabLab EIU, Trường Đại học Quốc tế Miền Đông (EIU)",
+        "format": "Trải nghiệm thực tế",
+        "target": "Học sinh Lớp 3 - Lớp 10",
+        "description": "Trải nghiệm chế tạo mô hình với công nghệ in 3D, cắt laser và lập trình robot dưới sự hướng dẫn của các kỹ sư công nghệ tại FabLab EIU. Phát triển tư duy giải quyết vấn đề và kỹ năng làm việc nhóm.",
+        "badge": "Trải nghiệm công nghệ"
+      }
+    ]
   },
   "partnersPage": {
     "hero": {
+      "badge": "Hệ Thống Đối Tác Chiến Lược",
       "title": "Đối tác quốc tế",
       "subtitle": "Hệ sinh thái giáo dục toàn cầu tại EPath Education"
     },
-    "curriculum": { "title": "Chương trình học", "desc": "Các đối tác cung cấp chương trình học và nội dung giáo dục" },
-    "certification": { "title": "Kiểm định", "desc": "Các tổ chức kiểm định chất lượng giáo dục quốc tế" },
-    "lab": { "title": "Phòng lab", "desc": "Cơ sở vật chất hỗ trợ học tập STEM" },
+    "curriculum": {
+      "title": "Chương trình học",
+      "desc": "Các đối tác cung cấp chương trình học và nội dung giáo dục"
+    },
+    "certification": {
+      "title": "Kiểm định",
+      "desc": "Các tổ chức kiểm định chất lượng giáo dục quốc tế"
+    },
+    "lab": {
+      "title": "Phòng lab",
+      "desc": "Cơ sở vật chất hỗ trợ học tập STEM"
+    },
     "features": "Điểm nổi bật",
     "featureList": {
       "f1": "Chương trình chuẩn Mỹ được công nhận toàn cầu",
@@ -397,6 +531,24 @@
       "title": "Tìm hiểu thêm về đối tác của EPath",
       "subtitle": "Liên hệ để được tư vấn về các chương trình học quốc tế tại EPath",
       "button": "Liên hệ tư vấn"
+    },
+    "pillarsBadge": "Liên Minh Học Thuật Quốc Tế",
+    "pillarsTitle": "3 Trụ Cột Hợp Tác Học Thuật Toàn Cầu",
+    "pillarsSubtitle": "Sự kết hợp chiến lược giữa Giáo trình chuẩn Mỹ, Khảo thí chuẩn Anh và Thực nghiệm công nghệ cao",
+    "pillar1": {
+      "title": "1. Học Thuật Chuẩn Mỹ",
+      "partner": "Edmentum International & EdOptions Academy",
+      "desc": "Chương trình học liệu số hóa K-12 hàng đầu Hoa Kỳ với hơn 60 năm kinh nghiệm, được kiểm định bởi Cognia và WASC, mang đến lộ trình Bằng Tú tài Mỹ (U.S. High School Diploma) chính quy ngay tại Việt Nam."
+    },
+    "pillar2": {
+      "title": "2. Khảo Thí Chuẩn Anh",
+      "partner": "Cambridge Assessment English",
+      "desc": "Tổ chức khảo thí thuộc Đại học Cambridge (Vương quốc Anh). Thang đo năng lực quốc tế giúp chuẩn hóa lộ trình tiếng Anh từ Starters, Movers, Flyers đến KET, PET và IELTS Academic."
+    },
+    "pillar3": {
+      "title": "3. Thực Hành Đổi Mới Sáng Tạo",
+      "partner": "FabLab EIU – Trường ĐH Quốc tế Miền Đông",
+      "desc": "Không gian sáng tạo (makerspace) công nghệ cao với máy in 3D, xưởng robotics và cắt laser, kết nối lý thuyết học thuật với kỹ năng chế tạo và giải quyết vấn đề thực tế."
     }
   },
   "steps": {
@@ -451,9 +603,9 @@
     "contactTitle": "Liên hệ",
     "partnersTitle": "Đối tác",
     "contact": {
-      "address": "38 Trần Phú, Thủ Dầu Một, TP.HCM",
-      "phone": "0912 345 678",
-      "email": "info@epatheducation.edu.vn"
+      "address": "38 Trần Phú, Phường Chánh Nghĩa, TP. Thủ Dầu Một, Bình Dương",
+      "phone": "0937 514 896",
+      "email": "infor@epath.edu.vn"
     },
     "partners": [
       "Edmentum International",

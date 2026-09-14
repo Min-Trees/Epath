@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
@@ -47,7 +47,7 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
   return (
     <div ref={ref} className="stat-cell text-center">
       <div
-        className="inline-flex items-baseline justify-center px-6 py-4 rounded-xl overflow-hidden relative"
+        className="inline-flex items-baseline justify-center px-6 py-4 rounded-2xl overflow-hidden relative"
         style={{ backgroundColor: bgColor }}
       >
         <span className="text-4xl md:text-5xl font-bold tabular-nums" style={{ color }}>
@@ -57,7 +57,7 @@ function Counter({ value, suffix, label, color, bgColor, active, startDelayMs }:
           {suffix}
         </span>
       </div>
-      <p className="mt-3 text-sm md:text-base font-medium" style={{ color }}>
+      <p className="mt-3 text-sm md:text-base font-medium" style={{ color: '#FFFFFF' }}>
         {label}
       </p>
     </div>
@@ -79,6 +79,7 @@ function pick(v: { vi: string; en: string } | undefined, locale: Locale): string
 
 export function StatisticsSection() {
   const t = useTranslations('stats')
+  const locale = useLocale() as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.25 })
   const [active, setActive] = useState(false)
   const { data: cms } = useCmsContext()
@@ -114,7 +115,13 @@ export function StatisticsSection() {
   })()
 
   return (
-    <section ref={sectionRef} className="py-20 bg-white stats-section">
+    <section 
+      ref={sectionRef} 
+      className="py-20 stats-section"
+      style={{
+        background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)',
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {displayStats.map((stat, index) => {
@@ -129,7 +136,7 @@ export function StatisticsSection() {
               : (stat as Statistic).suffix || ''
             const statLabel = isUsingFallback
               ? t((stat as { statKey: string }).statKey)
-              : pick((stat as Statistic).label, 'vi' as Locale) || pick((stat as Statistic).label, 'en' as Locale)
+              : pick((stat as Statistic).label, locale) || pick((stat as Statistic).label, 'vi' as Locale)
 
             return (
               <div key={isUsingFallback ? (stat as { statKey: string }).statKey : (stat as Statistic).id} className="relative">

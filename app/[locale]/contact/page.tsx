@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { MapPin, Phone, Mail, Clock, Send, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,8 +14,7 @@ import { useCmsContext } from '@/lib/cms-context'
 export default function ContactPage() {
   const t = useTranslations('contact')
   const tFooter = useTranslations('footer')
-  const params = useParams()
-  const locale = (params.locale as string) || 'vi'
+  const locale = useLocale()
   const { data: cms } = useCmsContext()
   const contactHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).contact as Record<string, unknown>) || {}
   const heroImage = contactHero?.backgroundImage as string || ''
@@ -25,10 +23,10 @@ export default function ContactPage() {
   const heroSubtitle = ((contactHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] || (contactHero?.subtitle as Record<string, string | undefined> || {})?.vi || t('hero.subtitle')
 
   const settings = cms.siteSettings
-  const address = (settings?.addressVi as string) || (settings?.addressEn as string) || tFooter('contact.address')
+  const address = (locale === 'en' ? settings?.addressEn : settings?.addressVi) || (settings?.addressEn as string) || (settings?.addressVi as string) || tFooter('contact.address')
   const hotline = settings?.hotline as string || tFooter('contact.phone')
   const email = settings?.contactEmail as string || tFooter('contact.email')
-  const workingHours = (settings?.workingHoursVi as string) || (settings?.workingHoursEn as string) || t('info.hoursValue')
+  const workingHours = (locale === 'en' ? settings?.workingHoursEn : settings?.workingHoursVi) || (settings?.workingHoursEn as string) || (settings?.workingHoursVi as string) || t('info.hoursValue')
   const mapEmbedUrl = settings?.mapEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.4854754843906!2d106.6573!3d10.9802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d60b6f0b1e1f%3A0x1c9a0f0b1c9a0f0b!2zMzggVHLhuqFuIFBow6o!5e0!3m2!1sen!2s!4v1234567890'
 
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
@@ -37,10 +35,29 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.phone.trim()) return
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setSubmitted(true)
-    setIsSubmitting(false)
+    try {
+      await fetch('/api/public/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name.trim() || 'Khách liên hệ website',
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+          program: formData.subject.trim() || 'Liên hệ chung',
+          message: formData.message.trim() || formData.subject.trim(),
+          source: 'contact-form',
+          locale,
+        }),
+      })
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Contact lead submit error:', err)
+      setSubmitted(true)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (

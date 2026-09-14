@@ -48,24 +48,27 @@ export interface AdminNavItem {
 
 export const adminNavItems: AdminNavItem[] = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/page-builder', label: 'Page Builder (Home)', icon: LayoutDashboard },
+  { href: '/admin/page-builder', label: 'Page Builder (Trang chủ)', icon: LayoutDashboard },
+  { href: '/admin/pages', label: 'Page Builder (Tất cả trang)', icon: LayoutDashboard },
   { href: '/admin/programs', label: 'Chương trình học', icon: BookOpen },
-  { href: '/admin/core-values', label: 'Giá trị cốt lõi', icon: BookOpen },
   { href: '/admin/pathways', label: 'Lộ trình học', icon: BookOpen },
+  { href: '/admin/team', label: 'Giảng viên & Cố vấn', icon: Users },
+  { href: '/admin/core-values', label: 'Giá trị cốt lõi', icon: BookOpen },
   { href: '/admin/faqs', label: 'FAQ', icon: MessageSquare },
   { href: '/admin/achievements', label: 'Thành tích', icon: Award },
-  { href: '/admin/team', label: 'Đội ngũ', icon: Users },
   { href: '/admin/admission-steps', label: 'Quy trình tuyển sinh', icon: ListChecks },
   { href: '/admin/testimonials', label: 'Phản hồi PH', icon: Users },
   { href: '/admin/partners', label: 'Đối tác', icon: FileText },
   { href: '/admin/events', label: 'Sự kiện', icon: Bell },
+  { href: '/admin/hero-content', label: 'Nội dung Hero', icon: FileText },
+  { href: '/admin/about-content', label: 'Nội dung About', icon: FileText },
+  { href: '/admin/site-settings', label: 'Cài đặt trang', icon: Settings },
   { href: '/admin/activity-logs', label: 'Lịch sử hoạt động', icon: History },
   { href: '/admin/leads', label: 'Hộp thư liên hệ', icon: Inbox },
   { href: '/admin/posts', label: 'Bài viết', icon: Newspaper },
   { href: '/admin/media', label: 'Thư viện Media', icon: ImageIcon },
   { href: '/admin/review-queue', label: 'Hàng chờ duyệt', icon: ClipboardCheck },
   { href: '/admin/backups', label: 'Backup dữ liệu', icon: HardDriveDownload },
-  { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
 ]
 
 interface AdminLayoutProps {

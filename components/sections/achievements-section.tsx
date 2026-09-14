@@ -3,8 +3,7 @@
 import { motion } from 'framer-motion'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
-import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import type { Locale } from '@/lib/cms-types'
 
 function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
@@ -15,8 +14,8 @@ function pick(v: { vi: string; en: string } | undefined, locale: Locale): string
 export function AchievementsSection() {
   const t = useTranslations('common')
   const { data: cms } = useCmsContext()
-  const params = useParams()
-  const locale = ((params.locale as string) || 'vi') as Locale
+  const locale = useLocale() as Locale
+  const isVi = locale === 'vi'
   const items = cms.achievements
 
   if (items.length === 0) return null
@@ -34,14 +33,16 @@ export function AchievementsSection() {
           transition={{ duration: duration.normal, ease: easeOut }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#20242B] mb-4">
             {/* Bilingual title – prefer CMS over i18n */}
             {cms.aboutContent?.introTitle
-              ? pick(cms.aboutContent.introTitle, locale) + ' — Thành tích'
-              : 'Thành tích vượt trội'}
+              ? pick(cms.aboutContent.introTitle, locale) + (isVi ? ' — Thành tích' : ' — Achievements')
+              : (isVi ? 'Thành tích vượt trội' : 'Outstanding Achievements')}
           </h2>
-          <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
-            Những thành tích học sinh EPath đã đạt được trong các kỳ thi và chứng chỉ quốc tế.
+          <p className="text-lg text-[#5C6069] max-w-2xl mx-auto">
+            {isVi
+              ? 'Những thành tích học sinh EPath đã đạt được trong các kỳ thi và chứng chỉ quốc tế.'
+              : 'Outstanding achievements EPath students have attained in international examinations and certifications.'}
           </p>
         </motion.div>
 
@@ -57,7 +58,8 @@ export function AchievementsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={inViewViewport}
                 transition={{ duration: duration.normal, delay: idx * 0.08, ease: easeOut }}
-                className="rounded-xl overflow-hidden shadow-sm border border-gray-100 bg-white"
+                className="rounded-2xl overflow-hidden shadow-md border border-[#DEDDD6] bg-white hover:shadow-xl hover:-translate-y-2 transition-all duration-400 ease-out"
+                style={{ boxShadow: '0 8px 24px -8px rgba(30, 53, 112, 0.08)' }}
               >
                 {imageUrl && (
                   <div
@@ -66,8 +68,8 @@ export function AchievementsSection() {
                   />
                 )}
                 <div className="p-5">
-                  <h3 className="font-bold text-[#231F20] mb-2">{title}</h3>
-                  <p className="text-sm text-[#6B6B6B] leading-relaxed line-clamp-3">{desc}</p>
+                  <h3 className="font-bold text-[#20242B] mb-2">{title}</h3>
+                  <p className="text-sm text-[#5C6069] leading-relaxed line-clamp-3">{desc}</p>
                 </div>
               </motion.div>
             )

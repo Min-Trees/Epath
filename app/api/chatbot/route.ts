@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 // updated 08 Jun 2026) and the brand knowledge base. Kept compact so
 // the LLM gets full context without burning tokens on formatting.
 const EPATH_KNOWLEDGE = `
-# EPath Education - Knowledge Base (Co Huong - Co van Hoc tap)
+# EPath Education - Knowledge Base (Bo phan Hoc vu - Academic Department)
 
 ## 1. GIOI THIEU CHUNG
 - EPath Education la don vi giao duc cung cap giai phap hoc tap ca nhan hoa tu Tieu hoc den Trung hoc, mo hinh Blended Learning ket hop cung Edmentum International (USA) — kiem dinh boi Cognia va WASC.
@@ -138,7 +138,7 @@ type ChatMessage = {
   content: string
 }
 
-const SYSTEM_PROMPT = `Ban la Co Huong — Co van Hoc tap (Academic Advisor) tai EPath Education, don vi giao duc cung cap giai phap hoc tap ca nhan hoa tu Tieu hoc den Trung hoc, theo mo hinh Blended Learning ket hop cung Edmentum International (USA), duoc kiem dinh boi Cognia va WASC.
+const SYSTEM_PROMPT = `Ban la co van hoc tap cua Bo phan Hoc vu (Academic Department) tai EPath Education, don vi giao duc cung cap giai phap hoc tap ca nhan hoa tu Tieu hoc den Trung hoc, theo mo hinh Blended Learning ket hop cung Edmentum International (USA), duoc kiem dinh boi Cognia va WASC.
 
 # VAI TRO
 Ban tro chuyen truc tiep voi phu huynh dang tim hieu chuong trinh cho con. Vai tro cua ban khong phai nhan vien ban hang, ma la mot co giao tu van tan tam — hieu ro chuong trinh, hieu tam ly phu huynh, mong muon giup phu huynh dua ra quyet dinh phu hop nhat cho con.
@@ -226,7 +226,7 @@ async function callGroq(messages: ChatMessage[]): Promise<string> {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'qwen/qwen3.6-27b',
       messages,
       temperature: 0.4,
       max_tokens: 450,
@@ -248,7 +248,7 @@ async function callGroq(messages: ChatMessage[]): Promise<string> {
 }
 
 // Fallback rule-based answers when Groq is unavailable.
-// Acts as "Co Huong" — am ap, dung "co", goi phu huynh "anh/chi".
+// Acts as the Academic Department's advisor — am ap, dung "co", goi phu huynh "anh/chi".
 // Strictly limited to KB facts. No invented numbers.
 // NOTE: Only add CTA when truly relevant (contact/registration intent).
 // Most answers should be purely informational.
@@ -261,7 +261,7 @@ function fallbackAnswer(question: string): string {
 
   // Greetings
   if (/^(xin chao|chao|hi|hello|hey)/i.test(q)) {
-    return 'Xin chao anh/chi! Co la Co Huong — Co van Hoc tap tai EPath Education. Co co the ho tro anh/chi tim hieu ve chuong trinh Tieu hoc – THPT, lo trinh hoc tap, hoc phi, hoac dang ky tu van. Anh/chi muon co chia se ve van de nao truoc a?'
+    return 'Xin chao anh/chi! Co la co van hoc tap cua Bo phan Hoc vu tai EPath Education. Co co the ho tro anh/chi tim hieu ve chuong trinh Tieu hoc – THPT, lo trinh hoc tap, hoc phi, hoac dang ky tu van. Anh/chi muon co chia se ve van de nao truoc a?'
   }
 
   if (q.includes('cam on') || q.includes('thank')) {
@@ -366,7 +366,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    info: 'EPath chatbot API (Co Huong - Co van Hoc tap). POST { message, history, name?, phone? } to get a reply.',
+    info: 'EPath chatbot API (Bo phan Hoc vu - Academic Department). POST { message, history, name?, phone? } to get a reply.',
     hasGroqKey: Boolean(process.env.GROQ_API_KEY),
   })
 }

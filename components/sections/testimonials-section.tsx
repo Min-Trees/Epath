@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Testimonial } from '@/lib/cms-types'
@@ -19,25 +18,34 @@ interface TestimonialData {
 
 export function TestimonialsSection() {
   const t = useTranslations('testimonials')
-  const params = useParams()
-  const locale = (params.locale as string) || 'vi'
+  const locale = useLocale()
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState(0)
   const { data: cms } = useCmsContext()
 
-  const testimonials = cms.testimonials
-    .filter((t) => t.isActive)
+  const rawTestimonials = (cms.testimonials || [])
+    .filter((t) => t.isActive !== false)
     .sort((a, b) => {
       if (a.isFeatured !== b.isFeatured) return b.isFeatured ? 1 : -1
-      return a.order - b.order
+      return (a.order ?? 0) - (b.order ?? 0)
     })
-    .map((item) => ({
-      name: item.name,
-      role: item.role || 'Phụ huynh học sinh',
-      quote: item.content?.vi || item.content?.en || '',
-      rating: item.rating || 5,
-      avatarUrl: item.avatarUrl,
-    }))
+
+  // Deduplicate testimonials by name or ID
+  const uniqueTestimonials = rawTestimonials.reduce<typeof rawTestimonials>((acc, curr) => {
+    const key = (curr.name || '').trim().toLowerCase()
+    if (!acc.some((t) => (t.name || '').trim().toLowerCase() === key)) {
+      acc.push(curr)
+    }
+    return acc
+  }, [])
+
+  const testimonials = uniqueTestimonials.map((item) => ({
+    name: item.name,
+    role: item.role || (locale === 'en' ? 'Parent of an EPath learner' : 'Phụ huynh học sinh'),
+    quote: (locale === 'en' ? item.content?.en : item.content?.vi) || item.content?.vi || item.content?.en || '',
+    rating: item.rating || 5,
+    avatarUrl: item.avatarUrl,
+  }))
 
   // Use i18n fallback if CMS is empty
   const i18nList = t.raw('list') as TestimonialData[]
@@ -69,7 +77,7 @@ export function TestimonialsSection() {
   }
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-20 bg-[#F6F5F1] overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,10 +86,10 @@ export function TestimonialsSection() {
           transition={{ duration: duration.normal, ease: easeOut }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#20242B] mb-4">
             {t('title')}
           </h2>
-          <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+          <p className="text-lg text-[#5C6069] max-w-2xl mx-auto">
             {t('subtitle')}
           </p>
         </motion.div>
@@ -101,8 +109,10 @@ export function TestimonialsSection() {
                     transition={{ duration: duration.normal, ease: easeOut }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <div className="surface-alt rounded-2xl p-8 md:p-12 relative shadow-lg border border-[#3A53A3]/10 w-full">
-                      <div className="absolute -top-6 left-8 w-12 h-12 bg-[#3A53A3] rounded-full flex items-center justify-center">
+                    <div className="bg-white rounded-3xl p-8 md:p-12 relative shadow-lg border border-[#DEDDD6] w-full"
+                      style={{ boxShadow: '0 12px 40px -12px rgba(30, 53, 112, 0.12)' }}
+                    >
+                      <div className="absolute -top-6 left-8 w-12 h-12 bg-[#1E3570] rounded-full flex items-center justify-center">
                         <Quote className="w-6 h-6 text-white" />
                       </div>
 
@@ -111,10 +121,12 @@ export function TestimonialsSection() {
                           <img
                             src={list[current].avatarUrl}
                             alt={list[current].name}
-                            className="w-20 h-20 mx-auto mb-6 rounded-xl object-cover"
+                            className="w-20 h-20 mx-auto mb-6 rounded-2xl object-cover"
                           />
                         ) : (
-                          <div className="w-20 h-20 mx-auto mb-6 rounded-xl bg-gradient-to-br from-[#3A53A3] to-[#8BC53F] flex items-center justify-center text-white text-2xl font-bold">
+                          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center text-white text-2xl font-bold"
+                            style={{ background: 'linear-gradient(135deg, #1E3570 0%, #F26522 100%)' }}
+                          >
                             {list[current].name
                               .split(' ')
                               .map((n) => n[0])
@@ -127,20 +139,20 @@ export function TestimonialsSection() {
                           {[...Array(list[current].rating || 5)].map((_, i) => (
                             <Star
                               key={i}
-                              className="w-5 h-5 fill-[#F05A28] text-[#F05A28]"
+                              className="w-5 h-5 fill-[#F26522] text-[#F26522]"
                             />
                           ))}
                         </div>
 
-                        <blockquote className="text-lg md:text-xl text-[#231F20] leading-relaxed mb-6 italic">
+                        <blockquote className="text-lg md:text-xl text-[#20242B] leading-relaxed mb-6 italic">
                           &ldquo;{list[current].quote}&rdquo;
                         </blockquote>
 
                         <div>
-                          <div className="font-semibold text-[#3A53A3] text-lg">
+                          <div className="font-semibold text-[#2E4A9E] text-lg">
                             {list[current].name}
                           </div>
-                          <div className="text-[#6B6B6B] text-sm">
+                          <div className="text-[#5C6069] text-sm">
                             {list[current].role}
                           </div>
                         </div>
@@ -157,7 +169,7 @@ export function TestimonialsSection() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: duration.fast, ease: easeOut }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#3A53A3] hover:text-white transition-colors duration-200 border border-[#3A53A3]/20"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#1E3570] hover:text-white transition-colors duration-300 ease-out border border-[#DEDDD6]"
                     aria-label="Previous testimonial"
                     type="button"
                   >
@@ -168,7 +180,7 @@ export function TestimonialsSection() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: duration.fast, ease: easeOut }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#3A53A3] hover:text-white transition-colors duration-200 border border-[#3A53A3]/20"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#1E3570] hover:text-white transition-colors duration-300 ease-out border border-[#DEDDD6]"
                     aria-label="Next testimonial"
                     type="button"
                   >
@@ -189,10 +201,10 @@ export function TestimonialsSection() {
                     }}
                     type="button"
                     aria-label={`Go to testimonial ${index + 1}`}
-                    className={`h-3 rounded-full transition-all duration-200 ${
+                    className={`h-3 rounded-full transition-all duration-400 ease-out ${
                       index === current
-                        ? 'bg-[#3A53A3] w-8'
-                        : 'bg-[#3A53A3]/30 hover:bg-[#3A53A3]/50 w-3'
+                        ? 'bg-[#2E4A9E] w-8'
+                        : 'bg-[#DEDDD6] hover:bg-[#2E4A9E]/50 w-3'
                     }`}
                   />
                 ))}

@@ -30,6 +30,8 @@ const defaultForm: Partial<AboutContent> = {
   visionContent: { vi: '', en: '' },
   missionTitle: { vi: '', en: '' },
   missionContent: { vi: '', en: '' },
+  facultyTitle: { vi: '', en: '' },
+  facultySubtitle: { vi: '', en: '' },
   milestones: '[]',
   heroImage: '',
 }
@@ -289,6 +291,50 @@ export function AboutContentForm({ load, update, create }: AboutContentFormProps
               placeholder="Mission content..."
               rows={4}
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Mục Đội ngũ Giảng viên & Cố vấn</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Tiêu đề mục (VN)</Label>
+              <Input
+                value={(form.facultyTitle as { vi: string } | undefined)?.vi ?? ''}
+                onChange={(e) => setLocalized('facultyTitle', 'vi', e.target.value)}
+                placeholder="Đội ngũ Giảng viên & Cố vấn Học thuật"
+              />
+            </div>
+            <div>
+              <Label>Tiêu đề mục (EN)</Label>
+              <Input
+                value={(form.facultyTitle as { en: string } | undefined)?.en ?? ''}
+                onChange={(e) => setLocalized('facultyTitle', 'en', e.target.value)}
+                placeholder="Faculty & Academic Advisory Board"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Phụ đề mục (VN)</Label>
+              <Input
+                value={(form.facultySubtitle as { vi: string } | undefined)?.vi ?? ''}
+                onChange={(e) => setLocalized('facultySubtitle', 'vi', e.target.value)}
+                placeholder="Mô hình kết hợp 50% Giáo viên Quốc tế và 50% Giáo viên Song ngữ chuyên môn cao"
+              />
+            </div>
+            <div>
+              <Label>Phụ đề mục (EN)</Label>
+              <Input
+                value={(form.facultySubtitle as { en: string } | undefined)?.en ?? ''}
+                onChange={(e) => setLocalized('facultySubtitle', 'en', e.target.value)}
+                placeholder="A balanced model of 50% International Teachers and 50% Specialized Bilingual Teachers"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

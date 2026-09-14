@@ -33,7 +33,7 @@ EPath Education cung cấp:
 - Blended Learning (Online + Onsite)
 - Dual Diploma / Song bằng Mỹ
 
-Hãy trả lời thân thiện bằng tiếng Việt, ngắn gọn và hữu ích. Nếu câu hỏi nằm ngoài phạm vi giáo dục, hãy gợi ý liên hệ trực tiếp với EPath qua hotline 0912 345 678.`
+Hãy trả lời thân thiện bằng tiếng Việt, ngắn gọn và hữu ích. Nếu câu hỏi nằm ngoài phạm vi giáo dục, hãy gợi ý liên hệ trực tiếp với EPath qua hotline 0937 514 896 hoặc email infor@epath.edu.vn.`
           },
           ...messages
         ],

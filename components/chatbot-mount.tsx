@@ -22,6 +22,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { ChatInvite } from './chat-invite'
+import { AdvisoryLeadPopup } from './advisory-lead-popup'
 
 const OPEN_CHAT_KEY = 'epath-wants-chat-open'
 
@@ -34,7 +35,7 @@ const Chatbot = dynamic(
     loading: () => (
       <div
         aria-hidden
-        className="fixed bottom-4 right-4 sm:bottom-5 sm:right-6 z-[70] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#3A53A3]/40 animate-pulse"
+        className="chat-fab fixed bottom-4 right-4 sm:bottom-5 sm:right-6 lg:bottom-6 lg:right-6 lg:left-auto z-[70] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#3A53A3]/40 animate-pulse"
         style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
       />
     ),
@@ -61,6 +62,7 @@ export function ChatbotMount() {
   if (!ready) return null
   return (
     <>
+      <AdvisoryLeadPopup />
       <ChatInvite onStartChat={handleInviteOpenChat} />
       <Chatbot />
     </>

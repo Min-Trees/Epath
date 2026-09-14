@@ -34,6 +34,7 @@
     "personalized": "Personalized"
   },
   "values": {
+    "eyebrow": "CORE VALUES",
     "title": "Why Parents Choose EPath?",
     "subtitle": "6 core values that make EPath Education different",
     "continuousPath": "Continuous Pathway",
@@ -171,18 +172,63 @@
       "subtitle": "Contact us for advice on the most suitable learning pathway",
       "button": "Contact for Consultation"
     },
-    "objective": { "title": "Objective", "desc": "Accompany students to build personalized learning pathways." },
-    "team": { "title": "Team", "desc": "International and Vietnamese teachers with extensive experience." },
+    "objective": {
+      "title": "Objective",
+      "desc": "Accompany students to build personalized learning pathways."
+    },
+    "team": {
+      "title": "Team",
+      "desc": "International and Vietnamese teachers with extensive experience."
+    },
     "achievements": {
-      "title": "Outstanding Achievements",
-      "subtitle": "Confirming academic capability and adaptability in a global education environment",
-      "desc": "Throughout their learning journey at EPath, students have achieved many notable accomplishments in international exams and certifications — a testament to comprehensive development in thinking, learning skills and readiness for the international education environment.",
-      "imageNote": "(Student photos and achievements)"
+      "title": "Outstanding Achievements & Outcomes",
+      "subtitle": "Demonstrating our standardized academic rigor and students' global readiness",
+      "desc": "Throughout their journey at EPath, students consistently achieve outstanding results in standardized international examinations and prestigious academic arenas.",
+      "stat1Number": "92%",
+      "stat1Label": "US University Acceptance",
+      "stat1Desc": "Acceptance rate of EdOptions Academy graduates into accredited universities across the United States.",
+      "stat2Number": "100%",
+      "stat2Label": "Language Proficiency",
+      "stat2Desc": "Students reach IELTS 5.5+ by Grade 8 and IELTS 7.0+ in High School, maximizing scholarship competitiveness.",
+      "stat3Number": "21.5",
+      "stat3Label": "US High School Credits",
+      "stat3Desc": "Earned under Cognia & WASC accreditation to graduate with the status of a native US high school student.",
+      "stat4Number": "400+",
+      "stat4Label": "Accredited US Courses",
+      "stat4Desc": "Edmentum course catalog including College Board approved Advanced Placement (AP®) university-level subjects.",
+      "olympiadTitle": "Academic Olympiads & Applied Innovation",
+      "olympiadDesc": "EPath learners regularly earn honors in global competitions (IMEC, STEMCO, GMEC, TIMO) and build applied robotics and 3D printing engineering projects at FabLab EIU."
     },
     "stats": {
       "years": "Years Experience",
       "levels": "Education Levels",
       "edmentum": "Years Edmentum"
+    },
+    "faculty": {
+      "title": "Faculty & Academic Advisory Board",
+      "subtitle": "Balanced model of 50% International Faculty and 50% Specialized Bilingual Teachers",
+      "desc": "At EPath Education, educational excellence is anchored in a harmonious blend of experienced international educators and dedicated bilingual mentors, ensuring global standards while delivering individualized student support.",
+      "international": {
+        "title": "50% International Teachers",
+        "tag": "100% English Instruction",
+        "desc": "Holding degrees in Elementary or Secondary Education with rich experience teaching academic subjects under US Common Core and Cambridge frameworks.",
+        "p1": "Direct instruction in Mathematics, Science, and English Language Arts (ELA) both online and onsite.",
+        "p2": "Cultivating natural communication reflexes, authentic phonics, and analytical critical thinking."
+      },
+      "bilingual": {
+        "title": "50% Bilingual Teachers",
+        "tag": "IELTS 7.0+ & Pedagogy",
+        "desc": "Vietnamese educators with IELTS 7.0+ credentials, strong academic fluency, and deep empathy for the learning journey of Vietnamese students.",
+        "p1": "Guiding students through challenging academic concepts, bridging language barriers, and reinforcing subject mastery.",
+        "p2": "Delivering personalized small-group tutoring to promptly address individual learning gaps."
+      },
+      "advisor": {
+        "title": "Academic Advisors",
+        "tag": "1:1 Dedicated Mentorship",
+        "desc": "Every EPath student is paired with a dedicated Academic Advisor who closely tracks online coursework progress on Edmentum and partners with parents.",
+        "p1": "Conducting periodic diagnostic reviews, identifying strengths, and recommending optimal course and AP options.",
+        "p2": "Safeguarding academic milestones and strategically shaping global university application portfolios."
+      }
     }
   },
   "programs": {
@@ -313,13 +359,45 @@
       "consult": "Consult Now"
     },
     "faq": {
-      "title": "Frequently Asked Questions",
-      "q1": "What is the registration process?",
-      "a1": "Step 1: Contact for consultation. Step 2: Book free assessment.",
-      "q2": "What to prepare for the assessment session?",
-      "a2": "Bring school reports and ID.",
-      "q3": "What is the refund policy?",
-      "a3": "100% refund if withdrawing 15 days before opening."
+      "title": "Frequently Asked Questions (FAQ)",
+      "subtitle": "Detailed guidance on educational pathways, curricula, and admissions at EPath Education",
+      "q1": "What age group is EPath Education suitable for?",
+      "a1": "EPath Education offers comprehensive learning programs for students from Kindergarten to High School, with personalized pathways designed for each developmental milestone. Learners can start with SpeedUp English and Academic Foundation, advancing to full international curricula across Elementary, Middle, and High School.",
+      "q2": "Can students without an English background study at EPath?",
+      "a2": "Yes. Every student undergoes an initial diagnostic assessment before starting. Assessment outcomes help EPath determine current proficiency levels and customize an appropriate placement rather than applying a rigid, one-size-fits-all pathway.",
+      "q3": "How is SpeedUp English different from conventional English courses?",
+      "a3": "SpeedUp English goes beyond conversational fluency to systematically build academic English across developmental stages. Built on official Cambridge University Press curricula and aligned with the Cambridge English Qualifications framework, it empowers students to master listening, speaking, reading, writing, and use English as a powerful tool for subject learning.",
+      "q4": "Is learning English at EPath designed to prepare students for subject learning in English?",
+      "a4": "Yes. A defining core principle of EPath is shifting learners from 'learning English' to 'learning in English'. Beyond language skills, students develop subject-specific academic vocabulary, critical reading, research writing, and analytical reasoning to excel in Bilingual, International, or US curriculum tracks.",
+      "q5": "What is the Foundation Track and who is it designed for?",
+      "a5": "The Academic Foundation Track is tailored for students seeking to build core academic knowledge in English prior to entering intensive international programs. Depending on age level, students master core subjects including ELA (English Language Arts), Mathematics, and Science while cultivating analytical study habits.",
+      "q6": "Does Semi-Homeschooling mean studying entirely at home?",
+      "a6": "No. Semi-Homeschooling is a blended learning model combining digital coursework with interactive in-person campus sessions. Students access rigorous international curricula while enjoying campus community interactions, tutor support, and collaborative project-based learning.",
+      "q7": "What is the difference between the Dual Diploma Pathway and the U.S. Diploma Pathway?",
+      "a7": "The Dual Diploma Pathway allows students to continue their Vietnamese national curriculum while completing accredited US coursework (5 standard credits + 1 AP credit) to earn both diplomas. The U.S. Diploma Pathway is an intensive full-time track fulfilling all 21.5 US high school credits to graduate as a native US high school student. Pathway selection depends on long-term university goals and family preference.",
+      "q8": "Which institution awards the U.S. High School Diploma?",
+      "a8": "In pathways utilizing EdOptions Academy, students graduate with an official U.S. High School Diploma upon fulfilling credit requirements. EdOptions Academy is the fully accredited online K–12 school of Edmentum International, accredited by Cognia and WASC, approved by College Board AP®, and NCAA eligible.",
+      "q9": "Can students change their learning pathway during their studies?",
+      "a9": "Yes. Pathways are flexible and customized to student growth. EPath conducts periodic assessments and counseling consultations to help parents and students fine-tune their course load, level, or pathway as goals evolve.",
+      "q10": "Does EPath provide individual international academic counseling?",
+      "a10": "Yes. Our International Academic Counseling service guides students and families in setting milestones, evaluating academic strengths, selecting curricula, accumulating AP/SAT credits, and building university application portfolios.",
+      "q11": "Who are the instructors at EPath Education?",
+      "a11": "Depending on the program, EPath deploys a balanced model of 50% International Teachers and 50% Bilingual Teachers. International Teachers hold education degrees and subject-matter teaching experience. Bilingual Teachers (IELTS 7.0+) provide specialized academic support, bridging concepts and personalizing progress for Vietnamese students.",
+      "q12": "Can parents monitor their child's learning progress?",
+      "a12": "Yes. Parents receive transparent, continuous updates on learning progress, diagnostic assessment results, and milestone accomplishments via our portal and regular advising reviews."
+    },
+    "financial": {
+      "title": "Financial Policy & Sustainable Educational Investment",
+      "subtitle": "Access world-class US educational pathways at less than one-third the tuition of traditional international schools",
+      "advantageTitle": "Why is EPath the most cost-efficient international pathway for families?",
+      "advantageDesc": "Leveraging our Blended Learning model powered by Edmentum International digital courseware alongside dedicated Campus faculty, EPath eliminates excessive physical overhead, directing 100% of educational resources into academic rigor, 1:1 advisory, and accredited credentials.",
+      "points": [
+        "Tuition investment is less than 1/3 of conventional bilingual international schools in Vietnam.",
+        "Includes a 12-month official Edmentum International digital portal with full access to US-aligned learning resources.",
+        "Students maintain their Vietnamese national schooling while earning transferable US high school credits.",
+        "Flexible learning tracks: Foundation Track (5 hrs/wk), Advanced Track (6.5-7 hrs/wk), Dual Diploma, and Fulltime Homeschooling.",
+        "Merit-based academic scholarship opportunities for students with outstanding English proficiency and academic records."
+      ]
     }
   },
   "contact": {
@@ -375,16 +453,72 @@
       "title": "Want to receive event information earliest?",
       "subtitle": "Register your email to receive the latest EPath events",
       "button": "Register for Updates"
-    }
+    },
+    "featuredEvents": [
+      {
+        "id": "event-open-house-2025",
+        "title": "Open House Day: Discover EPath International Academic Pathways",
+        "date": "October 15, 2025",
+        "time": "08:30 - 11:30",
+        "location": "EPath Campus, 38 Tran Phu Street, Thu Dau Mot City, Binh Duong",
+        "format": "Onsite",
+        "target": "Parents & Students K-12",
+        "description": "Experience our interactive Blended Learning classrooms, meet International & Bilingual faculty, and receive complimentary diagnostic English evaluations for students.",
+        "badge": "Featured Event"
+      },
+      {
+        "id": "event-edmentum-symposium",
+        "title": "Edmentum Symposium: Dual Diploma & US High School Diploma Strategy",
+        "date": "October 28, 2025",
+        "time": "14:00 - 16:30",
+        "location": "EPath Campus Auditorium & Online Livestream",
+        "format": "Hybrid",
+        "target": "Parents & Students Grades 6 - 11",
+        "description": "In-depth insights into the Dual Diploma (5 standard + 1 AP credit) and Fulltime Homeschool (21.5 credits) pathways with academic specialists from EdOptions Academy and EPath.",
+        "badge": "Academic Symposium"
+      },
+      {
+        "id": "event-cambridge-talk",
+        "title": "Cambridge Colloquium: Transitioning from 'Learning English' to 'Learning in English'",
+        "date": "November 12, 2025",
+        "time": "09:00 - 11:00",
+        "location": "EPath Campus, 38 Tran Phu Street, Thu Dau Mot City",
+        "format": "Onsite",
+        "target": "Parents with children ages 5 - 12",
+        "description": "Strategies for mastering language competencies under the Cambridge Qualifications framework and leveraging CLIL to study Math and Science in English naturally.",
+        "badge": "Parent Advisory"
+      },
+      {
+        "id": "event-fablab-workshop",
+        "title": "STEAM & Robotics Maker Workshop at FabLab EIU",
+        "date": "November 29, 2025",
+        "time": "08:30 - 12:00",
+        "location": "FabLab EIU, Eastern International University (EIU)",
+        "format": "Hands-on Workshop",
+        "target": "Students Grades 3 - 10",
+        "description": "Hands-on product engineering with 3D printers, laser cutters, and robotics coding mentored by FabLab EIU technology specialists. Fosters innovation and collaborative teamwork.",
+        "badge": "Tech Innovation"
+      }
+    ]
   },
   "partnersPage": {
     "hero": {
+      "badge": "Strategic Global Partners",
       "title": "International Partners",
       "subtitle": "Global education ecosystem at EPath Education"
     },
-    "curriculum": { "title": "Curriculum", "desc": "Partners providing educational programs and content" },
-    "certification": { "title": "Accreditation", "desc": "International educational quality accreditation organizations" },
-    "lab": { "title": "Lab", "desc": "Facilities supporting STEM learning" },
+    "curriculum": {
+      "title": "Curriculum",
+      "desc": "Partners providing educational programs and content"
+    },
+    "certification": {
+      "title": "Accreditation",
+      "desc": "International educational quality accreditation organizations"
+    },
+    "lab": {
+      "title": "Lab",
+      "desc": "Facilities supporting STEM learning"
+    },
     "features": "Key Features",
     "featureList": {
       "f1": "Globally recognized US-standard curriculum",
@@ -397,6 +531,24 @@
       "title": "Learn more about EPath's partners",
       "subtitle": "Contact us for advice on international programs at EPath",
       "button": "Contact for Consultation"
+    },
+    "pillarsBadge": "Global Academic Alliance",
+    "pillarsTitle": "Three Pillars of Global Academic Collaboration",
+    "pillarsSubtitle": "Strategic synergy between US Curriculum, British Assessment, and High-Tech Innovation",
+    "pillar1": {
+      "title": "1. US Academic Curriculum",
+      "partner": "Edmentum International & EdOptions Academy",
+      "desc": "Premier US K-12 digital learning provider with 60+ years of excellence, accredited by Cognia & WASC, delivering official U.S. High School Diplomas in Vietnam."
+    },
+    "pillar2": {
+      "title": "2. British Standardized Assessment",
+      "partner": "Cambridge Assessment English",
+      "desc": "Part of the University of Cambridge (UK). World-recognized qualifications benchmarking English proficiency from Young Learners to IELTS Academic."
+    },
+    "pillar3": {
+      "title": "3. Applied Innovation & STEAM",
+      "partner": "FabLab EIU – Eastern International University",
+      "desc": "High-tech makerspace with 3D printers, laser cutters, and robotics labs, seamlessly bridging theoretical concepts with real-world engineering."
     }
   },
   "steps": {
@@ -451,9 +603,9 @@
     "contactTitle": "Contact",
     "partnersTitle": "Partners",
     "contact": {
-      "address": "38 Tran Phu, Thu Dau Mot, HCMC",
-      "phone": "+84 912 345 678",
-      "email": "info@epatheducation.edu.vn"
+      "address": "38 Tran Phu Street, Chanh Nghia Ward, Thu Dau Mot City, Binh Duong",
+      "phone": "0937 514 896",
+      "email": "infor@epath.edu.vn"
     },
     "partners": [
       "Edmentum International",

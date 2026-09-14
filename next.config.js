@@ -3,7 +3,24 @@ const withNextIntl = require('next-intl/plugin')()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
+    domains: [
+      'images.unsplash.com',
+      'atm345069-s3user.vcos3.cloudstorage.com.vn',
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.cloudstorage.com.vn',
+      },
+      {
+        protocol: 'https',
+        hostname: 'atm345069-s3user.vcos3.cloudstorage.com.vn',
+      },
+    ],
   },
   async headers() {
     return [

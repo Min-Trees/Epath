@@ -16,7 +16,7 @@ const fields = [
   { key: 'startDate', label: 'Ngày bắt đầu (YYYY-MM-DD)', kind: 'text' as const },
   { key: 'endDate', label: 'Ngày kết thúc', kind: 'text' as const },
   { key: 'location', label: 'Địa điểm', kind: 'text' as const },
-  { key: 'imageUrl', label: 'URL ảnh đại diện', kind: 'text' as const },
+  { key: 'imageUrl', label: 'Hình ảnh đại diện', kind: 'image' as const, placeholder: 'JPG/PNG/WEBP, không giới hạn dung lượng', folder: 'events' },
   { key: 'registerUrl', label: 'URL đăng ký', kind: 'text' as const },
   {
     key: 'status',
@@ -60,26 +60,42 @@ export default function AdminEventsPage() {
         reorder={cms.events.reorder}
         reviewCollection="events"
         renderSummary={(item) => (
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span
-                className="text-xs px-2 py-1 rounded"
-                style={{
-                  color: semanticColors.primary,
-                  backgroundColor: semanticColors.primaryBg,
-                }}
-              >
-                {item.status}
-              </span>
-              <span className="text-xs" style={{ color: semanticColors.textMuted }}>
-                {item.startDate}
-              </span>
-            </div>
-            <div className="font-medium" style={{ color: semanticColors.text }}>
-              {item.title.vi}
-            </div>
-            <div className="text-sm line-clamp-2" style={{ color: semanticColors.textMuted }}>
-              {item.shortDescription.vi}
+          <div className="flex items-start gap-3">
+            {item.imageUrl ? (
+              <div className="w-20 h-14 rounded-lg border border-[#DEDDD6] overflow-hidden bg-white shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.imageUrl}
+                  alt={item.title.vi || item.title.en}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-20 h-14 rounded-lg border border-[#DEDDD6] bg-[#F6F5F1] shrink-0 flex items-center justify-center text-xs text-[#5C6069] font-bold">
+                EVENT
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className="text-xs px-2 py-0.5 rounded font-medium"
+                  style={{
+                    color: semanticColors.primary,
+                    backgroundColor: semanticColors.primaryBg,
+                  }}
+                >
+                  {item.status}
+                </span>
+                <span className="text-xs" style={{ color: semanticColors.textMuted }}>
+                  {item.startDate}
+                </span>
+              </div>
+              <div className="font-semibold text-sm truncate" style={{ color: semanticColors.text }}>
+                {item.title.vi || item.title.en}
+              </div>
+              <div className="text-xs line-clamp-2 mt-0.5" style={{ color: semanticColors.textMuted }}>
+                {item.shortDescription.vi || item.shortDescription.en}
+              </div>
             </div>
           </div>
         )}

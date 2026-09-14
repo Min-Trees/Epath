@@ -113,14 +113,24 @@ export function Header() {
     <header ref={headerRef} className="epath-header">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <div className="logo-pill">
+          <Link href={`/${locale}`} className="flex items-center group py-0.5" aria-label="EPath Education">
+            <div className="logo-wrapper">
+              {/* Logo for Blue Navbar (White text) */}
               <Image
-                src="/epath_logo.png"
+                src="/epath-logo-light.png"
                 alt="EPath Education"
-                width={235}
-                height={102}
-                className="logo-img"
+                width={200}
+                height={95}
+                className="logo-img logo-img-light"
+                priority
+              />
+              {/* Logo for White Navbar (Navy text) */}
+              <Image
+                src="/epath-logo-dark.png"
+                alt="EPath Education"
+                width={200}
+                height={95}
+                className="logo-img logo-img-dark"
                 priority
               />
             </div>
@@ -158,7 +168,7 @@ export function Header() {
                       transition={{ duration: duration.fast, ease: easeOut }}
                       // z-[60] sits above chat-bubble (z-50) and any
                       // sticky / positioned siblings.
-                      className="absolute top-full left-0 mt-2 min-w-48 bg-white shadow-xl rounded-xl py-1.5 border border-[#3A53A3]/10 z-[60]"
+                      className="absolute top-full left-0 mt-2 min-w-48 bg-white shadow-xl rounded-2xl py-1.5 border border-[#DEDDD6] z-[60]"
                       onMouseEnter={() => setActiveDropdown(item.label)}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
@@ -166,10 +176,10 @@ export function Header() {
                         <Link
                           key={child.label}
                           href={child.href}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-[#231F20] hover:bg-[#3A53A3] hover:text-white transition-colors duration-200"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-[#20242B] hover:bg-[#2E4A9E] hover:text-white transition-colors duration-200 rounded-lg mx-1"
                           onClick={() => setActiveDropdown(null)}
                         >
-                          <ChevronRight className="w-3 h-3 text-[#8BC53F]" />
+                          <ChevronRight className="w-3 h-3 text-[#8DC63F]" />
                           {child.label}
                         </Link>
                       ))}
@@ -211,7 +221,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: duration.normal, ease: easeOut }}
-              className="lg:hidden overflow-hidden mt-4 pb-4 border-t border-white/20 pt-4 z-[65]"
+              className="epath-mobile-nav lg:hidden overflow-hidden mt-4 pb-4 border-t border-white/20 pt-4 z-[65]"
             >
               <div className="flex flex-col gap-1">
                 {navItems.map((item) => (
@@ -219,8 +229,8 @@ export function Header() {
                     <Link
                       href={item.href}
                       className={cn(
-                        'block px-4 py-3 font-medium rounded-lg transition-colors duration-200',
-                        'text-[#231F20] hover:bg-[#3A53A3] hover:text-white'
+                        'epath-mobile-link block px-4 py-3 font-medium rounded-xl transition-colors duration-200',
+                        'text-white hover:bg-white/10'
                       )}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -233,12 +243,12 @@ export function Header() {
                             key={child.label}
                             href={child.href}
                             className={cn(
-                              'flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors duration-200',
-                              'text-[#231F20]/70 hover:bg-[#3A53A3] hover:text-white'
+                              'epath-mobile-sublink flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors duration-200',
+                              'text-white/80 hover:bg-white/10 hover:text-white'
                             )}
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            <ChevronRight className="w-4 h-4 text-[#8BC53F]" />
+                            <ChevronRight className="w-4 h-4 text-[#8DC63F]" />
                             {child.label}
                           </Link>
                         ))}
@@ -249,7 +259,7 @@ export function Header() {
                 <div className="mt-4 px-4">
                   <Link
                     href={`/${locale}/admissions#contact`}
-                    className="block w-full py-3 text-center bg-[#F05A28] text-white font-medium rounded-full transition-colors duration-200 hover:bg-[#E04D1A]"
+                    className="block w-full py-3 text-center bg-[#F26522] text-white font-medium rounded-full transition-colors duration-200 hover:bg-[#C94F16] hover:-translate-y-0.5 shadow-md"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {t('register')}

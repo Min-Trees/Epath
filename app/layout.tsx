@@ -1,9 +1,20 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import { SchemaMarkup } from '@/components/seo/schema-markup'
 
-const inter = Inter({ subsets: ['latin', 'vietnamese'] })
+const gilroy = localFont({
+  src: [
+    { path: './fonts/SVN-Gilroy Light.otf', weight: '300', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Regular.otf', weight: '400', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Medium.otf', weight: '500', style: 'normal' },
+    { path: './fonts/SVN-Gilroy SemiBold.otf', weight: '600', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Bold.otf', weight: '700', style: 'normal' },
+    { path: './fonts/SVN-Gilroy XBold.otf', weight: '800', style: 'normal' },
+  ],
+  display: 'swap',
+  variable: '--font-gilroy',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.epath.edu.vn'),
@@ -84,7 +95,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#3A53A3',
+  themeColor: '#1E3570',
 }
 
 export default function RootLayout({
@@ -100,7 +111,7 @@ export default function RootLayout({
       <head>
         <SchemaMarkup />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={gilroy.className}>{children}</body>
     </html>
   )
 }
