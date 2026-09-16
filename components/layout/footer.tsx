@@ -40,8 +40,13 @@ function pick(v: { vi: string; en: string } | undefined, locale: Locale): string
 }
 
 export function Footer(props: FooterProps) {
-  const currentLocale = useLocale()
-  const locale = ((currentLocale || props.locale || 'vi') as Locale)
+  let currentLocale: string | undefined
+  try {
+    currentLocale = useLocale()
+  } catch {
+    // In case called outside NextIntlClientProvider
+  }
+  const locale = ((props.locale || currentLocale || 'vi') as Locale)
   const isVi = locale === 'vi'
   const t = useTranslations('footer')
   const tNav = useTranslations('nav')
@@ -68,7 +73,17 @@ export function Footer(props: FooterProps) {
   const tiktokUrl = settings?.tiktokUrl || ''
   const logoUrl = settings?.logoUrl || '/epath-logo-title.png'
   const footerDesc = pick(settings?.footerDescription, locale) || props.footerDescription || defaultDesc
-  const copyrightText = settings?.copyrightText || props.copyright || t('copyright', { year: new Date().getFullYear() })
+  
+  let copyrightText = settings?.copyrightText || props.copyright
+  if (!copyrightText) {
+    try {
+      copyrightText = t('copyright', { year: new Date().getFullYear() })
+    } catch {
+      copyrightText = isVi
+        ? `© ${new Date().getFullYear()} EPath Education. Bảo lưu mọi quyền.`
+        : `© ${new Date().getFullYear()} EPath Education. All rights reserved.`
+    }
+  }
 
   const programsTitle = props.programsTitle || t('programsTitle') || (isVi ? 'Chương trình học' : 'Programs')
   const quickLinksTitle = props.quickLinksTitle || (isVi ? 'Liên kết nhanh' : 'Quick Links')

@@ -874,7 +874,7 @@ html {
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 14px;
+  border-radius: 0;
   box-shadow:
     0 10px 30px -8px rgba(30, 53, 112, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.06);
@@ -885,21 +885,31 @@ html {
 .epath-dropdown-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 11px 16px;
-  border-radius: 10px;
+  padding: 10px 16px;
+  border-radius: 0;
+  background-color: transparent;
   color: #1e3570;
   font-size: 0.9375rem;
   font-weight: 600;
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease-out, transform 0.2s ease-out;
+  text-decoration: none;
+  transition: color 0.2s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 .epath-dropdown-item:hover {
-  background-color: rgba(30, 53, 112, 0.1);
-  color: #1e3570;
-  transform: translateX(2px);
+  background-color: transparent;
+  color: #3a54a4;
+  transform: translateX(6px);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
 }
 .epath-dropdown-item-text {
   flex: 1;
+}
+.epath-dropdown-item:hover .epath-dropdown-item-text {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
 }
 
 /* ── Hero Circular CTA (iSchool Online Courses style) ─────────────
@@ -1224,11 +1234,18 @@ html {
 .epath-header[data-scrolled='true'] .epath-mobile-sublink {
   color: rgba(30, 53, 112, 0.7);
 }
+.epath-mobile-sublink {
+  border-radius: 0;
+  transition: color 0.2s ease-out, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .epath-header--solid .epath-mobile-sublink:hover,
 .epath-header[data-solid='true'] .epath-mobile-sublink:hover,
 .epath-header[data-scrolled='true'] .epath-mobile-sublink:hover {
-  background-color: rgba(30, 53, 112, 0.08);
-  color: #1e3570;
+  background-color: transparent;
+  color: #3a54a4;
+  transform: translateX(6px);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* Respect users' OS-level preference. */

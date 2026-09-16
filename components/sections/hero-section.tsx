@@ -239,15 +239,15 @@ export function HeroSection({
                   ))}
                 </h1>
               ) : (
-                <h1 className="hero-title font-black tracking-[-0.03em] mb-4 sm:mb-6 text-[#1e3570]">
+                <h1 className="hero-title font-black tracking-[-0.03em] leading-[1.02] sm:leading-[0.98] mb-4 sm:mb-6 text-[#1e3570]">
                   {titleLines.map((line, lineIdx) => {
                     const words = line.trim().split(' ')
                     return (
-                      <span key={`tl-${lineIdx}`} className="block">
+                      <span key={`tl-${lineIdx}`} className="block leading-[1.02] sm:leading-[0.98] mt-1 sm:mt-1.5 first:mt-0">
                         {words.map((word, i) => (
                           <span
                             key={`t-${lineIdx}-${i}`}
-                            className="inline-block mr-[0.22em] hero-word text-[#1e3570]"
+                            className="inline-block mr-[0.16em] last:mr-0 hero-word text-[#1e3570]"
                             style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + lineIdx * 0.1 + i * 0.05}s` } as React.CSSProperties}
                           >
                             {word}

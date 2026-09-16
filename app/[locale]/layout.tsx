@@ -8,15 +8,17 @@ import { CmsLayoutWrapper } from '@/components/cms-layout-wrapper'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
+  params: Promise<{ locale?: string }> | { locale?: string }
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>
+  params: Promise<{ locale?: string }> | { locale?: string }
 }): Promise<Metadata> {
-  const { locale } = await params
+  const resolved = await params
+  const rawLocale = resolved?.locale
+  const locale = rawLocale && ['vi', 'en'].includes(rawLocale) ? rawLocale : 'vi'
   const isVi = locale === 'vi'
 
   return {
@@ -77,7 +79,9 @@ export default async function LocaleLayout({
   children,
   params,
 }: LocaleLayoutProps) {
-  const { locale } = await params
+  const resolved = await params
+  const rawLocale = resolved?.locale
+  const locale = rawLocale && ['vi', 'en'].includes(rawLocale) ? rawLocale : 'vi'
   const messages = await getMessages({ locale })
 
   return (

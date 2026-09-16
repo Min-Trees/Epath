@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Menu, ChevronRight } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -193,7 +193,7 @@ export function Header() {
                           transition={{ duration: duration.fast, ease: easeOut }}
                           // z-[60] sits above chat-bubble (z-50) and any
                           // sticky / positioned siblings.
-                          className="absolute top-full left-0 mt-1 min-w-[240px] epath-dropdown-panel z-[60]"
+                          className="absolute top-full left-0 mt-1 min-w-[240px] epath-dropdown-panel z-[60] rounded-none"
                           onMouseEnter={() => setActiveDropdown(item.label)}
                           onMouseLeave={() => setActiveDropdown(null)}
                         >
@@ -202,11 +202,10 @@ export function Header() {
                               <Link
                                 key={child.label}
                                 href={child.href}
-                                className="epath-dropdown-item group"
+                                className="epath-dropdown-item rounded-none"
                                 onClick={() => setActiveDropdown(null)}
                               >
                                 <span className="epath-dropdown-item-text">{child.label}</span>
-                                <ChevronRight className="w-3.5 h-3.5 text-[#3a54a4] opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0 ml-3 flex-shrink-0" />
                               </Link>
                             ))}
                           </div>
@@ -280,12 +279,11 @@ export function Header() {
                             key={child.label}
                             href={child.href}
                             className={cn(
-                              'epath-mobile-sublink flex items-center gap-2 px-4 py-2 text-base rounded-lg transition-colors duration-200',
-                              'text-[#5C6069] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
+                              'epath-mobile-sublink flex items-center px-4 py-2 text-base rounded-none transition-all duration-200',
+                              'text-[#5C6069] hover:bg-transparent hover:text-[#3A54A4] hover:translate-x-1.5 hover:underline underline-offset-4'
                             )}
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            <ChevronRight className="w-4 h-4 text-[#8DC63F]" />
                             {child.label}
                           </Link>
                         ))}
