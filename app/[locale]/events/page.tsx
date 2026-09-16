@@ -7,6 +7,7 @@ import { Calendar, MapPin, ArrowRight, Sparkles, Users, Tag } from 'lucide-react
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
+import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 const fallbackEvents = [
   {
@@ -162,53 +163,21 @@ export default function EventsPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER
+          HERO BANNER – Light iSchool aesthetic matching Homepage
       ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="pt-24 sm:pt-28 pb-10 sm:pb-12 relative overflow-hidden"
-        style={
-          heroImage
-            ? {
-                backgroundImage: `linear-gradient(135deg, rgba(30,53,112,0.92) 0%, rgba(46,74,158,0.88) 100%), url(${heroImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }
-            : { background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }
-        }
-      >
-        <div className="absolute top-0 right-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#8DC63F]/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-2xl mx-auto text-center text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-xs uppercase tracking-wider mb-3 shadow-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
-              {welcomeText || t('hero.subtitle')}
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
-              className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight leading-tight text-white"
-            >
-              {mainTitle}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
-              className="text-sm sm:text-base text-white/90 leading-relaxed font-normal"
-            >
-              {heroSubtitle}
-            </motion.p>
-          </div>
-        </div>
-      </section>
+      <SubpageHero
+        badge={welcomeText || (isVi ? 'Sự kiện & Hoạt động học thuật' : 'Academic Events')}
+        title={locale === 'vi' ? 'Sự Kiện & Hội Thảo' : 'Academic Events'}
+        highlightText={locale === 'vi' ? 'Học Thuật Quốc Tế' : '& Workshops'}
+        subtitle={heroSubtitle}
+        tags={[
+          locale === 'vi' ? 'Hội Thảo Song Bằng' : 'Dual Diploma Symposium',
+          locale === 'vi' ? 'Workshop STEAM & Robotics' : 'STEAM & Robotics Workshop',
+          locale === 'vi' ? 'Tọa Đàm Cambridge' : 'Cambridge Academic Talk',
+          locale === 'vi' ? 'Open House Trải Nghiệm' : 'Open House Experience',
+        ]}
+        backgroundImage={heroImage || '/images/about/about-story.jpg'}
+      />
 
       {/* ─────────────────────────────────────────────────────────────
           EVENTS GRID

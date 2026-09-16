@@ -43,12 +43,8 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
   const isVi = locale === 'vi'
   return (
     <section
-      className={`${compact ? 'py-10' : 'py-12 sm:py-16'} relative overflow-hidden`}
-      style={{ background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }}
+      className={`${compact ? 'py-10' : 'py-12 sm:py-16'} relative overflow-hidden bg-[#F6F5F1] border-y border-[#DEDDD6]`}
     >
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#8DC63F]/10 rounded-full blur-3xl pointer-events-none" />
-
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <motion.div
@@ -56,13 +52,16 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
           whileInView={{ opacity: 1, y: 0 }}
           viewport={inViewViewport}
           transition={{ duration: duration.normal, ease: easeOut }}
-          className="text-center mb-8 sm:mb-10 text-white max-w-2xl mx-auto"
+          className="text-center mb-8 sm:mb-10 text-[#1E3570] max-w-2xl mx-auto"
         >
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-xs font-medium mb-3 border border-white/20">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#1E3570] border border-[#DEDDD6] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
             <Award className="w-3.5 h-3.5 text-[#8DC63F]" />
             <span>{translations.subtitle}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">
+          <h2
+            className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 tracking-tight text-[#1E3570]"
+            style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
+          >
             {translations.title}
           </h2>
         </motion.div>
@@ -179,18 +178,18 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
         </div>
 
         {/* Accreditation Trust Badges */}
-        <div className="mt-8 pt-6 border-t border-white/15 max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/85 text-xs font-medium">
+        <div className="mt-8 pt-6 border-t border-[#DEDDD6] max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[#5C6069] text-xs font-medium">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F]" />
-            <span>{isVi ? 'Kiểm định chất lượng giáo dục bởi ' : 'Educational quality accredited by '}<strong className="text-white font-bold">Cognia™</strong></span>
+            <span>{isVi ? 'Kiểm định chất lượng giáo dục bởi ' : 'Educational quality accredited by '}<strong className="text-[#1E3570] font-bold">Cognia™</strong></span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F]" />
-            <span>{isVi ? 'Phê duyệt bởi Hiệp hội ' : 'Approved by '}<strong className="text-white font-bold">{isVi ? 'NCAA Hoa Kỳ' : 'US NCAA'}</strong></span>
+            <span>{isVi ? 'Phê duyệt bởi Hiệp hội ' : 'Approved by '}<strong className="text-[#1E3570] font-bold">{isVi ? 'NCAA Hoa Kỳ' : 'US NCAA'}</strong></span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F]" />
-            <span>{isVi ? 'Mã trường khảo thí ' : 'Test center school code '}<strong className="text-white font-bold">College Board (AP®)</strong></span>
+            <span>{isVi ? 'Mã trường khảo thí ' : 'Test center school code '}<strong className="text-[#1E3570] font-bold">College Board (AP®)</strong></span>
           </div>
         </div>
 

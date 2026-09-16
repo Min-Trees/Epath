@@ -11,6 +11,8 @@ const gilroy = localFont({
     { path: './fonts/SVN-Gilroy SemiBold.otf', weight: '600', style: 'normal' },
     { path: './fonts/SVN-Gilroy Bold.otf', weight: '700', style: 'normal' },
     { path: './fonts/SVN-Gilroy XBold.otf', weight: '800', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Heavy.otf', weight: '900', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Black.otf', weight: '950', style: 'normal' },
   ],
   display: 'swap',
   variable: '--font-gilroy',
@@ -111,7 +113,7 @@ export default function RootLayout({
       <head>
         <SchemaMarkup />
       </head>
-      <body className={gilroy.className}>{children}</body>
+      <body className={`${gilroy.className} ${gilroy.variable}`}>{children}</body>
     </html>
   )
 }

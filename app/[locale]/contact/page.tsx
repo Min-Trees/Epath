@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
+import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 export default function ContactPage() {
   const t = useTranslations('contact')
@@ -62,82 +63,88 @@ export default function ContactPage() {
 
   return (
     <>
-      <section
-        className="pt-32 pb-20 relative overflow-hidden"
-        style={
-          heroImage
-            ? {
-                backgroundImage: `linear-gradient(135deg, rgba(58,83,163,0.85) 0%, rgba(46,67,137,0.85) 100%), url(${heroImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }
-            : {
-                background: 'linear-gradient(135deg, #3A53A3 0%, #2E4389 100%)',
-              }
-        }
-      >
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center text-white">
-            {welcomeText && (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium mb-4">
-                <Sparkles className="w-4 h-4" />
-                {welcomeText}
-              </div>
-            )}
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{mainTitle}</h1>
-            <p className="text-xl text-white/90">{heroSubtitle}</p>
-          </div>
-        </div>
-      </section>
+      {/* ─────────────────────────────────────────────────────────────
+          HERO BANNER – Light iSchool aesthetic matching Homepage
+      ─────────────────────────────────────────────────────────────── */}
+      <SubpageHero
+        badge={welcomeText || (locale === 'vi' ? 'Kết nối cùng EPath' : 'Connect with EPath')}
+        title={locale === 'vi' ? 'Liên Hệ & Tư Vấn' : 'Contact & Campus'}
+        highlightText={locale === 'vi' ? 'Lộ Trình Học Thuật' : 'Academic Advisory'}
+        subtitle={heroSubtitle}
+        tags={[
+          locale === 'vi' ? 'Tư Vấn 1:1 Miễn Phí' : 'Free 1:1 Consultation',
+          locale === 'vi' ? 'Trải Nghiệm Campus Trực Tiếp' : 'Onsite Campus Tour',
+          locale === 'vi' ? 'Hỗ Trợ Học Vụ 24/7' : '24/7 Academic Support',
+          locale === 'vi' ? 'Đánh Giá Năng Lực Đầu Vào' : 'Diagnostic Testing',
+        ]}
+        backgroundImage={heroImage || '/images/about/about-story.jpg'}
+      />
 
-      <section className="py-20 surface-alt">
+      <section className="py-12 sm:py-16 bg-[#F6F5F1] border-b border-[#DEDDD6]">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
             <div>
-              <h2 className="text-2xl font-bold text-[#231F20] mb-8">{t('info.title')}</h2>
-              <div className="space-y-6 mb-12">
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-[#3A53A3]/10 rounded-xl flex items-center justify-center shrink-0">
-                    <MapPin className="w-7 h-7 text-[#3A53A3]" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#1E3570] border border-[#DEDDD6] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
+                <span>{locale === 'vi' ? 'Thông Tin Trực Tiếp' : 'Direct Contacts'}</span>
+              </div>
+              <h2
+                className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-6"
+                style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
+              >
+                {t('info.title')}
+              </h2>
+
+              <div className="space-y-4 mb-8">
+                {/* Address Card */}
+                <div className="p-4 rounded-2xl bg-white border border-[#DEDDD6] shadow-xs hover:shadow-md hover:border-[#2E4A9E]/40 transition-all flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center shrink-0">
+                    <MapPin className="w-6 h-6 text-[#2E4A9E]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#231F20] mb-1">{t('info.address')}</h3>
-                    <p className="text-[#6B6B6B]">{address}</p>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.address')}</h3>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">{address}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-[#8BC53F]/10 rounded-xl flex items-center justify-center shrink-0">
-                    <Phone className="w-7 h-7 text-[#8BC53F]" />
+
+                {/* Hotline Card */}
+                <div className="p-4 rounded-2xl bg-white border border-[#DEDDD6] shadow-xs hover:shadow-md hover:border-[#8DC63F]/50 transition-all flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center shrink-0">
+                    <Phone className="w-6 h-6 text-[#5C9024]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#231F20] mb-1">{t('info.phone')}</h3>
-                    <p className="text-[#6B6B6B]">
-                      Hotline: {hotline}
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.phone')}</h3>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
+                      Hotline: <strong className="text-[#1E3570]">{hotline}</strong>
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-[#F05A28]/10 rounded-xl flex items-center justify-center shrink-0">
-                    <Mail className="w-7 h-7 text-[#F05A28]" />
+
+                {/* Email Card */}
+                <div className="p-4 rounded-2xl bg-white border border-[#DEDDD6] shadow-xs hover:shadow-md hover:border-[#F26522]/40 transition-all flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#F26522]/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Mail className="w-6 h-6 text-[#F26522]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#231F20] mb-1">{t('info.email')}</h3>
-                    <p className="text-[#6B6B6B]">{email}</p>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.email')}</h3>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">{email}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-[#3A53A3]/10 rounded-xl flex items-center justify-center shrink-0">
-                    <Clock className="w-7 h-7 text-[#3A53A3]" />
+
+                {/* Working Hours Card */}
+                <div className="p-4 rounded-2xl bg-white border border-[#DEDDD6] shadow-xs hover:shadow-md hover:border-[#1E3570]/30 transition-all flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#1E3570]/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Clock className="w-6 h-6 text-[#1E3570]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#231F20] mb-1">{t('info.hours')}</h3>
-                    <p className="text-[#6B6B6B]">
-                      {workingHours}
-                    </p>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.hours')}</h3>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">{workingHours}</p>
                   </div>
                 </div>
               </div>
-              <div className="aspect-video bg-white rounded-2xl overflow-hidden border border-[#3A53A3]/20">
+
+              {/* Campus Map Embed */}
+              <div className="aspect-video bg-white rounded-2xl overflow-hidden border border-[#DEDDD6] shadow-xs">
                 <iframe
                   src={mapEmbedUrl}
                   width="100%"
@@ -151,8 +158,13 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-[#231F20] mb-6">{t('form.title')}</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-[#DEDDD6] p-6 sm:p-8">
+              <h2
+                className="text-2xl font-black text-[#1E3570] mb-6"
+                style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
+              >
+                {t('form.title')}
+              </h2>
               {submitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }}

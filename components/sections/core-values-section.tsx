@@ -87,7 +87,7 @@ export function CoreValuesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 lg:gap-x-12 gap-y-12 sm:gap-y-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-x-8 lg:gap-x-12 gap-y-12 sm:gap-y-16"
         >
           {displayValues.map((value, index) => {
             const accent = accentCycle[index % accentCycle.length]
@@ -121,7 +121,7 @@ export function CoreValuesSection() {
                     transition: { duration: duration.slow, ease: easeOut },
                   },
                 }}
-                className="relative group cursor-pointer"
+                className="relative group cursor-pointer h-full flex flex-col justify-between"
               >
                 {/* Giant watermark number sitting behind icon + title */}
                 <span
@@ -135,42 +135,47 @@ export function CoreValuesSection() {
                   {numStr}
                 </span>
 
-                {/* Header row: Icon + Title */}
-                <div className="relative z-10 flex items-center gap-4 mb-3.5">
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
-                    style={{
-                      backgroundColor: accent.bg,
-                      color: accent.color,
-                    }}
-                  >
-                    <IconComponent className="w-7 h-7" />
+                {/* Content top area: fills space so arrow button anchors to bottom */}
+                <div className="flex-1 flex flex-col">
+                  {/* Header row: Icon + Title */}
+                  <div className="relative z-10 flex items-center gap-4 mb-3.5 min-h-[3.5rem]">
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
+                      style={{
+                        backgroundColor: accent.bg,
+                        color: accent.color,
+                      }}
+                    >
+                      <IconComponent className="w-7 h-7" />
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 tracking-tight">
+                      {title}
+                    </h3>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 tracking-tight">
-                    {title}
-                  </h3>
+                  {/* Description */}
+                  <p className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 flex-1 min-h-[3.25rem]">
+                    {description}
+                  </p>
                 </div>
 
-                {/* Description */}
-                <p className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 min-h-[48px]">
-                  {description}
-                </p>
-
-                {/* iSchool expanding More button */}
-                <Link
-                  href={`/${locale}/about#values`}
-                  className="relative z-10 inline-flex items-center text-sm font-semibold text-[#20242B]"
-                >
-                  <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
-                    {locale === 'en' ? 'More' : 'Tìm hiểu thêm'}
-                  </span>
-                  <span
-                    className="w-9 h-9 rounded-full border border-[#DEDDD6] bg-white/70 flex items-center justify-center text-[#20242B] transition-all duration-500 ease-out group-hover:bg-[#2E4A9E] group-hover:border-[#2E4A9E] group-hover:text-white group-hover:scale-105 shadow-sm"
+                {/* iSchool expanding More button – anchored to bottom baseline */}
+                <div className="relative z-10 mt-auto pt-2 flex items-center">
+                  <Link
+                    href={`/${locale}/about#values`}
+                    className="inline-flex items-center text-sm font-semibold text-[#20242B]"
                   >
-                    <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" />
-                  </span>
-                </Link>
+                    <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
+                      {locale === 'en' ? 'More' : 'Tìm hiểu thêm'}
+                    </span>
+                    <span
+                      className="w-9 h-9 rounded-full border border-[#DEDDD6] bg-white/70 flex items-center justify-center text-[#20242B] transition-all duration-500 ease-out group-hover:bg-[#2E4A9E] group-hover:border-[#2E4A9E] group-hover:text-white group-hover:scale-105 shadow-sm shrink-0"
+                    >
+                      <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
+                </div>
               </motion.div>
             )
           })}

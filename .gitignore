@@ -75,5 +75,12 @@ SESSION_REPORT*.md
 
 # Local raw archives & references
 Font Gilroy VH Full/
-Online Courses – iSchool.html
+*iSchool.html
+*iSchool_files/
 *.xlsx
+/ENG_iconLanaguage.png
+/VIE_iconLanaguage.png
+/Icon-herosection.png
+public/fonts/
+public/Icon-herosection.png
+public/images/hero/Icon-herosection.png

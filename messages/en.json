@@ -20,10 +20,10 @@
     "register": "Register"
   },
   "hero": {
-    "welcome": "Welcome to",
-    "title": "EPath Education",
-    "subtitle": "Children are the foundation of sustainable development.",
-    "description": "The early years play a crucial role not only in physical development but also in cognitive ability.",
+    "welcome": "",
+    "title": "Learn Local\nReach Global",
+    "subtitle": "",
+    "description": "",
     "cta": "LEARN MORE"
   },
   "stats": {

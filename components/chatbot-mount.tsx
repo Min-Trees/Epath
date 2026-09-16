@@ -31,11 +31,12 @@ const Chatbot = dynamic(
   {
     ssr: false,
     // Skeleton keeps the bottom-right corner reserved so the layout
-    // doesn't jump when the bubble finally mounts.
+    // doesn't jump when the bubble finally mounts. Matches the FAB's
+    // navy gradient via the shared `.epath-chat-bubble` styles.
     loading: () => (
       <div
         aria-hidden
-        className="chat-fab fixed bottom-4 right-4 sm:bottom-5 sm:right-6 lg:bottom-6 lg:right-6 lg:left-auto z-[70] w-14 h-14 sm:w-14 sm:h-14 rounded-full bg-[#3A53A3]/40 animate-pulse"
+        className="chat-fab fixed bottom-4 right-4 sm:bottom-5 sm:right-6 lg:bottom-6 lg:right-6 z-[70] animate-pulse opacity-60"
         style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
       />
     ),

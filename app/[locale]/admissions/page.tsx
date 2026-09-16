@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   MapPin,
   Phone,
@@ -102,17 +102,7 @@ function AdmissionsContent() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [showStickyBar, setShowStickyBar] = useState(false)
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('all')
-
-  // Listen to scroll position for sticky CTA bar
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowStickyBar(window.scrollY > 340)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -308,19 +298,27 @@ function AdmissionsContent() {
           1. HERO BANNER WITH TRUST-FIRST CREDIBILITY BADGES
       ─────────────────────────────────────────────────────────────── */}
       <section
-        className="pt-24 sm:pt-28 pb-12 sm:pb-16 relative overflow-hidden text-white"
-        style={
-          heroImage
-            ? {
-                backgroundImage: `linear-gradient(135deg, rgba(30,53,112,0.94) 0%, rgba(46,74,158,0.90) 100%), url(${heroImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }
-            : { background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }
-        }
+        className="pt-28 sm:pt-32 pb-12 sm:pb-16 relative overflow-hidden border-b border-[#DEDDD6]"
+        style={{ backgroundColor: '#F6F5F1' }}
+        aria-label={mainTitle}
       >
-        <div className="absolute top-0 right-1/4 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#8DC63F]/15 rounded-full blur-3xl pointer-events-none" />
+        {/* Background visual accents */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+          <div
+            className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-40 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(141,198,63,0.3) 0%, rgba(46,74,158,0.15) 70%, transparent 100%)' }}
+          />
+          <div
+            className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-30 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(46,74,158,0.25) 0%, rgba(240,90,40,0.1) 70%, transparent 100%)' }}
+          />
+          {heroImage && (
+            <div
+              className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-multiply"
+              style={{ backgroundImage: `url(${heroImage})` }}
+            />
+          )}
+        </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center max-w-6xl mx-auto">
@@ -330,7 +328,7 @@ function AdmissionsContent() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: duration.normal, ease: easeOut }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-xs uppercase tracking-wider mb-3 shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-[#1E3570] border border-[#DEDDD6] text-xs font-bold uppercase tracking-wider mb-4 shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
                 <span>{welcomeText}</span>
@@ -340,7 +338,8 @@ function AdmissionsContent() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: duration.slow, delay: 0.08, ease: easeOut }}
-                className="text-2xl sm:text-3xl md:text-4xl font-black mb-3.5 tracking-tight leading-tight text-white"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3.5 tracking-tight leading-tight text-[#1E3570]"
+                style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
               >
                 {mainTitle}
               </motion.h1>
@@ -349,7 +348,7 @@ function AdmissionsContent() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: duration.slow, delay: 0.16, ease: easeOut }}
-                className="text-sm sm:text-base text-white/90 leading-relaxed font-normal mb-6 max-w-xl"
+                className="text-sm sm:text-base text-[#5C6069] leading-relaxed font-normal mb-6 max-w-xl"
               >
                 {heroSubtitle}
               </motion.p>
@@ -364,7 +363,7 @@ function AdmissionsContent() {
                 <button
                   type="button"
                   onClick={() => scrollTo('form-tu-van')}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#F26522] hover:bg-[#C94F16] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#F26522] hover:bg-[#C94F16] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
                 >
                   <span>{isVi ? 'Đăng ký tư vấn lộ trình ngay' : 'Register for Free Consultation'}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -373,10 +372,10 @@ function AdmissionsContent() {
                 <button
                   type="button"
                   onClick={() => scrollTo('quy-trinh-tuyen-sinh')}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold border border-white/25 backdrop-blur-md transition-all duration-300 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-[#F6F5F1] text-[#1E3570] text-xs sm:text-sm font-bold border border-[#DEDDD6] shadow-xs transition-all duration-300 cursor-pointer"
                 >
                   <span>{isVi ? 'Khám phá quy trình 5 bước' : 'Explore 5-Step Process'}</span>
-                  <ArrowDown className="w-3.5 h-3.5" />
+                  <ArrowDown className="w-3.5 h-3.5 text-[#8DC63F]" />
                 </button>
               </motion.div>
             </div>
@@ -388,7 +387,7 @@ function AdmissionsContent() {
               transition={{ duration: duration.slow, delay: 0.18, ease: easeOut }}
               className="lg:col-span-5 relative"
             >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/20 bg-white/10 aspect-[4/3] sm:aspect-[16/11]">
+              <div className="relative rounded-3xl overflow-hidden shadow-lg border border-[#DEDDD6] bg-white aspect-[4/3] sm:aspect-[16/11]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/admissions/admissions-hero.jpg"
@@ -399,7 +398,7 @@ function AdmissionsContent() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/80 via-transparent to-transparent" />
 
                 {/* Floating Badge on Image */}
-                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-white/95 backdrop-blur-md text-[#20242B] border border-white/40 shadow-lg flex items-center gap-3">
+                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-white/95 backdrop-blur-md text-[#20242B] border border-[#DEDDD6] shadow-md flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[#8DC63F]/20 flex items-center justify-center text-[#5C9024] shrink-0 font-black text-xs">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
@@ -416,29 +415,29 @@ function AdmissionsContent() {
             </motion.div>
           </div>
 
-          {/* Above-The-Fold Trust Bar */}
+          {/* Above-The-Fold Trust Bar in Clean White Cards */}
           <motion.div
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: duration.slow, delay: 0.32, ease: easeOut }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto mt-10 pt-6 border-t border-white/15"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto mt-10 pt-6 border-t border-[#DEDDD6]"
           >
             {trustBadges.map((badge, idx) => {
               const Icon = badge.icon
               return (
                 <div
                   key={idx}
-                  className="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-white/15 flex items-center gap-3 text-left group hover:bg-white/15 transition-colors duration-200"
+                  className="bg-white rounded-2xl p-3 sm:p-3.5 border border-[#DEDDD6] flex items-center gap-3 text-left group hover:border-[#8DC63F]/60 hover:shadow-xs transition-all duration-200"
                 >
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs"
-                    style={{ backgroundColor: `${badge.color}35`, color: '#ffffff' }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform"
+                    style={{ backgroundColor: `${badge.color}15`, color: badge.color }}
                   >
-                    <Icon className="w-5 h-5 text-white" />
+                    <Icon className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-bold text-white truncate">{badge.title}</h4>
-                    <p className="text-[11px] sm:text-xs text-white/75 truncate">{badge.desc}</p>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#1E3570] truncate group-hover:text-[#5C9024] transition-colors">{badge.title}</h4>
+                    <p className="text-[11px] sm:text-xs text-[#5C6069] truncate">{badge.desc}</p>
                   </div>
                 </div>
               )
@@ -1242,48 +1241,6 @@ function AdmissionsContent() {
           </div>
         </div>
       </section>
-
-      {/* ─────────────────────────────────────────────────────────────
-          6. FLOATING STICKY ACTION BAR (Appears on Scroll)
-      ─────────────────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {showStickyBar && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.25, ease: easeOut }}
-            className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 z-40"
-          >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full border border-[#DEDDD6] shadow-xl p-2.5 sm:px-5 sm:py-2.5 flex items-center justify-between sm:justify-end gap-3 max-w-lg mx-auto sm:mx-0">
-              <div className="hidden md:flex items-center gap-2 pr-3 border-r border-[#DEDDD6]">
-                <span className="w-2 h-2 rounded-full bg-[#8DC63F] animate-pulse" />
-                <span className="text-xs font-bold text-[#20242B]">
-                  {isVi ? 'Tuyển sinh K-12 đang mở' : 'Admissions Open'}
-                </span>
-              </div>
-
-              <a
-                href="tel:0937514896"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F6F5F1] hover:bg-[#EAEFFB] text-xs font-bold text-[#20242B] border border-[#DEDDD6] transition-colors shrink-0"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#F26522]" />
-                <span className="hidden sm:inline">Hotline:</span>
-                <span>0937 514 896</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => scrollTo('form-tu-van')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#F26522] hover:bg-[#C94F16] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all shrink-0 cursor-pointer"
-              >
-                <span>{isVi ? 'Đăng ký tư vấn' : 'Enquire Now'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }

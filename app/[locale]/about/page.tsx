@@ -8,6 +8,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
+import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 interface MilestoneItem {
   year: string
@@ -127,8 +128,8 @@ export default function AboutPage() {
   // Use CMS milestones or fallback
   const displayMilestones = milestones.length > 0 ? milestones : fallbackMilestones.map(m => ({
     year: m.year,
-    title: { vi: t(m.titleKey), en: t(m.titleKey) },
-    description: { vi: t(m.descKey), en: t(m.descKey) },
+    title: { vi: t(`milestones.${m.titleKey}`), en: t(`milestones.${m.titleKey}`) },
+    description: { vi: t(`milestones.${m.descKey}`), en: t(`milestones.${m.descKey}`) },
   }))
 
   // Deduplicate and cap CMS core values to the canonical 6 values
@@ -162,50 +163,21 @@ export default function AboutPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER – Navy gradient, ambient glow, staggered reveal
+          HERO BANNER – Clean light iSchool aesthetic matching Homepage
       ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="pt-24 sm:pt-28 pb-10 sm:pb-12 relative overflow-hidden"
-        style={{
-          backgroundImage: 'linear-gradient(135deg, rgba(30,53,112,0.92) 0%, rgba(46,74,158,0.88) 100%), url(/images/about/about-story.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        {/* Ambient subtle glow */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#8DC63F]/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-2xl mx-auto text-center text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium text-xs uppercase tracking-wider mb-3 shadow-xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
-              {t('intro.title')}
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
-              className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight leading-tight text-white"
-            >
-              {(locale === 'vi' ? aboutContent?.introTitle?.vi : aboutContent?.introTitle?.en) || aboutContent?.introTitle?.vi || t('hero.title')}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
-              className="text-sm sm:text-base text-white/90 leading-relaxed font-normal max-w-xl mx-auto"
-            >
-              {t('hero.subtitle')}
-            </motion.p>
-          </div>
-        </div>
-      </section>
+      <SubpageHero
+        badge={pick(aboutContent?.introTitle, locale) || t('intro.title')}
+        title={locale === 'vi' ? 'Hệ Thống Giáo Dục' : 'Academic Journey'}
+        highlightText={locale === 'vi' ? 'EPath Education' : 'EPath Education'}
+        subtitle={t('hero.subtitle')}
+        tags={[
+          locale === 'vi' ? 'Kiểm Định Cognia & WASC' : 'Cognia & WASC Accredited',
+          locale === 'vi' ? 'Chương Trình Edmentum K-12' : 'Edmentum K-12 Curriculum',
+          locale === 'vi' ? 'Đội Ngũ 50/50 Quốc Tế & Song Ngữ' : '50/50 Global & Bilingual Faculty',
+          locale === 'vi' ? 'Cố Vấn Học Thuật 1:1' : '1:1 Academic Advising',
+        ]}
+        backgroundImage={heroImage || '/images/about/about-story.jpg'}
+      />
 
       {/* ─────────────────────────────────────────────────────────────
           INTRO & STATS – Interactive cards & image zoom
@@ -290,7 +262,7 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          VISION & MISSION – Luxury rounded cards with hover elevation
+          VISION & MISSION – Luxury rounded cards with watermark numbers
       ─────────────────────────────────────────────────────────────── */}
       <section id="vision" className="py-12 sm:py-16 bg-[#F6F5F1]">
         <div className="container mx-auto px-4">
@@ -300,18 +272,22 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.slow, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group"
+              className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group relative overflow-hidden"
             >
+              {/* Watermark 01 */}
+              <span className="absolute -top-6 -right-3 text-7xl sm:text-8xl font-black text-[#1E3570]/[0.04] pointer-events-none select-none font-mono">
+                01
+              </span>
               <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
                 <Eye className="w-6 h-6 text-[#2E4A9E]" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-3">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#1E3570] mb-3">
                 {pick(aboutContent?.visionTitle, locale) || t('vision')}
               </h3>
-              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
+              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base relative z-10">
                 <p>{pick(aboutContent?.visionContent, locale) || t('visionText')}</p>
                 <p>{t('visionP2')}</p>
-                <p className="p-4 rounded-xl bg-[#2E4A9E]/5 border-l-4 border-[#2E4A9E] text-[#20242B] font-medium leading-relaxed text-sm">
+                <p className="p-4 rounded-xl bg-[#2E4A9E]/5 border-l-4 border-[#2E4A9E] text-[#1E3570] font-medium leading-relaxed text-sm">
                   <strong className="text-[#2E4A9E]">{t('vision')}: </strong>
                   {t('visionHighlight')}
                 </p>
@@ -324,15 +300,19 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.slow, delay: 0.12, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group"
+              className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group relative overflow-hidden"
             >
+              {/* Watermark 02 */}
+              <span className="absolute -top-6 -right-3 text-7xl sm:text-8xl font-black text-[#8DC63F]/[0.08] pointer-events-none select-none font-mono">
+                02
+              </span>
               <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
                 <Target className="w-6 h-6 text-[#5C9024]" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-3">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#1E3570] mb-3">
                 {pick(aboutContent?.missionTitle, locale) || t('mission')}
               </h3>
-              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
+              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base relative z-10">
                 <p>{pick(aboutContent?.missionContent, locale) || t('missionText')}</p>
                 <p>{t('missionP2')}</p>
               </div>
@@ -419,11 +399,10 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          MILESTONES TIMELINE – Smooth animated nodes & Navy depth
+          MILESTONES TIMELINE – Light iSchool style matching Homepage
       ─────────────────────────────────────────────────────────────── */}
       <section
-        className="py-12 sm:py-16 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1E3570 0%, #2E4A9E 100%)' }}
+        className="py-12 sm:py-16 relative overflow-hidden bg-[#F6F5F1] border-y border-[#DEDDD6]"
       >
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -433,10 +412,14 @@ export default function AboutPage() {
             transition={{ duration: duration.normal, ease: easeOut }}
             className="text-center mb-10 max-w-2xl mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#DEDDD6] text-[#1E3570] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
+              {t('milestones.title')}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-2" style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}>
               {t('milestones.title')}
             </h2>
-            <p className="text-sm sm:text-base text-white/80">
+            <p className="text-sm sm:text-base text-[#5C6069]">
               {t('milestones.subtitle')}
             </p>
           </motion.div>
@@ -452,18 +435,18 @@ export default function AboutPage() {
                   viewport={inViewViewport}
                   transition={{ duration: duration.slow, delay: index * 0.06, ease: easeOut }}
                   whileHover={{ y: -4 }}
-                  className="text-center group"
+                  className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] hover:border-[#1E3570]/30 hover:shadow-md transition-all text-center group"
                 >
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md border-2 border-white/20 transition-transform duration-300 group-hover:scale-110"
+                    className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm transition-transform duration-300 group-hover:scale-110"
                     style={{ backgroundColor: accent.color }}
                   >
-                    <span className="text-white font-bold text-sm">{milestone.year}</span>
+                    <span className="text-white font-black text-sm">{milestone.year}</span>
                   </div>
-                  <h4 className="font-bold text-white text-sm sm:text-base mb-1.5 group-hover:text-[#8DC63F] transition-colors duration-300">
+                  <h4 className="font-bold text-[#1E3570] text-sm sm:text-base mb-1.5 group-hover:text-[#5C9024] transition-colors duration-300">
                     {pick(milestone.title, locale)}
                   </h4>
-                  <p className="text-xs sm:text-sm text-white/75 leading-relaxed">
+                  <p className="text-xs text-[#5C6069] leading-relaxed">
                     {pick(milestone.description, locale)}
                   </p>
                 </motion.div>

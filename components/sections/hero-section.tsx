@@ -16,21 +16,13 @@
  *  - 100% visible on first paint with smooth non-blocking entrance animations.
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { ArrowRight, ArrowDown } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import Image from 'next/image'
+import { ArrowDown } from 'lucide-react'
 import type { Locale } from '@/lib/cms-types'
 import { useCmsContext } from '@/lib/cms-context'
-
-const TIMING = {
-  welcomeStart: 0.05,
-  titleStart: 0.15,
-  titleWordStep: 0.05,
-  subtitleStart: 0.35,
-  descriptionStart: 0.5,
-  ctaStart: 0.65,
-  badgeStart: 0.75,
-}
 
 function pickLocalized(v: unknown, locale: Locale): string {
   if (!v) return ''
@@ -86,11 +78,10 @@ export function HeroSection({
 }) {
   const t = useTranslations('hero')
   const { data: cms } = useCmsContext()
-  const locale = useLocale() as Locale
+  const params = useParams()
+  const locale = ((params.locale as string) || 'vi') as Locale
   const sectionRef = useRef<HTMLElement>(null)
   const [videoFailed, setVideoFailed] = useState(false)
-  const [isMarqueeHovered, setIsMarqueeHovered] = useState(false)
-  const [marqueeOffset, setMarqueeOffset] = useState(0)
 
   const heroByPage = cms.heroContent || {}
   const contextHero =
@@ -103,26 +94,17 @@ export function HeroSection({
   const welcomeText =
     (hero && pickLocalized(hero.welcome, locale)) ||
     t('welcome') ||
-    (locale === 'en' ? 'Welcome to' : 'Chào mừng đến với')
+    (locale === 'en' ? '' : '')
 
+  const rawTitle = (hero && pickLocalized(hero.title, locale)) || t('title') || ''
   const titleText =
-    (hero && pickLocalized(hero.title, locale)) ||
-    t('title') ||
-    'EPath Education'
+    rawTitle && rawTitle !== 'EPath Education'
+      ? rawTitle
+      : 'LearnLocal\nReachGlobal'
 
-  const subtitleText =
-    (hero && pickLocalized(hero.subtitle, locale)) ||
-    t('subtitle') ||
-    (locale === 'en'
-      ? 'Bringing high-quality international education closer to Vietnamese families'
-      : 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn với gia đình Việt')
-
-  const descriptionText =
-    (hero && pickLocalized(hero.description, locale)) ||
-    t('description') ||
-    (locale === 'en'
-      ? 'Personalised learning aligned with US Common Core standards via the Edmentum International ecosystem — accredited by Cognia & WASC. Students can also access Cambridge ESOL, FabLab EIU and the Dual Diploma pathway from Kindergarten through Grade 12.'
-      : 'Chương trình học cá nhân hóa theo chuẩn Common Core (Mỹ) thông qua hệ sinh thái Edmentum International — được kiểm định bởi Cognia & WASC. Tiếp cận Cambridge ESOL, FabLab EIU và lộ trình Dual Diploma toàn diện từ Mầm non đến THPT.')
+  const titleLines = titleText.includes('\n')
+    ? titleText.split(/[\r\n]+/)
+    : [titleText]
 
   const ctaLabel =
     (hero && pickLocalized(hero.ctaLabel, locale)) ||
@@ -130,12 +112,6 @@ export function HeroSection({
     (locale === 'en' ? 'Learn More' : 'Tìm hiểu thêm')
 
   const ctaUrl = (hero?.ctaUrl as string) || '#programs'
-
-  const secondaryCtaLabel =
-    (hero && pickLocalized(hero.secondaryCtaLabel, locale)) ||
-    (locale === 'en' ? 'Free Consultation' : 'Liên hệ tư vấn')
-
-  const secondaryCtaUrl = (hero?.secondaryCtaUrl as string) || '#contact'
 
   // Background media
   const videoUrl = (hero?.videoUrl as string) || ''
@@ -152,25 +128,23 @@ export function HeroSection({
     el.classList.add('is-visible')
   }, [])
 
-  // Smooth continuous Marquee animation
-  useEffect(() => {
-    let raf: number
-    let last = 0
-    const speed = isMarqueeHovered ? 0.08 : 0.45 // slows down on hover
-
-    const tick = (ts: number) => {
-      if (last === 0) last = ts
-      const delta = ts - last
-      last = ts
-      setMarqueeOffset((prev) => {
-        const total = marqueeItems.length * 280
-        return (prev + (speed * delta) / 16) % total
-      })
-      raf = requestAnimationFrame(tick)
+  // Smooth-scroll to the section directly below the hero.
+  // Resolves at click-time so the target exists in the DOM even when
+  // CMS content swaps in async sections after first paint.
+  const handleScrollDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (typeof window === 'undefined') return
+    const heroEl = sectionRef.current
+    if (!heroEl) return
+    const next = heroEl.nextElementSibling as HTMLElement | null
+    if (next) {
+      const headerOffset = 72
+      const top = next.getBoundingClientRect().top + window.scrollY - headerOffset
+      window.scrollTo({ top, behavior: 'smooth' })
+    } else {
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [isMarqueeHovered, marqueeItems.length])
+  }
 
   // Resolve CTA URL helper
   const resolveUrl = (url: string) => {
@@ -186,23 +160,6 @@ export function HeroSection({
     return url
   }
 
-  // Handle smooth scroll down when clicking the iSchool circle badge
-  const handleScrollDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    const heroEl = sectionRef.current
-    const tickerEl = heroEl?.nextElementSibling as HTMLElement | null
-    const targetSection = tickerEl?.nextElementSibling as HTMLElement | null
-
-    if (targetSection) {
-      targetSection.scrollIntoView({ behavior: 'smooth' })
-    } else if (heroEl) {
-      window.scrollTo({
-        top: heroEl.offsetTop + heroEl.offsetHeight,
-        behavior: 'smooth',
-      })
-    }
-  }, [])
-
   const titleWords = titleText.split(' ')
 
   return (
@@ -215,223 +172,176 @@ export function HeroSection({
       ─────────────────────────────────────────────────────────────── */}
       <section
         ref={sectionRef}
-        className="hero-section is-visible relative min-h-[85vh] lg:min-h-[88vh] flex flex-col justify-between overflow-hidden bg-[#1E3570]"
+        className="hero-section relative min-h-screen flex flex-col overflow-hidden is-visible"
+        style={{ backgroundColor: '#e8e8e8' }}
+        aria-label="Hero"
       >
-        {/* Background media: video -> image fallback */}
-        <div className="absolute inset-0 z-0">
-          {(() => {
-            const video = videoUrl ? toEmbedUrl(videoUrl) : null
-            if (video && !videoFailed) {
-              if (video.kind === 'iframe') {
-                return (
-                  <iframe
-                    src={video.url}
-                    title="Hero background video"
-                    className="w-full h-full object-cover pointer-events-none"
-                    style={{ border: 0 }}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowFullScreen
-                  />
-                )
-              }
-              return (
+        {/* ── Layer 1A: Solid gray background (bottom-most) ─────────── */}
+        <div
+          className="absolute inset-0 z-0 bg-[#e8e8e8]"
+          aria-hidden="true"
+        />
+
+        {/* ── Layer 1B: Hero media (image / video) on top of gray ─── */}
+        <div className="absolute inset-0 z-[1]">
+          {videoUrl && !videoFailed ? (
+            <>
+              {toEmbedUrl(videoUrl).kind === 'iframe' ? (
+                <iframe
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={toEmbedUrl(videoUrl).url}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="Hero background video"
+                  onError={() => setVideoFailed(true)}
+                />
+              ) : (
                 <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={videoUrl}
                   autoPlay
                   muted
                   loop
                   playsInline
-                  preload="auto"
-                  poster={videoThumbnail || activeBackground}
-                  className="w-full h-full object-cover"
+                  poster={videoThumbnail}
                   onError={() => setVideoFailed(true)}
-                >
-                  <source src={video.url} type="video/mp4" />
-                </video>
-              )
-            }
-            return (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={activeBackground}
-                alt=""
-                className="w-full h-full object-cover hero-media-fade is-loaded"
-              />
-            )
-          })()}
-
-          {/* Navy brand gradient overlay for crystal-clear readability */}
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1E3570] via-[#1E3570]/70 to-[#1E3570]/40 lg:from-[#1E3570]/90 lg:via-[#1E3570]/50 lg:to-[#1E3570]/30"
-            aria-hidden="true"
-          />
+                />
+              )}
+            </>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={activeBackground}
+              alt=""
+              className="w-full h-full object-cover hero-media-fade is-loaded"
+            />
+          )}
         </div>
 
-        {/* Top Spacer to account for fixed navbar */}
-        <div className="w-full h-20 sm:h-24 lg:h-28" aria-hidden="true" />
+        {/* ── Layer 2: Spacer that clears the fixed header ─────────── */}
+        <div className="flex-shrink-0" style={{ height: '0px' }} />
 
-        {/* Main Content Container */}
-        <div className="relative z-10 w-full flex-grow flex items-end">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-6 w-full pb-8 sm:pb-12 lg:pb-14">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-              
-              {/* Left Column: Text & CTAs (shifted left, elegant sizing) */}
-              <div className="lg:col-span-8 xl:col-span-8 text-left">
-                
-                {/* Welcome Eyebrow Pill */}
-                {welcomeText && (
-                  <div
-                    className="hero-title inline-block mb-3 sm:mb-4"
-                    style={{ ['--enter-delay' as string]: `${TIMING.welcomeStart}s` } as React.CSSProperties}
-                  >
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider shadow-sm">
-                      <span className="w-2 h-2 rounded-full bg-[#8DC63F] animate-pulse" />
-                      {welcomeText}
-                    </span>
-                  </div>
-                )}
-
-                {/* Title – Refined size, clean & comfortable brilliant white */}
-                <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-black leading-[1.08] tracking-[-0.03em] mb-3 sm:mb-4 text-white">
+        {/* ── Layer 3: Main content ─────────────────────────────────── */}
+        <div className="relative z-30 flex-1 flex items-center pt-20 sm:pt-24 pb-16 sm:pb-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+            <div className="max-w-3xl">
+              {/* Title */}
+              {titleLines.length === 1 ? (
+                <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-black leading-[1.08] tracking-[-0.03em] mb-4 sm:mb-6 text-[#1e3570]">
                   {titleWords.map((word, i) => (
                     <span
                       key={`t-${i}`}
-                      className="inline-block mr-[0.22em] hero-word text-white"
-                      style={
-                        {
-                          ['--word-delay' as string]: `${TIMING.titleStart + i * TIMING.titleWordStep}s`,
-                        } as React.CSSProperties
-                      }
+                      className="inline-block mr-[0.22em] hero-word text-[#1e3570]"
+                      style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + i * 0.05}s` } as React.CSSProperties}
                     >
                       {word}
                     </span>
                   ))}
                 </h1>
-
-                {/* Subtitle */}
-                {subtitleText && (
-                  <p
-                    className="hero-subtitle text-base sm:text-lg md:text-xl text-white/95 font-semibold leading-relaxed mb-3 sm:mb-4 max-w-2xl"
-                    style={{ ['--enter-delay' as string]: `${TIMING.subtitleStart}s` } as React.CSSProperties}
-                  >
-                    {subtitleText}
-                  </p>
-                )}
-
-                {/* Description */}
-                {descriptionText && (
-                  <p
-                    className="hero-subtitle text-sm sm:text-base md:text-lg text-white/85 leading-relaxed mb-6 sm:mb-8 max-w-2xl"
-                    style={{ ['--enter-delay' as string]: `${TIMING.descriptionStart}s` } as React.CSSProperties}
-                  >
-                    {descriptionText}
-                  </p>
-                )}
-
-                {/* Call To Action Buttons */}
-                <div
-                  className="flex flex-wrap items-center gap-3 sm:gap-4"
-                  style={{ ['--enter-delay' as string]: `${TIMING.ctaStart}s` } as React.CSSProperties}
-                >
-                  {ctaLabel && (
-                    <a
-                      href={resolveUrl(ctaUrl)}
-                      className="hero-cta group/cta pulse-ripple-btn relative inline-flex items-center gap-3 bg-[#5C9024] hover:bg-[#4D7C1E] text-white px-8 py-3.5 sm:px-10 sm:py-4 rounded-full text-base sm:text-lg font-bold shadow-[0_4px_16px_rgba(0,0,0,0.25)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:scale-105 transition-all duration-400 ease-out"
-                    >
-                      <span className="pulse-ripple-ring ring-1" aria-hidden="true" />
-                      <span className="pulse-ripple-ring ring-2" aria-hidden="true" />
-                      <span className="relative z-10 inline-flex items-center gap-2.5">
-                        {ctaLabel}
-                        <ArrowRight className="hero-cta__arrow w-5 h-5 transition-transform duration-400 ease-out group-hover/cta:translate-x-1" />
+              ) : (
+                <h1 className="hero-title font-black tracking-[-0.03em] mb-4 sm:mb-6 text-[#1e3570]">
+                  {titleLines.map((line, lineIdx) => {
+                    const words = line.trim().split(' ')
+                    return (
+                      <span key={`tl-${lineIdx}`} className="block">
+                        {words.map((word, i) => (
+                          <span
+                            key={`t-${lineIdx}-${i}`}
+                            className="inline-block mr-[0.22em] hero-word text-[#1e3570]"
+                            style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + lineIdx * 0.1 + i * 0.05}s` } as React.CSSProperties}
+                          >
+                            {word}
+                          </span>
+                        ))}
                       </span>
-                    </a>
-                  )}
+                    )
+                  })}
+                </h1>
+              )}
 
-                  {secondaryCtaLabel && (
-                    <a
-                      href={resolveUrl(secondaryCtaUrl)}
-                      className="inline-flex items-center gap-2 border-2 border-white/60 hover:border-white text-white hover:bg-white/10 px-8 py-3.5 sm:px-9 sm:py-4 rounded-full text-base sm:text-lg font-semibold backdrop-blur-sm transition-all duration-400 ease-out hover:scale-105"
-                    >
-                      {secondaryCtaLabel}
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Column: Signature iSchool Spinning Scroll Badge */}
-              <div className="lg:col-span-4 xl:col-span-4 flex justify-start lg:justify-end items-end pt-4 lg:pt-0">
-                <div
-                  className="relative flex items-center justify-center"
-                  style={{ ['--enter-delay' as string]: `${TIMING.badgeStart}s` } as React.CSSProperties}
+              {/* Round CTA Learn More button directly below title */}
+              <div
+                className="pt-2 sm:pt-4 relative z-30"
+                style={{ animation: `heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: '0.35s' } as React.CSSProperties}
+              >
+                <a
+                  href={resolveUrl(ctaUrl)}
+                  role="button"
+                  aria-label={ctaLabel || 'Learn More'}
+                  onClick={handleScrollDown}
+                  className="hero-circle-cta group/circle relative inline-flex items-center justify-center w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] cursor-pointer"
                 >
-                  {/* Rotating Circular Text SVG Ring */}
-                  <div className="relative w-[110px] h-[110px] sm:w-[124px] sm:h-[124px] flex items-center justify-center select-none pointer-events-none">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/images/hero/anim-icon-text.svg"
-                      alt=""
-                      className="w-full h-full ischool-rotate-infinite"
-                      aria-hidden="true"
-                    />
-                  </div>
-
-                  {/* Centered Circle Button with Down Arrow */}
-                  <a
-                    href="#anchor"
-                    onClick={handleScrollDown}
-                    className="absolute w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#2E4A9E] hover:bg-[#1E3570] text-white flex items-center justify-center border-2 border-white/30 shadow-[0_8px_24px_rgba(46,74,158,0.5)] hover:shadow-[0_12px_32px_rgba(46,74,158,0.7)] hover:scale-110 active:scale-95 transition-all duration-300 z-10 group"
-                    aria-label="Scroll to next content section"
+                  {/* Orbiting text ring */}
+                  <span
+                    aria-hidden="true"
+                    className="hero-circle-cta__text absolute inset-0 select-none pointer-events-none"
                   >
-                    <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:translate-y-1" />
-                  </a>
-                </div>
-              </div>
+                    <svg
+                      viewBox="0 0 200 200"
+                      className="w-full h-full block overflow-visible"
+                    >
+                      <defs>
+                        <path
+                          id="learnMoreTextCircle"
+                          d="M 100, 100 m -66, 0 a 66,66 0 1,1 132,0 a 66,66 0 1,1 -132,0"
+                          fill="none"
+                        />
+                      </defs>
+                      <text
+                        className="fill-[#3a54a4] select-none uppercase tracking-[0.16em]"
+                        style={{
+                          fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif",
+                          fontSize: '13px',
+                          fontWeight: 800,
+                        }}
+                      >
+                        <textPath href="#learnMoreTextCircle" startOffset="0%" textLength="415" lengthAdjust="spacing">
+                          LEARN MORE • LEARN MORE • 
+                        </textPath>
+                      </text>
+                    </svg>
+                  </span>
 
+                  {/* Inner green circular button with glow + ArrowDown */}
+                  <span
+                    aria-hidden="true"
+                    className="hero-circle-cta__btn relative z-10 inline-flex items-center justify-center w-[68px] h-[68px] sm:w-[78px] sm:h-[78px] rounded-full bg-[#8bc53f] hover:bg-[#7ab332] text-white shadow-[0_8px_24px_rgba(139,197,63,0.45)] hover:shadow-[0_12px_32px_rgba(139,197,63,0.6)] transition-all duration-500 ease-out group-hover/circle:scale-105"
+                  >
+                    <ArrowDown className="w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-500 ease-out group-hover/circle:translate-y-1" />
+                  </span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ─────────────────────────────────────────────────────────────
-          TAGS TICKER / MARQUEE STRIP
-          iSchool signature horizontal marquee with keyword tag pills (.tag)
-          Smooth continuous scroll with left/right fade edges
-      ─────────────────────────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden bg-[#1E3570] border-t border-b border-white/15 py-3 sm:py-4 select-none"
-        onMouseEnter={() => setIsMarqueeHovered(true)}
-        onMouseLeave={() => setIsMarqueeHovered(false)}
-        aria-hidden="true"
-      >
-        {/* Edge Fade Gradients */}
+        {/* ── Layer 4: Tags Marquee Strip – floating over the hero ─────
+            Anchored to the bottom edge of the hero so it sits ON TOP of
+            the hero media rather than splitting it into a separate
+            block. No top border, no side tinting, fully transparent
+            background – the pills alone carry the readability over any
+            hero media. */}
         <div
-          className="absolute inset-y-0 left-0 z-10 pointer-events-none w-16 sm:w-24 bg-gradient-to-r from-[#1E3570] to-transparent"
-        />
-        <div
-          className="absolute inset-y-0 right-0 z-10 pointer-events-none w-16 sm:w-24 bg-gradient-to-l from-[#1E3570] to-transparent"
-        />
-
-        {/* Marquee Track */}
-        <div
-          className="flex whitespace-nowrap will-change-transform"
-          style={{
-            transform: `translateX(-${marqueeOffset}px)`,
-            transition: 'none',
-          }}
+          className="hero-marquee absolute inset-x-0 bottom-0 z-20 overflow-hidden select-none py-2 sm:py-2.5"
+          aria-hidden="true"
         >
-          {/* Repeat items 3 times for seamless infinite loop */}
-          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, idx) => (
-            <div
-              key={idx}
-              className="inline-flex items-center mx-2 sm:mx-3 flex-shrink-0"
-            >
-              <span className="inline-flex items-center gap-2.5 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium text-xs sm:text-sm tracking-wide shadow-sm backdrop-blur-sm transition-colors cursor-default">
-                <span className="w-2 h-2 rounded-full bg-[#8DC63F] shadow-[0_0_8px_rgba(141,198,63,0.8)]" />
-                {item}
-              </span>
-            </div>
-          ))}
+          {/* Marquee Track – 3× duplicated for seamless loop */}
+          <div className="hero-marquee__track">
+            {/* Repeat items 3 times for seamless infinite loop */}
+            {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, idx) => (
+              <div
+                key={idx}
+                className="inline-flex items-center mx-1.5 sm:mx-2 flex-shrink-0"
+              >
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/85 hover:bg-white text-[#1e3570] font-semibold text-[11px] sm:text-xs tracking-wide shadow-[0_2px_8px_rgba(30,53,112,0.14)] hover:shadow-[0_3px_12px_rgba(30,53,112,0.22)] transition-all duration-300 cursor-default">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F] shadow-[0_0_6px_rgba(141,198,63,0.8)] shrink-0" />
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     </>
   )
 }

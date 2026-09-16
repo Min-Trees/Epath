@@ -8,6 +8,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Partner } from '@/lib/cms-types'
+import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 const fallbackPartners: Partner[] = [
   {
@@ -209,49 +210,21 @@ export default function PartnersPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER
+          HERO BANNER – Light iSchool aesthetic matching Homepage
       ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="pt-24 sm:pt-28 pb-10 sm:pb-12 relative overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(135deg, rgba(30,53,112,0.92) 0%, rgba(46,74,158,0.88) 100%), url(${heroPartnersImage || '/images/partners/partner-edmentum.jpg'})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#8DC63F]/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-2xl mx-auto text-center text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium text-xs uppercase tracking-wider mb-3 shadow-xs"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
-              {heroBadge}
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
-              className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 tracking-tight leading-tight text-white"
-            >
-              {heroMainTitle}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
-              className="text-sm sm:text-base text-white/90 leading-relaxed font-normal max-w-xl mx-auto"
-            >
-              {heroSubtitle}
-            </motion.p>
-          </div>
-        </div>
-      </section>
+      <SubpageHero
+        badge={heroBadge}
+        title={locale === 'vi' ? 'Đối Tác Học Thuật' : 'Global Academic'}
+        highlightText={locale === 'vi' ? 'Quốc Tế & Kiểm Định' : 'Partners & Accreditation'}
+        subtitle={heroSubtitle}
+        tags={[
+          'Cognia & WASC Accreditation',
+          'Edmentum International',
+          'Cambridge Assessment',
+          'FabLab EIU Makerspace',
+        ]}
+        backgroundImage={heroPartnersImage || '/images/partners/partner-edmentum.jpg'}
+      />
 
       {/* ─────────────────────────────────────────────────────────────
           3 PILLARS OF GLOBAL ACADEMIC COLLABORATION
@@ -284,16 +257,19 @@ export default function PartnersPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.normal, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
             >
-              <div>
+              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#2E4A9E]/[0.05] pointer-events-none select-none font-mono">
+                01
+              </span>
+              <div className="relative z-10">
                 <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                   <BookOpen className="w-6 h-6 text-[#2E4A9E]" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#2E4A9E] block mb-1">
                   {t('pillar1.title')}
                 </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#20242B] mb-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
                   {t('pillar1.partner')}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
@@ -308,16 +284,19 @@ export default function PartnersPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.normal, delay: 0.08, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
             >
-              <div>
+              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#8DC63F]/[0.08] pointer-events-none select-none font-mono">
+                02
+              </span>
+              <div className="relative z-10">
                 <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                   <Award className="w-6 h-6 text-[#5C9024]" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#5C9024] block mb-1">
                   {t('pillar2.title')}
                 </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#20242B] mb-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
                   {t('pillar2.partner')}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
@@ -332,16 +311,19 @@ export default function PartnersPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.normal, delay: 0.16, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
             >
-              <div>
+              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#F26522]/[0.05] pointer-events-none select-none font-mono">
+                03
+              </span>
+              <div className="relative z-10">
                 <div className="w-12 h-12 bg-[#F26522]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                   <Wrench className="w-6 h-6 text-[#F26522]" />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#F26522] block mb-1">
                   {t('pillar3.title')}
                 </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#20242B] mb-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
                   {t('pillar3.partner')}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
@@ -433,12 +415,19 @@ export default function PartnersPage() {
 
                   {/* Partner Details & Features */}
                   <div
-                    className={`lg:col-span-7 rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between ${index % 2 === 1 ? 'lg:order-1' : ''}`}
-                    style={{ backgroundColor: accent.bg }}
+                    className={`lg:col-span-7 bg-[#F6F5F1] hover:bg-white rounded-2xl p-6 sm:p-8 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                   >
-                    <div>
+                    {/* Watermark Numeral */}
+                    <span className="absolute -top-6 -right-2 text-7xl sm:text-8xl font-black text-[#1E3570]/[0.04] pointer-events-none select-none font-mono">
+                      0{index + 1}
+                    </span>
+
+                    <div className="relative z-10">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
-                        <h2 className="text-xl sm:text-2xl font-bold text-[#20242B]">
+                        <h2
+                          className="text-xl sm:text-2xl font-black text-[#1E3570] group-hover:text-[#2E4A9E] transition-colors"
+                          style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
+                        >
                           {partnerName}
                         </h2>
                         {partner.website && (
@@ -446,7 +435,7 @@ export default function PartnersPage() {
                             href={partner.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[#2E4A9E] font-bold text-xs sm:text-sm hover:text-[#1E3570] hover:underline shrink-0 pt-1"
+                            className="inline-flex items-center gap-1.5 text-[#1E3570] hover:text-[#8DC63F] font-bold text-xs sm:text-sm hover:underline shrink-0 pt-1 transition-colors"
                           >
                             <span>{t('visitWebsite')}</span>
                             <ExternalLink className="w-3.5 h-3.5" />

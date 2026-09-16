@@ -2,24 +2,21 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import { Globe } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
 
 /**
  * LanguageSwitcher
  *
- * Optimizations to avoid the language-switch flicker:
- * 1. We keep an `optimisticLocale` state so the visible label updates
- *    instantly on click instead of waiting for the router to settle.
- * 2. We use `router.replace` (not `router.push`) so the URL change
- *    does not push a new history entry, and so the next click goes
- *    forward rather than relying on browser back/forward.
- * 3. We wrap the navigation in `startTransition` so React keeps the
- *    current tree interactive while the new one streams in.
- * 4. When the browser supports the View Transitions API, we wrap the
- *    navigation in `document.startViewTransition` for a buttery-smooth
- *    cross-fade of the entire page (Chrome / Edge / Safari 18+).
+ * Displays EN and VI flag icon buttons side by side.
+ * - Active language: opacity 1
+ * - Inactive language: opacity ~0.55 (hover ~1.0)
+ *
+ * Retains zero-flicker transitions via:
+ * 1. optimisticLocale state for instant visual feedback.
+ * 2. router.replace with scroll: false.
+ * 3. document.startViewTransition for smooth cross-fade.
  */
 export function LanguageSwitcher() {
   const router = useRouter()
@@ -31,19 +28,17 @@ export function LanguageSwitcher() {
 
   useEffect(() => setMounted(true), [])
 
-  // While transitioning we display the *target* locale, otherwise the
-  // server-detected one. This prevents the UI from briefly showing the
-  // old locale after the URL has changed.
   const currentLocale = optimisticLocale ?? serverLocale
-  const switchTo = currentLocale === 'vi' ? 'en' : 'vi'
 
-  const toggleLocale = () => {
+  const switchLanguage = (targetLocale: string) => {
+    if (targetLocale === currentLocale) return
+
     const segments = pathname.split('/')
-    segments[1] = switchTo
+    segments[1] = targetLocale
     const newPath = segments.join('/')
     if (newPath === pathname) return
 
-    setOptimisticLocale(switchTo)
+    setOptimisticLocale(targetLocale)
 
     const navigate = () => {
       startTransition(() => {
@@ -51,8 +46,6 @@ export function LanguageSwitcher() {
       })
     }
 
-    // Use the native View Transitions API when available for a
-    // perfectly smooth cross-fade. Fall back to router.replace.
     const anyDoc = document as Document & {
       startViewTransition?: (cb: () => void) => unknown
     }
@@ -63,34 +56,59 @@ export function LanguageSwitcher() {
     }
   }
 
-  // Once the server-rendered locale catches up to our optimistic value
-  // we clear the flag.
   useEffect(() => {
     if (optimisticLocale && serverLocale === optimisticLocale) {
       setOptimisticLocale(null)
     }
   }, [serverLocale, optimisticLocale])
 
+  const activeLocale = mounted ? currentLocale : serverLocale
+
   return (
-    <button
-      onClick={toggleLocale}
-      className={cn(
-        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium',
-        'transition-colors duration-200',
-        'text-white/90 hover:text-white hover:bg-white/10',
-        'view-transition-target'
-      )}
-      aria-label="Toggle language"
-      type="button"
-    >
-      <Globe className="w-4 h-4" />
-      <span
-        key={mounted ? currentLocale : 'placeholder'}
-        className="uppercase font-semibold inline-block animate-fade-in"
+    <div className="flex items-center gap-1.5 sm:gap-2">
+
+      <button
+        type="button"
+        onClick={() => switchLanguage('vi')}
+        aria-label="Chuyển sang Tiếng Việt"
+        title="Tiếng Việt"
+        className={cn(
+          'transition-all duration-200 rounded-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3a54a4]',
+          activeLocale === 'vi'
+            ? 'opacity-100 scale-105 cursor-default'
+            : 'opacity-55 hover:opacity-100 scale-95 hover:scale-100 cursor-pointer'
+        )}
       >
-        {mounted ? currentLocale : '—'}
-      </span>
-      <span className="text-white/60 text-xs">/ {switchTo.toUpperCase()}</span>
-    </button>
+        <Image
+          src="/images/VIE_iconLanaguage.png"
+          alt="Tiếng Việt"
+          width={32}
+          height={32}
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-contain"
+          priority
+        />
+      </button>
+      <button
+        type="button"
+        onClick={() => switchLanguage('en')}
+        aria-label="Switch to English"
+        title="English"
+        className={cn(
+          'transition-all duration-200 rounded-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3a54a4]',
+          activeLocale === 'en'
+            ? 'opacity-100 scale-105 cursor-default'
+            : 'opacity-55 hover:opacity-100 scale-95 hover:scale-100 cursor-pointer'
+        )}
+      >
+        <Image
+          src="/images/ENG_iconLanaguage.png"
+          alt="English"
+          width={32}
+          height={32}
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-contain"
+          priority
+        />
+      </button>
+    </div>
   )
 }
