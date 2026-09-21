@@ -19,6 +19,7 @@ import type { Locale, LocalizedString } from '@/lib/cms-types'
 interface Props {
   locale: Locale
   compact?: boolean
+  isTop?: boolean
 }
 
 const ROADMAP_STEPS = [
@@ -218,7 +219,7 @@ function parseOutcomes(outcomes: unknown, locale: Locale): string[] {
   return []
 }
 
-export function ProgramsRoadmap({ locale, compact }: Props) {
+export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
   const isVi = locale === 'vi'
   const { data: cms } = useCmsContext()
 
@@ -277,7 +278,7 @@ export function ProgramsRoadmap({ locale, compact }: Props) {
       }))
 
   return (
-    <section className={`${compact ? 'py-8 sm:py-10' : 'py-10 sm:py-14'} bg-white border-b border-[#DEDDD6]`}>
+    <section className={`${compact ? 'py-8 sm:py-10' : isTop ? 'pt-28 sm:pt-32 pb-10 sm:pb-14' : 'py-10 sm:py-14'} bg-white border-b border-[#DEDDD6]`}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-10">

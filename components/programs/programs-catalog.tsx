@@ -7,6 +7,7 @@ import type { Program, Locale } from '@/lib/cms-types'
 import type { DisplayLayout, LevelDef } from './types'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 
 interface Props {
   locale: Locale
@@ -15,7 +16,7 @@ interface Props {
   displayLayout?: DisplayLayout
   searchQuery: string
   onResetSearch: () => void
-  onSelectProgram: (program: Program) => void
+  onSelectProgram?: (program: Program) => void
   compact?: boolean
   translations: {
     curriculum: string
@@ -58,6 +59,7 @@ export function ProgramsCatalog({
   translations,
 }: Props) {
   const isVi = locale === 'vi'
+  const { openRegistrationModal } = useRegistrationModal()
 
   // Filter programs by search query
   const query = searchQuery.trim().toLowerCase()
@@ -144,7 +146,7 @@ export function ProgramsCatalog({
                       <h2 className="text-xl sm:text-2xl font-bold text-[#20242B]">
                         {translations.levels[level.id] || level.id}
                       </h2>
-                      <span className="px-2 py-0.2 rounded-full text-xs font-bold bg-[#F6F5F1] border border-[#DEDDD6] text-[#5C6069]">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#F6F5F1] border border-[#DEDDD6] text-[#5C6069]">
                         {levelPrograms.length} {isVi ? 'chương trình' : 'programs'}
                       </span>
                     </div>
@@ -166,14 +168,21 @@ export function ProgramsCatalog({
                         ? 'Chương trình học đang được cập nhật thêm môn chuyên sâu.'
                         : 'Curriculum is being updated with additional specialized subjects.'}
                     </p>
-                    <Link
-                      href={`/${locale}/admissions?program=${level.id}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold hover:gap-2.5 transition-all duration-300"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openRegistrationModal({
+                          program: level.id,
+                          title: translations.levels[level.id],
+                          source: 'catalog-empty',
+                        })
+                      }
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold hover:gap-2.5 transition-all duration-300 cursor-pointer"
                       style={{ color: level.color }}
                     >
                       <span>{translations.register}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    </button>
                   </div>
                 ) : displayLayout === 'grid' ? (
                   /* GRID VIEW (2 - 3 Columns) */
@@ -188,7 +197,10 @@ export function ProgramsCatalog({
                           className="bg-white rounded-2xl border border-[#DEDDD6] hover:border-[#2E4A9E]/30 overflow-hidden transition-all duration-400 hover:shadow-lg hover:-translate-y-1 group flex flex-col justify-between"
                         >
                           {/* Top Image Banner */}
-                          <div className="relative w-full h-44 sm:h-48 overflow-hidden bg-[#F6F5F1]">
+                          <Link
+                            href={`/${locale}/programs/${p.slug || p.id}`}
+                            className="relative w-full h-44 sm:h-48 overflow-hidden bg-[#F6F5F1] block group/img"
+                          >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={cardImage}
@@ -214,14 +226,16 @@ export function ProgramsCatalog({
                                 {formatAgeRange(p.ageRange, locale)}
                               </span>
                             )}
-                          </div>
+                          </Link>
 
                           {/* Card Content */}
                           <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                             <div>
-                              <h3 onClick={() => onSelectProgram(p)} className="text-base font-bold mb-1.5 text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 cursor-pointer">
-                                {title}
-                              </h3>
+                              <Link href={`/${locale}/programs/${p.slug || p.id}`} className="block">
+                                <h3 className="text-base font-bold mb-1.5 text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300">
+                                  {title}
+                                </h3>
+                              </Link>
                               <div className="text-[#5C6069] mb-3 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3">
                                 <RichTextRenderer html={shortDesc} compact />
                               </div>
@@ -248,22 +262,28 @@ export function ProgramsCatalog({
 
                             {/* Card Footer Actions */}
                             <div className="pt-3 border-t border-[#DEDDD6]/60 flex items-center justify-between gap-2 mt-1">
-                              <button
-                                type="button"
-                                onClick={() => onSelectProgram(p)}
+                              <Link
+                                href={`/${locale}/programs/${p.slug || p.id}`}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200"
                               >
                                 <Eye className="w-3.5 h-3.5" />
                                 <span>{translations.viewDetails}</span>
-                              </button>
+                              </Link>
 
-                              <Link
-                                href={`/${locale}/admissions?program=${p.slug || p.id}`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs bg-[#FEF0E9] text-[#F26522] hover:bg-[#F26522] hover:text-white transition-all duration-200"
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openRegistrationModal({
+                                    program: p.slug || p.id,
+                                    title,
+                                    source: 'catalog-grid',
+                                  })
+                                }
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs bg-[#FEF0E9] text-[#F26522] hover:bg-[#F26522] hover:text-white transition-all duration-200 cursor-pointer"
                               >
                                 <span>{translations.register}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
-                              </Link>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -283,7 +303,10 @@ export function ProgramsCatalog({
                           className="bg-white rounded-xl p-4 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:shadow-sm transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group"
                         >
                           <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-[#F6F5F1] flex-shrink-0 overflow-hidden relative border border-[#DEDDD6]">
+                            <Link
+                              href={`/${locale}/programs/${p.slug || p.id}`}
+                              className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-[#F6F5F1] flex-shrink-0 overflow-hidden relative border border-[#DEDDD6] block"
+                            >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={cardImage}
@@ -297,7 +320,7 @@ export function ProgramsCatalog({
                                   }
                                 }}
                               />
-                            </div>
+                            </Link>
 
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap mb-0.5">
@@ -314,12 +337,11 @@ export function ProgramsCatalog({
                                   </span>
                                 )}
                               </div>
-                              <h3
-                                onClick={() => onSelectProgram(p)}
-                                className="text-sm sm:text-base font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors truncate cursor-pointer"
-                              >
-                                {title}
-                              </h3>
+                              <Link href={`/${locale}/programs/${p.slug || p.id}`}>
+                                <h3 className="text-sm sm:text-base font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors truncate">
+                                  {title}
+                                </h3>
+                              </Link>
                               <div className="text-xs text-[#5C6069] line-clamp-2">
                                 <RichTextRenderer html={shortDesc} compact />
                               </div>
@@ -327,21 +349,27 @@ export function ProgramsCatalog({
                           </div>
 
                           <div className="flex items-center gap-2 flex-shrink-0 justify-end pt-2 md:pt-0 border-t md:border-t-0 border-[#DEDDD6]">
-                            <button
-                              type="button"
-                              onClick={() => onSelectProgram(p)}
+                            <Link
+                              href={`/${locale}/programs/${p.slug || p.id}`}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>{translations.viewDetails}</span>
-                            </button>
-                            <Link
-                              href={`/${locale}/admissions?program=${p.slug || p.id}`}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FEF0E9] hover:bg-[#F26522] text-[#F26522] hover:text-white text-xs font-bold transition-all duration-200"
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openRegistrationModal({
+                                  program: p.slug || p.id,
+                                  title,
+                                  source: 'catalog-list',
+                                })
+                              }
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FEF0E9] hover:bg-[#F26522] text-[#F26522] hover:text-white text-xs font-bold transition-all duration-200 cursor-pointer"
                             >
                               <span>{translations.register}</span>
                               <ArrowRight className="w-3.5 h-3.5" />
-                            </Link>
+                            </button>
                           </div>
                         </div>
                       )

@@ -68,6 +68,7 @@ const SECTION_LABELS: Record<SectionType, string> = {
   pricing: 'Học phí',
   team: 'Đội ngũ',
   cta: 'CTA / Liên hệ',
+  featuredCourses: 'Khóa học nổi bật',
 }
 
 const SECTION_TYPES: SectionType[] = Object.keys(SECTION_LABELS) as SectionType[]

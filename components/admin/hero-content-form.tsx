@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Save, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -31,6 +31,9 @@ const defaultForm: Partial<HeroContent> = {
   videoUrl: '',
   videoThumbnail: '',
   backgroundImage: '',
+  slides: [],
+  finalSlideIndex: -1,
+  slideInterval: 4,
   isActive: true,
 }
 
@@ -147,6 +150,44 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
         en: lang === 'en' ? value : (current?.en ?? ''),
       },
     }))
+  }
+
+  const slides = (form.slides as string[] | undefined) || []
+
+  const addSlide = () => {
+    const next = [...slides, '']
+    setField('slides', next)
+  }
+
+  const updateSlide = (idx: number, url: string) => {
+    const next = [...slides]
+    next[idx] = url
+    setField('slides', next)
+  }
+
+  const removeSlide = (idx: number) => {
+    const next = slides.filter((_, i) => i !== idx)
+    setField('slides', next)
+    if (form.finalSlideIndex === idx) {
+      setField('finalSlideIndex', -1)
+    } else if (typeof form.finalSlideIndex === 'number' && form.finalSlideIndex > idx) {
+      setField('finalSlideIndex', form.finalSlideIndex - 1)
+    }
+  }
+
+  const moveSlide = (idx: number, direction: -1 | 1) => {
+    const targetIdx = idx + direction
+    if (targetIdx < 0 || targetIdx >= slides.length) return
+    const next = [...slides]
+    const temp = next[idx]
+    next[idx] = next[targetIdx]
+    next[targetIdx] = temp
+    setField('slides', next)
+    if (form.finalSlideIndex === idx) {
+      setField('finalSlideIndex', targetIdx)
+    } else if (form.finalSlideIndex === targetIdx) {
+      setField('finalSlideIndex', idx)
+    }
   }
 
   if (isLoading) {
@@ -347,6 +388,166 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
               placeholder="#contact"
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div>
+            <CardTitle className="text-base">Hero Slideshow (Danh sách ảnh slide chạy qua)</CardTitle>
+            <p className="text-xs mt-1" style={{ color: semanticColors.textMuted }}>
+              Thêm nhiều ảnh để chạy slide trên Hero Section. Bạn có thể chọn ảnh nào sẽ là ảnh dừng lại cuối cùng khi slide chạy qua xong.
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={addSlide}
+            className="gap-1.5"
+          >
+            <Plus className="w-4 h-4" /> Thêm ảnh slide
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-2">
+          {slides.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-500 mb-3">
+                Chưa có ảnh slide nào. Hệ thống sẽ sử dụng Background Image đơn bên dưới hoặc ảnh mặc định.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={addSlide}
+                className="gap-1.5"
+              >
+                <Plus className="w-4 h-4" /> Thêm ảnh slide đầu tiên
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {slides.map((url, idx) => {
+                const isFinal = form.finalSlideIndex === idx
+                return (
+                  <div
+                    key={idx}
+                    className={`border rounded-lg p-3 sm:p-4 transition-all ${
+                      isFinal
+                        ? 'border-[#3A53A3] bg-blue-50/40 ring-1 ring-[#3A53A3]/30'
+                        : 'border-gray-200 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
+                          {idx + 1}
+                        </span>
+                        <span className="text-sm font-semibold text-gray-800">
+                          Ảnh slide #{idx + 1}
+                        </span>
+                        {isFinal && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#3A53A3] text-white">
+                            ★ Ảnh dừng lại cuối cùng
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveSlide(idx, -1)}
+                          disabled={idx === 0}
+                          className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-600"
+                          title="Di chuyển lên"
+                        >
+                          <ArrowUp className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveSlide(idx, 1)}
+                          disabled={idx === slides.length - 1}
+                          className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-600"
+                          title="Di chuyển xuống"
+                        >
+                          <ArrowDown className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeSlide(idx)}
+                          className="p-1.5 rounded hover:bg-red-50 text-red-600 ml-1"
+                          title="Xoá ảnh này"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <ImagePicker
+                      value={url}
+                      onChange={(newUrl) => updateSlide(idx, newUrl)}
+                      label={`Chọn hoặc tải ảnh #${idx + 1}`}
+                      folder="hero"
+                    />
+
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                      <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                        <input
+                          type="radio"
+                          name="finalSlideRadio"
+                          checked={isFinal}
+                          onChange={() => setField('finalSlideIndex', idx)}
+                          className="w-4 h-4 text-[#3A53A3] border-gray-300 focus:ring-[#3A53A3]"
+                        />
+                        <span>
+                          Đặt ảnh này làm <strong>ảnh dừng lại cuối cùng</strong> sau khi slide chạy qua
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )
+              })}
+
+              <div className="pt-2 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-xs font-semibold">Tùy chọn dừng slide</Label>
+                  <select
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-[#3A53A3] focus:outline-none focus:ring-1 focus:ring-[#3A53A3]"
+                    value={form.finalSlideIndex ?? -1}
+                    onChange={(e) => setField('finalSlideIndex', parseInt(e.target.value, 10))}
+                  >
+                    <option value="-1">Lặp vô tận (không dừng)</option>
+                    {slides.map((_, i) => (
+                      <option key={i} value={i}>
+                        Dừng lại ở Ảnh #{i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    {form.finalSlideIndex === -1
+                      ? 'Slide sẽ tự động chuyển liên tục qua tất cả ảnh không ngừng.'
+                      : `Slide sẽ chạy lần lượt các ảnh và dừng lại cố định ở Ảnh #${(form.finalSlideIndex ?? 0) + 1}.`}
+                  </p>
+                </div>
+
+                <div>
+                  <Label className="text-xs font-semibold">Thời gian chuyển slide (giây)</Label>
+                  <Input
+                    type="number"
+                    min={2}
+                    max={20}
+                    step={1}
+                    value={form.slideInterval ?? 4}
+                    onChange={(e) =>
+                      setField('slideInterval', Math.max(2, parseInt(e.target.value, 10) || 4))
+                    }
+                    className="mt-1"
+                  />
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    Số giây mỗi ảnh hiển thị trước khi chuyển sang ảnh tiếp theo (mặc định 4 giây).
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

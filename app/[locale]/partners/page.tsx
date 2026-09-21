@@ -3,12 +3,12 @@
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
-import { ExternalLink, Award, BookOpen, Wrench, ArrowRight, Sparkles, Check } from 'lucide-react'
+import { ExternalLink, Award, ArrowRight, Check } from 'lucide-react'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Partner } from '@/lib/cms-types'
-import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 const fallbackPartners: Partner[] = [
   {
@@ -189,7 +189,7 @@ export default function PartnersPage() {
   const tFeature = useTranslations('partnersPage.featureList')
   const locale = useLocale()
   const { data: cms } = useCmsContext()
-  const partnersHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).partners as Record<string, unknown>) || {}
+  const { openRegistrationModal } = useRegistrationModal()
 
   // Deduplicate partners by semantic key to guarantee no repeated entries
   const rawPartners: Partner[] = cms.partners.length > 0 ? cms.partners : fallbackPartners
@@ -201,144 +201,12 @@ export default function PartnersPage() {
     })
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
-  const heroPartnersImage = (partnersHero?.backgroundImage as string) || ''
-  const heroWelcomeText = (((partnersHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
-  const heroBadge = heroWelcomeText || t('hero.badge')
-  const heroMainTitle = (((partnersHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
-  const heroSubtitle = (((partnersHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((partnersHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
-
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER – Light iSchool aesthetic matching Homepage
-      ─────────────────────────────────────────────────────────────── */}
-      <SubpageHero
-        badge={heroBadge}
-        title={locale === 'vi' ? 'Đối Tác Học Thuật' : 'Global Academic'}
-        highlightText={locale === 'vi' ? 'Quốc Tế & Kiểm Định' : 'Partners & Accreditation'}
-        subtitle={heroSubtitle}
-        tags={[
-          'Cognia & WASC Accreditation',
-          'Edmentum International',
-          'Cambridge Assessment',
-          'FabLab EIU Makerspace',
-        ]}
-        backgroundImage={heroPartnersImage || '/images/partners/partner-edmentum.jpg'}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          3 PILLARS OF GLOBAL ACADEMIC COLLABORATION
-      ─────────────────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-[#F6F5F1] border-b border-[#DEDDD6]">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={inViewViewport}
-            transition={{ duration: duration.normal, ease: easeOut }}
-            className="text-center mb-10 max-w-2xl mx-auto"
-          >
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-semibold mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              {t('pillarsBadge')}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
-              {t('pillarsTitle')}
-            </h2>
-            <p className="text-sm sm:text-base text-[#5C6069]">
-              {t('pillarsSubtitle')}
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-5 sm:gap-6 max-w-6xl mx-auto">
-            {/* Pillar 1: US Curriculum */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inViewViewport}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
-            >
-              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#2E4A9E]/[0.05] pointer-events-none select-none font-mono">
-                01
-              </span>
-              <div className="relative z-10">
-                <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <BookOpen className="w-6 h-6 text-[#2E4A9E]" />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#2E4A9E] block mb-1">
-                  {t('pillar1.title')}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
-                  {t('pillar1.partner')}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                  {t('pillar1.desc')}
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Pillar 2: British Assessment */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inViewViewport}
-              transition={{ duration: duration.normal, delay: 0.08, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
-            >
-              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#8DC63F]/[0.08] pointer-events-none select-none font-mono">
-                02
-              </span>
-              <div className="relative z-10">
-                <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <Award className="w-6 h-6 text-[#5C9024]" />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#5C9024] block mb-1">
-                  {t('pillar2.title')}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
-                  {t('pillar2.partner')}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                  {t('pillar2.desc')}
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Pillar 3: High-Tech Innovation */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inViewViewport}
-              transition={{ duration: duration.normal, delay: 0.16, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden"
-            >
-              <span className="absolute -top-6 -right-3 text-7xl font-black text-[#F26522]/[0.05] pointer-events-none select-none font-mono">
-                03
-              </span>
-              <div className="relative z-10">
-                <div className="w-12 h-12 bg-[#F26522]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <Wrench className="w-6 h-6 text-[#F26522]" />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F26522] block mb-1">
-                  {t('pillar3.title')}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-2">
-                  {t('pillar3.partner')}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                  {t('pillar3.desc')}
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────
           PARTNER SHOWCASE ROWS
       ─────────────────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="space-y-12 sm:space-y-16 max-w-6xl mx-auto">
             {partners.map((partner, index) => {
@@ -497,13 +365,14 @@ export default function PartnersPage() {
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2.5">{t('cta.title')}</h2>
             <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">{t('cta.subtitle')}</p>
-            <Link
-              href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+            <button
+              type="button"
+              onClick={() => openRegistrationModal({ source: 'partners-bottom-cta' })}
+              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             >
               <span>{t('cta.button')}</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </motion.div>
         </div>
       </section>

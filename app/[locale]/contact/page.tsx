@@ -86,14 +86,19 @@ export default function ContactPage() {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#1E3570] border border-[#DEDDD6] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
-                <span>{locale === 'vi' ? 'Thông Tin Trực Tiếp' : 'Direct Contacts'}</span>
+                <span>{locale === 'vi' ? 'Thông Tin Liên Hệ' : 'Contact Information'}</span>
               </div>
               <h2
-                className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-6"
+                className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-3"
                 style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
               >
-                {t('info.title')}
+                {locale === 'vi' ? 'Bắt đầu hành trình học tập của con cùng EPath' : "Begin Your Child's Learning Journey with EPath"}
               </h2>
+              <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-6">
+                {locale === 'vi'
+                  ? 'Mỗi học sinh có một năng lực, sở thích và định hướng khác nhau. EPath Education đồng hành cùng phụ huynh trong việc tìm hiểu chương trình học, đánh giá nhu cầu và xây dựng lộ trình giáo dục phù hợp cho từng giai đoạn phát triển của học sinh.'
+                  : 'Each student has unique strengths, interests, and aspirations. EPath Education partners with parents to explore curricula, evaluate needs, and tailor educational pathways suited to each developmental stage.'}
+              </p>
 
               <div className="space-y-4 mb-8">
                 {/* Address Card */}
@@ -102,8 +107,13 @@ export default function ContactPage() {
                     <MapPin className="w-6 h-6 text-[#2E4A9E]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.address')}</h3>
-                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">{address}</p>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{locale === 'vi' ? 'Địa chỉ' : 'Address'}</h3>
+                    <p className="text-xs font-bold text-[#1E3570] mb-0.5">EPath Education</p>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
+                      {locale === 'vi'
+                        ? '38 Trần Phú, Phường Thủ Dầu Một, Hồ Chí Minh'
+                        : '38 Tran Phu Street, Thu Dau Mot Ward, Ho Chi Minh City'}
+                    </p>
                   </div>
                 </div>
 
@@ -113,9 +123,9 @@ export default function ContactPage() {
                     <Phone className="w-6 h-6 text-[#5C9024]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.phone')}</h3>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{locale === 'vi' ? 'Thông tin liên hệ' : 'Contact Info'}</h3>
                     <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                      Hotline: <strong className="text-[#1E3570]">{hotline}</strong>
+                      Hotline: <strong className="text-[#1E3570]">0937 514 896</strong>
                     </p>
                   </div>
                 </div>
@@ -126,8 +136,12 @@ export default function ContactPage() {
                     <Mail className="w-6 h-6 text-[#F26522]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">{t('info.email')}</h3>
-                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">{email}</p>
+                    <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">Email</h3>
+                    <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
+                      <a href="mailto:infor@epath.edu.vn" className="text-[#5C6069] hover:text-[#2E4A9E] transition-colors">
+                        infor@epath.edu.vn
+                      </a>
+                    </p>
                   </div>
                 </div>
 

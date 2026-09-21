@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Sprout, Book, GraduationCap, Trophy } from 'lucide-react'
 
@@ -9,15 +8,11 @@ import { useCmsContext } from '@/lib/cms-context'
 import type { Program, Locale } from '@/lib/cms-types'
 import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import {
-  ProgramsHero,
-  ProgramsToolbar,
-  ProgramsIntro,
   ProgramsRoadmap,
   ProgramsCatalog,
   ProgramsEdOptions,
   ProgramsPersonalized,
   ProgramsCta,
-  ProgramDetailModal,
   type LevelDef,
 } from '@/components/programs'
 
@@ -65,11 +60,6 @@ export default function ProgramsPage() {
   const locale = useLocale() as Locale
 
   const { data: cms } = useCmsContext()
-  const programsHero =
-    ((cms.heroContent as Record<string, Record<string, unknown> | null>).programs as Record<
-      string,
-      unknown
-    >) || {}
 
   // Fallback to DEFAULT_PROGRAMS if cms.programs is empty
   const programs: Program[] = cms.programs && cms.programs.length > 0 ? cms.programs : (DEFAULT_PROGRAMS as Program[])
@@ -77,7 +67,6 @@ export default function ProgramsPage() {
   // Interactive Filter & Search States
   const [selectedLevel, setSelectedLevel] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null)
 
   // Filtered levels based on user selection
   const filteredLevels =
@@ -85,76 +74,15 @@ export default function ProgramsPage() {
       ? levelDefs
       : levelDefs.filter((lvl) => lvl.id === selectedLevel)
 
-  // Hero contents
-  const heroBackgroundImage = (programsHero?.backgroundImage as string) || ''
-  const heroWelcome =
-    (((programsHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale] as string) ||
-    (((programsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) ||
-    (locale === 'vi' ? 'Lộ trình giáo dục chuẩn Hoa Kỳ' : 'US-standard Educational Pathway')
-  const heroTitle =
-    (((programsHero?.title as Record<string, string | undefined>) || {})[locale] as string) ||
-    (((programsHero?.title as Record<string, string | undefined>) || {})?.vi as string) ||
-    t('hero.title')
-  const heroSubtitle =
-    (((programsHero?.subtitle as Record<string, string | undefined>) || {})[locale] as string) ||
-    (((programsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) ||
-    t('hero.subtitle')
-
-  // Selected program metadata for modal
-  const selectedLevelDef = selectedProgram
-    ? levelDefs.find((l) => l.id === selectedProgram.level) || levelDefs[0]
-    : levelDefs[0]
-
   const isVi = locale === 'vi'
 
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          1. HERO BANNER WITH PRESTIGIOUS VALUE BADGES
-      ─────────────────────────────────────────────────────────────── */}
-      <ProgramsHero
-        welcomeText={heroWelcome}
-        title={heroTitle}
-        subtitle={heroSubtitle}
-        backgroundImage={heroBackgroundImage}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          2. EDUCATIONAL PHILOSOPHY & CONTINUOUS PATHWAY NARRATIVE
-      ─────────────────────────────────────────────────────────────── */}
-      <ProgramsIntro
-        p1={t('pathwayIntro.p1')}
-        p2={t('pathwayIntro.p2')}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          3. CONTINUOUS K-12 ROADMAP INFOGRAPHIC
+          1. CONTINUOUS K-12 ROADMAP INFOGRAPHIC
       ─────────────────────────────────────────────────────────────── */}
       <ProgramsRoadmap locale={locale} />
 
-      {/* ─────────────────────────────────────────────────────────────
-          4. REFINED STICKY ACADEMIC LEVEL NAVIGATION & SEARCH
-      ─────────────────────────────────────────────────────────────── */}
-      <ProgramsToolbar
-        locale={locale}
-        selectedLevel={selectedLevel}
-        onChangeSelectedLevel={setSelectedLevel}
-        searchQuery={searchQuery}
-        onChangeSearchQuery={setSearchQuery}
-        levelDefs={levelDefs}
-        translations={{
-          all: t('all'),
-          filter: t('filter'),
-          searchPlaceholder:
-            isVi ? 'Tìm môn học, chứng chỉ, độ tuổi...' : 'Search subjects, diplomas, ages...',
-          levels: {
-            kindergarten: t('levels.kindergarten'),
-            elementary: t('levels.elementary'),
-            middle: t('levels.middle'),
-            high: t('levels.high'),
-          },
-        }}
-      />
 
       {/* ─────────────────────────────────────────────────────────────
           5. CURRICULUM CATALOG SHOWCASE (Cards with View Details & Register)
@@ -168,7 +96,6 @@ export default function ProgramsPage() {
           setSearchQuery('')
           setSelectedLevel('all')
         }}
-        onSelectProgram={(p) => setSelectedProgram(p)}
         translations={{
           curriculum: t('curriculum'),
           register: t('register'),
@@ -261,23 +188,6 @@ export default function ProgramsPage() {
           button: t('cta.button'),
         }}
       />
-
-      {/* ─────────────────────────────────────────────────────────────
-          9. PROGRAM DETAIL MODAL
-      ─────────────────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {selectedProgram && (
-          <ProgramDetailModal
-            key={selectedProgram.id}
-            program={selectedProgram}
-            locale={locale}
-            levelLabel={t(`levels.${selectedLevelDef.id}`)}
-            levelColor={selectedLevelDef.color}
-            levelBgColor={selectedLevelDef.bgColor}
-            onClose={() => setSelectedProgram(null)}
-          />
-        )}
-      </AnimatePresence>
     </>
   )
 }

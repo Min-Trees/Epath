@@ -22,9 +22,10 @@ interface Props {
   p1?: string
   p2?: string
   compact?: boolean
+  isTop?: boolean
 }
 
-export function ProgramsIntro({ p1, p2, compact }: Props) {
+export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
   const locale = useLocale()
   const isVi = locale === 'vi'
 
@@ -177,7 +178,7 @@ export function ProgramsIntro({ p1, p2, compact }: Props) {
       ]
 
   return (
-    <section className={`${compact ? 'py-10 sm:py-14' : 'py-14 sm:py-20'} bg-[#F6F5F1] relative overflow-hidden border-b border-[#DEDDD6]`}>
+    <section className={`${compact ? 'py-10 sm:py-14' : isTop ? 'pt-28 sm:pt-32 pb-14 sm:pb-20' : 'py-14 sm:py-20'} bg-[#F6F5F1] relative overflow-hidden border-b border-[#DEDDD6]`}>
       {/* Decorative ambient background accents */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#8DC63F]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#1E3570]/5 rounded-full blur-3xl pointer-events-none" />

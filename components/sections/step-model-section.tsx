@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { ClipboardCheck, Map, Laptop, MessageCircle, Award, ListChecks } from 'lucide-react'
-import { duration, easeOut, useSectionActive } from '@/lib/motion-presets'
+import { duration, easeOut, inViewViewport, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { AdmissionStep, Locale } from '@/lib/cms-types'
@@ -69,9 +69,9 @@ export function StepModelSection() {
     >
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={inViewViewport}
           transition={{ duration: duration.normal, ease: easeOut }}
           className="text-center mb-16"
         >
@@ -123,13 +123,13 @@ export function StepModelSection() {
                     )}
 
                     <motion.div
-                      initial={{ opacity: 0, y: 24 }}
+                      initial={{ opacity: 0, y: 16 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
+                      viewport={inViewViewport}
                       transition={{
-                        duration: duration.slow,
+                        duration: duration.normal,
                         ease: easeOut,
-                        delay: idx * 0.12,
+                        delay: idx * 0.08,
                       }}
                       className="step-icon-wrap relative"
                       style={{ backgroundColor: accent.color }}
@@ -138,13 +138,13 @@ export function StepModelSection() {
                     </motion.div>
 
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 16 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
+                      viewport={inViewViewport}
                       transition={{
-                        duration: duration.slow,
+                        duration: duration.normal,
                         ease: easeOut,
-                        delay: idx * 0.12 + 0.1,
+                        delay: idx * 0.08 + 0.04,
                       }}
                       className="step-card relative overflow-hidden"
                       style={{ backgroundColor: accent.bg }}
@@ -214,13 +214,13 @@ export function StepModelSection() {
                       />
                     )}
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.6 }}
+                      initial={{ opacity: 0, scale: 0.92 }}
                       whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true, amount: 0.4 }}
+                      viewport={inViewViewport}
                       transition={{
                         duration: duration.normal,
                         ease: easeOut,
-                        delay: idx * 0.12,
+                        delay: idx * 0.08,
                       }}
                       className="step-icon-mobile"
                       style={{ backgroundColor: accent.color }}
@@ -229,13 +229,13 @@ export function StepModelSection() {
                     </motion.div>
 
                     <motion.div
-                      initial={{ opacity: 0, x: 16 }}
+                      initial={{ opacity: 0, x: 14 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
+                      viewport={inViewViewport}
                       transition={{
                         duration: duration.normal,
                         ease: easeOut,
-                        delay: idx * 0.12 + 0.1,
+                        delay: idx * 0.08 + 0.04,
                       }}
                       className="step-card-mobile"
                       style={{ backgroundColor: accent.bg }}

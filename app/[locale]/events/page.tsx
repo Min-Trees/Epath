@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
 import { Calendar, MapPin, ArrowRight, Sparkles, Users, Tag } from 'lucide-react'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
-import { SubpageHero } from '@/components/subpages/subpage-hero'
 
 const fallbackEvents = [
   {
@@ -96,6 +96,7 @@ export default function EventsPage() {
   const t = useTranslations('events')
   const locale = useLocale()
   const isVi = locale === 'vi'
+  const { openRegistrationModal } = useRegistrationModal()
 
   const localizeStatus = (status: string) => {
     if (isVi) return status
@@ -153,37 +154,29 @@ export default function EventsPage() {
 
   const { data: cms } = useCmsContext()
   const events = cms.events && cms.events.length > 0 ? cms.events : fallbackEvents
-  const eventsHero = ((cms.heroContent as Record<string, Record<string, unknown> | null>).events as Record<string, unknown>) || {}
-
-  const heroImage = (eventsHero?.backgroundImage as string) || ''
-  const welcomeText = (((eventsHero?.welcomeTitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) || ''
-  const mainTitle = (((eventsHero?.title as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.title as Record<string, string | undefined>) || {})?.vi as string) || t('hero.title')
-  const heroSubtitle = (((eventsHero?.subtitle as Record<string, string | undefined>) || {})[locale as 'vi' | 'en'] as string) || (((eventsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) || t('hero.subtitle')
 
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER – Light iSchool aesthetic matching Homepage
-      ─────────────────────────────────────────────────────────────── */}
-      <SubpageHero
-        badge={welcomeText || (isVi ? 'Sự kiện & Hoạt động học thuật' : 'Academic Events')}
-        title={locale === 'vi' ? 'Sự Kiện & Hội Thảo' : 'Academic Events'}
-        highlightText={locale === 'vi' ? 'Học Thuật Quốc Tế' : '& Workshops'}
-        subtitle={heroSubtitle}
-        tags={[
-          locale === 'vi' ? 'Hội Thảo Song Bằng' : 'Dual Diploma Symposium',
-          locale === 'vi' ? 'Workshop STEAM & Robotics' : 'STEAM & Robotics Workshop',
-          locale === 'vi' ? 'Tọa Đàm Cambridge' : 'Cambridge Academic Talk',
-          locale === 'vi' ? 'Open House Trải Nghiệm' : 'Open House Experience',
-        ]}
-        backgroundImage={heroImage || '/images/about/about-story.jpg'}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
           EVENTS GRID
       ─────────────────────────────────────────────────────────────── */}
-      <section className="py-10 sm:py-14 bg-[#F6F5F1]">
+      <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-[#F6F5F1]">
         <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EAEFFB] text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{isVi ? 'Hoạt động học thuật & kết nối' : 'Academic & Community Events'}</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#20242B] tracking-tight mb-3">
+              {locale === 'vi' ? 'Sự Kiện & Hội Thảo Học Thuật' : 'Academic Events & Workshops'}
+            </h1>
+            <p className="text-sm sm:text-base text-[#5C6069] leading-relaxed">
+              {isVi
+                ? 'Tham gia các buổi hội thảo chuyên đề, workshop công nghệ và ngày hội trải nghiệm cùng đội ngũ học vụ EPath.'
+                : 'Join specialized academic symposiums, tech workshops, and interactive open days with the EPath academic team.'}
+            </p>
+          </div>
           {events.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl border border-[#DEDDD6] max-w-md mx-auto shadow-sm">
               <Calendar className="w-12 h-12 text-[#2E4A9E]/30 mx-auto mb-3" />
@@ -320,13 +313,14 @@ export default function EventsPage() {
           >
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2.5">{t('cta.title')}</h2>
             <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">{t('cta.subtitle')}</p>
-            <Link
-              href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+            <button
+              type="button"
+              onClick={() => openRegistrationModal({ source: 'events-bottom-cta' })}
+              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             >
               <span>{t('cta.button')}</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </motion.div>
         </div>
       </section>

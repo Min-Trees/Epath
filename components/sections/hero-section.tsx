@@ -119,6 +119,62 @@ export function HeroSection({
   const backgroundImage = (hero?.backgroundImage as string) || ''
   const activeBackground = backgroundImage || '/images/hero/hero-bg.jpg'
 
+  // Slideshow configuration
+  const rawSlides = (hero?.slides as string[] | undefined) || []
+  const slides = rawSlides.filter((s) => typeof s === 'string' && s.trim().length > 0)
+  const finalSlideIndex = typeof hero?.finalSlideIndex === 'number' ? hero.finalSlideIndex : -1
+  const slideInterval =
+    typeof hero?.slideInterval === 'number' && hero.slideInterval > 0
+      ? hero.slideInterval
+      : 4
+
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
+  const [isStopped, setIsStopped] = useState(false)
+  const hasPassedEndRef = useRef(false)
+
+  // Reset slide state when page or slides change
+  useEffect(() => {
+    setCurrentSlideIndex(0)
+    setIsStopped(false)
+    hasPassedEndRef.current = false
+  }, [hero?.id, slides.length, finalSlideIndex])
+
+  // Slideshow timer logic
+  useEffect(() => {
+    if (slides.length <= 1 || isStopped) return
+
+    const intervalMs = slideInterval * 1000
+    const timer = setInterval(() => {
+      setCurrentSlideIndex((prev) => {
+        const next = (prev + 1) % slides.length
+
+        // Track when we have cycled through to the end of the slide list
+        if (prev === slides.length - 1) {
+          hasPassedEndRef.current = true
+        }
+
+        // Stopping check:
+        if (finalSlideIndex >= 0 && finalSlideIndex < slides.length) {
+          // If finalSlideIndex is the last slide, stop as soon as we reach it
+          if (finalSlideIndex === slides.length - 1 && next === finalSlideIndex) {
+            setIsStopped(true)
+            return next
+          }
+          // If finalSlideIndex is earlier (e.g. 0 or 1), wait until subsequent slides
+          // have been cycled through at least once before stopping on it
+          if (hasPassedEndRef.current && next === finalSlideIndex) {
+            setIsStopped(true)
+            return next
+          }
+        }
+
+        return next
+      })
+    }, intervalMs)
+
+    return () => clearInterval(timer)
+  }, [slides.length, isStopped, finalSlideIndex, slideInterval])
+
   // Marquee items according to current locale
   const marqueeItems = locale === 'en' ? MARQUEE_ITEMS_EN : MARQUEE_ITEMS_VI
 
@@ -151,7 +207,7 @@ export function HeroSection({
     if (url.startsWith('#')) {
       const map: Record<string, string> = {
         '#programs': '/programs',
-        '#contact': '/contact',
+        '#contact': '/admissions#contact',
         '#about': '/about',
         '#admissions': '/admissions',
       }
@@ -182,8 +238,8 @@ export function HeroSection({
           aria-hidden="true"
         />
 
-        {/* ── Layer 1B: Hero media (image / video) on top of gray ─── */}
-        <div className="absolute inset-0 z-[1]">
+        {/* ── Layer 1B: Hero media (slideshow / image / video) on top of gray ─── */}
+        <div className="absolute inset-0 z-[1] overflow-hidden">
           {videoUrl && !videoFailed ? (
             <>
               {toEmbedUrl(videoUrl).kind === 'iframe' ? (
@@ -208,6 +264,29 @@ export function HeroSection({
                 />
               )}
             </>
+          ) : slides.length > 0 ? (
+            slides.map((slideUrl, idx) => {
+              const isActive = idx === currentSlideIndex
+              return (
+                <div
+                  key={idx}
+                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none"
+                  style={{
+                    opacity: isActive ? 1 : 0,
+                    zIndex: isActive ? 2 : 1,
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={slideUrl}
+                    alt=""
+                    className={`w-full h-full object-cover transition-transform duration-[7000ms] ease-out ${
+                      isActive ? 'scale-105' : 'scale-100'
+                    }`}
+                  />
+                </div>
+              )
+            })
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -314,6 +393,25 @@ export function HeroSection({
             </div>
           </div>
         </div>
+
+        {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ─── */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-14 right-6 sm:right-12 z-30 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 shadow-lg">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentSlideIndex(idx)}
+                aria-label={`Chuyển tới slide ${idx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === currentSlideIndex
+                    ? 'w-6 bg-[#8bc53f]'
+                    : 'w-2 bg-white/50 hover:bg-white/90'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* ── Layer 4: Tags Marquee Strip – floating over the hero ─────
             Anchored to the bottom edge of the hero so it sits ON TOP of

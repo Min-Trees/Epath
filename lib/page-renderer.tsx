@@ -2,6 +2,8 @@ import 'server-only'
 import { getPageSections, type PageSection, type PageSlug } from '@/lib/pages-repo'
 import { loadHeroContentForPage } from '@/lib/cms-data'
 import { HeroSection } from '@/components/sections/hero-section'
+import { IntroSection } from '@/components/sections/intro-section'
+import { FeaturedCoursesSection } from '@/components/sections/featured-courses-section'
 import { CoreValuesSection } from '@/components/sections/core-values-section'
 import { LearningPathwaysSection } from '@/components/sections/learning-pathways-section'
 import { StepModelSection } from '@/components/sections/step-model-section'
@@ -16,11 +18,12 @@ type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }
 
 // Map each section type to its underlying component. We expose a single
 // canonical component per visual block so duplicate section types (e.g.
-// 'hero' + 'intro', 'vision' + 'mission', 'whyEdmentum') automatically
-// share the same renderer and dedupe correctly downstream.
+// 'vision' + 'mission', 'whyEdmentum') automatically share the same
+// renderer and dedupe correctly downstream.
 const SECTION_COMPONENT: Record<string, SectionComponent> = {
   hero: ({ initialHero }) => <HeroSection initialHero={initialHero ?? null} />,
-  intro: ({ initialHero }) => <HeroSection initialHero={initialHero ?? null} />,
+  intro: () => <IntroSection />,
+  featuredCourses: () => <FeaturedCoursesSection />,
   coreValues: () => <CoreValuesSection />,
   learningPathways: () => <LearningPathwaysSection />,
   stepModel: () => <StepModelSection />,
@@ -42,7 +45,8 @@ const SECTION_COMPONENT: Record<string, SectionComponent> = {
 // the same renderer collapse to the same key.
 const SECTION_DEDUP_KEY: Record<string, string> = {
   hero: 'hero',
-  intro: 'hero',
+  intro: 'intro',
+  featuredCourses: 'featuredCourses',
   coreValues: 'coreValues',
   vision: 'coreValues',
   mission: 'coreValues',
@@ -63,15 +67,11 @@ const SECTION_DEDUP_KEY: Record<string, string> = {
 const DEFAULT_SECTIONS: Record<PageSlug, string[]> = {
   home: [
     'hero',
+    'intro',
+    'featuredCourses',
     'coreValues',
-    'learningPathways',
-    'stepModel',
-    'statistics',
-    'achievements',
     'testimonials',
-    'partners',
     'faqs',
-    'cta',
   ],
   about: ['hero', 'coreValues', 'statistics', 'cta'],
   programs: ['hero', 'learningPathways', 'testimonials', 'faq' as never, 'cta'],
@@ -92,7 +92,24 @@ export async function getActivePageSections(pageId: PageSlug): Promise<string[]>
       .filter((s: PageSection) => s.isActive)
       .sort((a: PageSection, b: PageSection) => a.order - b.order)
     if (active.length === 0) return DEFAULT_SECTIONS[pageId] ?? []
-    return active.map((s) => s.type)
+    let types = active.map((s) => s.type)
+    if (pageId === 'home') {
+      const removedFromHome = new Set([
+        'partners',
+        'whyEdmentum',
+        'stepModel',
+        'admissionSteps',
+        'statistics',
+        'achievements',
+        'cta',
+        'pricing',
+      ])
+      types = types.filter((t) => !removedFromHome.has(t))
+      if (!types.includes('featuredCourses') || !types.includes('coreValues')) {
+        return DEFAULT_SECTIONS.home
+      }
+    }
+    return types
   } catch (err) {
     console.warn(`[page-renderer] failed to load sections for ${pageId}:`, (err as Error).message)
     return DEFAULT_SECTIONS[pageId] ?? []

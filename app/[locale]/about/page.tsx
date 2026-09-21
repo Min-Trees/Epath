@@ -1,29 +1,15 @@
 'use client'
 
-import { Target, Eye, Heart, Users, BookOpen, Sparkles, GraduationCap, Award, ArrowRight, CheckCircle2, Globe2, Trophy, Cpu, ShieldCheck } from 'lucide-react'
+import { Target, Eye, Heart, Users, BookOpen, Sparkles, GraduationCap, Award, ArrowRight, CheckCircle2, Globe2, Trophy, Cpu, ShieldCheck, Compass } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
-import { SubpageHero } from '@/components/subpages/subpage-hero'
 
-interface MilestoneItem {
-  year: string
-  title: { vi: string; en: string }
-  description: { vi: string; en: string }
-}
-
-// Fallback milestones
-const fallbackMilestones = [
-  { year: '2014', titleKey: 'm1Title', descKey: 'm1Desc' },
-  { year: '2018', titleKey: 'm2Title', descKey: 'm2Desc' },
-  { year: '2020', titleKey: 'm3Title', descKey: 'm3Desc' },
-  { year: '2022', titleKey: 'm4Title', descKey: 'm4Desc' },
-  { year: '2024', titleKey: 'm5Title', descKey: 'm5Desc' },
-]
 
 // Fallback Faculty & Academic Board
 const fallbackFaculty = [
@@ -101,36 +87,18 @@ function pick(v: { vi?: string; en?: string } | string | undefined, locale: Loca
 export default function AboutPage() {
   const t = useTranslations('about')
   const locale = useLocale() as Locale
+  const isVi = locale === 'vi'
+  const { openRegistrationModal } = useRegistrationModal()
 
   const { data: cms } = useCmsContext()
   const aboutContent = cms.aboutContent
   const coreValues = cms.coreValues
-
-  // Parse milestones from CMS or use fallback
-  let milestones: MilestoneItem[] = []
-  if (aboutContent?.milestones) {
-    try {
-      const parsedMilestones = JSON.parse(aboutContent.milestones)
-      if (parsedMilestones.length > 0) {
-        milestones = parsedMilestones
-      }
-    } catch {
-      // Use fallback milestones
-    }
-  }
 
   // Intro paragraphs
   const introText = pick(aboutContent?.introContent, locale)
   const introParagraphs = introText
     ? introText.split('\n\n').filter(Boolean)
     : [t('intro.p1'), t('intro.p2'), t('intro.p3'), t('intro.p4'), t('intro.p5')]
-
-  // Use CMS milestones or fallback
-  const displayMilestones = milestones.length > 0 ? milestones : fallbackMilestones.map(m => ({
-    year: m.year,
-    title: { vi: t(`milestones.${m.titleKey}`), en: t(`milestones.${m.titleKey}`) },
-    description: { vi: t(`milestones.${m.descKey}`), en: t(`milestones.${m.descKey}`) },
-  }))
 
   // Deduplicate and cap CMS core values to the canonical 6 values
   const uniqueCoreValues = (coreValues || [])
@@ -163,26 +131,9 @@ export default function AboutPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          HERO BANNER – Clean light iSchool aesthetic matching Homepage
-      ─────────────────────────────────────────────────────────────── */}
-      <SubpageHero
-        badge={pick(aboutContent?.introTitle, locale) || t('intro.title')}
-        title={locale === 'vi' ? 'Hệ Thống Giáo Dục' : 'Academic Journey'}
-        highlightText={locale === 'vi' ? 'EPath Education' : 'EPath Education'}
-        subtitle={t('hero.subtitle')}
-        tags={[
-          locale === 'vi' ? 'Kiểm Định Cognia & WASC' : 'Cognia & WASC Accredited',
-          locale === 'vi' ? 'Chương Trình Edmentum K-12' : 'Edmentum K-12 Curriculum',
-          locale === 'vi' ? 'Đội Ngũ 50/50 Quốc Tế & Song Ngữ' : '50/50 Global & Bilingual Faculty',
-          locale === 'vi' ? 'Cố Vấn Học Thuật 1:1' : '1:1 Academic Advising',
-        ]}
-        backgroundImage={heroImage || '/images/about/about-story.jpg'}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
           INTRO & STATS – Interactive cards & image zoom
       ─────────────────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section id="about" className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
@@ -262,59 +213,184 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          VISION & MISSION – Luxury rounded cards with watermark numbers
+          VISION & MISSION – Compact & Wide in 1 section
       ─────────────────────────────────────────────────────────────── */}
-      <section id="vision" className="py-12 sm:py-16 bg-[#F6F5F1]">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+      <section id="vision" className="py-10 sm:py-12 bg-[#F6F5F1]">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={inViewViewport}
+            transition={{ duration: duration.normal, ease: easeOut }}
+            className="text-center mb-6 sm:mb-8 max-w-3xl mx-auto"
+          >
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isVi ? 'Định hướng phát triển' : 'Strategic Foundation'}</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#20242B] mb-2 leading-tight">
+              {isVi ? 'Tầm Nhìn & Sứ Mệnh EPath Education' : 'Vision & Mission of EPath Education'}
+            </h2>
+            <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed max-w-2xl mx-auto">
+              {isVi
+                ? 'Kim chỉ nam định hướng mọi giải pháp học thuật và hoạt động đồng hành, xây dựng bệ phóng vững chắc để học sinh Việt Nam tự tin vươn ra thế giới.'
+                : 'Guiding all academic solutions and partnerships, creating a sustainable launchpad for Vietnamese students to confidently integrate into the world.'}
+            </p>
+          </motion.div>
+
+          {/* Cards Grid - Wider max-w-7xl and Compact */}
+          <div className="grid md:grid-cols-2 gap-5 lg:gap-6 items-stretch">
+            {/* 1. VISION CARD */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.slow, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group relative overflow-hidden"
+              className="bg-white rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between"
             >
-              {/* Watermark 01 */}
-              <span className="absolute -top-6 -right-3 text-7xl sm:text-8xl font-black text-[#1E3570]/[0.04] pointer-events-none select-none font-mono">
-                01
-              </span>
-              <div className="w-12 h-12 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
-                <Eye className="w-6 h-6 text-[#2E4A9E]" />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#1E3570] mb-3">
-                {pick(aboutContent?.visionTitle, locale) || t('vision')}
-              </h3>
-              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base relative z-10">
-                <p>{pick(aboutContent?.visionContent, locale) || t('visionText')}</p>
-                <p>{t('visionP2')}</p>
-                <p className="p-4 rounded-xl bg-[#2E4A9E]/5 border-l-4 border-[#2E4A9E] text-[#1E3570] font-medium leading-relaxed text-sm">
-                  <strong className="text-[#2E4A9E]">{t('vision')}: </strong>
-                  {t('visionHighlight')}
+              <div>
+                {/* Header Badge & Icon */}
+                <div className="flex items-center justify-between gap-3 mb-3.5">
+                  <div className="w-10 h-10 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-108 shadow-xs">
+                    <Eye className="w-5 h-5 text-[#2E4A9E]" />
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#2E4A9E]/10 text-[#2E4A9E] border border-[#2E4A9E]/20">
+                    {isVi ? 'Tầm nhìn chiến lược' : 'Strategic Vision'}
+                  </span>
+                </div>
+
+                <h3 className="text-lg sm:text-xl font-black text-[#1E3570] mb-1">
+                  {pick(aboutContent?.visionTitle, locale) || t('vision')}
+                </h3>
+                <p className="text-xs font-semibold text-[#2E4A9E] mb-3">
+                  {isVi ? 'Kiến tạo nền tảng giáo dục quốc tế bền vững' : 'Building a Sustainable Global Education Pathway'}
                 </p>
+
+                {/* Lead Quote */}
+                <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#2E4A9E] mb-4">
+                  <p className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed">
+                    “{pick(aboutContent?.visionContent, locale) || t('visionText')}”
+                  </p>
+                </div>
+
+                {/* Key Strategic Pillars */}
+                <div className="space-y-2 mb-4">
+                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider">
+                    {isVi ? 'Trụ Cột Phát Triển Dài Hạn' : 'Key Strategic Pillars'}
+                  </h4>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <Globe2 className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Tiếp cận toàn cầu: ' : 'Global access: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Xóa bỏ rào cản tài chính & địa lý, mang bằng cấp chuẩn Mỹ đến mọi học sinh.' : 'Accessible US-accredited diplomas for all students.'}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <BookOpen className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Lộ trình K–12: ' : 'K-12 pathway: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Hành trình xuyên suốt từ Mầm non đến THPT, đảm bảo liên tục không đứt gãy.' : 'Continuous seamless journey from Kindergarten through High School.'}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <Sparkles className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Tư duy suốt đời: ' : 'Lifelong mindset: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Nuôi dưỡng niềm say mê tri thức, tự tin hội nhập và thích ứng toàn cầu.' : 'Fostering intellectual passion and global adaptability.'}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Highlight Bottom Box */}
+              <div className="p-2.5 rounded-xl bg-[#2E4A9E]/5 border border-[#2E4A9E]/20 mt-1">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2E4A9E] shrink-0" />
+                  <p className="text-xs text-[#20242B] font-medium truncate">
+                    {t('visionHighlight')}
+                  </p>
+                </div>
               </div>
             </motion.div>
 
+            {/* 2. MISSION CARD */}
             <motion.div
               id="mission"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
-              transition={{ duration: duration.slow, delay: 0.12, ease: easeOut }}
-              className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-400 group relative overflow-hidden"
+              transition={{ duration: duration.slow, delay: 0.08, ease: easeOut }}
+              className="bg-white rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between"
             >
-              {/* Watermark 02 */}
-              <span className="absolute -top-6 -right-3 text-7xl sm:text-8xl font-black text-[#8DC63F]/[0.08] pointer-events-none select-none font-mono">
-                02
-              </span>
-              <div className="w-12 h-12 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center mb-4 transition-transform duration-400 group-hover:scale-110">
-                <Target className="w-6 h-6 text-[#5C9024]" />
+              <div>
+                {/* Header Badge & Icon */}
+                <div className="flex items-center justify-between gap-3 mb-3.5">
+                  <div className="w-10 h-10 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-108 shadow-xs">
+                    <Target className="w-5 h-5 text-[#5C9024]" />
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#8DC63F]/15 text-[#5C9024] border border-[#8DC63F]/30">
+                    {isVi ? 'Sứ mệnh hành động' : 'Action Mission'}
+                  </span>
+                </div>
+
+                <h3 className="text-lg sm:text-xl font-black text-[#1E3570] mb-1">
+                  {pick(aboutContent?.missionTitle, locale) || t('mission')}
+                </h3>
+                <p className="text-xs font-semibold text-[#5C9024] mb-3">
+                  {isVi ? 'Đồng hành toàn diện cùng học sinh & gia đình' : 'Comprehensive Partnership with Learners & Families'}
+                </p>
+
+                {/* Lead Quote */}
+                <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#8DC63F] mb-4">
+                  <p className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed">
+                    “{pick(aboutContent?.missionContent, locale) || t('missionText')}”
+                  </p>
+                </div>
+
+                {/* Key Mission Pillars */}
+                <div className="space-y-2 mb-4">
+                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider">
+                    {isVi ? 'Trụ Cột Hành Động Cốt Lõi' : 'Core Action Pillars'}
+                  </h4>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <Users className="w-4 h-4 text-[#5C9024] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Đồng hành 3 bên: ' : 'Tripartite partnership: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Cố vấn học thuật 1:1 đồng hành cùng phụ huynh và học sinh từng giai đoạn.' : '1:1 Academic mentorship guiding student and parent progress.'}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <GraduationCap className="w-4 h-4 text-[#5C9024] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Chuẩn hóa quốc tế: ' : 'Standardized excellence: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Tích hợp Edmentum K-12, khảo thí Cambridge và thực nghiệm FabLab EIU.' : 'Combining Edmentum K-12, Cambridge ESOL, and FabLab EIU.'}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
+                    <Award className="w-4 h-4 text-[#5C9024] shrink-0" />
+                    <p className="text-xs text-[#20242B]">
+                      <strong className="font-bold">{isVi ? 'Năng lực toàn diện: ' : '21st Century skills: '}</strong>
+                      <span className="text-[#5C6069]">{isVi ? 'Rèn luyện tự học, tư duy phản biện và xây dựng Student Portfolio cạnh tranh.' : 'Self-directed learning, critical thinking, and global portfolios.'}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#1E3570] mb-3">
-                {pick(aboutContent?.missionTitle, locale) || t('mission')}
-              </h3>
-              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base relative z-10">
-                <p>{pick(aboutContent?.missionContent, locale) || t('missionText')}</p>
-                <p>{t('missionP2')}</p>
+
+              {/* Highlight Bottom Box */}
+              <div className="p-2.5 rounded-xl bg-[#8DC63F]/10 border border-[#8DC63F]/30 mt-1">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#5C9024] shrink-0" />
+                  <p className="text-xs text-[#20242B] font-medium truncate">
+                    {t('missionP2')}
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -399,60 +475,88 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          MILESTONES TIMELINE – Light iSchool style matching Homepage
+          EPATH LEARNING PATHWAY – Foundation Stage (K-8)
       ─────────────────────────────────────────────────────────────── */}
-      <section
-        className="py-12 sm:py-16 relative overflow-hidden bg-[#F6F5F1] border-y border-[#DEDDD6]"
-      >
-        <div className="container mx-auto px-4 relative z-10">
+      <section id="pathway" className="py-10 sm:py-14 bg-[#F6F5F1] border-t border-[#DEDDD6]">
+        <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.normal, ease: easeOut }}
-            className="text-center mb-10 max-w-2xl mx-auto"
+            className="text-center mb-8 max-w-2xl mx-auto"
           >
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#DEDDD6] text-[#1E3570] text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#8DC63F]" />
-              {t('milestones.title')}
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#1E3570]/10 text-[#1E3570] text-xs font-bold uppercase tracking-wider mb-2.5">
+              <BookOpen className="w-3.5 h-3.5 text-[#8DC63F]" />
+              <span>{locale === 'vi' ? 'Giai đoạn Nền tảng Học thuật' : 'Foundation Academic Stage'}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-2" style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}>
-              {t('milestones.title')}
+            <h2 className="text-2xl sm:text-3xl font-black text-[#1E3570] mb-2">
+              {locale === 'vi' ? 'Xây Dựng Năng Lực Học Thuật & Tư Duy Quốc Tế (Mầm non – Lớp 8)' : 'Building Core Academic & Global Competencies (K–8)'}
             </h2>
-            <p className="text-sm sm:text-base text-[#5C6069]">
-              {t('milestones.subtitle')}
+            <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
+              {locale === 'vi'
+                ? 'Mục tiêu quan trọng nhất trong giai đoạn nền tảng không phải bằng cấp mà là xây dựng năng lực cốt lõi: tiếng Anh học thuật, tư duy Toán – Khoa học, kỹ năng học độc lập và phản biện.'
+                : 'The foundation priority is building core capabilities: academic English, Math/Science reasoning, independent study, and critical thinking.'}
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-5 gap-4 sm:gap-5 max-w-6xl mx-auto">
-            {displayMilestones.map((milestone, index) => {
-              const accent = accentCycle[index % accentCycle.length]
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={inViewViewport}
-                  transition={{ duration: duration.slow, delay: index * 0.06, ease: easeOut }}
-                  whileHover={{ y: -4 }}
-                  className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] hover:border-[#1E3570]/30 hover:shadow-md transition-all text-center group"
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm transition-transform duration-300 group-hover:scale-110"
-                    style={{ backgroundColor: accent.color }}
-                  >
-                    <span className="text-white font-black text-sm">{milestone.year}</span>
-                  </div>
-                  <h4 className="font-bold text-[#1E3570] text-sm sm:text-base mb-1.5 group-hover:text-[#5C9024] transition-colors duration-300">
-                    {pick(milestone.title, locale)}
+          {/* Stage 1: Foundation - Centered Wide Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={inViewViewport}
+            transition={{ duration: duration.slow, ease: easeOut }}
+            className="bg-white rounded-2xl p-6 sm:p-8 border border-[#DEDDD6] hover:border-[#1E3570]/30 shadow-xs hover:shadow-md transition-all"
+          >
+            <div className="grid sm:grid-cols-3 gap-3.5 mb-6">
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+                <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
+                    {locale === 'vi' ? 'Phản Xạ Ngôn Ngữ' : 'Language Reflex'}
                   </h4>
-                  <p className="text-xs text-[#5C6069] leading-relaxed">
-                    {pick(milestone.description, locale)}
+                  <p className="text-xs text-[#5C6069] mt-0.5">
+                    {locale === 'vi' ? 'Phát triển phản xạ tiếng Anh tự nhiên & chuẩn bị nền tảng IELTS 5.5+.' : 'Natural English reflexes & early IELTS 5.5+ preparation.'}
                   </p>
-                </motion.div>
-              )
-            })}
-          </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+                <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
+                    {locale === 'vi' ? 'Toán & Khoa Học' : 'Math & Science'}
+                  </h4>
+                  <p className="text-xs text-[#5C6069] mt-0.5">
+                    {locale === 'vi' ? 'Tiếp cận Toán & Khoa học chuẩn US Common Core & Cambridge.' : 'US Common Core Math & Science plus Cambridge English.'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+                <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
+                    {locale === 'vi' ? 'Tích Lũy Tín Chỉ Sớm' : 'Early Credits'}
+                  </h4>
+                  <p className="text-xs text-[#5C6069] mt-0.5">
+                    {locale === 'vi' ? 'Lớp 8 trải nghiệm 1–2 môn tích lũy tín chỉ cùng EdOptions Academy.' : 'Grade 8 credit-bearing course trial with EdOptions Academy.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#DEDDD6]/60">
+              <p className="text-xs text-[#5C6069]">
+                {locale === 'vi' ? 'Tìm hiểu toàn diện các lộ trình học tập từ Mầm non đến THPT tại trang Chương trình.' : 'Explore continuous pathways from Kindergarten to High School on our Programs page.'}
+              </p>
+              <Link
+                href={`/${locale}/programs`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E3570] hover:bg-[#2E4A9E] text-white text-xs sm:text-sm font-bold shadow-xs transition-all shrink-0"
+              >
+                <span>{locale === 'vi' ? 'Xem chi tiết chương trình học' : 'View Academic Programs'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -727,13 +831,14 @@ export default function AboutPage() {
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2.5">{t('cta.title')}</h2>
             <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">{t('cta.subtitle')}</p>
-            <Link
-              href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+            <button
+              type="button"
+              onClick={() => openRegistrationModal({ source: 'about-bottom-cta' })}
+              className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             >
               <span>{t('cta.button')}</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </motion.div>
         </div>
       </section>

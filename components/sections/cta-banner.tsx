@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { semanticColors } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import type { Locale } from '@/lib/cms-types'
 
 /**
@@ -19,6 +20,7 @@ export function CTABanner() {
   const t = useTranslations('cta')
   const { data: cms } = useCmsContext()
   const locale = useLocale() as Locale
+  const { openRegistrationModal } = useRegistrationModal()
   const orbContainerRef = useRef<HTMLDivElement>(null)
 
   const settings = cms.siteSettings
@@ -32,7 +34,9 @@ export function CTABanner() {
     return url.startsWith(`/${locale}`) ? url : `/${locale}${url.startsWith('/') ? '' : '/'}${url}`
   }
   const primaryUrl = resolveUrl(settings?.ctaPrimaryUrl || '/admissions')
-  const secondaryUrl = resolveUrl(settings?.ctaSecondaryUrl || '/contact')
+  const rawSecondary = settings?.ctaSecondaryUrl || ''
+  const isContactSecondary = !rawSecondary || rawSecondary === '/contact' || rawSecondary === `/${locale}/contact`
+  const secondaryUrl = isContactSecondary ? '' : resolveUrl(rawSecondary)
   const bgImage = settings?.ctaBackgroundImage || ''
 
   // IntersectionObserver toggles a `data-active` attribute the CSS uses
@@ -104,9 +108,19 @@ export function CTABanner() {
                 </span>
               </span>
             </a>
-            <a href={secondaryUrl} className="cta-btn-outline">
-              {secondaryLabel}
-            </a>
+            {isContactSecondary ? (
+              <button
+                type="button"
+                onClick={() => openRegistrationModal({ source: 'cta-banner-secondary' })}
+                className="cta-btn-outline cursor-pointer"
+              >
+                {secondaryLabel}
+              </button>
+            ) : (
+              <a href={secondaryUrl} className="cta-btn-outline">
+                {secondaryLabel}
+              </a>
+            )}
           </div>
         </div>
       </div>

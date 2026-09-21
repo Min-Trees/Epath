@@ -16,7 +16,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Route, Award, Laptop, Shield, FileText, Network, type LucideIcon } from 'lucide-react'
-import { duration, easeOut, staggerContainer, useSectionActive } from '@/lib/motion-presets'
+import { duration, easeOut, inViewViewport, staggerContainer, useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
@@ -64,9 +64,9 @@ export function CoreValuesSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Section Header – Left-aligned matching iSchool */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={inViewViewport}
           transition={{ duration: duration.normal, ease: easeOut }}
           className="mb-14 sm:mb-16"
         >
@@ -83,10 +83,10 @@ export function CoreValuesSection() {
 
         {/* 3-Column Grid matching iSchool sc_icons */}
         <motion.div
-          variants={staggerContainer(0.08)}
+          variants={staggerContainer(0.06)}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
+          viewport={inViewViewport}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-x-8 lg:gap-x-12 gap-y-12 sm:gap-y-16"
         >
           {displayValues.map((value, index) => {
@@ -114,11 +114,11 @@ export function CoreValuesSection() {
               <motion.div
                 key={itemKey}
                 variants={{
-                  hidden: { opacity: 0, y: 32 },
+                  hidden: { opacity: 0, y: 16 },
                   visible: {
                     opacity: 1,
                     y: 0,
-                    transition: { duration: duration.slow, ease: easeOut },
+                    transition: { duration: duration.normal, ease: easeOut },
                   },
                 }}
                 className="relative group cursor-pointer h-full flex flex-col justify-between"

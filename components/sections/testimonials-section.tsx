@@ -63,7 +63,7 @@ export function TestimonialsSection() {
 
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 300 : -300,
+      x: dir > 0 ? 48 : -48,
       opacity: 0,
     }),
     center: {
@@ -71,7 +71,7 @@ export function TestimonialsSection() {
       opacity: 1,
     },
     exit: (dir: number) => ({
-      x: dir < 0 ? 300 : -300,
+      x: dir < 0 ? 48 : -48,
       opacity: 0,
     }),
   }

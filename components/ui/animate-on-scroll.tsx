@@ -74,7 +74,7 @@ export function AnimateOnScroll({
   duration: dur,
   className,
   once = true,
-  amount = 0.2,
+  amount = 0.06,
 }: AnimateOnScrollProps) {
   const variants = directionToVariants(direction === 'none' ? 'none' : direction) ?? presetToVariants(preset)
 
@@ -106,21 +106,21 @@ interface StaggerContainerProps {
 
 export function StaggerContainer({
   children,
-  staggerDelay = 0.08,
+  staggerDelay = 0.06,
   className,
 }: StaggerContainerProps) {
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2, margin: '0px 0px -10% 0px' }}
+      viewport={inViewViewport}
       variants={{
         hidden: { opacity: 0 },
         visible: {
           opacity: 1,
           transition: {
             staggerChildren: staggerDelay,
-            delayChildren: 0,
+            delayChildren: 0.02,
           },
         },
       }}
@@ -180,14 +180,14 @@ export function AnimateInView({
   children,
   className,
   delay = 0,
-  duration: dur = 0.35,
-  y = 20,
+  duration: dur = 0.45,
+  y = 16,
 }: AnimateInViewProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2, margin: '0px 0px -10% 0px' }}
+      viewport={inViewViewport}
       transition={{ duration: dur, delay, ease: easeOut }}
       className={className}
     >

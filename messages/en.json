@@ -236,7 +236,7 @@
       "title": "Academic Programs",
       "subtitle": "Continuous learning pathway from Kindergarten to High School"
     },
-    "filter": "Filter by level:",
+    "filter": "Filter by level",
     "all": "All",
     "curriculum": "American Curriculum - Cognia & WASC Accredited",
     "duration": "Duration:",
@@ -265,10 +265,11 @@
       "desc": "From Grade 9, requirements around credits, diplomas, academic profile and university orientation become more specialized. This is also the stage where EPath works with families to assess each student's capability, learning goals and future direction to choose a suitable pathway."
     },
     "edoptions": {
-      "title": "1. EdOptions Academy",
-      "subtitle": "US High School program with two pathway options to suit Vietnamese families",
+      "badge": "US High School Program",
+      "title": "EdOptions Academy — Accredited US High School Pathways",
+      "subtitle": "US High School programs with two flexible pathway options for Vietnamese families",
       "dual": {
-        "label": "1.1 Dual Diploma Option",
+        "label": "Option 1: Dual Diploma",
         "title": "Dual Diploma — Vietnamese & US High School Diplomas",
         "desc": "Dual Diploma is a learning pathway that lets students study the Vietnamese High School program and the US High School program via EdOptions Academy at the same time.",
         "p2": "Instead of transferring to a full-time international school, students continue studying at their current public or private school while completing the subjects and credits required by the US program on EdOptions Academy's online learning platform.",
@@ -277,28 +278,28 @@
           "Vietnamese High School Diploma",
           "US High School Diploma"
         ],
-        "p3": "Beyond the value of the diplomas, the program also helps students gradually get familiar with international learning methods, develop self-learning, time management and research skills, and use English in an academic environment.",
-        "p4": "This pathway is especially suitable for students who want to access the US education program, prepare study-abroad applications or expand admission opportunities to international universities in the future while continuing at their current school.",
-        "note": "Students study the program at their current school and the US High School program in parallel, working toward two diplomas."
+        "p3": "Along with the value of the diploma, the program helps students get used to international learning methods, developing self-study, time management, research and academic English skills.",
+        "p4": "This pathway is especially suitable for students who wish to access US education, prepare study abroad applications or expand admission opportunities to international universities while maintaining their current studies.",
+        "note": "Students study concurrently at their current school and the US High School program toward dual diplomas."
       },
       "fulltime": {
-        "label": "1.2 Fulltime Homeschool Option",
-        "title": "Fulltime Homeschool — Studying the US High School program full time",
-        "desc": "This pathway is for students who wish to study the US High School program full time through EdOptions Academy instead of taking it in parallel with a domestic program.",
-        "p2": "In this model, students study, accumulate credits and complete graduation requirements entirely through the EdOptions Academy program. All learning content, assessments and progress management follow US education standards via the online learning environment.",
-        "fitTitle": "This option suits families who want:",
+        "label": "Option 2: US Fulltime Diploma",
+        "title": "US Fulltime Diploma — Full-Time US High School Program",
+        "desc": "This pathway is for students who wish to pursue the US High School program full-time via EdOptions Academy rather than concurrently with the domestic curriculum.",
+        "p2": "In this model, students study, accumulate credits and complete graduation requirements entirely according to EdOptions Academy's curriculum. All learning content, assessment and progress tracking follow US education standards in an online environment.",
+        "fitTitle": "This option is suitable for families who want to:",
         "fit": [
-          "To pursue a comprehensive US education pathway",
-          "Flexibility in time and place of study",
-          "Plans for study abroad or international transfer in the future",
-          "Students to develop high-level self-learning and self-management"
+          "Pursue a US educational pathway comprehensively",
+          "Need flexibility in study time and location",
+          "Plan for study abroad or international transfer in the future",
+          "Encourage students to develop high levels of independent learning and self-management"
         ],
-        "p3": "Through the program, students access teaching methods, assessment standards and an academic environment equivalent to US High Schools, with opportunities to build an academic profile aligned with university goals.",
-        "p4": "Due to the nature of full-time online learning, students must meet entry requirements on English proficiency, academic results and independent learning capability as regulated by EdOptions Academy. EPath Education advises and supports parents as they explore the program, evaluates student fit and accompanies the family throughout learning and any international transfer."
+        "p3": "Through the program, students access learning methods, assessment standards and academic environments equivalent to US high schools, while building academic profiles suited for university goals.",
+        "p4": "Due to the full-time online nature, students must meet entry requirements for English proficiency, academic results and independent study capability per EdOptions Academy regulations. EPath Education advises and supports parents in evaluating student fit and accompanies the family throughout their academic journey."
       }
     },
     "personalized": {
-      "title": "2. Personalized International Pathway",
+      "title": "Personalized International Pathways & 1:1 Academic Mentorship",
       "desc": "Beyond the Edmentum and EdOptions Academy ecosystem, EPath is gradually expanding its academic partner network to bring more options to high-school students and those preparing for university.",
       "goalsTitle": "EPath's development direction includes:",
       "goals": [
@@ -327,7 +328,8 @@
       "subtitle": "Register for free consultation to start your journey with EPath"
     },
     "form": {
-      "title": "Register for Free Consultation",
+      "title": "Begin Your Child's Learning Journey with EPath",
+      "desc": "Each student has unique strengths, interests, and aspirations. EPath Education partners with parents to explore curricula, evaluate needs, and tailor educational pathways suited to each developmental stage.",
       "parentName": "Parent's Full Name *",
       "phone": "Phone Number *",
       "email": "Email *",
@@ -406,9 +408,10 @@
       "subtitle": "We are always ready to listen and support you"
     },
     "info": {
-      "title": "Contact Information",
+      "title": "Begin Your Child's Learning Journey with EPath",
+      "desc": "Each student has unique strengths, interests, and aspirations. EPath Education partners with parents to explore curricula, evaluate needs, and tailor educational pathways suited to each developmental stage.",
       "address": "Address",
-      "phone": "Phone",
+      "phone": "Contact Information",
       "email": "Email",
       "hours": "Working Hours",
       "hoursValue": "Mon - Fri: 8:00 - 17:00"
@@ -597,24 +600,41 @@
     ]
   },
   "footer": {
-    "description": "International academic pathway from Elementary to High School. Blended Learning - Edmentum International - Personalized learning pathways.",
-    "programsTitle": "Programs",
-    "quickLinksTitle": "EPath",
-    "contactTitle": "Contact",
-    "partnersTitle": "Partners",
+    "description": "EPath Education — A pioneering international education ecosystem accompanying Vietnamese students with accredited US and Cambridge academic pathways. Inspiring minds, nurturing independent thinkers, and empowering global readiness.",
+    "programsTitle": "Academic Programs",
+    "quickLinksTitle": "Explore EPath",
+    "contactTitle": "Contact Us",
+    "partnersTitle": "Academic Partners",
+    "workingHoursTitle": "Working Hours",
+    "workingHours": "Mon – Sat: 08:00 AM – 06:00 PM",
     "contact": {
-      "address": "38 Tran Phu Street, Chanh Nghia Ward, Thu Dau Mot City, Binh Duong",
+      "address": "38 Tran Phu Street, Thu Dau Mot Ward, Ho Chi Minh City",
       "phone": "0937 514 896",
       "email": "infor@epath.edu.vn"
     },
+    "programs": {
+      "kindergarten": "Kindergarten (Ages 3–6)",
+      "elementary": "Elementary (Grades 1–5)",
+      "middle": "Middle School (Grades 6–8)",
+      "high": "High School & US Diploma (Grades 9–12)",
+      "dual": "US Dual Diploma"
+    },
+    "quickLinks": {
+      "aboutUs": "About Us",
+      "vision": "Vision & Mission",
+      "values": "Core Values",
+      "partners": "International Partners",
+      "admissions": "Admissions Process",
+      "events": "Events & Workshops"
+    },
     "partners": [
-      "Edmentum International",
-      "Cambridge Assessment",
-      "Cognia & WASC",
-      "FabLab EIU"
+      "Edmentum International (USA)",
+      "EdOptions Academy (Cognia & WASC)",
+      "Cambridge Assessment English (UK)",
+      "FabLab EIU — Eastern International University"
     ],
     "copyright": "© {year} EPath Education. All rights reserved.",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "terms": "Terms of Service"
   }
 }

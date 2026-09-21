@@ -236,7 +236,7 @@
       "title": "Chương trình học",
       "subtitle": "Lộ trình học tập liên tục từ Mầm non đến THPT"
     },
-    "filter": "Lọc theo cấp học:",
+    "filter": "Lọc theo cấp học",
     "all": "Tất cả",
     "curriculum": "Chương trình chuẩn Mỹ - Kiểm định Cognia & WASC",
     "duration": "Thời lượng:",
@@ -265,10 +265,11 @@
       "desc": "Từ lớp 9, các yêu cầu về tín chỉ, bằng cấp, hồ sơ học thuật và định hướng đại học bắt đầu trở nên chuyên sâu hơn. Đây cũng là giai đoạn EPath phối hợp cùng gia đình đánh giá năng lực, mục tiêu học tập và định hướng tương lai của từng học sinh để lựa chọn lộ trình phù hợp."
     },
     "edoptions": {
-      "title": "1. EdOptions Academy",
+      "badge": "Chương trình THPT Hoa Kỳ",
+      "title": "EdOptions Academy — Lộ Trình Tú Tài Mỹ Chuẩn Quốc Tế",
       "subtitle": "Chương trình THPT Hoa Kỳ với hai lựa chọn lộ trình phù hợp với nhu cầu gia đình Việt Nam",
       "dual": {
-        "label": "1.1 Lựa chọn Dual Diploma (Song bằng)",
+        "label": "Lựa chọn 1: Dual Diploma (Song bằng)",
         "title": "Dual Diploma — Song bằng THPT Việt Nam & Hoa Kỳ",
         "desc": "Dual Diploma là lộ trình học tập cho phép học sinh theo học đồng thời chương trình Trung học phổ thông tại Việt Nam và chương trình Trung học phổ thông Hoa Kỳ thông qua EdOptions Academy.",
         "p2": "Thay vì phải chuyển sang một trường quốc tế toàn thời gian, học sinh vẫn tiếp tục học tại trường Công lập hoặc Tư thục hiện tại, đồng thời hoàn thành các môn học và tín chỉ theo yêu cầu của chương trình Hoa Kỳ trên nền tảng học trực tuyến của EdOptions Academy.",
@@ -282,8 +283,8 @@
         "note": "Học sinh học song song chương trình tại trường hiện tại và chương trình THPT Hoa Kỳ để hướng tới hai văn bằng tốt nghiệp."
       },
       "fulltime": {
-        "label": "1.2 Lựa chọn Fulltime Homeschool (Homeschool toàn phần)",
-        "title": "Fulltime Homeschool — Học toàn thời gian chương trình THPT Hoa Kỳ",
+        "label": "Lựa chọn 2: US Fulltime Diploma (Tú tài Mỹ toàn phần)",
+        "title": "US Fulltime Diploma — Học toàn thời gian chương trình THPT Hoa Kỳ",
         "desc": "Đây là lộ trình dành cho những học sinh mong muốn theo học toàn thời gian chương trình Trung học phổ thông Hoa Kỳ thông qua EdOptions Academy thay vì theo học song song với chương trình trong nước.",
         "p2": "Trong mô hình này, học sinh sẽ học tập, tích lũy tín chỉ và hoàn thành các yêu cầu tốt nghiệp hoàn toàn theo chương trình của EdOptions Academy. Toàn bộ nội dung học tập, đánh giá và quản lý tiến độ được thực hiện theo tiêu chuẩn của hệ thống giáo dục Hoa Kỳ thông qua môi trường học trực tuyến.",
         "fitTitle": "Lựa chọn này phù hợp với các gia đình mong muốn:",
@@ -298,7 +299,7 @@
       }
     },
     "personalized": {
-      "title": "2. Lộ trình Quốc tế cá nhân hóa",
+      "title": "Lộ trình Quốc tế cá nhân hóa & Cố vấn học thuật 1:1",
       "desc": "Bên cạnh hệ sinh thái Edmentum và EdOptions Academy, EPath đang từng bước mở rộng mạng lưới đối tác học thuật nhằm mang đến nhiều lựa chọn hơn cho học sinh ở bậc Trung học phổ thông và giai đoạn chuẩn bị đại học.",
       "goalsTitle": "Định hướng phát triển của EPath bao gồm:",
       "goals": [
@@ -327,7 +328,8 @@
       "subtitle": "Đăng ký tư vấn miễn phí để bắt đầu hành trình cùng EPath"
     },
     "form": {
-      "title": "Đăng ký tư vấn miễn phí",
+      "title": "Bắt đầu hành trình học tập của con cùng EPath",
+      "desc": "Mỗi học sinh có một năng lực, sở thích và định hướng khác nhau. EPath Education đồng hành cùng phụ huynh trong việc tìm hiểu chương trình học, đánh giá nhu cầu và xây dựng lộ trình giáo dục phù hợp cho từng giai đoạn phát triển của học sinh.",
       "parentName": "Họ và tên phụ huynh *",
       "phone": "Số điện thoại *",
       "email": "Email *",
@@ -406,9 +408,10 @@
       "subtitle": "Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn"
     },
     "info": {
-      "title": "Thông tin liên hệ",
+      "title": "Bắt đầu hành trình học tập của con cùng EPath",
+      "desc": "Mỗi học sinh có một năng lực, sở thích và định hướng khác nhau. EPath Education đồng hành cùng phụ huynh trong việc tìm hiểu chương trình học, đánh giá nhu cầu và xây dựng lộ trình giáo dục phù hợp cho từng giai đoạn phát triển của học sinh.",
       "address": "Địa chỉ",
-      "phone": "Điện thoại",
+      "phone": "Thông tin liên hệ",
       "email": "Email",
       "hours": "Giờ làm việc",
       "hoursValue": "Thứ 2 - Thứ 6: 8:00 - 17:00"
@@ -597,21 +600,38 @@
     ]
   },
   "footer": {
-    "description": "Lộ trình học thuật quốc tế xuyên suốt từ Tiểu học đến THPT. Blended Learning - Edmentum International - Cá nhân hóa lộ trình.",
-    "programsTitle": "Chương trình",
-    "quickLinksTitle": "EPath",
-    "contactTitle": "Liên hệ",
-    "partnersTitle": "Đối tác",
+    "description": "EPath Education — Hệ sinh thái giáo dục chuẩn quốc tế tiên phong, đồng hành cùng học sinh Việt Nam kiến tạo lộ trình học thuật Hoa Kỳ và Cambridge vững chắc. Nơi khơi nguồn tri thức, nuôi dưỡng tư duy độc lập và bứt phá năng lực hội nhập toàn cầu.",
+    "programsTitle": "Chương trình đào tạo",
+    "quickLinksTitle": "Về EPath Education",
+    "contactTitle": "Thông tin liên hệ",
+    "partnersTitle": "Đối tác học thuật",
+    "workingHoursTitle": "Giờ làm việc",
+    "workingHours": "Thứ 2 – Thứ 7: 08:00 – 18:00",
     "contact": {
-      "address": "38 Trần Phú, Phường Chánh Nghĩa, TP. Thủ Dầu Một, Bình Dương",
+      "address": "38 Trần Phú, Phường Thủ Dầu Một, Hồ Chí Minh",
       "phone": "0937 514 896",
       "email": "infor@epath.edu.vn"
     },
+    "programs": {
+      "kindergarten": "Mầm non (3 – 6 tuổi)",
+      "elementary": "Tiểu học (Lớp 1 – 5)",
+      "middle": "THCS (Lớp 6 – 8)",
+      "high": "THPT & Tú tài Mỹ (Lớp 9 – 12)",
+      "dual": "Song bằng Mỹ (Dual Diploma)"
+    },
+    "quickLinks": {
+      "aboutUs": "Về chúng tôi",
+      "vision": "Tầm nhìn & Sứ mệnh",
+      "values": "Giá trị cốt lõi",
+      "partners": "Đối tác quốc tế",
+      "admissions": "Quy trình tuyển sinh",
+      "events": "Sự kiện & Hội thảo"
+    },
     "partners": [
-      "Edmentum International",
-      "Cambridge Assessment",
-      "Cognia & WASC",
-      "FabLab EIU"
+      "Edmentum International (Hoa Kỳ)",
+      "EdOptions Academy (Cognia & WASC)",
+      "Cambridge Assessment English (Anh Quốc)",
+      "FabLab EIU — ĐH Quốc tế Miền Đông"
     ],
     "copyright": "© {year} EPath Education. Bảo lưu mọi quyền.",
     "privacy": "Chính sách bảo mật",

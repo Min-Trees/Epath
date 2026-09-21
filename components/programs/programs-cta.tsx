@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import type { Locale } from '@/lib/cms-types'
 
@@ -17,6 +18,8 @@ interface Props {
 }
 
 export function ProgramsCta({ locale, compact, translations }: Props) {
+  const { openRegistrationModal } = useRegistrationModal()
+
   return (
     <section className={`${compact ? 'py-8 sm:py-10' : 'py-10 sm:py-14'} bg-white border-t border-[#DEDDD6]`}>
       <div className="container mx-auto px-4 text-center">
@@ -40,13 +43,14 @@ export function ProgramsCta({ locale, compact, translations }: Props) {
             {translations.subtitle}
           </p>
 
-          <Link
-            href={`/${locale}/contact`}
-            className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+          <button
+            type="button"
+            onClick={() => openRegistrationModal({ source: 'programs-bottom-cta' })}
+            className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
           >
             <span>{translations.button}</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </button>
         </motion.div>
       </div>
     </section>

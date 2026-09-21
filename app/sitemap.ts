@@ -86,19 +86,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
-    // Contact page
-    {
-      url: `${baseUrl}/vi/contact`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/en/contact`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
   ]
 
   // ==========================================

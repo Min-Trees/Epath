@@ -25,12 +25,12 @@ export const easeStandard: [number, number, number, number] = [0.25, 1, 0.5, 1]
 // -----------------------------------------------------------
 
 export const duration = {
-  instant: 0.15,
-  fast: 0.35,
-  normal: 0.65,
-  slow: 0.85,
-  slower: 1.1,
-  page: 0.45,
+  instant: 0.12,
+  fast: 0.25,
+  normal: 0.48,
+  slow: 0.62,
+  slower: 0.8,
+  page: 0.35,
 } as const
 
 // -----------------------------------------------------------
@@ -71,15 +71,18 @@ export const springSmooth: Transition = {
 // Reusable variants
 // -----------------------------------------------------------
 
-/** Default viewport settings for in-view scroll animations. */
+/** Default viewport settings for in-view scroll animations.
+ * amount: 0.06 ensures animations start immediately as elements enter the view.
+ * margin buffer avoids late pop-ins.
+ */
 export const inViewViewport = {
   once: true,
-  amount: 0.2,
-  margin: '0px 0px -10% 0px',
+  amount: 0.06,
+  margin: '0px 0px -40px 0px',
 } as const
 
 /** Container that staggers its direct children with fluid cascade. */
-export const staggerContainer = (stagger = 0.1, delay = 0.05): Variants => ({
+export const staggerContainer = (stagger = 0.06, delay = 0.02): Variants => ({
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -98,12 +101,12 @@ export const fadeIn: Variants = {
 
 /** Fade + translate from below with smooth organic settle. */
 export const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: duration.slow,
+      duration: duration.normal,
       ease: easeOut,
     },
   },
@@ -111,25 +114,25 @@ export const fadeInUp: Variants = {
 
 /** Fade + translate from above. */
 export const fadeInDown: Variants = {
-  hidden: { opacity: 0, y: -24 },
-  visible: { opacity: 1, y: 0, transition: transitionSlowEnter },
+  hidden: { opacity: 0, y: -16 },
+  visible: { opacity: 1, y: 0, transition: transitionEnter },
 }
 
 /** Fade + translate from left. */
 export const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -32 },
-  visible: { opacity: 1, x: 0, transition: transitionSlowEnter },
+  hidden: { opacity: 0, x: -16 },
+  visible: { opacity: 1, x: 0, transition: transitionEnter },
 }
 
 /** Fade + translate from right. */
 export const fadeInRight: Variants = {
-  hidden: { opacity: 0, x: 32 },
-  visible: { opacity: 1, x: 0, transition: transitionSlowEnter },
+  hidden: { opacity: 0, x: 16 },
+  visible: { opacity: 1, x: 0, transition: transitionEnter },
 }
 
 /** Subtle scale-in, smooth settle. */
 export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
+  hidden: { opacity: 0, scale: 0.97 },
   visible: { opacity: 1, scale: 1, transition: transitionEnter },
 }
 
@@ -138,14 +141,14 @@ export const hoverLift = {
   rest: {
     y: 0,
     boxShadow: '0 4px 16px -4px rgba(30, 53, 112, 0.06)',
-    transition: { duration: 0.45, ease: easeOut },
+    transition: { duration: 0.3, ease: easeOut },
   },
   hover: {
-    y: -6,
-    boxShadow: '0 20px 40px -12px rgba(30, 53, 112, 0.15)',
-    transition: { duration: 0.45, ease: easeOut },
+    y: -4,
+    boxShadow: '0 16px 32px -8px rgba(30, 53, 112, 0.14)',
+    transition: { duration: 0.3, ease: easeOut },
   },
-  tap: { y: -2, transition: { duration: 0.15 } },
+  tap: { y: -1, transition: { duration: 0.12 } },
 } satisfies Variants
 
 /** Plain hover scale with organic spring. */

@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { motion, AnimatePresence } from 'framer-motion'
 import { duration, easeOut } from '@/lib/motion-presets'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 
 /**
  * Header – performance-optimised rebuild.
@@ -34,6 +35,7 @@ export function Header() {
   const pathname = usePathname()
   const locale = useLocale()
   const t = useTranslations('nav')
+  const { openRegistrationModal } = useRegistrationModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   // useTransition: mark locale updates as non-urgent so the visible tree
@@ -220,9 +222,10 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-3.5 flex-shrink-0">
             <LanguageSwitcher />
-            <Link
-              href={`/${locale}/admissions#contact`}
-              className="header-register-btn group"
+            <button
+              type="button"
+              onClick={() => openRegistrationModal({ source: 'header' })}
+              className="header-register-btn group cursor-pointer"
               aria-label={locale === 'vi' ? 'Đăng ký ngay' : 'Register'}
             >
               <span className="header-register-ring ring-1" aria-hidden="true" />
@@ -230,7 +233,7 @@ export function Header() {
               <span className="relative z-10 inline-flex items-center">
                 <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
               </span>
-            </Link>
+            </button>
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
@@ -292,13 +295,16 @@ export function Header() {
                   </div>
                 ))}
                 <div className="mt-4 px-4">
-                  <Link
-                    href={`/${locale}/admissions#contact`}
-                    className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-semibold rounded-full shadow-md transition-all duration-200 text-base"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <button
+                    type="button"
+                    className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-semibold rounded-full shadow-md transition-all duration-200 text-base cursor-pointer"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false)
+                      openRegistrationModal({ source: 'header-mobile' })
+                    }}
                   >
                     <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
-                  </Link>
+                  </button>
                 </div>
               </div>
             </motion.nav>

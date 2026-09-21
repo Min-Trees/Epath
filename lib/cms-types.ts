@@ -315,6 +315,7 @@ export const SectionTypeSchema = zns.enum([
   'pricing',
   'team',
   'cta',
+  'featuredCourses',
 ])
 export type SectionType = zns.infer<typeof SectionTypeSchema>
 
@@ -589,6 +590,9 @@ export const HeroContentSchema = z.object({
   videoUrl: z.string().url().or(z.literal('')).default(''),
   videoThumbnail: z.string().url().or(z.literal('')).default(''),
   backgroundImage: z.string().url().or(z.literal('')).default(''),
+  slides: z.array(z.string()).optional().default([]),
+  finalSlideIndex: z.number().optional().default(-1),
+  slideInterval: z.number().optional().default(4),
   isActive: z.boolean().default(true),
 })
 export type HeroContentInput = z.infer<typeof HeroContentSchema>

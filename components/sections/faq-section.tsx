@@ -11,11 +11,13 @@ import {
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 
 export function FAQSection() {
   const t = useTranslations('faq')
   const locale = useLocale()
   const { data: cms } = useCmsContext()
+  const { openRegistrationModal } = useRegistrationModal()
   const faqs = cms.faqs
 
   // Merge static (i18n) and CMS faqs. CMS takes priority if present.
@@ -80,13 +82,14 @@ export function FAQSection() {
             className="text-center mt-12"
           >
             <p className="text-[#5C6069] mb-4">{t('otherQuestion')}</p>
-            <a
-              href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2 bg-[#F26522] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#C94F16] transition-all duration-300 ease-out hover:-translate-y-1 shadow-lg"
+            <button
+              type="button"
+              onClick={() => openRegistrationModal({ source: 'faq-section' })}
+              className="inline-flex items-center gap-2 bg-[#F26522] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#C94F16] transition-all duration-300 ease-out hover:-translate-y-1 shadow-lg cursor-pointer"
               style={{ boxShadow: '0 8px 20px -6px rgba(242, 101, 34, 0.45)' }}
             >
               {t('contactBtn')}
-            </a>
+            </button>
           </motion.div>
         </div>
       </section>
@@ -160,13 +163,14 @@ export function FAQSection() {
           className="text-center mt-12"
         >
           <p className="text-[#5C6069] mb-4">{t('otherQuestion')}</p>
-          <a
-            href={`/${locale}/contact`}
-            className="inline-flex items-center gap-2 bg-[#F26522] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#C94F16] transition-all duration-300 ease-out hover:-translate-y-1 shadow-lg"
+          <button
+            type="button"
+            onClick={() => openRegistrationModal({ source: 'faq-section' })}
+            className="inline-flex items-center gap-2 bg-[#F26522] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#C94F16] transition-all duration-300 ease-out hover:-translate-y-1 shadow-lg cursor-pointer"
             style={{ boxShadow: '0 8px 20px -6px rgba(242, 101, 34, 0.45)' }}
           >
             {t('contactBtn')}
-          </a>
+          </button>
         </motion.div>
       </div>
     </section>
