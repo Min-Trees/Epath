@@ -9,6 +9,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 
 // Fallback Faculty & Academic Board
@@ -149,37 +150,40 @@ export default function AboutPage() {
               <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-4 leading-tight">
                 {pick(aboutContent?.introTitle, locale) || t('hero.title')}
               </h2>
-              <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
-                {introParagraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-3 mt-6">
-                <motion.div
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  transition={{ duration: 0.35, ease: easeOut }}
-                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#2E4A9E]/30 transition-all cursor-default"
-                >
-                  <div className="text-3xl sm:text-4xl font-black text-[#2E4A9E] mb-0.5">10+</div>
-                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.years')}</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  transition={{ duration: 0.35, ease: easeOut }}
-                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#8DC63F]/50 transition-all cursor-default"
-                >
-                  <div className="text-3xl sm:text-4xl font-black text-[#5C9024] mb-0.5">4</div>
-                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.levels')}</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  transition={{ duration: 0.35, ease: easeOut }}
-                  className="bg-[#F6F5F1] rounded-xl p-3.5 text-center border border-[#DEDDD6] shadow-xs hover:shadow-sm hover:border-[#F26522]/30 transition-all cursor-default"
-                >
-                  <div className="text-3xl sm:text-4xl font-black text-[#F26522] mb-0.5">60+</div>
-                  <div className="text-xs font-medium text-[#5C6069]">{t('stats.edmentum')}</div>
-                </motion.div>
-              </div>
+              {/<[a-z][\s\S]*>/i.test(introText) ? (
+                <RichTextRenderer
+                  html={introText}
+                  className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base [&_p]:my-2"
+                />
+              ) : (
+                <div className="space-y-3 text-[#5C6069] leading-relaxed text-sm sm:text-base">
+                  {introParagraphs.map((p, i) => {
+                    const trimmed = p.trim()
+                    const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('• ')
+                    const isQuestion = trimmed.endsWith('?')
+
+                    if (isBullet) {
+                      const cleanText = trimmed.replace(/^[-•]\s*/, '')
+                      return (
+                        <div key={i} className="flex items-start gap-2.5 pl-0.5">
+                          <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-1" />
+                          <span className="text-[#20242B] font-medium leading-relaxed">{cleanText}</span>
+                        </div>
+                      )
+                    }
+
+                    if (isQuestion) {
+                      return (
+                        <h3 key={i} className="font-bold text-[#1E3570] pt-2 text-base sm:text-lg">
+                          {trimmed}
+                        </h3>
+                      )
+                    }
+
+                    return <p key={i}>{p}</p>
+                  })}
+                </div>
+              )}
             </motion.div>
 
             <motion.div
@@ -189,7 +193,7 @@ export default function AboutPage() {
               transition={{ duration: duration.slow, ease: easeOut }}
               className="relative group max-w-md mx-auto lg:max-w-none"
             >
-              <div className="aspect-4/3 sm:aspect-square rounded-2xl shadow-lg overflow-hidden border border-[#DEDDD6] relative">
+              <div className="aspect-4/3 sm:aspect-square rounded-xl shadow-lg overflow-hidden border border-[#DEDDD6] relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={heroImage || '/images/about/about-story.jpg'}
@@ -199,14 +203,6 @@ export default function AboutPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
               </div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.35, ease: easeOut }}
-                className="absolute -bottom-4 -right-4 bg-[#F26522] hover:bg-[#C94F16] text-white rounded-xl p-4 shadow-xl transition-colors duration-300"
-              >
-                <div className="text-2xl sm:text-3xl font-black">60+</div>
-                <div className="text-xs font-medium">{t('stats.edmentum')}</div>
-              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -269,9 +265,10 @@ export default function AboutPage() {
 
                 {/* Lead Quote */}
                 <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#2E4A9E] mb-4">
-                  <p className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed">
-                    “{pick(aboutContent?.visionContent, locale) || t('visionText')}”
-                  </p>
+                  <RichTextRenderer
+                    html={pick(aboutContent?.visionContent, locale) || t('visionText')}
+                    className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed [&_p]:my-1"
+                  />
                 </div>
 
                 {/* Key Strategic Pillars */}
@@ -346,9 +343,10 @@ export default function AboutPage() {
 
                 {/* Lead Quote */}
                 <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#8DC63F] mb-4">
-                  <p className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed">
-                    “{pick(aboutContent?.missionContent, locale) || t('missionText')}”
-                  </p>
+                  <RichTextRenderer
+                    html={pick(aboutContent?.missionContent, locale) || t('missionText')}
+                    className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed [&_p]:my-1"
+                  />
                 </div>
 
                 {/* Key Mission Pillars */}
@@ -433,22 +431,30 @@ export default function AboutPage() {
               const accent = accentCycle[index % accentCycle.length]
               const valTitle = pick(value.title, locale)
               const valDesc = pick(value.description, locale)
+              const imageUrl = (value as { imageUrl?: string }).imageUrl || `/images/core-values/${index + 1}.png`
 
               return (
                 <motion.div
-                  key={value.id}
+                  key={`about-core-val-${index}`}
                   initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={inViewViewport}
-                  transition={{ duration: duration.slow, delay: index * 0.06, ease: easeOut }}
-                  className="bg-[#F6F5F1] hover:bg-white rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
+                  viewport={{ once: true, amount: 0.05 }}
+                  transition={{ duration: duration.slow, delay: index * 0.05, ease: easeOut }}
+                  className="bg-[#F6F5F1] hover:bg-white rounded-xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-3.5">
-                    <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-108 shadow-xs"
-                      style={{ backgroundColor: accent.bg }}
-                    >
-                      <Award className="w-5 h-5" style={{ color: accent.color }} />
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-108">
+                      {imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={imageUrl}
+                          alt={valTitle}
+                          className="w-full h-full object-contain"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <Award className="w-7 h-7" style={{ color: accent.color }} />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2 mb-1">
@@ -462,9 +468,10 @@ export default function AboutPage() {
                           {valTitle}
                         </h3>
                       </div>
-                      <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                        {valDesc}
-                      </p>
+                      <RichTextRenderer
+                        html={valDesc}
+                        className="text-xs sm:text-sm text-[#5C6069] leading-relaxed [&_p]:my-0"
+                      />
                     </div>
                   </div>
                 </motion.div>
@@ -637,9 +644,10 @@ export default function AboutPage() {
                         {cardTitle}
                       </h3>
                       {cardBio && (
-                        <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-4">
-                          {cardBio}
-                        </p>
+                        <RichTextRenderer
+                          html={cardBio}
+                          className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-4 [&_p]:my-1"
+                        />
                       )}
                     </div>
                   </div>

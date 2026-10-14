@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { CrudList } from '@/components/admin/crud-list'
 import { cms } from '@/lib/cms-client'
@@ -41,15 +39,6 @@ export default function AdminEventsPage() {
       title="Sự kiện"
       subtitle="Quản lý sự kiện. Thay đổi cập nhật realtime."
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Quay lại Dashboard
-      </Link>
-
       <CrudList<CmsEvent>
         title="Sự kiện"
         fields={fields}
@@ -62,7 +51,7 @@ export default function AdminEventsPage() {
         renderSummary={(item) => (
           <div className="flex items-start gap-3">
             {item.imageUrl ? (
-              <div className="w-20 h-14 rounded-lg border border-[#DEDDD6] overflow-hidden bg-white shrink-0">
+              <div className="w-20 h-14 rounded border border-[#DEDDD6] overflow-hidden bg-white shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.imageUrl}
@@ -71,7 +60,7 @@ export default function AdminEventsPage() {
                 />
               </div>
             ) : (
-              <div className="w-20 h-14 rounded-lg border border-[#DEDDD6] bg-[#F6F5F1] shrink-0 flex items-center justify-center text-xs text-[#5C6069] font-bold">
+              <div className="w-20 h-14 rounded border border-[#DEDDD6] bg-[#F6F5F1] shrink-0 flex items-center justify-center text-xs text-[#5C6069] font-bold">
                 EVENT
               </div>
             )}

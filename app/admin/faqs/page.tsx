@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { CrudList } from '@/components/admin/crud-list'
 import { cms } from '@/lib/cms-client'
@@ -33,15 +31,6 @@ export default function AdminFAQsPage() {
       title="Quản lý FAQ"
       subtitle="Thêm, sửa, xóa câu hỏi thường gặp. Thay đổi cập nhật realtime."
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Quay lại Dashboard
-      </Link>
-
       <CrudList<FAQ>
         title="FAQ"
         fields={fields}
@@ -54,7 +43,7 @@ export default function AdminFAQsPage() {
         renderSummary={(item) => (
           <div>
             <div
-              className="text-xs px-2 py-1 rounded inline-block mb-1"
+              className="text-xs px-2 py-0.5 rounded inline-block mb-1 font-medium"
               style={{
                 color: semanticColors.primary,
                 backgroundColor: semanticColors.primaryBg,
@@ -62,10 +51,10 @@ export default function AdminFAQsPage() {
             >
               {item.category}
             </div>
-            <div className="font-medium" style={{ color: semanticColors.text }}>
+            <div className="font-semibold text-sm" style={{ color: semanticColors.text }}>
               {item.question.vi}
             </div>
-            <div className="text-sm line-clamp-2" style={{ color: semanticColors.textMuted }}>
+            <div className="text-xs line-clamp-2 mt-0.5" style={{ color: semanticColors.textMuted }}>
               {item.answer.vi}
             </div>
           </div>

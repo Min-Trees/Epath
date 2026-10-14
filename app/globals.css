@@ -44,8 +44,8 @@
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    /* Radius */
-    --radius: 1.25rem; /* 20px - cards và khối lớn */
+    /* Radius - siêu sắc nét, ưu tiên vuông vức */
+    --radius: 4px;
   }
 }
 
@@ -462,7 +462,7 @@
 
   .partner-card {
     background-color: white;
-    border-radius: 16px;
+    border-radius: 6px;
     padding: 20px 16px;
     text-align: center;
     border: 1px solid #DEDDD6;
@@ -1121,7 +1121,7 @@
    any hero imagery. */
 .mobile-menu-btn {
   padding: 8px;
-  border-radius: 12px;
+  border-radius: 4px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1480,7 +1480,7 @@
 }
 
 .step-card {
-  border-radius: 20px;
+  border-radius: 6px;
   padding: 24px;
   text-align: center;
   transition:
@@ -1555,7 +1555,7 @@
 
 .step-card-mobile {
   margin-left: 16px;
-  border-radius: 20px;
+  border-radius: 6px;
   padding: 16px;
   transition:
     transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
@@ -1826,5 +1826,88 @@
     animation: none !important;
     display: none !important;
   }
+}
+
+/* ==========================================================================
+   Admin Design System Tokens & Typography (Scoped to .admin-root)
+   ========================================================================== */
+.admin-root {
+  /* Colors */
+  --primary: #1e3a8a;        /* Giữ navy thương hiệu */
+  --primary-soft: #eef2ff;   /* Nền item active / hover */
+  --accent: #84cc16;         /* Trạng thái "bật" */
+  --danger: #dc2626;         /* Cảnh báo / xóa */
+  --text: #0f172a;           /* Chữ chính Slate-900 */
+  --text-muted: #64748b;     /* Chữ phụ Slate-500 */
+  --border: #e2e8f0;         /* Viền Slate-200 */
+  --bg: #f8fafc;             /* Nền Slate-50 */
+  --surface: #ffffff;        /* Nền surface trắng */
+
+  /* Cỡ chữ */
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --fs-2xl: 24px;
+
+  /* Khoảng cách (lưới 4px) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+
+  /* Bo góc phẳng & sắc nét chuẩn công sở (giảm radius theo yêu cầu) */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  /* Typography Reset: Chuyển toàn bộ admin sang font chữ công sở hiện đại Inter / System Sans */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: var(--text);
+  background-color: var(--bg);
+  min-height: 100vh;
+}
+
+/* Ép border-radius toàn bộ control, button, input, card trong admin về chuẩn 4px sắc nét */
+.admin-root button,
+.admin-root input,
+.admin-root select,
+.admin-root textarea,
+.admin-root .rounded-2xl,
+.admin-root .rounded-xl,
+.admin-root .rounded-lg {
+  border-radius: 4px !important;
+}
+.admin-root .rounded-full {
+  border-radius: 2px !important;
+}
+
+/* Scrollbar mảnh 6px màu xám nhạt trung tính */
+.admin-root ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.admin-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-root ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.admin-root ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Focus visible state rõ ràng theo chuẩn a11y */
+.admin-root button:focus-visible,
+.admin-root a:focus-visible,
+.admin-root input:focus-visible,
+.admin-root select:focus-visible,
+.admin-root textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 

@@ -7,6 +7,7 @@ import { useSectionActive } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { LearningPathway, Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 const defaultPathways: Array<{ id: string; level: string }> = [
   { id: 'kindergarten', level: 'kindergarten' },
@@ -137,9 +138,11 @@ export function LearningPathwaysSection() {
                       </span>
                     </div>
 
-                    <p className="text-sm text-[#5C6069] mb-4">
-                      {description}
-                    </p>
+                    <RichTextRenderer
+                      html={description}
+                      compact
+                      className="text-sm text-[#5C6069] mb-4 block"
+                    />
 
                     {badgesList.length > 0 && (
                       <div className="space-y-2 mb-4">

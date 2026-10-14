@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <!-- Background Navy Gradient -->
+    <linearGradient id="epath-navy-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3570"/>
+      <stop offset="60%" stop-color="#243C7E"/>
+      <stop offset="100%" stop-color="#2E4A9E"/>
+    </linearGradient>
+
+    <!-- Accent Orange Glow -->
+    <linearGradient id="epath-orange-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F26522"/>
+      <stop offset="100%" stop-color="#D94E10"/>
+    </linearGradient>
+
+    <!-- Soft Drop Shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#1E3570" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Main Circle Background with Shadow -->
+  <circle cx="60" cy="60" r="54" fill="url(#epath-navy-bg)" filter="url(#shadow)"/>
+  <circle cx="60" cy="60" r="53" stroke="rgba(255, 255, 255, 0.18)" stroke-width="2"/>
+
+  <!-- Chat Bubble Shape -->
+  <path d="M38 42C38 35.3726 43.3726 30 50 30H70C76.6274 30 82 35.3726 82 42V58C82 64.6274 76.6274 70 70 70H54L42 79V70C39.5393 70 38 68.4607 38 66V42Z" fill="#FFFFFF"/>
+
+  <!-- Inner EPath Stylized 'E' Symbol in Chat Bubble -->
+  <path d="M50 42H68C69.1 42 70 42.9 70 44C70 45.1 69.1 46 68 46H54V50H65C66.1 50 67 50.9 67 52C67 53.1 66.1 54 65 54H54V58H68C69.1 58 70 58.9 70 60C70 61.1 69.1 62 68 62H50C48.9 62 48 61.1 48 60V44C48 42.9 48.9 42 50 42Z" fill="#1E3570"/>
+
+  <!-- Small AI Sparkle Star / Accent Badge -->
+  <circle cx="78" cy="34" r="8" fill="url(#epath-orange-accent)"/>
+  <path d="M78 30.5L79.2 33L81.5 34L79.2 35L78 37.5L76.8 35L74.5 34L76.8 33L78 30.5Z" fill="#FFFFFF"/>
+
+  <!-- Active Online Dot -->
+  <circle cx="94" cy="84" r="7" fill="#8DC63F" stroke="#FFFFFF" stroke-width="2.5"/>
+</svg>

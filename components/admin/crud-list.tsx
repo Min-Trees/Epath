@@ -7,7 +7,6 @@
  *  - Toggle isActive
  */
 import { useEffect, useState } from 'react'
-import { ArrowDown, ArrowUp, Edit, Plus, Trash2, Power, History } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/dialog'
 import { semanticColors } from '@/lib/design-tokens'
 import { RichTextEditor, RichTextEditorMultilang } from './rich-text-editor'
+import { stripHtml } from './rich-text-renderer'
 import { ImagePicker } from './image-picker'
 import { ReviewStatusBadge } from './review/review-status-badge'
 import { ReviewActions } from './review/review-actions'
@@ -82,6 +82,9 @@ export function CrudList<T extends CrudItem>({
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]> | null>(null)
 
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+
   const refresh = async () => {
     try {
       const list = await load()
@@ -118,16 +121,9 @@ export function CrudList<T extends CrudItem>({
       setIsDialogOpen(false)
       setEditing(null)
       await refresh()
-      // Reload page to ensure all caches are cleared
-      if (typeof window !== 'undefined') {
-        window.location.reload()
-      }
     } catch (err) {
       const msg = (err as Error).message
       setError(msg)
-      // Server-side validation errors come back as JSON like
-      // `{"error":"Validation failed","details":{"fieldErrors":{"level":["..."]}}}`
-      // Try to surface per-field errors so the dialog highlights them.
       try {
         const parsed = JSON.parse(msg) as {
           details?: { fieldErrors?: Record<string, string[]> }
@@ -142,7 +138,7 @@ export function CrudList<T extends CrudItem>({
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Xóa mục này?')) return
+    if (!confirm('Xác nhận xóa mục này? Thao tác không thể hoàn tác.')) return
     try {
       await remove(id)
       await refresh()
@@ -175,114 +171,195 @@ export function CrudList<T extends CrudItem>({
     }
   }
 
+  // Filter items
+  const filteredItems = items.filter((item) => {
+    if (statusFilter === 'active' && !item.isActive) return false
+    if (statusFilter === 'inactive' && item.isActive) return false
+
+    if (!searchQuery.trim()) return true
+    const q = searchQuery.toLowerCase().trim()
+
+    return fields.some((f) => {
+      const val = item[f.key]
+      if (!val) return false
+      if (typeof val === 'string') return val.toLowerCase().includes(q)
+      if (typeof val === 'number') return String(val).includes(q)
+      if (typeof val === 'object') {
+        const localized = val as { vi?: string; en?: string }
+        return (
+          (localized.vi && localized.vi.toLowerCase().includes(q)) ||
+          (localized.en && localized.en.toLowerCase().includes(q))
+        )
+      }
+      return false
+    })
+  })
+
   return (
     <div className="space-y-4">
       {error && (
         <div
-          className="text-sm p-3 rounded"
+          className="text-sm p-3.5 rounded-xl border border-red-200"
           style={{ color: '#dc2626', backgroundColor: '#fef2f2' }}
         >
           {error}
         </div>
       )}
 
-      <div className="flex justify-end">
-        <Button onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" /> Thêm mới
-        </Button>
+      {/* Toolbar: Search, Status Filter & Create Action (No icons, 4px radius) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded border border-[#e2e8f0]">
+        <div className="flex flex-1 flex-wrap sm:flex-nowrap items-center gap-2">
+          <div className="relative flex-1 min-w-[200px]">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`Tìm kiếm trong ${title.toLowerCase()}...`}
+              className="w-full text-xs sm:text-sm h-8 px-3 rounded border border-[#e2e8f0] bg-[#f8fafc] focus:bg-white focus:border-[#1e3a8a] outline-none transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
+              >
+                Xóa
+              </button>
+            )}
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+            className="text-xs h-8 px-2.5 rounded border border-[#e2e8f0] bg-[#f8fafc] text-slate-700 font-medium outline-none shrink-0"
+          >
+            <option value="all">Tất cả ({items.length})</option>
+            <option value="active">Đang hiển thị ({items.filter((i) => i.isActive).length})</option>
+            <option value="inactive">Đang ẩn ({items.filter((i) => !i.isActive).length})</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-3 justify-end shrink-0">
+          <span className="text-xs text-[#64748b] font-medium hidden md:inline">
+            Hiển thị <strong>{filteredItems.length}</strong> / {items.length} mục
+          </span>
+          <button
+            type="button"
+            onClick={openCreate}
+            className="h-8 px-3 rounded bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white font-medium text-xs sm:text-sm inline-flex items-center transition-colors shadow-xs"
+          >
+            <span>Thêm mới</span>
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="text-sm text-center py-12" style={{ color: semanticColors.textMuted }}>
-          Đang tải…
+        <div className="text-sm text-center py-10 text-[#64748b] bg-white rounded border border-[#e2e8f0]">
+          Đang tải dữ liệu…
         </div>
       ) : items.length === 0 ? (
-        <div className="text-sm text-center py-12" style={{ color: semanticColors.textMuted }}>
-          Chưa có dữ liệu. Bấm “Thêm mới” để bắt đầu.
+        <div className="text-sm text-center py-10 text-[#64748b] bg-white rounded border border-[#e2e8f0]">
+          Chưa có dữ liệu. Bấm “Thêm mới” để bắt đầu nhập bản ghi đầu tiên.
+        </div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-sm text-center py-8 text-[#64748b] bg-white rounded border border-[#e2e8f0]">
+          Không tìm thấy mục nào khớp với bộ lọc.
+          <button
+            onClick={() => {
+              setSearchQuery('')
+              setStatusFilter('all')
+            }}
+            className="ml-2 font-semibold text-[#1e3a8a] underline"
+          >
+            Xóa tìm kiếm
+          </button>
         </div>
       ) : (
-        <div className="space-y-3">
-          {items.map((item, index) => (
-            <Card key={item.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="flex flex-col gap-1 shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
+        <div className="space-y-1.5">
+          {filteredItems.map((item, index) => (
+            <div
+              key={item.id}
+              className={`rounded border border-[#e2e8f0] bg-white transition-all hover:bg-[#f8fafc] hover:border-slate-300 p-3 sm:p-3.5 ${
+                !item.isActive ? 'opacity-70 bg-slate-50/60' : ''
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
+                  {/* Index & Reorder Buttons (Text only) */}
+                  <div className="flex flex-col items-center gap-1 shrink-0">
+                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">
+                      #{String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div className="flex flex-col gap-0.5">
+                      <button
+                        type="button"
+                        className="h-5 px-1 rounded border border-[#e2e8f0] bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none text-[10px] font-medium transition-colors"
                         onClick={() => handleMove(index, -1)}
-                        aria-label="Move up"
+                        title="Di chuyển lên"
                         disabled={index === 0}
                       >
-                        <ArrowUp className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
+                        Lên
+                      </button>
+                      <button
+                        type="button"
+                        className="h-5 px-1 rounded border border-[#e2e8f0] bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none text-[10px] font-medium transition-colors"
                         onClick={() => handleMove(index, 1)}
-                        aria-label="Move down"
+                        title="Di chuyển xuống"
                         disabled={index === items.length - 1}
                       >
-                        <ArrowDown className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      {reviewCollection && (item as { status?: string }).status && (
-                        <div className="mb-2">
-                          <ReviewStatusBadge status={(item as { status?: string }).status as never} />
-                        </div>
-                      )}
-                      {renderSummary ? (
-                        renderSummary(item)
-                      ) : (
-                        <Summary item={item} fields={fields} />
-                      )}
+                        Xuống
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${item.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {item.isActive ? 'Hiển thị' : 'Ẩn'}
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleToggleActive(item)}
-                      aria-label="Toggle active"
-                      title={item.isActive ? 'Đang hiển thị' : 'Đang ẩn'}
-                    >
-                      <Power
-                        className="w-4 h-4"
-                        style={{
-                          color: item.isActive ? semanticColors.primary : semanticColors.textMuted,
-                        }}
-                      />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEdit(item)}
-                      aria-label="Edit"
-                    >
-                      <Edit className="w-4 h-4 mr-1" />
-                      Sửa
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(item.id)}
-                      aria-label="Delete"
-                      className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
-                      style={{ color: semanticColors.cta }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+
+                  {/* Summary Content */}
+                  <div className="flex-1 min-w-0">
+                    {reviewCollection && (item as { status?: string }).status && (
+                      <div className="mb-1.5">
+                        <ReviewStatusBadge status={(item as { status?: string }).status as never} />
+                      </div>
+                    )}
+                    {renderSummary ? (
+                      renderSummary(item)
+                    ) : (
+                      <Summary item={item} fields={fields} />
+                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Actions (Text only, 4px radius) */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleActive(item)}
+                    className={`px-2 h-7 rounded text-xs font-medium transition-colors border ${
+                      item.isActive
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                        : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                    }`}
+                    title={item.isActive ? 'Bấm để ẩn khỏi website' : 'Bấm để hiển thị trên website'}
+                  >
+                    {item.isActive ? 'Bật' : 'Tắt'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openEdit(item)}
+                    title="Chỉnh sửa bản ghi"
+                    className="h-7 px-2 text-xs font-medium rounded border border-[#e2e8f0] bg-white hover:bg-slate-100 text-[#1e3a8a] inline-flex items-center transition-colors"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(item.id)}
+                    title="Xóa bản ghi"
+                    className="h-7 px-2 text-xs font-medium rounded border border-[#e2e8f0] bg-white text-slate-500 hover:text-[#dc2626] hover:bg-red-50 hover:border-red-200 flex items-center justify-center transition-colors"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -318,12 +395,13 @@ function Summary({ item, fields }: { item: CrudItem; fields: CrudFieldDef[] }) {
       {fields.slice(0, 2).map((f) => {
         const raw = item[f.key]
         if (f.multilang && raw && typeof raw === 'object') {
+          const val = (raw as { vi?: string; en?: string }).vi || (raw as { vi?: string; en?: string }).en || ''
           return (
             <div key={f.key}>
               <div className="text-xs" style={{ color: semanticColors.textMuted }}>
                 {f.label}
               </div>
-              <div className="font-medium truncate">{(raw as { vi?: string }).vi}</div>
+              <div className="font-medium truncate">{stripHtml(val)}</div>
             </div>
           )
         }
@@ -333,7 +411,7 @@ function Summary({ item, fields }: { item: CrudItem; fields: CrudFieldDef[] }) {
               <div className="text-xs" style={{ color: semanticColors.textMuted }}>
                 {f.label}
               </div>
-              <div className="font-medium truncate">{raw}</div>
+              <div className="font-medium truncate">{stripHtml(raw)}</div>
             </div>
           )
         }
@@ -476,8 +554,7 @@ function CrudDialog({
               onClick={onToggleHistory}
               className="mt-1"
             >
-              <History className="w-4 h-4 mr-1" />
-              {showHistory ? 'Ẩn lịch sử' : 'Xem lịch sử'}
+              <span>{showHistory ? 'Ẩn lịch sử' : 'Xem lịch sử'}</span>
             </Button>
             {showHistory && (
               <ReviewHistoryTimeline collection={reviewCollection!} documentId={editing!.id as string} />

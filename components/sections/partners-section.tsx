@@ -13,6 +13,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { ArrowRight, Sparkles, ShieldCheck } from 'lucide-react'
 import { useSectionActive } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 const partnerBadges: Record<string, { label: { vi: string; en: string }; color: string; bg: string }> = {
   edmentum: {
@@ -277,9 +278,11 @@ export function PartnersSection() {
                     </h3>
 
                     {/* Partner Description */}
-                    <p className="text-xs text-[#5C6069] leading-relaxed line-clamp-4 mb-4 text-left sm:text-center">
-                      {desc}
-                    </p>
+                    <RichTextRenderer
+                      html={desc}
+                      compact
+                      className="text-xs text-[#5C6069] leading-relaxed line-clamp-4 mb-4 text-left sm:text-center block"
+                    />
                   </div>
 
                   {/* Card Bottom Link */}

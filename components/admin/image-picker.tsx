@@ -15,7 +15,6 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { ImageIcon, Loader2, Trash2, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -143,7 +142,7 @@ export function ImagePicker({
 
       <div className="flex items-center gap-3">
         <div
-          className="relative w-32 h-32 rounded-md overflow-hidden border bg-gray-50 flex items-center justify-center shrink-0"
+          className="relative w-28 h-28 rounded overflow-hidden border bg-gray-50 flex items-center justify-center shrink-0"
           style={{ borderColor: 'rgba(35,31,32,0.15)' }}
         >
           {value ? (
@@ -158,25 +157,23 @@ export function ImagePicker({
               }}
             />
           ) : (
-            <ImageIcon className="w-8 h-8 text-gray-300" />
+            <span className="text-xs text-slate-400">Chưa có ảnh</span>
           )}
         </div>
 
         <div className="flex flex-col gap-2 flex-1 min-w-0">
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(true)}>
-              <Upload className="w-4 h-4 mr-2" />
+            <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)} className="rounded h-8 text-xs">
               {value ? 'Thay ảnh' : 'Chọn ảnh'}
             </Button>
             {value && (
-              <Button type="button" variant="outline" onClick={handleDelete}>
-                <Trash2 className="w-4 h-4 mr-2" />
+              <Button type="button" variant="outline" size="sm" onClick={handleDelete} className="rounded h-8 text-xs text-red-600 border-red-200 hover:bg-red-50">
                 Xóa
               </Button>
             )}
           </div>
           {value && (
-            <div className="text-xs truncate" style={{ color: '#6B6B6B' }}>
+            <div className="text-xs truncate font-mono" style={{ color: '#6B6B6B' }}>
               <a href={value} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 {value}
               </a>
@@ -192,35 +189,36 @@ export function ImagePicker({
               placeholder="Alt text (mô tả ảnh cho SEO/a11y)"
               value={altText ?? ''}
               onChange={(e) => onAltTextChange(e.target.value)}
+              className="rounded h-8 text-xs"
             />
           )}
         </div>
       </div>
 
       {open && (
-        <div className="relative z-10 bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden mt-2">
-          <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-            <h3 className="text-base font-bold text-gray-900">Chọn hình ảnh</h3>
+        <div className="relative z-10 bg-white rounded border border-gray-200 shadow-md overflow-hidden mt-2">
+          <div className="flex items-center justify-between p-3 border-b bg-gray-50">
+            <h3 className="text-sm font-bold text-gray-900">Chọn hình ảnh</h3>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 p-1 transition-colors"
+              className="text-xs text-gray-600 hover:text-gray-900 border border-gray-200 px-2 py-0.5 rounded hover:bg-gray-100 transition-colors"
               aria-label="Đóng"
             >
-              <X className="w-4 h-4" />
+              Đóng
             </button>
           </div>
 
-          <div className="flex gap-2 p-3 border-b" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
+          <div className="flex gap-1.5 p-2.5 border-b" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
             {tabs.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => setTab(t.id)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                className={`px-3 py-1 text-xs font-medium rounded transition-all ${
                   tab === t.id
-                    ? 'bg-[#3A53A3] text-white shadow-md'
-                    : 'text-gray-600 hover:bg-white hover:shadow-sm'
+                    ? 'bg-[#3A53A3] text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 {t.label}
@@ -229,7 +227,7 @@ export function ImagePicker({
           </div>
 
           {error && (
-            <div className="mx-4 mt-4 text-sm p-3 rounded-lg" style={{ color: '#dc2626', backgroundColor: '#fef2f2' }}>
+            <div className="mx-4 mt-3 text-xs p-2.5 rounded" style={{ color: '#dc2626', backgroundColor: '#fef2f2' }}>
               {error}
             </div>
           )}
@@ -238,12 +236,11 @@ export function ImagePicker({
             {tab === 'upload' && (
               <div className="flex flex-col items-center justify-center">
                 <div
-                  className="border-2 border-dashed rounded-xl p-8 text-center w-full transition-colors hover:border-[#3A53A3]"
+                  className="border-2 border-dashed rounded p-6 text-center w-full transition-colors hover:border-[#3A53A3]"
                   style={{ borderColor: 'rgba(35,31,32,0.15)' }}
                 >
-                  <Upload className="w-10 h-10 mx-auto mb-3 text-gray-400" />
-                  <p className="text-sm mb-3 font-medium">Kéo thả hoặc chọn tệp để upload lên S3</p>
-                  <p className="text-xs mb-4 text-gray-500">JPG, PNG, WebP, GIF, AVIF, SVG</p>
+                  <p className="text-sm mb-1 font-medium">Kéo thả hoặc chọn tệp để upload lên S3</p>
+                  <p className="text-xs mb-3 text-gray-500">JPG, PNG, WebP, GIF, AVIF, SVG</p>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -260,18 +257,9 @@ export function ImagePicker({
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
                     size="sm"
+                    className="rounded h-8 text-xs"
                   >
-                    {uploading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Đang upload…
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Chọn tệp
-                      </>
-                    )}
+                    {uploading ? 'Đang upload…' : 'Chọn tệp'}
                   </Button>
                 </div>
               </div>
@@ -296,7 +284,7 @@ export function ImagePicker({
                           onChange(m.url)
                           setOpen(false)
                         }}
-                        className="relative aspect-square rounded-lg overflow-hidden border-2 hover:ring-2 hover:ring-[#3A53A3] hover:border-[#3A53A3] transition-all"
+                        className="relative aspect-square rounded overflow-hidden border hover:border-[#3A53A3] transition-all"
                         style={{ borderColor: 'rgba(35,31,32,0.15)' }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}

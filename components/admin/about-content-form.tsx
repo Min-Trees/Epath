@@ -1,14 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { AboutContent } from '@/lib/cms-types'
-import { semanticColors } from '@/lib/design-tokens'
 import { ImagePicker } from './image-picker'
 
 interface Milestone {
@@ -44,6 +42,8 @@ export function AboutContentForm({ load, update, create }: AboutContentFormProps
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState<Partial<AboutContent>>(defaultForm)
   const [milestones, setMilestones] = useState<Milestone[]>([])
+  const [activeTab, setActiveTab] = useState<'intro' | 'vision' | 'milestones'>('intro')
+  const [activeLang, setActiveLang] = useState<'vi' | 'en'>('vi')
 
   useEffect(() => {
     load()
@@ -135,304 +135,397 @@ export function AboutContentForm({ load, update, create }: AboutContentFormProps
 
   if (isLoading) {
     return (
-      <div className="text-sm" style={{ color: semanticColors.textMuted }}>
-        Đang tải…
+      <div className="text-sm text-center py-12 text-[#868E96] bg-white rounded border border-[#E9ECEF]">
+        Đang tải nội dung About…
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 max-w-5xl">
+      {/* Top Controls: Section Tabs, Language Switcher & Save Button */}
+      <div className="sticky top-[58px] z-30 bg-white p-3 rounded border border-[#E9ECEF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Section Tabs */}
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab('intro')}
+            className={`px-3 py-1.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 ${
+              activeTab === 'intro'
+                ? 'bg-[#1E3570] text-white'
+                : 'text-[#495057] hover:bg-[#F1F3F5]'
+            }`}
+          >
+            1. Giới thiệu & Ảnh Hero
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('vision')}
+            className={`px-3 py-1.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 ${
+              activeTab === 'vision'
+                ? 'bg-[#1E3570] text-white'
+                : 'text-[#495057] hover:bg-[#F1F3F5]'
+            }`}
+          >
+            2. Tầm nhìn & Sứ mệnh
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('milestones')}
+            className={`px-3 py-1.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 ${
+              activeTab === 'milestones'
+                ? 'bg-[#1E3570] text-white'
+                : 'text-[#495057] hover:bg-[#F1F3F5]'
+            }`}
+          >
+            3. Cột mốc ({milestones.length})
+          </button>
+        </div>
+
+        {/* Language Switcher & Save Button */}
+        <div className="flex items-center gap-2 justify-end shrink-0">
+          <div className="flex items-center p-0.5 bg-[#F1F3F5] rounded border border-[#E9ECEF]">
+            <button
+              type="button"
+              onClick={() => setActiveLang('vi')}
+              className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                activeLang === 'vi'
+                  ? 'bg-white text-[#1E3570]'
+                  : 'text-[#868E96] hover:text-[#20242B]'
+              }`}
+            >
+              Tiếng Việt
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveLang('en')}
+              className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                activeLang === 'en'
+                  ? 'bg-white text-[#1E3570]'
+                  : 'text-[#868E96] hover:text-[#20242B]'
+              }`}
+            >
+              English
+            </button>
+          </div>
+
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="h-8 px-4 rounded bg-[#1E3570] hover:bg-[#2A4B9B] text-white font-medium text-xs sm:text-sm"
+          >
+            {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+          </Button>
+        </div>
+      </div>
+
       {error && (
-        <div className="text-sm p-3 rounded" style={{ color: '#dc2626', backgroundColor: '#fef2f2' }}>
+        <div className="text-sm p-3 rounded border border-red-200 bg-[#FFF5F5] text-[#FA5252]">
           {error}
         </div>
       )}
       {success && (
-        <div className="text-sm p-3 rounded" style={{ color: '#16a34a', backgroundColor: '#f0fdf4' }}>
-          Đã lưu thành công!
+        <div className="text-sm p-3 rounded border border-green-200 bg-[#EBFBEE] text-[#2B8A3E] font-semibold">
+          Đã lưu nội dung Giới thiệu thành công!
         </div>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Hình ảnh Hero</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImagePicker
-            value={form.heroImage ?? ''}
-            onChange={(url) => setField('heroImage', url)}
-            label="Hero Image"
-            helperText="Ảnh hiển thị phía bên phải của phần giới thiệu. Không giới hạn dung lượng."
-            folder="about"
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Giới thiệu</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Tiêu đề giới thiệu (VN)</Label>
-            <Input
-              value={(form.introTitle as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('introTitle', 'vi', e.target.value)}
-              placeholder="Về EPath Education"
-            />
-          </div>
-          <div>
-            <Label>Tiêu đề giới thiệu (EN)</Label>
-            <Input
-              value={(form.introTitle as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('introTitle', 'en', e.target.value)}
-              placeholder="About EPath Education"
-            />
-          </div>
-          <div>
-            <Label>Nội dung giới thiệu (VN)</Label>
-            <Textarea
-              value={(form.introContent as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('introContent', 'vi', e.target.value)}
-              placeholder="Nội dung giới thiệu..."
-              rows={5}
-            />
-          </div>
-          <div>
-            <Label>Nội dung giới thiệu (EN)</Label>
-            <Textarea
-              value={(form.introContent as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('introContent', 'en', e.target.value)}
-              placeholder="Introduction content..."
-              rows={5}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Tầm nhìn</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Tiêu đề tầm nhìn (VN)</Label>
-            <Input
-              value={(form.visionTitle as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('visionTitle', 'vi', e.target.value)}
-              placeholder="Tầm nhìn của chúng tôi"
-            />
-          </div>
-          <div>
-            <Label>Tiêu đề tầm nhìn (EN)</Label>
-            <Input
-              value={(form.visionTitle as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('visionTitle', 'en', e.target.value)}
-              placeholder="Our Vision"
-            />
-          </div>
-          <div>
-            <Label>Nội dung tầm nhìn (VN)</Label>
-            <Textarea
-              value={(form.visionContent as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('visionContent', 'vi', e.target.value)}
-              placeholder="Nội dung tầm nhìn..."
-              rows={4}
-            />
-          </div>
-          <div>
-            <Label>Nội dung tầm nhìn (EN)</Label>
-            <Textarea
-              value={(form.visionContent as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('visionContent', 'en', e.target.value)}
-              placeholder="Vision content..."
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Sứ mệnh</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Tiêu đề sứ mệnh (VN)</Label>
-            <Input
-              value={(form.missionTitle as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('missionTitle', 'vi', e.target.value)}
-              placeholder="Sứ mệnh của chúng tôi"
-            />
-          </div>
-          <div>
-            <Label>Tiêu đề sứ mệnh (EN)</Label>
-            <Input
-              value={(form.missionTitle as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('missionTitle', 'en', e.target.value)}
-              placeholder="Our Mission"
-            />
-          </div>
-          <div>
-            <Label>Nội dung sứ mệnh (VN)</Label>
-            <Textarea
-              value={(form.missionContent as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('missionContent', 'vi', e.target.value)}
-              placeholder="Nội dung sứ mệnh..."
-              rows={4}
-            />
-          </div>
-          <div>
-            <Label>Nội dung sứ mệnh (EN)</Label>
-            <Textarea
-              value={(form.missionContent as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('missionContent', 'en', e.target.value)}
-              placeholder="Mission content..."
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Mục Đội ngũ Giảng viên & Cố vấn</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Tiêu đề mục (VN)</Label>
-              <Input
-                value={(form.facultyTitle as { vi: string } | undefined)?.vi ?? ''}
-                onChange={(e) => setLocalized('facultyTitle', 'vi', e.target.value)}
-                placeholder="Đội ngũ Giảng viên & Cố vấn Học thuật"
+      {/* TAB 1: Giới thiệu & Ảnh Hero */}
+      {activeTab === 'intro' && (
+        <div className="space-y-4">
+          <Card className="rounded border-[#E9ECEF] overflow-hidden">
+            <CardHeader className="bg-[#F8F9FA] border-b border-[#E9ECEF] py-3 px-4">
+              <CardTitle className="text-sm text-[#1E3570] font-bold">
+                Ảnh Đại Diện (Hero Image)
+              </CardTitle>
+              <CardDescription className="text-xs text-[#5C6069]">
+                Ảnh này sẽ xuất hiện tại khối &ldquo;VỀ EPATH EDUCATION&rdquo; trên Trang chủ và đầu trang Giới thiệu (/about).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-5">
+              <ImagePicker
+                value={form.heroImage ?? ''}
+                onChange={(url) => setField('heroImage', url)}
+                label="Tải ảnh lên S3 hoặc chọn từ thư viện"
+                helperText="Khuyên dùng ảnh chụp học sinh hoặc hoạt động học thuật sắc nét (tỷ lệ 4:3 hoặc 16:9)."
+                folder="about"
               />
-            </div>
-            <div>
-              <Label>Tiêu đề mục (EN)</Label>
-              <Input
-                value={(form.facultyTitle as { en: string } | undefined)?.en ?? ''}
-                onChange={(e) => setLocalized('facultyTitle', 'en', e.target.value)}
-                placeholder="Faculty & Academic Advisory Board"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Phụ đề mục (VN)</Label>
-              <Input
-                value={(form.facultySubtitle as { vi: string } | undefined)?.vi ?? ''}
-                onChange={(e) => setLocalized('facultySubtitle', 'vi', e.target.value)}
-                placeholder="Mô hình kết hợp 50% Giáo viên Quốc tế và 50% Giáo viên Song ngữ chuyên môn cao"
-              />
-            </div>
-            <div>
-              <Label>Phụ đề mục (EN)</Label>
-              <Input
-                value={(form.facultySubtitle as { en: string } | undefined)?.en ?? ''}
-                onChange={(e) => setLocalized('facultySubtitle', 'en', e.target.value)}
-                placeholder="A balanced model of 50% International Teachers and 50% Specialized Bilingual Teachers"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Cột mốc phát triển</CardTitle>
-            <Button size="sm" variant="outline" onClick={addMilestone}>
-              <Plus className="w-4 h-4 mr-1" /> Thêm cột mốc
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {milestones.length === 0 ? (
-            <div className="text-sm" style={{ color: semanticColors.textMuted }}>
-              Chưa có cột mốc nào. Bấm "Thêm cột mốc" để bắt đầu.
-            </div>
-          ) : (
-            milestones.map((m, i) => (
-              <div
-                key={i}
-                className="p-4 border rounded-lg space-y-3"
-                style={{ borderColor: 'rgba(35,31,32,0.1)' }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Cột mốc #{i + 1}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => removeMilestone(i)}
-                    style={{ color: '#dc2626' }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs">Năm</Label>
-                    <Input
-                      value={m.year}
-                      onChange={(e) => updateMilestone(i, 'year', e.target.value)}
-                      placeholder="2024"
-                    />
-                  </div>
-                </div>
+          <Card className="rounded-2xl border-[#E9ECEF] shadow-xs overflow-hidden">
+            <CardHeader className="bg-[#F8F9FA] border-b border-[#E9ECEF] pb-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-xs">Tiêu đề (VN)</Label>
-                  <Input
-                    value={m.title.vi}
-                    onChange={(e) =>
-                      updateMilestone(i, 'title', { ...m.title, vi: e.target.value })
-                    }
-                    placeholder="Tiêu đề cột mốc"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Tiêu đề (EN)</Label>
-                  <Input
-                    value={m.title.en}
-                    onChange={(e) =>
-                      updateMilestone(i, 'title', { ...m.title, en: e.target.value })
-                    }
-                    placeholder="Milestone title"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Mô tả (VN)</Label>
-                  <Textarea
-                    value={m.description.vi}
-                    onChange={(e) =>
-                      updateMilestone(i, 'description', { ...m.description, vi: e.target.value })
-                    }
-                    placeholder="Mô tả cột mốc..."
-                    rows={2}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Mô tả (EN)</Label>
-                  <Textarea
-                    value={m.description.en}
-                    onChange={(e) =>
-                      updateMilestone(i, 'description', { ...m.description, en: e.target.value })
-                    }
-                    placeholder="Milestone description..."
-                    rows={2}
-                  />
+                  <CardTitle className="text-sm text-[#1E3570] font-bold">
+                    Tiêu Đề & Nội Dung Giới Thiệu
+                  </CardTitle>
+                  <CardDescription className="text-xs text-[#5C6069]">
+                    Đang chỉnh sửa bản: <strong className="text-[#1E3570]">{activeLang === 'vi' ? 'Tiếng Việt' : 'English'}</strong>
+                  </CardDescription>
                 </div>
               </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <div>
+                <Label className="text-xs font-semibold text-[#495057] mb-1.5 block">
+                  Tiêu đề giới thiệu ({activeLang.toUpperCase()})
+                </Label>
+                <Input
+                  value={(form.introTitle as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('introTitle', activeLang, e.target.value)}
+                  placeholder={activeLang === 'vi' ? 'Về EPath Education' : 'About EPath Education'}
+                  className="rounded border-[#CED4DA] focus:border-[#1E3570]"
+                />
+              </div>
 
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving}>
-          <Save className="w-4 h-4 mr-2" />
-          {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <Label className="text-xs font-semibold text-[#495057]">
+                    Nội dung giới thiệu ({activeLang.toUpperCase()})
+                  </Label>
+                  <span className="text-[11px] text-[#868E96]">
+                    Hỗ trợ xuống dòng đoạn văn & bullet gạch đầu dòng
+                  </span>
+                </div>
+                <Textarea
+                  value={(form.introContent as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('introContent', activeLang, e.target.value)}
+                  placeholder={
+                    activeLang === 'vi'
+                      ? 'Nhập các đoạn văn giới thiệu...\n\nCác bạn nhỏ trưởng thành cùng EPath Education sẽ như thế nào?\n\n- Sở hữu bằng tốt nghiệp THPT Mỹ...\n- Bổ sung nền tảng học thuật vững vàng...'
+                      : 'Enter introductory content here...'
+                  }
+                  rows={10}
+                  className="rounded border-[#CED4DA] focus:border-[#1E3570] text-sm leading-relaxed"
+                />
+                <div className="mt-2 p-3 rounded bg-[#F8F9FA] border border-[#E9ECEF] text-xs text-[#5C6069]">
+                  <strong>Quy tắc định dạng tự động:</strong>
+                  <ul className="list-disc list-inside mt-1 space-y-0.5 text-[#868E96]">
+                    <li>Mỗi đoạn văn cách nhau 2 lần Enter (dòng trống).</li>
+                    <li>Các dòng bắt đầu bằng <code className="text-[#1E3570] font-bold">- </code> hoặc <code className="text-[#1E3570] font-bold">• </code> sẽ tự động biến thành thẻ danh sách có icon tích xanh.</li>
+                    <li>Dòng kết thúc bằng dấu chấm hỏi <code className="text-[#1E3570] font-bold">?</code> sẽ tự động biến thành tiêu đề phân đoạn in đậm.</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 2: Tầm nhìn & Sứ mệnh */}
+      {activeTab === 'vision' && (
+        <div className="grid md:grid-cols-2 gap-4">
+          {/* Vision */}
+          <Card className="rounded border-[#E9ECEF] overflow-hidden">
+            <CardHeader className="bg-[#F8F9FA] border-b border-[#E9ECEF] py-3 px-4">
+              <CardTitle className="text-sm text-[#1E3570] font-bold">
+                Tầm Nhìn Chiến Lược (Vision)
+              </CardTitle>
+              <CardDescription className="text-xs text-[#5C6069]">
+                Bản ngữ: <strong className="text-[#1E3570]">{activeLang === 'vi' ? 'Tiếng Việt' : 'English'}</strong>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <div>
+                <Label className="text-xs font-semibold text-[#495057] mb-1.5 block">
+                  Tiêu đề tầm nhìn ({activeLang.toUpperCase()})
+                </Label>
+                <Input
+                  value={(form.visionTitle as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('visionTitle', activeLang, e.target.value)}
+                  placeholder={activeLang === 'vi' ? 'Tầm nhìn (Vision)' : 'Our Vision'}
+                  className="rounded border-[#CED4DA]"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-semibold text-[#495057] mb-1.5 block">
+                  Nội dung tầm nhìn ({activeLang.toUpperCase()})
+                </Label>
+                <Textarea
+                  value={(form.visionContent as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('visionContent', activeLang, e.target.value)}
+                  placeholder="Nhập nội dung tầm nhìn..."
+                  rows={8}
+                  className="rounded border-[#CED4DA] text-sm leading-relaxed"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Mission */}
+          <Card className="rounded border-[#E9ECEF] overflow-hidden">
+            <CardHeader className="bg-[#F8F9FA] border-b border-[#E9ECEF] py-3 px-4">
+              <CardTitle className="text-sm text-[#1E3570] font-bold">
+                Sứ Mệnh Hành Động (Mission)
+              </CardTitle>
+              <CardDescription className="text-xs text-[#5C6069]">
+                Bản ngữ: <strong className="text-[#1E3570]">{activeLang === 'vi' ? 'Tiếng Việt' : 'English'}</strong>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <div>
+                <Label className="text-xs font-semibold text-[#495057] mb-1.5 block">
+                  Tiêu đề sứ mệnh ({activeLang.toUpperCase()})
+                </Label>
+                <Input
+                  value={(form.missionTitle as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('missionTitle', activeLang, e.target.value)}
+                  placeholder={activeLang === 'vi' ? 'Sứ mệnh (Mission)' : 'Our Mission'}
+                  className="rounded border-[#CED4DA]"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-semibold text-[#495057] mb-1.5 block">
+                  Nội dung sứ mệnh ({activeLang.toUpperCase()})
+                </Label>
+                <Textarea
+                  value={(form.missionContent as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                  onChange={(e) => setLocalized('missionContent', activeLang, e.target.value)}
+                  placeholder="Nhập nội dung sứ mệnh..."
+                  rows={8}
+                  className="rounded border-[#CED4DA] text-sm leading-relaxed"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 3: Milestones */}
+      {activeTab === 'milestones' && (
+        <Card className="rounded border-[#E9ECEF] overflow-hidden">
+          <CardHeader className="bg-[#F8F9FA] border-b border-[#E9ECEF] py-3 px-4 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-sm text-[#1E3570] font-bold">
+                Dòng Thời Gian Lịch Sử (Milestones)
+              </CardTitle>
+              <CardDescription className="text-xs text-[#5C6069]">
+                Các mốc năm phát triển hiển thị trên trang Giới thiệu.
+              </CardDescription>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              onClick={addMilestone}
+              className="bg-[#1E3570] hover:bg-[#2A4B9B] text-white text-xs font-medium rounded h-8 px-3"
+            >
+              Thêm cột mốc
+            </Button>
+          </CardHeader>
+          <CardContent className="pt-4 space-y-3">
+            {milestones.length === 0 ? (
+              <div className="text-center py-8 text-xs text-[#868E96]">
+                Chưa có cột mốc nào. Bấm &ldquo;Thêm cột mốc&rdquo; để bắt đầu.
+              </div>
+            ) : (
+              milestones.map((ms, idx) => (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded border border-[#E9ECEF] bg-[#F8F9FA] space-y-3 relative group"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded bg-[#1E3570] text-white text-[11px] font-bold flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <Input
+                        value={ms.year}
+                        onChange={(e) => updateMilestone(idx, 'year', e.target.value)}
+                        placeholder="Năm (VD: 2024)"
+                        className="w-32 h-7 text-xs font-medium rounded border-[#CED4DA] bg-white"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeMilestone(idx)}
+                      className="h-7 px-2.5 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 rounded border-red-200"
+                    >
+                      Xóa
+                    </Button>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-[11px] font-medium text-[#495057] mb-1 block">
+                        Tiêu đề (Tiếng Việt)
+                      </Label>
+                      <Input
+                        value={ms.title.vi}
+                        onChange={(e) =>
+                          updateMilestone(idx, 'title', { ...ms.title, vi: e.target.value })
+                        }
+                        placeholder="VD: Ra mắt EPath Education"
+                        className="h-8 text-xs rounded border-[#CED4DA] bg-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[11px] font-medium text-[#495057] mb-1 block">
+                        Tiêu đề (English)
+                      </Label>
+                      <Input
+                        value={ms.title.en}
+                        onChange={(e) =>
+                          updateMilestone(idx, 'title', { ...ms.title, en: e.target.value })
+                        }
+                        placeholder="VD: EPath Education Launched"
+                        className="h-8 text-xs rounded border-[#CED4DA] bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-[11px] font-medium text-[#495057] mb-1 block">
+                        Mô tả (Tiếng Việt)
+                      </Label>
+                      <Textarea
+                        value={ms.description.vi}
+                        onChange={(e) =>
+                          updateMilestone(idx, 'description', { ...ms.description, vi: e.target.value })
+                        }
+                        placeholder="Mô tả sự kiện bằng tiếng Việt..."
+                        rows={2}
+                        className="text-xs rounded border-[#CED4DA] bg-white"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[11px] font-medium text-[#495057] mb-1 block">
+                        Mô tả (English)
+                      </Label>
+                      <Textarea
+                        value={ms.description.en}
+                        onChange={(e) =>
+                          updateMilestone(idx, 'description', { ...ms.description, en: e.target.value })
+                        }
+                        placeholder="Description in English..."
+                        rows={2}
+                        className="text-xs rounded border-[#CED4DA] bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Save Footer */}
+      <div className="flex items-center justify-between p-3.5 bg-white rounded border border-[#E9ECEF]">
+        <span className="text-xs text-[#868E96]">
+          Mọi thay đổi sẽ cập nhật trực tiếp lên Firestore và phản ánh tức thì trên website.
+        </span>
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="h-8 px-5 rounded bg-[#1E3570] hover:bg-[#2A4B9B] text-white font-medium text-xs sm:text-sm"
+        >
+          {isSaving ? 'Đang lưu dữ liệu...' : 'Lưu tất cả thay đổi'}
         </Button>
       </div>
     </div>

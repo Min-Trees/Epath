@@ -5,6 +5,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
 import { useTranslations, useLocale } from 'next-intl'
 import type { Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 function pick(v: { vi: string; en: string } | undefined, locale: Locale): string {
   if (!v) return ''
@@ -34,10 +35,7 @@ export function AchievementsSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-[#20242B] mb-4">
-            {/* Bilingual title – prefer CMS over i18n */}
-            {cms.aboutContent?.introTitle
-              ? pick(cms.aboutContent.introTitle, locale) + (isVi ? ' — Thành tích' : ' — Achievements')
-              : (isVi ? 'Thành tích vượt trội' : 'Outstanding Achievements')}
+            {isVi ? 'Thành tích vượt trội' : 'Outstanding Achievements'}
           </h2>
           <p className="text-lg text-[#5C6069] max-w-2xl mx-auto">
             {isVi
@@ -69,7 +67,11 @@ export function AchievementsSection() {
                 )}
                 <div className="p-5">
                   <h3 className="font-bold text-[#20242B] mb-2">{title}</h3>
-                  <p className="text-sm text-[#5C6069] leading-relaxed line-clamp-3">{desc}</p>
+                  <RichTextRenderer
+                    html={desc}
+                    compact
+                    className="text-sm text-[#5C6069] leading-relaxed line-clamp-3 block"
+                  />
                 </div>
               </motion.div>
             )

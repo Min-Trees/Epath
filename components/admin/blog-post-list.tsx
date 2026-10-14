@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
-import { ArrowDown, ArrowUp, Edit, Plus, Trash2, Power, Star } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -144,8 +143,8 @@ export function BlogPostList({
       )}
 
       <div className="flex justify-end">
-        <Button onClick={() => { setEditing(null); setIsOpen(true) }}>
-          <Plus className="w-4 h-4 mr-2" /> Đăng bài mới
+        <Button onClick={() => { setEditing(null); setIsOpen(true) }} className="rounded h-8 px-4 text-xs font-medium bg-[#1E3570] hover:bg-[#2A4B9B] text-white">
+          Đăng bài mới
         </Button>
       </div>
 
@@ -158,79 +157,92 @@ export function BlogPostList({
           Chưa có bài viết. Bấm "Đăng bài mới" để bắt đầu.
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {items.map((item, index) => (
-            <Card key={item.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span
-                        className="text-xs px-2 py-0.5 rounded-full text-white"
-                        style={{
-                          backgroundColor: item.status === 'PUBLISHED' ? '#16a34a' : item.status === 'PENDING_REVIEW' ? '#f59e0b' : item.status === 'REJECTED' ? '#dc2626' : item.status === 'SCHEDULED' ? '#8b5cf6' : '#6b7280',
-                        }}
-                      >
-                        {item.status === 'PUBLISHED' ? 'Đã đăng' : item.status === 'PENDING_REVIEW' ? 'Chờ duyệt' : item.status === 'REJECTED' ? 'Bị từ chối' : item.status === 'SCHEDULED' ? 'Lên lịch' : item.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
+            <div key={item.id} className="p-3 bg-white border border-[#E2E8F0] rounded hover:border-[#CBD5E1] transition-colors">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span
+                      className="text-xs px-1.5 py-0.5 rounded text-white font-medium"
+                      style={{
+                        backgroundColor: item.status === 'PUBLISHED' ? '#16a34a' : item.status === 'PENDING_REVIEW' ? '#f59e0b' : item.status === 'REJECTED' ? '#dc2626' : item.status === 'SCHEDULED' ? '#8b5cf6' : '#6b7280',
+                      }}
+                    >
+                      {item.status === 'PUBLISHED' ? 'Đã đăng' : item.status === 'PENDING_REVIEW' ? 'Chờ duyệt' : item.status === 'REJECTED' ? 'Bị từ chối' : item.status === 'SCHEDULED' ? 'Lên lịch' : item.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
+                    </span>
+                    {item.isFeatured && (
+                      <span className="text-xs px-1.5 py-0.5 rounded text-white font-medium" style={{ backgroundColor: '#9333ea' }}>
+                        Nổi bật
                       </span>
-                      {item.isFeatured && (
-                        <span className="text-xs px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: '#9333ea' }}>
-                          Nổi bật
-                        </span>
-                      )}
-                      <span className="text-xs" style={{ color: semanticColors.textMuted }}>
-                        /{item.slug}
-                      </span>
-                      {item.category && (
-                        <span className="text-xs" style={{ color: semanticColors.textMuted }}>· {item.category}</span>
-                      )}
-                    </div>
-                    <div className="font-medium truncate">
-                      {item.title?.vi || '(Không tiêu đề)'}
-                    </div>
-                    <div className="text-xs" style={{ color: semanticColors.textMuted }}>
-                      {item.author && `${item.author} · `}
-                      {item.publishedAt && new Date(item.publishedAt).toLocaleDateString('vi-VN')}
-                      {item.readingTimeMinutes && ` · ${item.readingTimeMinutes} phút đọc`}
-                    </div>
+                    )}
+                    <span className="text-xs font-mono" style={{ color: semanticColors.textMuted }}>
+                      /{item.slug}
+                    </span>
+                    {item.category && (
+                      <span className="text-xs" style={{ color: semanticColors.textMuted }}>· {item.category}</span>
+                    )}
                   </div>
-                  <div className="flex flex-col gap-2 shrink-0">
-                    <div className="flex gap-1">
-                      <Button variant="outline" size="icon" onClick={() => handleMove(index, -1)} disabled={index === 0}>
-                        <ArrowUp className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => handleMove(index, 1)} disabled={index === items.length - 1}>
-                        <ArrowDown className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleToggle(item)}
-                        title={item.isActive ? 'Đang hiển thị' : 'Đang ẩn'}
-                      >
-                        <Power className="w-4 h-4" style={{ color: item.isActive ? semanticColors.primary : semanticColors.textMuted }} />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleToggleFeatured(item)}
-                        title={item.isFeatured ? 'Bài nổi bật' : 'Đánh dấu nổi bật'}
-                      >
-                        <Star className="w-4 h-4" style={{ color: item.isFeatured ? '#9333ea' : semanticColors.textMuted }} />
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => { setEditing(item); setIsOpen(true) }}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => handleDelete(item.id)} style={{ color: semanticColors.cta }}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                  <div className="font-semibold text-sm text-[#0F172A] truncate">
+                    {item.title?.vi || '(Không tiêu đề)'}
+                  </div>
+                  <div className="text-xs mt-0.5" style={{ color: semanticColors.textMuted }}>
+                    {item.author && `${item.author} · `}
+                    {item.publishedAt && new Date(item.publishedAt).toLocaleDateString('vi-VN')}
+                    {item.readingTimeMinutes && ` · ${item.readingTimeMinutes} phút đọc`}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleToggle(item)}
+                    className="h-7 px-2 text-xs rounded border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    {item.isActive ? 'Bật' : 'Tắt'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleFeatured(item)}
+                    className={`h-7 px-2 text-xs rounded border transition-colors ${
+                      item.isFeatured ? 'border-purple-300 text-purple-700 bg-purple-50' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {item.isFeatured ? 'Bỏ nổi bật' : 'Nổi bật'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setEditing(item); setIsOpen(true) }}
+                    className="h-7 px-2.5 text-xs rounded border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, -1)}
+                    disabled={index === 0}
+                    className="h-7 px-2 text-xs rounded border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                  >
+                    Lên
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, 1)}
+                    disabled={index === items.length - 1}
+                    className="h-7 px-2 text-xs rounded border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                  >
+                    Xuống
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(item.id)}
+                    className="h-7 px-2.5 text-xs rounded border border-red-200 text-red-600 hover:bg-red-50 transition-colors ml-1"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}

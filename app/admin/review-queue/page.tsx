@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Check, X, Loader2 } from 'lucide-react'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,24 +66,16 @@ export default function AdminReviewQueuePage() {
       title="Hàng chờ duyệt"
       subtitle={`${items.length} nội dung đang chờ được duyệt`}
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Quay lại Dashboard
-      </Link>
-
       {/* Filters */}
       <div className="flex gap-3 mb-6 flex-wrap">
         <Input
           placeholder="Tìm kiếm tiêu đề..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs rounded"
         />
         <select
-          className="rounded-md border px-3 py-2 text-sm"
+          className="rounded border px-3 py-2 text-sm bg-white"
           value={filterCollection}
           onChange={(e) => setFilterCollection(e.target.value)}
           style={{ borderColor: 'rgba(35,31,32,0.15)' }}
@@ -96,24 +87,22 @@ export default function AdminReviewQueuePage() {
             </option>
           ))}
         </select>
-        <Button variant="outline" size="sm" onClick={fetchQueue} disabled={loading}>
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Làm mới'}
+        <Button variant="outline" size="sm" onClick={fetchQueue} disabled={loading} className="rounded">
+          {loading ? 'Đang tải...' : 'Làm mới'}
         </Button>
       </div>
 
       {/* Queue list */}
       {loading && items.length === 0 ? (
-        <div className="text-center py-12" style={{ color: semanticColors.textMuted }}>
-          <Loader2 className="w-8 h-8 mx-auto animate-spin mb-3" />
-          Đang tải...
+        <div className="text-center py-12 text-sm" style={{ color: semanticColors.textMuted }}>
+          Đang tải danh sách chờ duyệt...
         </div>
       ) : filtered.length === 0 ? (
         <div
-          className="text-center py-12 rounded-xl"
+          className="text-center py-12 rounded border border-slate-200"
           style={{ backgroundColor: semanticColors.surface }}
         >
-          <div className="text-4xl mb-3">🎉</div>
-          <p className="font-medium" style={{ color: semanticColors.text }}>
+          <p className="font-medium text-base" style={{ color: semanticColors.text }}>
             Hàng chờ duyệt trống
           </p>
           <p className="text-sm mt-1" style={{ color: semanticColors.textMuted }}>
@@ -123,13 +112,13 @@ export default function AdminReviewQueuePage() {
       ) : (
         <div className="space-y-3">
           {filtered.map((item) => (
-            <Card key={`${item.collection}-${item.id}`}>
-              <CardContent className="p-5">
+            <Card key={`${item.collection}-${item.id}`} className="rounded border border-slate-200">
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span
-                        className="text-xs px-2 py-1 rounded font-medium text-white"
+                        className="text-xs px-2 py-0.5 rounded font-medium text-white"
                         style={{ backgroundColor: '#f59e0b' }}
                       >
                         {getCollectionLabel(item.collection)}
@@ -164,14 +153,9 @@ export default function AdminReviewQueuePage() {
                       size="sm"
                       onClick={() => handleAction(item, 'APPROVED')}
                       disabled={actionId === item.id}
-                      style={{ backgroundColor: '#16a34a', color: '#fff' }}
+                      className="rounded bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
-                      {actionId === item.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Check className="w-4 h-4 mr-1" />
-                      )}
-                      Duyệt
+                      {actionId === item.id ? 'Đang duyệt...' : 'Duyệt'}
                     </Button>
                     <Button
                       variant="outline"
@@ -181,10 +165,9 @@ export default function AdminReviewQueuePage() {
                         if (reason) handleAction(item, 'REJECTED', reason)
                       }}
                       disabled={actionId === item.id}
-                      style={{ color: '#dc2626', borderColor: '#fecaca' }}
+                      className="rounded text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
                     >
-                      <X className="w-4 h-4 mr-1" />
-                      Từ chối
+                      {actionId === item.id ? 'Đang từ chối...' : 'Từ chối'}
                     </Button>
                   </div>
                 </div>

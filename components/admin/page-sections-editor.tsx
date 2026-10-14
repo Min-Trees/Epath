@@ -29,9 +29,8 @@
  *     orphan draft is detected on mount.
  */
 import { useEffect, useState } from 'react'
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, Power, Pencil } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -194,33 +193,52 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-lg font-bold" style={{ color: semanticColors.text }}>
+          <h2 className="text-base font-semibold text-[#0f172a]">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-sm" style={{ color: semanticColors.textMuted }}>
+            <p className="text-[13px] text-[#64748b]">
               {subtitle}
             </p>
           )}
         </div>
-        <Button onClick={() => setIsAddOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Thêm section
-        </Button>
+        <button
+          type="button"
+          onClick={() => setIsAddOpen(true)}
+          className="h-8 px-3 rounded text-sm font-medium bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 inline-flex items-center transition-colors shadow-xs"
+        >
+          <span>Thêm section</span>
+        </button>
       </div>
 
+      {/* Loading Skeleton */}
       {isLoading ? (
-        <p className="text-sm text-center py-12" style={{ color: semanticColors.textMuted }}>
-          Đang tải…
-        </p>
+        <div className="space-y-2 py-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-12 rounded bg-slate-100 animate-pulse border border-[#e2e8f0]" />
+          ))}
+        </div>
       ) : sections.length === 0 ? (
-        <p className="text-sm text-center py-12" style={{ color: semanticColors.textMuted }}>
-          Chưa có section. Bấm “Thêm section” để bắt đầu.
-        </p>
+        /* Empty State */
+        <div className="text-center py-10 px-4 rounded border border-dashed border-[#e2e8f0] bg-white">
+          <p className="text-sm font-medium text-[#0f172a]">Chưa có section nào trên trang này</p>
+          <p className="text-xs text-[#64748b] mt-1 mb-3">
+            Bấm &quot;Thêm section&quot; để bắt đầu xây dựng bố cục trang.
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsAddOpen(true)}
+            className="h-8 px-3 rounded text-sm font-medium bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 inline-flex items-center transition-colors"
+          >
+            <span>Thêm section ngay</span>
+          </button>
+        </div>
       ) : (
-        <div className="space-y-2">
+        /* Compact Section Rows List - Text Actions Only, 4px Radius */
+        <div className="space-y-1.5">
           {sections.map((section, index) => {
             const d = (section.data ?? {}) as SectionData
             const hasContent =
@@ -230,94 +248,131 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
               !!d.subtitle?.en ||
               !!d.body?.vi ||
               !!d.body?.en
+
             return (
-              <Card key={section.id}>
-                <CardContent className="p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium" style={{ color: semanticColors.text }}>
-                        {SECTION_LABELS[section.type]}
-                      </div>
-                      <div className="text-xs" style={{ color: semanticColors.textMuted }}>
-                        {section.id} • Thứ tự {index + 1}
-                        {hasContent ? ' • Đã có nội dung' : ' • Trống'}
-                      </div>
-                    </div>
-                    <div className="flex gap-1 flex-wrap justify-end">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setEditing(section)}
-                        aria-label="Edit content"
-                        title="Sửa nội dung"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleMove(index, -1)}
-                        disabled={index === 0}
-                        aria-label="Move up"
-                      >
-                        <ArrowUp className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleMove(index, 1)}
-                        disabled={index === sections.length - 1}
-                        aria-label="Move down"
-                      >
-                        <ArrowDown className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleToggle(section)}
-                        title={section.isActive ? 'Đang hiển thị' : 'Đang ẩn'}
-                      >
-                        <Power
-                          className="w-4 h-4"
-                          style={{
-                            color: section.isActive
-                              ? semanticColors.primary
-                              : semanticColors.textMuted,
-                          }}
-                        />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDelete(section.id)}
-                        style={{ color: semanticColors.cta }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+              <div
+                key={section.id}
+                className={cn(
+                  'flex items-center justify-between gap-3 px-3 py-2 rounded border border-[#e2e8f0] bg-white transition-all hover:bg-[#f8fafc] hover:border-slate-300 min-h-[50px]',
+                  !section.isActive && 'opacity-60 bg-slate-50/70'
+                )}
+              >
+                {/* Left: Order Index + Label + Code ID + Content Badge */}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Order Index */}
+                  <span className="w-5 h-5 rounded bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-center shrink-0 border border-slate-200">
+                    {index + 1}
+                  </span>
+
+                  <div className="flex items-center flex-wrap gap-2 min-w-0">
+                    <span className="text-sm font-semibold text-[#0f172a] truncate">
+                      {SECTION_LABELS[section.type] || section.type}
+                    </span>
+
+                    {/* Monospace Code Identifier */}
+                    <code className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                      {section.id}
+                    </code>
+
+                    {/* Status Content Badge */}
+                    {hasContent ? (
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Đã có nội dung
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">
+                        Trống
+                      </span>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* Right: Text Actions Group (No Icons, 4px radius) */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggle(section)}
+                    title={section.isActive ? 'Đang bật (Click để ẩn)' : 'Đang tắt (Click để bật)'}
+                    className={cn(
+                      'h-7 px-2.5 rounded text-xs font-medium border transition-colors',
+                      section.isActive
+                        ? 'bg-lime-50 text-lime-800 border-lime-300 hover:bg-lime-100'
+                        : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                    )}
+                  >
+                    {section.isActive ? 'Bật' : 'Tắt'}
+                  </button>
+
+                  {/* Edit */}
+                  <button
+                    type="button"
+                    onClick={() => setEditing(section)}
+                    title="Sửa nội dung section"
+                    className="h-7 px-2.5 rounded text-xs font-medium border border-[#e2e8f0] bg-white text-slate-700 hover:bg-slate-100 hover:text-[#1e3a8a] transition-colors"
+                  >
+                    Sửa
+                  </button>
+
+                  {/* Move Up */}
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, -1)}
+                    disabled={index === 0}
+                    title={index === 0 ? 'Đã ở đầu trang' : 'Di chuyển lên'}
+                    className="h-7 px-2 rounded text-xs font-medium border border-[#e2e8f0] bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  >
+                    Lên
+                  </button>
+
+                  {/* Move Down */}
+                  <button
+                    type="button"
+                    onClick={() => handleMove(index, 1)}
+                    disabled={index === sections.length - 1}
+                    title={index === sections.length - 1 ? 'Đã ở cuối trang' : 'Di chuyển xuống'}
+                    className="h-7 px-2 rounded text-xs font-medium border border-[#e2e8f0] bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  >
+                    Xuống
+                  </button>
+
+                  {/* Divider before delete */}
+                  <div className="h-3.5 w-px bg-[#e2e8f0] mx-0.5" />
+
+                  {/* Delete Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(section.id)}
+                    title="Xoá section"
+                    className="h-7 px-2 rounded text-xs font-medium border border-[#e2e8f0] bg-white text-slate-500 hover:text-[#dc2626] hover:bg-red-50 hover:border-red-200 transition-colors"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
             )
           })}
         </div>
       )}
 
-      {/* Add section dialog */}
+      {/* Add Section Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="max-w-md w-[calc(100vw-2rem)]">
+        <DialogContent className="max-w-md w-[calc(100vw-2rem)] rounded border border-[#e2e8f0] bg-white p-5 shadow-lg">
           <DialogHeader>
-            <DialogTitle>Thêm section mới</DialogTitle>
-            <DialogDescription>
-              Chọn loại section. Nội dung chi tiết có thể sửa sau khi thêm.
+            <DialogTitle className="text-base font-semibold text-[#0f172a]">
+              Thêm section mới
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#64748b]">
+              Chọn loại section. Bạn có thể chỉnh sửa nội dung chi tiết ngay sau khi thêm.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 py-2">
-            <Label htmlFor="section-type-select">Loại section</Label>
+          <div className="space-y-3 py-3">
+            <Label htmlFor="section-type-select" className="text-xs font-medium text-slate-700">
+              Loại section
+            </Label>
             <select
               id="section-type-select"
-              className="flex h-11 w-full rounded-lg border bg-background px-3 py-2 text-sm"
-              style={{ borderColor: 'rgba(35,31,32,0.15)' }}
+              className="flex h-8 w-full rounded border border-[#e2e8f0] bg-white px-3 py-1 text-sm text-[#0f172a] focus:border-[#1e3a8a] focus:outline-none"
               value={draftType}
               onChange={(e) => setDraftType(e.target.value as SectionType)}
             >
@@ -328,14 +383,21 @@ export function PageSectionsEditor({ pageId, title, subtitle }: Props) {
               ))}
             </select>
           </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setIsAddOpen(false)}>
+          <DialogFooter className="gap-2 pt-2 border-t border-[#e2e8f0]">
+            <button
+              type="button"
+              onClick={() => setIsAddOpen(false)}
+              className="h-8 px-3 rounded text-sm font-medium border border-[#e2e8f0] bg-white text-slate-700 hover:bg-slate-50 transition-colors"
+            >
               Hủy
-            </Button>
-            <Button onClick={handleAdd}>
-              <Save className="w-4 h-4 mr-2" />
-              Thêm
-            </Button>
+            </button>
+            <button
+              type="button"
+              onClick={handleAdd}
+              className="h-8 px-3.5 rounded text-sm font-medium bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 inline-flex items-center transition-colors"
+            >
+              <span>Thêm section</span>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -668,14 +730,23 @@ function SectionContentDialog({
           </div>
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t shrink-0 gap-2" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
-          <Button variant="outline" onClick={handleCancel} disabled={saving}>
+        <DialogFooter className="px-5 py-3 border-t border-[#e2e8f0] shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={saving}
+            className="h-8 px-3 rounded text-sm font-medium border border-[#e2e8f0] bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+          >
             Hủy
-          </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? 'Đang lưu…' : 'Lưu'}
-          </Button>
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="h-8 px-3.5 rounded text-sm font-medium bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 disabled:opacity-50 inline-flex items-center transition-colors"
+          >
+            <span>{saving ? 'Đang lưu…' : 'Lưu'}</span>
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

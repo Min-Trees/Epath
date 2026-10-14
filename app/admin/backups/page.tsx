@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, HardDriveDownload, Loader2 } from 'lucide-react'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { Button } from '@/components/ui/button'
 import { BackupList } from '@/components/admin/backup/backup-list'
@@ -44,38 +42,26 @@ export default function AdminBackupsPage() {
       title="Backup dữ liệu"
       subtitle="Quản lý backup Firestore sang GCS. Tự động chạy vào Chủ Nhật hàng tuần."
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Quay lại Dashboard
-      </Link>
-
-      <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: semanticColors.surface, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+      <div className="rounded border border-gray-200 p-4 mb-4 bg-white">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-base font-semibold" style={{ color: semanticColors.text }}>
+            <h2 className="text-sm font-semibold" style={{ color: semanticColors.text }}>
               Tạo backup thủ công
             </h2>
-            <p className="text-sm mt-1" style={{ color: semanticColors.textMuted }}>
+            <p className="text-xs mt-0.5" style={{ color: semanticColors.textMuted }}>
               Backup sẽ export tất cả collections lên GCS bucket. Khuyến nghị chạy vào giờ thấp điểm.
             </p>
           </div>
           <Button
             onClick={handleCreateBackup}
             disabled={creating || !canCreate}
-            className="gap-2"
+            className="rounded h-8 px-4 text-xs font-medium bg-[#1E3570] hover:bg-[#2A4B9B] text-white"
           >
-            {creating ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Đang tạo...</>
-            ) : (
-              <><HardDriveDownload className="w-4 h-4" /> Backup ngay</>
-            )}
+            {creating ? 'Đang tạo...' : 'Backup ngay'}
           </Button>
         </div>
         {lastError && (
-          <div className="mt-4 text-sm p-3 rounded-lg bg-red-50 text-red-700">{lastError}</div>
+          <div className="mt-3 text-xs p-2.5 rounded bg-red-50 text-red-700 border border-red-200">{lastError}</div>
         )}
       </div>
 

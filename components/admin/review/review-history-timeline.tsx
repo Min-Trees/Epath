@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { History as HistoryIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { ReviewStatusBadge } from './review-status-badge'
 import type { ReviewEvent } from '@/lib/cms-types'
@@ -43,8 +42,7 @@ export function ReviewHistoryTimeline({ collection, documentId }: ReviewHistoryT
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 text-sm font-medium">
-        <HistoryIcon className="w-4 h-4" />
+      <div className="text-xs font-semibold text-slate-700">
         Lịch sử ({items.length})
       </div>
       <div className="space-y-2">

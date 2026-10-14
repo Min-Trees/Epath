@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, RefreshCw, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -102,25 +100,15 @@ export default function AdminActivityLogsPage() {
       title="Lịch sử hoạt động"
       subtitle="Theo dõi mọi thao tác CRUD trong hệ thống"
       actions={
-        <Button variant="outline" onClick={refresh} disabled={isLoading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Làm mới
+        <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading} className="rounded h-8 px-3 text-xs">
+          {isLoading ? 'Đang tải...' : 'Làm mới'}
         </Button>
       }
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Quay lại Dashboard
-      </Link>
-
-      <Card className="mb-4">
+      <Card className="mb-4 rounded">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4" style={{ color: semanticColors.textMuted }} />
-            <span className="text-sm font-medium">Bộ lọc</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Bộ lọc</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>

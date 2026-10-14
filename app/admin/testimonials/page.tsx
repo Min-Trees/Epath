@@ -1,12 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { CrudList } from '@/components/admin/crud-list'
 import { cms } from '@/lib/cms-client'
 import type { Testimonial } from '@/lib/cms-types'
-import { semanticColors } from '@/lib/design-tokens'
 
 const fields = [
   { key: 'name', label: 'Tên', kind: 'text' as const, placeholder: 'Nguyễn Văn A' },
@@ -23,13 +20,6 @@ export default function AdminTestimonialsPage() {
 
   return (
     <AdminLayout title="Lời chứng thực" subtitle="Quản lý testimonials hiển thị trên trang chủ.">
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Quay lại Dashboard
-      </Link>
       <CrudList<Testimonial>
         title="Testimonials"
         fields={fields}

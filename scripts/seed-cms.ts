@@ -54,7 +54,6 @@ async function seedHomeSections() {
     { id: 'vision', type: 'vision', order: 2, data: {} },
     { id: 'mission', type: 'mission', order: 3, data: {} },
     { id: 'core-values', type: 'coreValues', order: 4, data: {} },
-    { id: 'pathways', type: 'learningPathways', order: 5, data: {} },
     { id: 'achievements', type: 'achievements', order: 6, data: {} },
     { id: 'faqs', type: 'faqs', order: 7, data: {} },
     { id: 'cta', type: 'cta', order: 8, data: {} },
@@ -79,6 +78,7 @@ async function main() {
   await seedCollection(CollectionNames.coreValues, [
     {
       icon: 'Route',
+      imageUrl: '/images/core-values/1.png',
       title: t('Lộ trình học tập xuyên suốt', 'Continuous learning pathway'),
       description: t(
         'Xây dựng hành trình học tập liền mạch từ nền tảng Mầm non (Little People) đến Trung học Phổ thông, đảm bảo tính liên tục và nhất quán trong phát triển học thuật.',
@@ -88,6 +88,7 @@ async function main() {
     },
     {
       icon: 'BadgeCheck',
+      imageUrl: '/images/core-values/2.png',
       title: t('Chuẩn học thuật quốc tế được kiểm định', 'Accredited international academic standards'),
       description: t(
         'Triển khai chương trình hợp tác với tổ chức giáo dục Edmentum International (USA), được kiểm định bởi Cognia và WASC.',
@@ -97,6 +98,7 @@ async function main() {
     },
     {
       icon: 'Layers',
+      imageUrl: '/images/core-values/3.png',
       title: t('Mô hình học tập kết hợp (Blended Learning)', 'Blended learning model'),
       description: t(
         'Tích hợp linh hoạt giữa học trực tuyến và trực tiếp, tối ưu hiệu quả tiếp thu và cá nhân hoá trải nghiệm học tập.',
@@ -106,6 +108,7 @@ async function main() {
     },
     {
       icon: 'Compass',
+      imageUrl: '/images/core-values/4.png',
       title: t('Cá nhân hoá lộ trình học tập', 'Personalised learning pathway'),
       description: t(
         'Thiết kế lộ trình dựa trên năng lực, mục tiêu và định hướng của từng học sinh thông qua hệ thống đánh giá học thuật và tư vấn chuyên sâu.',
@@ -115,6 +118,7 @@ async function main() {
     },
     {
       icon: 'Sparkles',
+      imageUrl: '/images/core-values/5.png',
       title: t('Phát triển năng lực toàn diện & hồ sơ cá nhân', 'Holistic development and student profile'),
       description: t(
         'Kết hợp học thuật với hoạt động ngoại khoá, kỹ năng và trải nghiệm thực tiễn nhằm xây dựng student profile chuẩn quốc tế.',
@@ -124,6 +128,7 @@ async function main() {
     },
     {
       icon: 'Network',
+      imageUrl: '/images/core-values/6.png',
       title: t('Hệ sinh thái kết nối giáo dục', 'Connected education ecosystem'),
       description: t(
         'Phát triển môi trường học tập mở, kết nối nhà trường – gia đình – chuyên gia – đối tác quốc tế.',

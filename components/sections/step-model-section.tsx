@@ -8,6 +8,7 @@ import { duration, easeOut, inViewViewport, useSectionActive } from '@/lib/motio
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { AdmissionStep, Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 // Icon mapping for admission steps
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -166,9 +167,12 @@ export function StepModelSection() {
                       <div className="font-bold text-lg mb-1" style={{ color: accent.color }}>
                         {stepTitle}
                       </div>
-                      <p className="text-sm" style={{ color: accent.color }}>
-                        {stepDesc}
-                      </p>
+                      <RichTextRenderer
+                        html={stepDesc}
+                        compact
+                        className="text-sm block"
+                        style={{ color: accent.color }}
+                      />
                     </motion.div>
                   </div>
                 )
@@ -251,9 +255,12 @@ export function StepModelSection() {
                           {stepTitle}
                         </div>
                       </div>
-                      <p className="text-sm" style={{ color: accent.color }}>
-                        {stepDesc}
-                      </p>
+                      <RichTextRenderer
+                        html={stepDesc}
+                        compact
+                        className="text-sm block"
+                        style={{ color: accent.color }}
+                      />
                     </motion.div>
                   </div>
                 )

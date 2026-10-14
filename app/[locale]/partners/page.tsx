@@ -9,6 +9,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Partner } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 const fallbackPartners: Partner[] = [
   {
@@ -312,7 +313,10 @@ export default function PartnersPage() {
                       </div>
 
                       {desc && (
-                        <p className="text-[#5C6069] text-xs sm:text-sm leading-relaxed mb-5">{desc}</p>
+                        <RichTextRenderer
+                          html={desc}
+                          className="text-[#5C6069] text-xs sm:text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_p:last-child]:mb-0"
+                        />
                       )}
 
                       <div className="pt-4 border-t border-[#DEDDD6]">

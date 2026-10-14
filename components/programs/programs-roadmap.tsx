@@ -15,6 +15,7 @@ import Link from 'next/link'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale, LocalizedString } from '@/lib/cms-types'
+import { RichTextRenderer, stripHtml } from '@/components/admin/rich-text-renderer'
 
 interface Props {
   locale: Locale
@@ -205,16 +206,16 @@ function parseBadges(badges: unknown, objectives: unknown, locale: Locale): stri
 function parseOutcomes(outcomes: unknown, locale: Locale): string[] {
   if (!outcomes) return []
   if (Array.isArray(outcomes)) {
-    return outcomes.map((o) => (typeof o === 'string' ? o : getLocalized(o as LocalizedString, locale))).filter(Boolean)
+    return outcomes.map((o) => stripHtml(typeof o === 'string' ? o : getLocalized(o as LocalizedString, locale))).filter(Boolean)
   }
   if (typeof outcomes === 'object') {
     const raw = getLocalized(outcomes as LocalizedString, locale)
     if (raw) {
-      return raw.split('\n').map((s) => s.trim().replace(/^[-•*]\s*/, '')).filter(Boolean)
+      return stripHtml(raw).split('\n').map((s) => s.trim().replace(/^[-•*]\s*/, '')).filter(Boolean)
     }
   }
   if (typeof outcomes === 'string') {
-    return outcomes.split('\n').map((s) => s.trim().replace(/^[-•*]\s*/, '')).filter(Boolean)
+    return stripHtml(outcomes).split('\n').map((s) => s.trim().replace(/^[-•*]\s*/, '')).filter(Boolean)
   }
   return []
 }
@@ -339,9 +340,11 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
                       {step.title}
                     </h3>
                     {step.subtitle && (
-                      <p className="text-xs sm:text-sm font-medium text-[#5C6069] leading-relaxed">
-                        {step.subtitle}
-                      </p>
+                      <RichTextRenderer
+                        html={step.subtitle}
+                        compact
+                        className="text-xs sm:text-sm font-medium text-[#5C6069] leading-relaxed block"
+                      />
                     )}
                   </div>
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -54,6 +53,7 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState<Partial<HeroContent>>(defaultForm)
   const [activePageId, setActivePageId] = useState<PageSlug>('home')
+  const [activeLang, setActiveLang] = useState<'vi' | 'en'>('vi')
 
   const reload = useCallback(async () => {
     const data = await load()
@@ -227,7 +227,7 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                   key={pid}
                   type="button"
                   onClick={() => handlePageChange(pid)}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-xs font-medium border transition-colors"
                   style={{
                     backgroundColor: isActive ? '#3A53A3' : 'white',
                     color: isActive ? 'white' : '#231F20',
@@ -236,7 +236,7 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                 >
                   {PAGE_LABELS[pid]}
                   <span
-                    className="inline-block w-2 h-2 rounded-full"
+                    className="inline-block w-2 h-2 rounded-sm"
                     style={{ backgroundColor: hasRecord ? '#8BC53F' : '#d1d5db' }}
                     title={hasRecord ? 'Đã cấu hình' : 'Chưa có dữ liệu'}
                   />
@@ -252,141 +252,124 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Nội dung chính</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-[#E9ECEF]">
+          <div>
+            <CardTitle className="text-base text-[#1E3570] font-bold">Nội Dung Chính</CardTitle>
+            <p className="text-xs text-[#5C6069] mt-0.5">
+              Đang chỉnh sửa bản: <strong className="text-[#1E3570]">{activeLang === 'vi' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English'}</strong>
+            </p>
+          </div>
+          <div className="flex items-center p-0.5 bg-[#F1F3F5] rounded-xl border border-[#E9ECEF]">
+            <button
+              type="button"
+              onClick={() => setActiveLang('vi')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                activeLang === 'vi' ? 'bg-white text-[#1E3570] shadow-xs' : 'text-[#868E96]'
+              }`}
+            >
+              🇻🇳 VI
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveLang('en')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                activeLang === 'en' ? 'bg-white text-[#1E3570] shadow-xs' : 'text-[#868E96]'
+              }`}
+            >
+              🇬🇧 EN
+            </button>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Welcome (VN)</Label>
+            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Chào mừng / Eyebrow ({activeLang.toUpperCase()})</Label>
             <Input
-              value={(form.welcome as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('welcome', 'vi', e.target.value)}
-              placeholder="Chào mừng đến với"
-            />
-          </div>
-          <div>
-            <Label>Welcome (EN)</Label>
-            <Input
-              value={(form.welcome as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('welcome', 'en', e.target.value)}
-              placeholder="Welcome to"
+              value={(form.welcome as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+              onChange={(e) => setLocalized('welcome', activeLang, e.target.value)}
+              placeholder={activeLang === 'vi' ? 'Chào mừng đến với' : 'Welcome to'}
+              className="rounded-xl border-[#CED4DA]"
             />
           </div>
 
           <div>
-            <Label>Tiêu đề chính (VN)</Label>
+            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Tiêu đề chính ({activeLang.toUpperCase()})</Label>
             <Textarea
-              value={(form.title as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('title', 'vi', e.target.value)}
+              value={(form.title as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+              onChange={(e) => setLocalized('title', activeLang, e.target.value)}
               placeholder="EPath Education"
               rows={2}
-            />
-          </div>
-          <div>
-            <Label>Tiêu đề chính (EN)</Label>
-            <Textarea
-              value={(form.title as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('title', 'en', e.target.value)}
-              placeholder="EPath Education"
-              rows={2}
+              className="rounded-xl border-[#CED4DA]"
             />
           </div>
 
           <div>
-            <Label>Phụ đề (VN)</Label>
+            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Phụ đề ({activeLang.toUpperCase()})</Label>
             <Input
-              value={(form.subtitle as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('subtitle', 'vi', e.target.value)}
-              placeholder="Nơi khơi nguồn tương lai"
-            />
-          </div>
-          <div>
-            <Label>Phụ đề (EN)</Label>
-            <Input
-              value={(form.subtitle as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('subtitle', 'en', e.target.value)}
-              placeholder="Igniting futures"
+              value={(form.subtitle as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+              onChange={(e) => setLocalized('subtitle', activeLang, e.target.value)}
+              placeholder={activeLang === 'vi' ? 'Lộ trình học thuật quốc tế cá nhân hóa' : 'Personalized International Pathway'}
+              className="rounded-xl border-[#CED4DA]"
             />
           </div>
 
           <div>
-            <Label>Mô tả (VN)</Label>
+            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Mô tả ngắn ({activeLang.toUpperCase()})</Label>
             <Textarea
-              value={(form.description as { vi: string } | undefined)?.vi ?? ''}
-              onChange={(e) => setLocalized('description', 'vi', e.target.value)}
+              value={(form.description as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+              onChange={(e) => setLocalized('description', activeLang, e.target.value)}
               placeholder="Mô tả ngắn về EPath..."
               rows={3}
-            />
-          </div>
-          <div>
-            <Label>Mô tả (EN)</Label>
-            <Textarea
-              value={(form.description as { en: string } | undefined)?.en ?? ''}
-              onChange={(e) => setLocalized('description', 'en', e.target.value)}
-              placeholder="Short description about EPath..."
-              rows={3}
+              className="rounded-xl border-[#CED4DA]"
             />
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Nút kêu gọi hành động (CTA)</CardTitle>
+        <CardHeader className="pb-3 border-b border-[#E9ECEF]">
+          <CardTitle className="text-base text-[#1E3570] font-bold">Nút Kêu Gọi Hành Động (CTA)</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="space-y-4 pt-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <Label>Label CTA chính (VN)</Label>
+              <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Label CTA chính ({activeLang.toUpperCase()})</Label>
               <Input
-                value={(form.ctaLabel as { vi: string } | undefined)?.vi ?? ''}
-                onChange={(e) => setLocalized('ctaLabel', 'vi', e.target.value)}
-                placeholder="Khám phá chương trình"
+                value={(form.ctaLabel as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                onChange={(e) => setLocalized('ctaLabel', activeLang, e.target.value)}
+                placeholder={activeLang === 'vi' ? 'Khám phá chương trình' : 'Explore programs'}
+                className="rounded-xl border-[#CED4DA]"
               />
             </div>
             <div>
-              <Label>Label CTA chính (EN)</Label>
+              <Label className="text-xs font-bold text-[#495057] mb-1.5 block">URL CTA chính</Label>
               <Input
-                value={(form.ctaLabel as { en: string } | undefined)?.en ?? ''}
-                onChange={(e) => setLocalized('ctaLabel', 'en', e.target.value)}
-                placeholder="Explore programs"
+                value={form.ctaUrl ?? ''}
+                onChange={(e) => setField('ctaUrl', e.target.value)}
+                placeholder="#programs"
+                className="rounded-xl border-[#CED4DA]"
               />
             </div>
-          </div>
-          <div>
-            <Label>URL CTA chính</Label>
-            <Input
-              value={form.ctaUrl ?? ''}
-              onChange={(e) => setField('ctaUrl', e.target.value)}
-              placeholder="#programs"
-            />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <Label>Label CTA phụ (VN)</Label>
+              <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Label CTA phụ ({activeLang.toUpperCase()})</Label>
               <Input
-                value={(form.secondaryCtaLabel as { vi: string } | undefined)?.vi ?? ''}
-                onChange={(e) => setLocalized('secondaryCtaLabel', 'vi', e.target.value)}
-                placeholder="Liên hệ tư vấn"
+                value={(form.secondaryCtaLabel as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
+                onChange={(e) => setLocalized('secondaryCtaLabel', activeLang, e.target.value)}
+                placeholder={activeLang === 'vi' ? 'Liên hệ tư vấn' : 'Contact us'}
+                className="rounded-xl border-[#CED4DA]"
               />
             </div>
             <div>
-              <Label>Label CTA phụ (EN)</Label>
+              <Label className="text-xs font-bold text-[#495057] mb-1.5 block">URL CTA phụ</Label>
               <Input
-                value={(form.secondaryCtaLabel as { en: string } | undefined)?.en ?? ''}
-                onChange={(e) => setLocalized('secondaryCtaLabel', 'en', e.target.value)}
-                placeholder="Contact us"
+                value={form.secondaryCtaUrl ?? ''}
+                onChange={(e) => setField('secondaryCtaUrl', e.target.value)}
+                placeholder="#contact"
+                className="rounded-xl border-[#CED4DA]"
               />
             </div>
-          </div>
-          <div>
-            <Label>URL CTA phụ</Label>
-            <Input
-              value={form.secondaryCtaUrl ?? ''}
-              onChange={(e) => setField('secondaryCtaUrl', e.target.value)}
-              placeholder="#contact"
-            />
           </div>
         </CardContent>
       </Card>
@@ -404,14 +387,14 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
             size="sm"
             variant="outline"
             onClick={addSlide}
-            className="gap-1.5"
+            className="rounded h-8 text-xs"
           >
-            <Plus className="w-4 h-4" /> Thêm ảnh slide
+            Thêm ảnh slide
           </Button>
         </CardHeader>
         <CardContent className="space-y-4 pt-2">
           {slides.length === 0 ? (
-            <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+            <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded">
               <p className="text-sm text-gray-500 mb-3">
                 Chưa có ảnh slide nào. Hệ thống sẽ sử dụng Background Image đơn bên dưới hoặc ảnh mặc định.
               </p>
@@ -419,9 +402,9 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                 type="button"
                 size="sm"
                 onClick={addSlide}
-                className="gap-1.5"
+                className="rounded h-8 text-xs"
               >
-                <Plus className="w-4 h-4" /> Thêm ảnh slide đầu tiên
+                Thêm ảnh slide đầu tiên
               </Button>
             </div>
           ) : (
@@ -431,7 +414,7 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                 return (
                   <div
                     key={idx}
-                    className={`border rounded-lg p-3 sm:p-4 transition-all ${
+                    className={`border rounded p-3 sm:p-4 transition-all ${
                       isFinal
                         ? 'border-[#3A53A3] bg-blue-50/40 ring-1 ring-[#3A53A3]/30'
                         : 'border-gray-200 bg-white'
@@ -439,14 +422,14 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                   >
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold bg-gray-100 text-gray-700">
                           {idx + 1}
                         </span>
                         <span className="text-sm font-semibold text-gray-800">
                           Ảnh slide #{idx + 1}
                         </span>
                         {isFinal && (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#3A53A3] text-white">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-[#3A53A3] text-white">
                             ★ Ảnh dừng lại cuối cùng
                           </span>
                         )}
@@ -456,27 +439,27 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                           type="button"
                           onClick={() => moveSlide(idx, -1)}
                           disabled={idx === 0}
-                          className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-600"
+                          className="px-2 py-1 rounded text-xs border border-gray-200 hover:bg-gray-100 disabled:opacity-30 text-gray-600"
                           title="Di chuyển lên"
                         >
-                          <ArrowUp className="w-4 h-4" />
+                          Lên
                         </button>
                         <button
                           type="button"
                           onClick={() => moveSlide(idx, 1)}
                           disabled={idx === slides.length - 1}
-                          className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-600"
+                          className="px-2 py-1 rounded text-xs border border-gray-200 hover:bg-gray-100 disabled:opacity-30 text-gray-600"
                           title="Di chuyển xuống"
                         >
-                          <ArrowDown className="w-4 h-4" />
+                          Xuống
                         </button>
                         <button
                           type="button"
                           onClick={() => removeSlide(idx)}
-                          className="p-1.5 rounded hover:bg-red-50 text-red-600 ml-1"
+                          className="px-2 py-1 rounded text-xs border border-red-200 hover:bg-red-50 text-red-600 ml-1"
                           title="Xoá ảnh này"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          Xóa
                         </button>
                       </div>
                     </div>
@@ -593,12 +576,11 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
         </div>
         <div className="flex gap-2">
           {existingForPage && remove && (
-            <Button variant="outline" onClick={handleDelete} disabled={isSaving}>
-              <Trash2 className="w-4 h-4 mr-2" /> Xoá
+            <Button variant="outline" onClick={handleDelete} disabled={isSaving} className="rounded h-8 text-xs text-red-600 border-red-200 hover:bg-red-50">
+              Xoá
             </Button>
           )}
-          <Button onClick={handleSave} disabled={isSaving}>
-            <Save className="w-4 h-4 mr-2" />
+          <Button onClick={handleSave} disabled={isSaving} className="rounded h-8 text-xs bg-[#1E3570] hover:bg-[#2A4B9B] text-white">
             {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
           </Button>
         </div>

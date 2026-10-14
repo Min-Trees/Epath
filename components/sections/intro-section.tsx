@@ -12,11 +12,45 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { duration, easeOut, inViewViewport, useSectionActive } from '@/lib/motion-presets'
+import { useCmsContext } from '@/lib/cms-context'
+import type { Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
+
+function pick(v: { vi?: string; en?: string } | string | undefined, locale: Locale): string {
+  if (!v) return ''
+  if (typeof v === 'string') return v
+  return v[locale] || v.vi || v.en || ''
+}
 
 export function IntroSection() {
-  const locale = useLocale()
+  const locale = useLocale() as Locale
   const isVi = locale === 'vi'
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.1 })
+  const { data: cms } = useCmsContext()
+  const aboutContent = cms.aboutContent
+
+  const cmsTitle = pick(aboutContent?.introTitle, locale).trim()
+  const cmsText = pick(aboutContent?.introContent, locale).trim()
+  const heroImage = aboutContent?.heroImage?.trim() || '/images/about/about-story.jpg'
+
+  // Determine headline
+  const defaultHeadline = isVi ? (
+    <>
+      EPath là gì? — Lộ trình học thuật quốc tế{' '}
+      <span className="text-[#8DC63F]">cá nhân hóa</span>
+    </>
+  ) : (
+    <>
+      What is EPath? — A Personalized International{' '}
+      <span className="text-[#8DC63F]">Academic Pathway</span>
+    </>
+  )
+
+  const isGenericTitle = !cmsTitle || cmsTitle.toLowerCase() === (isVi ? 'về epath education' : 'about epath education')
+  const headline = isGenericTitle ? defaultHeadline : cmsTitle
+
+  // Parse paragraphs and bullet points if CMS text is provided
+  const cmsParagraphs = cmsText ? cmsText.split('\n\n').map((p) => p.trim()).filter(Boolean) : []
 
   return (
     <section
@@ -26,7 +60,7 @@ export function IntroSection() {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column: Narrative with user's exact content */}
+          {/* Left Column: Narrative with user's content */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -42,83 +76,119 @@ export function IntroSection() {
 
             {/* Main Headline */}
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E3570] tracking-tight mb-6 leading-tight">
-              {isVi ? (
-                <>
-                  EPath là gì? — Lộ trình học thuật quốc tế{' '}
-                  <span className="text-[#8DC63F]">cá nhân hóa</span>
-                </>
-              ) : (
-                <>
-                  What is EPath? — A Personalized International{' '}
-                  <span className="text-[#8DC63F]">Academic Pathway</span>
-                </>
-              )}
+              {headline}
             </h2>
 
-            {/* Paragraphs 1, 2, 3 */}
-            <div className="space-y-4 text-[#5C6069] leading-relaxed text-sm sm:text-base mb-6">
-              <p>
-                {isVi ? (
-                  <>
-                    <strong className="text-[#1E3570] font-semibold">EPath Education</strong> là đơn vị giáo dục cung cấp giải pháp học tập cá nhân hóa từ Tiểu học đến Trung học, giúp học sinh tiếp cận nền tảng học thuật quốc tế thông qua mô hình <strong className="text-[#1E3570] font-semibold">Blended Learning</strong> (kết hợp Trực tiếp và Trực tuyến) và hệ sinh thái giáo dục toàn diện.
-                  </>
-                ) : (
-                  <>
-                    <strong className="text-[#1E3570] font-semibold">EPath Education</strong> provides personalized learning pathways from Elementary through High School, giving students access to international academic standards via our innovative <strong className="text-[#1E3570] font-semibold">Blended Learning</strong> model (online + on-site) and a comprehensive educational ecosystem.
-                  </>
-                )}
-              </p>
+            {/* Content: Render dynamic CMS content or fallback */}
+            {cmsText && /<[a-z][\s\S]*>/i.test(cmsText) ? (
+              <RichTextRenderer
+                html={cmsText}
+                className="space-y-4 mb-8 text-[#5C6069] leading-relaxed text-sm sm:text-base [&_p]:my-2"
+              />
+            ) : cmsParagraphs.length > 0 ? (
+              <div className="space-y-4 mb-8">
+                {cmsParagraphs.map((p, idx) => {
+                  const isBullet = p.startsWith('- ') || p.startsWith('• ')
+                  const isQuestion = p.endsWith('?')
 
-              <p>
-                {isVi ? (
-                  <>
-                    Chương trình được xây dựng theo định hướng <strong className="text-[#1E3570] font-semibold">Common Core State Standards (Mỹ)</strong>, kết hợp học liệu từ <strong className="text-[#1E3570] font-semibold">Edmentum International</strong> — tổ chức giáo dục uy tín được kiểm định bởi <strong className="text-[#1E3570] font-semibold">Cognia và WASC</strong> — nhằm phát triển năng lực học thuật, kỹ năng tự học và tư duy thế kỷ 21.
-                  </>
-                ) : (
-                  <>
-                    Our curriculum is aligned with the <strong className="text-[#1E3570] font-semibold">U.S. Common Core State Standards</strong>, incorporating accredited learning resources from <strong className="text-[#1E3570] font-semibold">Edmentum International</strong> — accredited by <strong className="text-[#1E3570] font-semibold">Cognia & WASC</strong> — to cultivate academic excellence, independent learning skills, and 21st-century critical thinking.
-                  </>
-                )}
-              </p>
+                  if (isBullet) {
+                    const cleanText = p.replace(/^[-•]\s*/, '')
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 p-3.5 rounded-md bg-[#F6F5F1]/80 border border-[#DEDDD6]/70 shadow-xs hover:border-[#8DC63F]/50 transition-colors"
+                      >
+                        <CheckCircle2 className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
+                        <span className="text-sm sm:text-base text-[#20242B] font-medium leading-relaxed">
+                          {cleanText}
+                        </span>
+                      </div>
+                    )
+                  }
 
-              <p>
-                {isVi ? (
-                  <>
-                    EPath kết nối nhà trường, gia đình và các đối tác giáo dục uy tín để xây dựng lộ trình học tập rõ ràng, giúp giáo dục quốc tế chất lượng cao trở nên dễ tiếp cận hơn với các gia đình Việt Nam.
-                  </>
-                ) : (
-                  <>
-                    EPath connects schools, families, and trusted global educational partners to establish clear pathways, making high-quality international education truly accessible for Vietnamese families.
-                  </>
-                )}
-              </p>
-            </div>
+                  if (isQuestion) {
+                    return (
+                      <h3 key={idx} className="text-base sm:text-lg font-bold text-[#1E3570] pt-2">
+                        {p}
+                      </h3>
+                    )
+                  }
 
-            {/* Paragraph 4: Highlighted Callout / Origin Story */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#F6F5F1] border-l-4 border-[#8DC63F] border-[#DEDDD6] shadow-xs mb-8 text-[#20242B] relative">
-              <div className="flex items-start gap-3">
-                <Quote className="w-5 h-5 text-[#8DC63F] flex-shrink-0 mt-0.5" />
-                <p className="text-sm sm:text-[0.9375rem] leading-relaxed text-[#20242B]">
-                  {isVi ? (
-                    <>
-                      EPath Education được hình thành từ một câu hỏi rất thực của phụ huynh tại hệ thống Mầm non Little People sau hơn 10 năm vận hành:{' '}
-                      <span className="font-semibold text-[#1E3570] italic">
-                        &ldquo;Sau Mầm non, con sẽ tiếp tục học theo lộ trình nào để không bị đứt gãy?&rdquo;
-                      </span>{' '}
-                      Từ nhu cầu đó, EPath ra đời như một lời giải có hệ thống.
-                    </>
-                  ) : (
-                    <>
-                      EPath Education was born from a genuine question asked by parents at Little People Kindergarten after 10+ years of operation:{' '}
-                      <span className="font-semibold text-[#1E3570] italic">
-                        &ldquo;After Kindergarten, what pathway should our child follow so learning remains unbroken?&rdquo;
-                      </span>{' '}
-                      From that real need, EPath was established as a systematic, long-term solution.
-                    </>
-                  )}
-                </p>
+                  return (
+                    <p key={idx} className="text-sm sm:text-base text-[#5C6069] leading-relaxed">
+                      {p}
+                    </p>
+                  )
+                })}
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Fallback Static Paragraphs */}
+                <div className="space-y-4 text-[#5C6069] leading-relaxed text-sm sm:text-base mb-6">
+                  <p>
+                    {isVi ? (
+                      <>
+                        <strong className="text-[#1E3570] font-semibold">EPath Education</strong> là đơn vị giáo dục cung cấp giải pháp học tập cá nhân hóa từ Tiểu học đến Trung học, giúp học sinh tiếp cận nền tảng học thuật quốc tế thông qua mô hình <strong className="text-[#1E3570] font-semibold">Blended Learning</strong> (kết hợp Trực tiếp và Trực tuyến) và hệ sinh thái giáo dục toàn diện.
+                      </>
+                    ) : (
+                      <>
+                        <strong className="text-[#1E3570] font-semibold">EPath Education</strong> provides personalized learning pathways from Elementary through High School, giving students access to international academic standards via our innovative <strong className="text-[#1E3570] font-semibold">Blended Learning</strong> model (online + on-site) and a comprehensive educational ecosystem.
+                      </>
+                    )}
+                  </p>
+
+                  <p>
+                    {isVi ? (
+                      <>
+                        Chương trình được xây dựng theo định hướng <strong className="text-[#1E3570] font-semibold">Common Core State Standards (Mỹ)</strong>, kết hợp học liệu từ <strong className="text-[#1E3570] font-semibold">Edmentum International</strong> — tổ chức giáo dục uy tín được kiểm định bởi <strong className="text-[#1E3570] font-semibold">Cognia và WASC</strong> — nhằm phát triển năng lực học thuật, kỹ năng tự học và tư duy thế kỷ 21.
+                      </>
+                    ) : (
+                      <>
+                        Our curriculum is aligned with the <strong className="text-[#1E3570] font-semibold">U.S. Common Core State Standards</strong>, incorporating accredited learning resources from <strong className="text-[#1E3570] font-semibold">Edmentum International</strong> — accredited by <strong className="text-[#1E3570] font-semibold">Cognia & WASC</strong> — to cultivate academic excellence, independent learning skills, and 21st-century critical thinking.
+                      </>
+                    )}
+                  </p>
+
+                  <p>
+                    {isVi ? (
+                      <>
+                        EPath kết nối nhà trường, gia đình và các đối tác giáo dục uy tín để xây dựng lộ trình học tập rõ ràng, giúp giáo dục quốc tế chất lượng cao trở nên dễ tiếp cận hơn với các gia đình Việt Nam.
+                      </>
+                    ) : (
+                      <>
+                        EPath connects schools, families, and trusted global educational partners to establish clear pathways, making high-quality international education truly accessible for Vietnamese families.
+                      </>
+                    )}
+                  </p>
+                </div>
+
+                {/* Paragraph 4: Highlighted Callout / Origin Story */}
+                <div className="p-4 sm:p-5 rounded-md bg-[#F6F5F1] border-l-4 border-[#8DC63F] border-[#DEDDD6] shadow-xs mb-8 text-[#20242B] relative">
+                  <div className="flex items-start gap-3">
+                    <Quote className="w-5 h-5 text-[#8DC63F] flex-shrink-0 mt-0.5" />
+                    <p className="text-sm sm:text-[0.9375rem] leading-relaxed text-[#20242B]">
+                      {isVi ? (
+                        <>
+                          EPath Education được hình thành từ một câu hỏi rất thực của phụ huynh tại hệ thống Mầm non Little People sau hơn 10 năm vận hành:{' '}
+                          <span className="font-semibold text-[#1E3570] italic">
+                            &ldquo;Sau Mầm non, con sẽ tiếp tục học theo lộ trình nào để không bị đứt gãy?&rdquo;
+                          </span>{' '}
+                          Từ nhu cầu đó, EPath ra đời như một lời giải có hệ thống.
+                        </>
+                      ) : (
+                        <>
+                          EPath Education was born from a genuine question asked by parents at Little People Kindergarten after 10+ years of operation:{' '}
+                          <span className="font-semibold text-[#1E3570] italic">
+                            &ldquo;After Kindergarten, what pathway should our child follow so learning remains unbroken?&rdquo;
+                          </span>{' '}
+                          From that real need, EPath was established as a systematic, long-term solution.
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Action Links */}
             <div className="flex flex-wrap items-center gap-4">
@@ -146,19 +216,19 @@ export function IntroSection() {
             transition={{ duration: duration.normal, ease: easeOut, delay: 0.1 }}
             className="lg:col-span-5 relative"
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-[#F6F5F1]">
+            <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-white bg-[#F6F5F1]">
               <div className="aspect-[4/5] sm:aspect-[3/4] relative overflow-hidden group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/about/about-story.jpg"
-                  alt="EPath Education Students"
+                  src={heroImage}
+                  alt={typeof headline === 'string' ? headline : 'EPath Education'}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/85 via-[#1E3570]/20 to-transparent pointer-events-none" />
 
                 {/* Top Badge */}
-                <div className="absolute top-5 left-5 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-md border border-white/60 flex items-center gap-2">
+                <div className="absolute top-5 left-5 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-md shadow-md border border-white/60 flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#8DC63F] animate-pulse" />
                   <span className="text-xs font-bold text-[#1E3570]">
                     {isVi ? 'Kiểm định Cognia & WASC' : 'Cognia & WASC Accredited'}
@@ -166,7 +236,7 @@ export function IntroSection() {
                 </div>
 
                 {/* Bottom Overlay Info */}
-                <div className="absolute bottom-5 left-5 right-5 p-4 rounded-2xl bg-white/95 backdrop-blur-md shadow-lg border border-white/60 text-[#1E3570]">
+                <div className="absolute bottom-5 left-5 right-5 p-4 rounded-md bg-white/95 backdrop-blur-md shadow-lg border border-white/60 text-[#1E3570]">
                   <div className="flex items-center gap-2 mb-1.5">
                     <CheckCircle2 className="w-4 h-4 text-[#8DC63F]" />
                     <span className="text-xs font-bold uppercase tracking-wider text-[#8DC63F]">

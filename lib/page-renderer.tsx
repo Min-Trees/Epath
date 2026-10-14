@@ -14,7 +14,7 @@ import { FAQSection } from '@/components/sections/faq-section'
 import { CTABanner } from '@/components/sections/cta-banner'
 import { AchievementsSection } from '@/components/sections/achievements-section'
 
-type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }) => React.JSX.Element
+type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }) => React.JSX.Element | null
 
 // Map each section type to its underlying component. We expose a single
 // canonical component per visual block so duplicate section types (e.g.
@@ -25,7 +25,7 @@ const SECTION_COMPONENT: Record<string, SectionComponent> = {
   intro: () => <IntroSection />,
   featuredCourses: () => <FeaturedCoursesSection />,
   coreValues: () => <CoreValuesSection />,
-  learningPathways: () => <LearningPathwaysSection />,
+  learningPathways: () => null,
   stepModel: () => <StepModelSection />,
   statistics: () => <StatisticsSection />,
   achievements: () => <AchievementsSection />,
@@ -74,7 +74,7 @@ const DEFAULT_SECTIONS: Record<PageSlug, string[]> = {
     'faqs',
   ],
   about: ['hero', 'coreValues', 'statistics', 'cta'],
-  programs: ['hero', 'learningPathways', 'testimonials', 'faq' as never, 'cta'],
+  programs: ['hero', 'testimonials', 'faqs' as never, 'cta'],
   partners: ['hero', 'partners', 'testimonials', 'cta'],
   admissions: ['hero', 'stepModel', 'faqs', 'cta'],
   events: ['hero', 'cta'],
@@ -103,6 +103,8 @@ export async function getActivePageSections(pageId: PageSlug): Promise<string[]>
         'achievements',
         'cta',
         'pricing',
+        'learningPathways',
+        'pathways',
       ])
       types = types.filter((t) => !removedFromHome.has(t))
       if (!types.includes('featuredCourses') || !types.includes('coreValues')) {

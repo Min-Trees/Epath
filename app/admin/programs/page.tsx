@@ -1,8 +1,6 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
-import { ArrowLeft, Sparkles, GraduationCap, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AdminLayout, useRequireAdmin } from '@/components/admin/admin-layout'
 import { CrudList, type CrudFieldDef } from '@/components/admin/crud-list'
@@ -70,30 +68,20 @@ export default function AdminProgramsPage() {
       title="Chương trình học"
       subtitle="Quản lý danh mục chương trình học từ Mầm non đến THPT (Dual Diploma & Fulltime Homeschool)."
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Quay lại Dashboard
-      </Link>
-
       {/* Thông tin hỗ trợ THPT Dual Diploma & Fulltime Homeschool */}
-      <div className="mb-4 p-4 rounded-xl bg-gradient-to-r from-[#1E3570]/10 via-[#2E4A9E]/10 to-[#F26522]/10 border border-[#2E4A9E]/30 text-xs text-[#20242B]">
-        <div className="flex items-center gap-2 font-bold text-[#1E3570] text-sm mb-1.5">
-          <GraduationCap className="w-4 h-4 text-[#F26522]" />
-          <span>Lộ Trình THPT EdOptions Academy (Dual Diploma & Fulltime Homeschool)</span>
+      <div className="mb-4 p-4 rounded bg-slate-50 border border-slate-200 text-xs text-[#20242B]">
+        <div className="font-bold text-[#1E3570] text-sm mb-1.5">
+          Lộ Trình THPT EdOptions Academy (Dual Diploma & Fulltime Homeschool)
         </div>
         <p className="leading-relaxed text-[#5C6069]">
           Hai chương trình THPT chủ lực đã được tích hợp đầy đủ trong hệ thống:
         </p>
         <div className="mt-2 grid sm:grid-cols-2 gap-2 text-[11px]">
-          <div className="p-2 rounded-lg bg-white/80 border border-[#2E4A9E]/20">
+          <div className="p-2.5 rounded bg-white border border-slate-200">
             <span className="font-bold text-[#2E4A9E] block">1.1 Lựa chọn Dual Diploma (Song bằng)</span>
             <span className="text-[#20242B] font-medium">Dual Diploma — Song bằng THPT Việt Nam & Hoa Kỳ</span>
           </div>
-          <div className="p-2 rounded-lg bg-white/80 border border-[#F26522]/20">
+          <div className="p-2.5 rounded bg-white border border-slate-200">
             <span className="font-bold text-[#F26522] block">1.2 Lựa chọn Fulltime Homeschool (Homeschool toàn phần)</span>
             <span className="text-[#20242B] font-medium">Fulltime Homeschool — Học toàn thời gian chương trình THPT Hoa Kỳ</span>
           </div>
@@ -105,17 +93,16 @@ export default function AdminProgramsPage() {
 
       {/* Filter Tabs */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-1.5 bg-[#EDEDE8] p-1 rounded-xl">
-          <div className="flex items-center gap-1 px-2.5 text-xs font-semibold text-[#5C6069]">
-            <Filter className="w-3 h-3" />
-            <span>Cấp học:</span>
+        <div className="flex flex-wrap items-center gap-1 border border-slate-200 bg-white p-1 rounded">
+          <div className="px-2 text-xs font-semibold text-[#5C6069]">
+            Cấp học:
           </div>
           <button
             type="button"
             onClick={() => setLevelFilter('all')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
               levelFilter === 'all'
-                ? 'bg-white text-[#20242B] shadow-xs'
+                ? 'bg-slate-900 text-white'
                 : 'text-[#5C6069] hover:text-[#20242B]'
             }`}
           >
@@ -124,9 +111,9 @@ export default function AdminProgramsPage() {
           <button
             type="button"
             onClick={() => setLevelFilter('kindergarten')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
               levelFilter === 'kindergarten'
-                ? 'bg-[#8DC63F] text-white shadow-xs'
+                ? 'bg-[#5C9024] text-white'
                 : 'text-[#5C6069] hover:text-[#5C9024]'
             }`}
           >
@@ -135,9 +122,9 @@ export default function AdminProgramsPage() {
           <button
             type="button"
             onClick={() => setLevelFilter('elementary')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
               levelFilter === 'elementary'
-                ? 'bg-[#2E4A9E] text-white shadow-xs'
+                ? 'bg-[#2E4A9E] text-white'
                 : 'text-[#5C6069] hover:text-[#2E4A9E]'
             }`}
           >
@@ -146,9 +133,9 @@ export default function AdminProgramsPage() {
           <button
             type="button"
             onClick={() => setLevelFilter('middle')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
               levelFilter === 'middle'
-                ? 'bg-[#1E3570] text-white shadow-xs'
+                ? 'bg-[#1E3570] text-white'
                 : 'text-[#5C6069] hover:text-[#1E3570]'
             }`}
           >
@@ -157,9 +144,9 @@ export default function AdminProgramsPage() {
           <button
             type="button"
             onClick={() => setLevelFilter('high')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
               levelFilter === 'high'
-                ? 'bg-[#F26522] text-white shadow-xs'
+                ? 'bg-[#F26522] text-white'
                 : 'text-[#5C6069] hover:text-[#F26522]'
             }`}
           >
@@ -167,9 +154,8 @@ export default function AdminProgramsPage() {
           </button>
         </div>
 
-        <Button variant="outline" size="sm" onClick={handleSeed}>
-          <Sparkles className="w-3.5 h-3.5 mr-1.5 text-[#8DC63F]" />
-          <span>Tạo lại mẫu mặc định</span>
+        <Button variant="outline" size="sm" onClick={handleSeed} className="rounded">
+          Tạo lại mẫu mặc định
         </Button>
       </div>
 
@@ -194,7 +180,7 @@ export default function AdminProgramsPage() {
           return (
             <div className="flex items-start gap-3">
               {item.imageUrl && (
-                <div className="w-16 h-12 rounded-lg overflow-hidden shrink-0 border border-slate-200 bg-slate-100 hidden sm:block">
+                <div className="w-16 h-12 rounded overflow-hidden shrink-0 border border-slate-200 bg-slate-100 hidden sm:block">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -202,18 +188,18 @@ export default function AdminProgramsPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-1.5 mb-1">
                   <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
                     style={{ color: badge.color, backgroundColor: badge.bg }}
                   >
                     {badge.label}
                   </span>
                   {isDual && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#2E4A9E] text-white">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#2E4A9E] text-white">
                       1.1 Dual Diploma (Song bằng)
                     </span>
                   )}
                   {isFulltime && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F26522] text-white">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#F26522] text-white">
                       1.2 Fulltime Homeschool
                     </span>
                   )}

@@ -58,7 +58,7 @@ export function FAQSection() {
             <Accordion
               type="single"
               collapsible
-              className="w-full bg-white rounded-2xl p-4 shadow-md border border-[#DEDDD6]"
+              className="w-full bg-white rounded-lg p-4 shadow-md border border-[#DEDDD6]"
               style={{ boxShadow: '0 8px 24px -8px rgba(30, 53, 112, 0.08)' }}
             >
               {staticFaqs.map((faq) => (
@@ -135,7 +135,7 @@ export function FAQSection() {
           <Accordion
             type="single"
             collapsible
-            className="w-full bg-white rounded-2xl p-4 shadow-md border border-[#DEDDD6]"
+            className="w-full bg-white rounded-lg p-4 shadow-md border border-[#DEDDD6]"
             style={{ boxShadow: '0 8px 24px -8px rgba(30, 53, 112, 0.08)' }}
           >
             {faqs.map((faq, idx) => {

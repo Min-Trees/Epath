@@ -1,20 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
-import {
-  ArrowLeft,
-  RefreshCw,
-  Phone,
-  Mail,
-  Trash2,
-  Filter,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  UserCheck,
-  Archive,
-} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -35,12 +21,12 @@ import type { LeadStatus } from '@/lib/cms-types'
 import { semanticColors } from '@/lib/design-tokens'
 import { formatDateVi } from '@/lib/date-utils'
 
-const STATUSES: { value: LeadStatus; label: string; color: string; icon: typeof Clock }[] = [
-  { value: 'new', label: 'Mới', color: '#0d9488', icon: Clock },
-  { value: 'contacted', label: 'Đã liên hệ', color: '#2563eb', icon: Phone },
-  { value: 'qualified', label: 'Quan tâm', color: '#9333ea', icon: UserCheck },
-  { value: 'converted', label: 'Đã chuyển đổi', color: '#16a34a', icon: CheckCircle2 },
-  { value: 'archived', label: 'Lưu trữ', color: '#6b7280', icon: Archive },
+const STATUSES: { value: LeadStatus; label: string; color: string }[] = [
+  { value: 'new', label: 'Mới', color: '#0d9488' },
+  { value: 'contacted', label: 'Đã liên hệ', color: '#2563eb' },
+  { value: 'qualified', label: 'Quan tâm', color: '#9333ea' },
+  { value: 'converted', label: 'Đã chuyển đổi', color: '#16a34a' },
+  { value: 'archived', label: 'Lưu trữ', color: '#6b7280' },
 ]
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -137,20 +123,11 @@ export default function AdminLeadsPage() {
       title="Hộp thư liên hệ"
       subtitle="Quản lý các lead từ chatbot, form liên hệ và Zalo"
       actions={
-        <Button variant="outline" onClick={refresh} disabled={isLoading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Làm mới
+        <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading} className="rounded h-8 px-3 text-xs">
+          {isLoading ? 'Đang tải...' : 'Làm mới'}
         </Button>
       }
     >
-      <Link
-        href="/admin/dashboard"
-        className="inline-flex items-center gap-2 text-sm mb-4"
-        style={{ color: semanticColors.textMuted }}
-      >
-        <ArrowLeft className="w-4 h-4" /> Quay lại Dashboard
-      </Link>
-
       {/* Status summary */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
         {STATUSES.map((s) => (
@@ -158,7 +135,7 @@ export default function AdminLeadsPage() {
             key={s.value}
             type="button"
             onClick={() => setStatusFilter(statusFilter === s.value ? '' : s.value)}
-            className="rounded-lg p-3 text-left border transition-all"
+            className="rounded p-3 text-left border transition-all"
             style={{
               backgroundColor:
                 statusFilter === s.value ? s.color : semanticColors.surface,
@@ -167,21 +144,21 @@ export default function AdminLeadsPage() {
             }}
           >
             <div className="text-xs opacity-80">{s.label}</div>
-            <div className="text-2xl font-bold">{counts[s.value]}</div>
+            <div className="text-xl font-bold">{counts[s.value]}</div>
           </button>
         ))}
       </div>
 
-      <Card className="mb-4">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4" style={{ color: semanticColors.textMuted }} />
-            <span className="text-sm font-medium">Bộ lọc</span>
+      <Card className="mb-4 rounded">
+        <CardContent className="p-3.5">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+            Bộ lọc
           </div>
           <Input
             placeholder="Tìm theo tên, SĐT, email, chương trình..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="rounded h-8 text-xs"
           />
         </CardContent>
       </Card>
@@ -201,113 +178,107 @@ export default function AdminLeadsPage() {
             : 'Không có lead nào khớp bộ lọc.'}
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {filtered.map((lead) => {
             const status = STATUSES.find((s) => s.value === lead.status) ?? STATUSES[0]
-            const StatusIcon = status.icon
             return (
-              <Card key={lead.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <StatusIcon
-                          className="w-4 h-4 shrink-0"
-                          style={{ color: status.color }}
-                        />
-                        <span className="font-semibold">
-                          {lead.name || '(Không tên)'}
-                        </span>
-                        <span
-                          className="text-xs px-2 py-0.5 rounded-full"
-                          style={{ backgroundColor: status.color, color: 'white' }}
-                        >
-                          {status.label}
-                        </span>
-                        <span className="text-xs" style={{ color: semanticColors.textMuted }}>
-                          · {SOURCE_LABELS[lead.source] || lead.source}
-                        </span>
+              <div key={lead.id} className="p-3.5 bg-white border border-[#E2E8F0] rounded">
+                <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="font-semibold text-sm text-[#0F172A]">
+                        {lead.name || '(Không tên)'}
+                      </span>
+                      <span
+                        className="text-xs px-2 py-0.5 rounded text-white font-medium"
+                        style={{ backgroundColor: status.color }}
+                      >
+                        {status.label}
+                      </span>
+                      <span className="text-xs" style={{ color: semanticColors.textMuted }}>
+                        · {SOURCE_LABELS[lead.source] || lead.source}
+                      </span>
+                    </div>
+                    <div className="text-xs space-y-0.5 text-slate-600">
+                      <div>
+                        <span className="text-slate-400 mr-1">SĐT:</span>
+                        <a href={`tel:${lead.phone}`} className="hover:underline font-medium text-slate-800">
+                          {lead.phone}
+                        </a>
                       </div>
-                      <div className="text-sm space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-3.5 h-3.5" style={{ color: semanticColors.textMuted }} />
-                          <a href={`tel:${lead.phone}`} className="hover:underline">
-                            {lead.phone}
+                      {lead.email && (
+                        <div>
+                          <span className="text-slate-400 mr-1">Email:</span>
+                          <a href={`mailto:${lead.email}`} className="hover:underline font-medium text-slate-800">
+                            {lead.email}
                           </a>
                         </div>
-                        {lead.email && (
-                          <div className="flex items-center gap-2">
-                            <Mail className="w-3.5 h-3.5" style={{ color: semanticColors.textMuted }} />
-                            <a href={`mailto:${lead.email}`} className="hover:underline">
-                              {lead.email}
-                            </a>
-                          </div>
-                        )}
+                      )}
+                    </div>
+                    {(lead.program || lead.childAge || lead.campus) && (
+                      <div className="mt-1.5 text-xs flex flex-wrap gap-x-3 gap-y-1" style={{ color: semanticColors.textMuted }}>
+                        {lead.program && <span>CT: {lead.program}</span>}
+                        {lead.childAge && <span>Tuổi: {lead.childAge}</span>}
+                        {lead.campus && <span>Cơ sở: {lead.campus}</span>}
                       </div>
-                      {(lead.program || lead.childAge || lead.campus) && (
-                        <div className="mt-2 text-xs flex flex-wrap gap-x-3 gap-y-1" style={{ color: semanticColors.textMuted }}>
-                          {lead.program && <span>CT: {lead.program}</span>}
-                          {lead.childAge && <span>Tuổi: {lead.childAge}</span>}
-                          {lead.campus && <span>Cơ sở: {lead.campus}</span>}
-                        </div>
-                      )}
-                      {lead.topicsInterested.length > 0 && (
-                        <div className="mt-1 text-xs" style={{ color: semanticColors.textMuted }}>
-                          Quan tâm: {lead.topicsInterested.join(', ')}
-                        </div>
-                      )}
-                      {lead.conversationSummary && (
-                        <details className="mt-2">
-                          <summary className="text-xs cursor-pointer" style={{ color: semanticColors.textMuted }}>
-                            Tóm tắt hội thoại ({lead.conversationCount} tin)
-                          </summary>
-                          <pre
-                            className="text-xs mt-1 p-2 rounded whitespace-pre-wrap"
-                            style={{ backgroundColor: semanticColors.surfaceAlt }}
-                          >
-                            {lead.conversationSummary}
-                          </pre>
-                        </details>
-                      )}
-                      {lead.notes && (
-                        <div className="mt-2 text-xs p-2 rounded" style={{ backgroundColor: semanticColors.surfaceAlt }}>
-                          <strong>Ghi chú:</strong> {lead.notes}
-                        </div>
-                      )}
-                      <div className="text-xs mt-2" style={{ color: semanticColors.textMuted }}>
-                        {formatDate(lead.createdAt)}
-                        {lead.assignedTo && ` · Phụ trách: ${lead.assignedTo}`}
+                    )}
+                    {lead.topicsInterested.length > 0 && (
+                      <div className="mt-1 text-xs" style={{ color: semanticColors.textMuted }}>
+                        Quan tâm: {lead.topicsInterested.join(', ')}
                       </div>
+                    )}
+                    {lead.conversationSummary && (
+                      <details className="mt-2">
+                        <summary className="text-xs cursor-pointer text-slate-500">
+                          Tóm tắt hội thoại ({lead.conversationCount} tin)
+                        </summary>
+                        <pre
+                          className="text-xs mt-1 p-2 rounded whitespace-pre-wrap bg-slate-50 border border-slate-100"
+                        >
+                          {lead.conversationSummary}
+                        </pre>
+                      </details>
+                    )}
+                    {lead.notes && (
+                      <div className="mt-2 text-xs p-2 rounded bg-blue-50 border border-blue-100 text-blue-900">
+                        <strong>Ghi chú:</strong> {lead.notes}
+                      </div>
+                    )}
+                    <div className="text-xs mt-2" style={{ color: semanticColors.textMuted }}>
+                      {formatDate(lead.createdAt)}
+                      {lead.assignedTo && ` · Phụ trách: ${lead.assignedTo}`}
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    {STATUSES.filter((s) => s.value !== lead.status).map((s) => (
-                      <Button
-                        key={s.value}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleQuickStatus(lead, s.value)}
-                        style={{ color: s.color, borderColor: s.color }}
-                      >
-                        <s.icon className="w-3 h-3 mr-1" />
-                        {s.label}
-                      </Button>
-                    ))}
-                    <Button variant="outline" size="sm" onClick={() => setEditing(lead)}>
-                      Sửa
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(lead)}
-                      style={{ color: semanticColors.cta }}
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
+                  <span className="text-xs mr-1 text-slate-500">Chuyển:</span>
+                  {STATUSES.filter((s) => s.value !== lead.status).map((s) => (
+                    <button
+                      key={s.value}
+                      type="button"
+                      onClick={() => handleQuickStatus(lead, s.value)}
+                      className="h-6 px-2 text-xs rounded border transition-colors hover:bg-slate-50"
+                      style={{ color: s.color, borderColor: s.color }}
                     >
-                      <Trash2 className="w-3 h-3 mr-1" />
-                      Xóa
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                      {s.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setEditing(lead)}
+                    className="h-6 px-2.5 text-xs rounded border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors ml-auto"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(lead)}
+                    className="h-6 px-2.5 text-xs rounded border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
             )
           })}
         </div>

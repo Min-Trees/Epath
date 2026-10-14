@@ -16,7 +16,7 @@
  *  - 100% visible on first paint with smooth non-blocking entrance animations.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
@@ -97,10 +97,13 @@ export function HeroSection({
     (locale === 'en' ? '' : '')
 
   const rawTitle = (hero && pickLocalized(hero.title, locale)) || t('title') || ''
-  const titleText =
+  const baseTitle =
     rawTitle && rawTitle !== 'EPath Education'
       ? rawTitle
-      : 'LearnLocal\nReachGlobal'
+      : 'Learn Local\nReach Global'
+  const titleText = baseTitle
+    .replace(/LearnLocal/g, 'Learn Local')
+    .replace(/ReachGlobal/g, 'Reach Global')
 
   const titleLines = titleText.includes('\n')
     ? titleText.split(/[\r\n]+/)
@@ -119,61 +122,74 @@ export function HeroSection({
   const backgroundImage = (hero?.backgroundImage as string) || ''
   const activeBackground = backgroundImage || '/images/hero/hero-bg.jpg'
 
+  // Default sample slides for Home hero if none configured in CMS
+  const DEFAULT_HOME_SLIDES = [
+    '/images/hero/hero-bg.jpg',
+    '/images/programs/program-high.jpg',
+    '/images/admissions/admissions-campus.jpg',
+  ]
+
   // Slideshow configuration
   const rawSlides = (hero?.slides as string[] | undefined) || []
-  const slides = rawSlides.filter((s) => typeof s === 'string' && s.trim().length > 0)
-  const finalSlideIndex = typeof hero?.finalSlideIndex === 'number' ? hero.finalSlideIndex : -1
+  const configuredSlides = rawSlides.filter((s) => typeof s === 'string' && s.trim().length > 0)
+  const slides =
+    configuredSlides.length > 0
+      ? configuredSlides
+      : pageId === 'home' && !backgroundImage
+      ? DEFAULT_HOME_SLIDES
+      : []
+
   const slideInterval =
     typeof hero?.slideInterval === 'number' && hero.slideInterval > 0
       ? hero.slideInterval
       : 4
 
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [isStopped, setIsStopped] = useState(false)
-  const hasPassedEndRef = useRef(false)
+  // Hardware-accelerated infinite slider state
+  const extendedSlides =
+    slides.length > 1 ? [slides[slides.length - 1], ...slides, slides[0]] : slides
+  const [trackIndex, setTrackIndex] = useState(slides.length > 1 ? 1 : 0)
+  const [isTransitioning, setIsTransitioning] = useState(true)
 
-  // Reset slide state when page or slides change
+  // Reset when slides change
   useEffect(() => {
-    setCurrentSlideIndex(0)
-    setIsStopped(false)
-    hasPassedEndRef.current = false
-  }, [hero?.id, slides.length, finalSlideIndex])
+    setTrackIndex(slides.length > 1 ? 1 : 0)
+    setIsTransitioning(true)
+  }, [slides.length, hero?.id])
 
-  // Slideshow timer logic
+  // Seamless wrap-around on transition end
+  const handleTransitionEnd = useCallback(() => {
+    if (slides.length <= 1) return
+    if (trackIndex === extendedSlides.length - 1) {
+      setIsTransitioning(false)
+      setTrackIndex(1)
+    } else if (trackIndex === 0) {
+      setIsTransitioning(false)
+      setTrackIndex(slides.length)
+    }
+  }, [slides.length, trackIndex, extendedSlides.length])
+
+  // Re-enable transition on next frame after seamless snap
   useEffect(() => {
-    if (slides.length <= 1 || isStopped) return
-
-    const intervalMs = slideInterval * 1000
-    const timer = setInterval(() => {
-      setCurrentSlideIndex((prev) => {
-        const next = (prev + 1) % slides.length
-
-        // Track when we have cycled through to the end of the slide list
-        if (prev === slides.length - 1) {
-          hasPassedEndRef.current = true
-        }
-
-        // Stopping check:
-        if (finalSlideIndex >= 0 && finalSlideIndex < slides.length) {
-          // If finalSlideIndex is the last slide, stop as soon as we reach it
-          if (finalSlideIndex === slides.length - 1 && next === finalSlideIndex) {
-            setIsStopped(true)
-            return next
-          }
-          // If finalSlideIndex is earlier (e.g. 0 or 1), wait until subsequent slides
-          // have been cycled through at least once before stopping on it
-          if (hasPassedEndRef.current && next === finalSlideIndex) {
-            setIsStopped(true)
-            return next
-          }
-        }
-
-        return next
+    if (!isTransitioning) {
+      const frame = requestAnimationFrame(() => {
+        setIsTransitioning(true)
       })
+      return () => cancelAnimationFrame(frame)
+    }
+  }, [isTransitioning])
+
+  // Continuous auto-run timer: runs automatically, never stops
+  useEffect(() => {
+    if (slides.length <= 1) return
+    const intervalMs = (slideInterval || 4) * 1000
+    const timer = setInterval(() => {
+      setIsTransitioning(true)
+      setTrackIndex((prev) => prev + 1)
     }, intervalMs)
 
     return () => clearInterval(timer)
-  }, [slides.length, isStopped, finalSlideIndex, slideInterval])
+  }, [slides.length, slideInterval])
+
 
   // Marquee items according to current locale
   const marqueeItems = locale === 'en' ? MARQUEE_ITEMS_EN : MARQUEE_ITEMS_VI
@@ -264,33 +280,45 @@ export function HeroSection({
                 />
               )}
             </>
-          ) : slides.length > 0 ? (
-            slides.map((slideUrl, idx) => {
-              const isActive = idx === currentSlideIndex
-              return (
-                <div
-                  key={idx}
-                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none"
-                  style={{
-                    opacity: isActive ? 1 : 0,
-                    zIndex: isActive ? 2 : 1,
-                  }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={slideUrl}
-                    alt=""
-                    className={`w-full h-full object-cover transition-transform duration-[7000ms] ease-out ${
-                      isActive ? 'scale-105' : 'scale-100'
-                    }`}
-                  />
-                </div>
-              )
-            })
+          ) : slides.length > 1 ? (
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+              <div
+                className="flex h-full w-full will-change-transform"
+                style={{
+                  transform: `translate3d(-${trackIndex * 100}%, 0, 0)`,
+                  transition: isTransitioning
+                    ? 'transform 650ms cubic-bezier(0.25, 1, 0.5, 1)'
+                    : 'none',
+                }}
+                onTransitionEnd={handleTransitionEnd}
+              >
+                {extendedSlides.map((url, idx) => (
+                  <div
+                    key={idx}
+                    className="w-full h-full flex-shrink-0 relative overflow-hidden"
+                    style={{
+                      transform: 'translateZ(0)',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt=""
+                      className="w-full h-full object-cover select-none pointer-events-none"
+                      loading="eager"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={activeBackground}
+              src={slides[0] || activeBackground}
               alt=""
               className="w-full h-full object-cover hero-media-fade is-loaded"
             />
@@ -326,7 +354,7 @@ export function HeroSection({
                         {words.map((word, i) => (
                           <span
                             key={`t-${lineIdx}-${i}`}
-                            className="inline-block mr-[0.16em] last:mr-0 hero-word text-[#1e3570]"
+                            className="inline-block mr-[0.25em] sm:mr-[0.28em] last:mr-0 hero-word text-[#1e3570]"
                             style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + lineIdx * 0.1 + i * 0.05}s` } as React.CSSProperties}
                           >
                             {word}
@@ -394,24 +422,6 @@ export function HeroSection({
           </div>
         </div>
 
-        {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ─── */}
-        {slides.length > 1 && (
-          <div className="absolute bottom-14 right-6 sm:right-12 z-30 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 shadow-lg">
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setCurrentSlideIndex(idx)}
-                aria-label={`Chuyển tới slide ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  idx === currentSlideIndex
-                    ? 'w-6 bg-[#8bc53f]'
-                    : 'w-2 bg-white/50 hover:bg-white/90'
-                }`}
-              />
-            ))}
-          </div>
-        )}
 
         {/* ── Layer 4: Tags Marquee Strip – floating over the hero ─────
             Anchored to the bottom edge of the hero so it sits ON TOP of

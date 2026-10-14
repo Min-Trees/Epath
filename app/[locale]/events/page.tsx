@@ -8,6 +8,7 @@ import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 const fallbackEvents = [
   {
@@ -242,7 +243,11 @@ export default function EventsPage() {
                           {title}
                         </h3>
                         {desc && (
-                          <p className="text-xs sm:text-sm text-[#5C6069] mb-4 leading-relaxed line-clamp-3">{desc}</p>
+                          <RichTextRenderer
+                            html={desc}
+                            compact
+                            className="text-xs sm:text-sm text-[#5C6069] mb-4 leading-relaxed line-clamp-3 block"
+                          />
                         )}
 
                         {((event as Record<string, unknown>).target as string) && (

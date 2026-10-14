@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { HardDriveDownload, Trash2, RotateCcw, Loader2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BackupStatusBadge } from './backup-status-badge'
@@ -51,7 +50,6 @@ export function BackupList({ onBackupsChange }: BackupListProps) {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-400 mb-3" />
         <p className="text-sm text-gray-500">Đang tải danh sách backup...</p>
       </div>
     )
@@ -59,81 +57,74 @@ export function BackupList({ onBackupsChange }: BackupListProps) {
 
   if (backups.length === 0) {
     return (
-      <div className="text-center py-12 rounded-xl bg-gray-50">
-        <HardDriveDownload className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-        <p className="font-medium text-gray-600">Chưa có backup nào</p>
-        <p className="text-sm text-gray-400 mt-1">Backup sẽ được tạo tự động vào Chủ Nhật hàng tuần.</p>
+      <div className="text-center py-12 rounded border border-gray-200 bg-gray-50">
+        <p className="font-semibold text-gray-700">Chưa có backup nào</p>
+        <p className="text-xs text-gray-500 mt-1">Backup sẽ được tạo tự động vào Chủ Nhật hàng tuần.</p>
       </div>
     )
   }
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">{backups.length} backup(s)</p>
-        <Button variant="outline" size="sm" onClick={fetchBackups}>
-          <RefreshCw className="w-4 h-4 mr-1" /> Làm mới
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs text-gray-500">{backups.length} bản sao lưu</p>
+        <Button variant="outline" size="sm" onClick={fetchBackups} className="rounded h-7 px-3 text-xs">
+          Làm mới
         </Button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {backups.map((backup) => (
-          <Card key={backup.id}>
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <BackupStatusBadge status={backup.status} />
-                    <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600">
-                      {backup.type === 'scheduled' ? 'Tự động' : backup.type === 'manual' ? 'Thủ công' : 'Pre-restore'}
-                    </span>
-                  </div>
-                  <div className="text-sm font-medium text-gray-900">
-                    {new Date(backup.startedAt).toLocaleString('vi-VN', { hour12: false })}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-0.5">
-                    {backup.collections?.length || 0} collections
-                    {backup.gcsPrefix && (
-                      <> · GCS: {backup.gcsPrefix}</>
-                    )}
-                  </div>
-                  {backup.error && (
-                    <div className="text-xs text-red-600 mt-1">Lỗi: {backup.error}</div>
-                  )}
-                  {backup.notes && (
-                    <div className="text-xs text-gray-500 mt-1 italic">{backup.notes}</div>
-                  )}
-                  <div className="text-xs text-gray-400 mt-1">
-                    Tạo bởi: {backup.triggeredByName || backup.triggeredByEmail || 'Hệ thống'}
-                  </div>
+          <div key={backup.id} className="p-3 bg-white border border-[#E2E8F0] rounded">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <BackupStatusBadge status={backup.status} />
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-medium">
+                    {backup.type === 'scheduled' ? 'Tự động' : backup.type === 'manual' ? 'Thủ công' : 'Pre-restore'}
+                  </span>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  {backup.status === 'completed' && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setRestoreBackup(backup)}
-                    >
-                      <RotateCcw className="w-4 h-4 mr-1" />
-                      Restore
-                    </Button>
+                <div className="text-sm font-medium text-gray-900">
+                  {new Date(backup.startedAt).toLocaleString('vi-VN', { hour12: false })}
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  {backup.collections?.length || 0} collections
+                  {backup.gcsPrefix && (
+                    <> · GCS: {backup.gcsPrefix}</>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => backup.id && handleDelete(backup.id)}
-                    disabled={deletingId === backup.id}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    {deletingId === backup.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
-                  </Button>
+                </div>
+                {backup.error && (
+                  <div className="text-xs text-red-600 mt-1">Lỗi: {backup.error}</div>
+                )}
+                {backup.notes && (
+                  <div className="text-xs text-gray-500 mt-1 italic">{backup.notes}</div>
+                )}
+                <div className="text-xs text-gray-400 mt-1">
+                  Tạo bởi: {backup.triggeredByName || backup.triggeredByEmail || 'Hệ thống'}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex gap-1.5 shrink-0">
+                {backup.status === 'completed' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRestoreBackup(backup)}
+                    className="rounded h-7 px-2.5 text-xs text-[#1E3570] border-[#1E3570]/30 hover:bg-blue-50"
+                  >
+                    Phục hồi
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => backup.id && handleDelete(backup.id)}
+                  disabled={deletingId === backup.id}
+                  className="rounded h-7 px-2.5 text-xs text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  {deletingId === backup.id ? 'Đang xóa...' : 'Xóa'}
+                </Button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
       {restoreBackup && (

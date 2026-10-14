@@ -13,8 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Eye, EyeOff, LogIn, Lock, Mail } from 'lucide-react'
-import { semanticColors, radius } from '@/lib/design-tokens'
+import { radius, semanticColors } from '@/lib/design-tokens'
 import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 
@@ -60,14 +59,14 @@ export default function AdminLoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
+      className="admin-root min-h-screen flex items-center justify-center p-4"
       style={{
         background: `linear-gradient(135deg, ${semanticColors.primary} 0%, ${semanticColors.primaryDark} 100%)`,
       }}
     >
       <Card
-        className="w-full max-w-md"
-        style={{ borderRadius: radius['2xl'] }}
+        className="w-full max-w-md rounded"
+        style={{ borderRadius: radius.md }}
       >
         <CardHeader className="text-center">
           <Image
@@ -78,66 +77,50 @@ export default function AdminLoginPage() {
             className="h-14 w-auto mx-auto mb-4"
           />
           <CardTitle
-            className="text-xl mt-2"
+            className="text-xl mt-2 font-semibold"
             style={{ color: semanticColors.textMuted }}
           >
-            Admin
+            Admin CMS
           </CardTitle>
           <CardDescription>
-            Đăng nhập để truy cập trang quản trị
+            Đăng nhập để truy cập trang quản trị hệ thống
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{ color: semanticColors.textMuted }}
-                />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@epath.edu.vn"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@epath.edu.vn"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="rounded"
+                required
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
-              <div className="relative">
-                <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                  style={{ color: semanticColors.textMuted }}
-                />
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Nhập mật khẩu"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Mật khẩu</Label>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors duration-200"
-                  style={{ color: semanticColors.textMuted }}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="text-xs text-slate-500 hover:text-slate-800"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showPassword ? 'Ẩn' : 'Hiện'}
                 </button>
               </div>
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Nhập mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="rounded"
+                required
+              />
             </div>
 
             {error && (
@@ -152,15 +135,8 @@ export default function AdminLoginPage() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                'Đang đăng nhập...'
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Đăng nhập
-                </>
-              )}
+            <Button type="submit" className="w-full rounded" disabled={isLoading}>
+              {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
             </Button>
           </form>
 

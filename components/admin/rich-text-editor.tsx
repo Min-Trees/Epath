@@ -27,22 +27,6 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
-import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Heading1,
-  Heading2,
-  Heading3,
-  List,
-  ListOrdered,
-  Link as LinkIcon,
-  Undo2,
-  Redo2,
-  Pilcrow,
-  Trash2,
-} from 'lucide-react'
 import type { Editor } from '@tiptap/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -85,7 +69,7 @@ const ToolbarButton = ({
     title={title}
     aria-label={title}
     className={cn(
-      'h-8 w-8 inline-flex items-center justify-center rounded-md border transition-colors',
+      'h-7 min-w-[28px] px-1.5 inline-flex items-center justify-center rounded border text-xs font-medium transition-colors',
       active
         ? 'bg-[#3A53A3] text-white border-[#3A53A3]'
         : 'bg-white text-[#231F20] border-[#e5e7eb] hover:bg-[#F8F9FA]'
@@ -111,7 +95,7 @@ function Toolbar({ editor }: { editor: Editor | null }) {
 
   return (
     <div
-      className="flex flex-wrap items-center gap-1 p-2 border-b bg-[#F8F9FA] rounded-t-md"
+      className="flex flex-wrap items-center gap-1 p-2 border-b bg-[#F8F9FA] rounded-t"
       style={{ borderColor: 'rgba(35,31,32,0.1)' }}
     >
       <ToolbarButton
@@ -119,94 +103,94 @@ function Toolbar({ editor }: { editor: Editor | null }) {
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().undo()}
       >
-        <Undo2 className="w-4 h-4" />
+        <span>↶</span>
       </ToolbarButton>
       <ToolbarButton
         title="Redo"
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().redo()}
       >
-        <Redo2 className="w-4 h-4" />
+        <span>↷</span>
       </ToolbarButton>
-      <div className="w-px h-5 bg-[#e5e7eb] mx-1" />
+      <div className="w-px h-4 bg-[#e5e7eb] mx-1" />
       <ToolbarButton
         title="Đoạn văn"
         active={editor.isActive('paragraph')}
         onClick={() => editor.chain().focus().setParagraph().run()}
       >
-        <Pilcrow className="w-4 h-4" />
+        <span>P</span>
       </ToolbarButton>
       <ToolbarButton
         title="Heading 1"
         active={editor.isActive('heading', { level: 1 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
       >
-        <Heading1 className="w-4 h-4" />
+        <span>H1</span>
       </ToolbarButton>
       <ToolbarButton
         title="Heading 2"
         active={editor.isActive('heading', { level: 2 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
       >
-        <Heading2 className="w-4 h-4" />
+        <span>H2</span>
       </ToolbarButton>
       <ToolbarButton
         title="Heading 3"
         active={editor.isActive('heading', { level: 3 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
       >
-        <Heading3 className="w-4 h-4" />
+        <span>H3</span>
       </ToolbarButton>
-      <div className="w-px h-5 bg-[#e5e7eb] mx-1" />
+      <div className="w-px h-4 bg-[#e5e7eb] mx-1" />
       <ToolbarButton
         title="Bold"
         active={editor.isActive('bold')}
         onClick={() => editor.chain().focus().toggleBold().run()}
       >
-        <Bold className="w-4 h-4" />
+        <span className="font-bold">B</span>
       </ToolbarButton>
       <ToolbarButton
         title="Italic"
         active={editor.isActive('italic')}
         onClick={() => editor.chain().focus().toggleItalic().run()}
       >
-        <Italic className="w-4 h-4" />
+        <span className="italic font-serif">I</span>
       </ToolbarButton>
       <ToolbarButton
         title="Underline"
         active={editor.isActive('underline')}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
       >
-        <UnderlineIcon className="w-4 h-4" />
+        <span className="underline">U</span>
       </ToolbarButton>
       <ToolbarButton
         title="Strike"
         active={editor.isActive('strike')}
         onClick={() => editor.chain().focus().toggleStrike().run()}
       >
-        <Strikethrough className="w-4 h-4" />
+        <span className="line-through">S</span>
       </ToolbarButton>
-      <div className="w-px h-5 bg-[#e5e7eb] mx-1" />
+      <div className="w-px h-4 bg-[#e5e7eb] mx-1" />
       <ToolbarButton
         title="Bullet list"
         active={editor.isActive('bulletList')}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
       >
-        <List className="w-4 h-4" />
+        <span>• List</span>
       </ToolbarButton>
       <ToolbarButton
         title="Ordered list"
         active={editor.isActive('orderedList')}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       >
-        <ListOrdered className="w-4 h-4" />
+        <span>1. List</span>
       </ToolbarButton>
       <ToolbarButton
         title="Link"
         active={editor.isActive('link')}
         onClick={setLink}
       >
-        <LinkIcon className="w-4 h-4" />
+        <span>Link</span>
       </ToolbarButton>
     </div>
   )
@@ -251,7 +235,7 @@ function EditorSurface({
   })
 
   return (
-    <div className="border rounded-md" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
+    <div className="border rounded" style={{ borderColor: 'rgba(35,31,32,0.1)' }}>
       <Toolbar editor={editor} />
       <div
         className="p-3 prose prose-sm max-w-none focus:outline-none"
@@ -273,6 +257,7 @@ function EditorSurface({
               size="sm"
               variant="outline"
               onClick={() => draft.restore()}
+              className="rounded h-7 text-xs"
             >
               Khôi phục
             </Button>
@@ -280,9 +265,9 @@ function EditorSurface({
               size="sm"
               variant="outline"
               onClick={() => draft.discard()}
+              className="rounded h-7 text-xs"
               style={{ color: semanticColors.cta }}
             >
-              <Trash2 className="w-3 h-3 mr-1" />
               Bỏ
             </Button>
           </div>

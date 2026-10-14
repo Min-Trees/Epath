@@ -17,7 +17,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { semanticColors } from '@/lib/design-tokens'
-import { Copy, Loader2, Trash2, Upload } from 'lucide-react'
 
 interface MediaItem {
   id: string
@@ -147,17 +146,7 @@ export default function AdminMediaPage() {
             onChange={(e) => handleFiles(e.target.files)}
           />
           <Button onClick={() => inputRef.current?.click()} disabled={uploading}>
-            {uploading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Đang upload…
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4 mr-2" />
-                Upload ảnh
-              </>
-            )}
+            {uploading ? 'Đang tải lên…' : 'Tải lên ảnh'}
           </Button>
         </>
       }
@@ -200,7 +189,7 @@ export default function AdminMediaPage() {
           {items.map((m) => (
             <Card key={m.id} className="overflow-hidden">
               <CardContent className="p-3 space-y-2">
-                <div className="aspect-square rounded-md overflow-hidden border bg-gray-50">
+                <div className="aspect-square rounded overflow-hidden border bg-gray-50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={m.url}
@@ -208,31 +197,30 @@ export default function AdminMediaPage() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <div className="text-xs truncate" title={m.fileName}>
+                <div className="text-xs truncate font-medium" title={m.fileName}>
                   {m.fileName}
                 </div>
                 <div className="text-xs" style={{ color: semanticColors.textMuted }}>
                   {formatSize(m.size)} · {m.folder}
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 pt-1">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 text-xs rounded"
                     onClick={() => copyUrl(m.url)}
                   >
-                    <Copy className="w-3 h-3 mr-1" /> URL
+                    Copy URL
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
+                    className="text-xs rounded text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={() => handleDelete(m)}
-                    style={{ color: '#dc2626' }}
-                    aria-label="Xóa"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    Xóa
                   </Button>
                 </div>
               </CardContent>

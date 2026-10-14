@@ -1,17 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Send,
-  Check,
-  X,
-  Rocket,
-  Calendar,
-  EyeOff,
-  Archive,
-  RotateCcw,
-  Trash2,
-} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -37,17 +26,6 @@ export interface ReviewActionsProps {
   compact?: boolean
 }
 
-const ICONS: Record<string, typeof Send> = {
-  PENDING_REVIEW: Send,
-  APPROVED: Check,
-  REJECTED: X,
-  PUBLISHED: Rocket,
-  SCHEDULED: Calendar,
-  DRAFT: RotateCcw,
-  UNPUBLISHED: EyeOff,
-  ARCHIVED: Archive,
-}
-
 const ACTION_LABELS: Record<string, string> = {
   submit_review: 'Gửi duyệt',
   approve: 'Duyệt',
@@ -60,7 +38,7 @@ const ACTION_LABELS: Record<string, string> = {
 }
 
 export function ReviewActions(props: ReviewActionsProps) {
-  const { collection, documentId, status, onActionCompleted, compact } = props
+  const { collection, documentId, status, onActionCompleted } = props
   const from = status as ReviewStatus
   const allowed = ALLOWED_TRANSITIONS[from] || []
 
@@ -94,9 +72,8 @@ export function ReviewActions(props: ReviewActionsProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5">
       {allowed.map(({ to, action }) => {
-        const Icon = ICONS[to] || Send
         const label = ACTION_LABELS[action] || to
         if (action === 'reject') {
           return (
@@ -106,9 +83,9 @@ export function ReviewActions(props: ReviewActionsProps) {
               size="sm"
               disabled={pending !== null}
               onClick={() => setRejectOpen(true)}
-              style={{ color: '#dc2626', borderColor: '#fecaca' }}
+              className="rounded h-7 px-2.5 text-xs text-red-600 border-red-200 hover:bg-red-50"
             >
-              <X className="w-4 h-4 mr-1" /> {label}
+              {label}
             </Button>
           )
         }
@@ -120,8 +97,9 @@ export function ReviewActions(props: ReviewActionsProps) {
               size="sm"
               disabled={pending !== null}
               onClick={() => setScheduleOpen(true)}
+              className="rounded h-7 px-2.5 text-xs text-purple-700 border-purple-200 hover:bg-purple-50"
             >
-              <Calendar className="w-4 h-4 mr-1" /> {label}
+              {label}
             </Button>
           )
         }
@@ -132,8 +110,9 @@ export function ReviewActions(props: ReviewActionsProps) {
             size="sm"
             disabled={pending !== null}
             onClick={() => submit(to)}
+            className="rounded h-7 px-2.5 text-xs text-slate-700 border-slate-200 hover:bg-slate-50"
           >
-            <Icon className="w-4 h-4 mr-1" /> {label}
+            {label}
           </Button>
         )
       })}
@@ -158,7 +137,7 @@ export function ReviewActions(props: ReviewActionsProps) {
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              className="w-full min-h-[100px] rounded-md border p-3 text-sm"
+              className="w-full min-h-[100px] rounded border p-3 text-sm"
               placeholder="Ví dụ: Tiêu đề chưa rõ ràng, thiếu hình ảnh..."
             />
           </div>

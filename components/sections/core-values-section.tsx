@@ -20,6 +20,7 @@ import { duration, easeOut, inViewViewport, staggerContainer, useSectionActive }
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
+import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 
 const iconMap: Record<string, LucideIcon> = {
   Route,
@@ -31,12 +32,12 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const fallbackValues = [
-  { number: '01', key: 'continuousPath', icon: Route },
-  { number: '02', key: 'usStandard', icon: Award },
-  { number: '03', key: 'blended', icon: Laptop },
-  { number: '04', key: 'parentsRelax', icon: Shield },
-  { number: '05', key: 'portfolio', icon: FileText },
-  { number: '06', key: 'ecosystem', icon: Network },
+  { number: '01', key: 'continuousPath', icon: Route, imageUrl: '/images/core-values/1.png' },
+  { number: '02', key: 'usStandard', icon: Award, imageUrl: '/images/core-values/2.png' },
+  { number: '03', key: 'blended', icon: Laptop, imageUrl: '/images/core-values/3.png' },
+  { number: '04', key: 'parentsRelax', icon: Shield, imageUrl: '/images/core-values/4.png' },
+  { number: '05', key: 'portfolio', icon: FileText, imageUrl: '/images/core-values/5.png' },
+  { number: '06', key: 'ecosystem', icon: Network, imageUrl: '/images/core-values/6.png' },
 ]
 
 function pick(v: { vi?: string; en?: string } | undefined, locale: Locale): string {
@@ -82,18 +83,18 @@ export function CoreValuesSection() {
         </motion.div>
 
         {/* 3-Column Grid matching iSchool sc_icons */}
-        <motion.div
-          variants={staggerContainer(0.06)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={inViewViewport}
+        <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-x-8 lg:gap-x-12 gap-y-12 sm:gap-y-16"
         >
           {displayValues.map((value, index) => {
             const accent = accentCycle[index % accentCycle.length]
             const isCMSItem = isUsingCMS && 'title' in value
-            const cmsItem = isCMSItem ? (value as { id?: string; icon?: string; title?: { vi?: string; en?: string }; description?: { vi?: string; en?: string } }) : null
+            const cmsItem = isCMSItem ? (value as { id?: string; icon?: string; imageUrl?: string; title?: { vi?: string; en?: string }; description?: { vi?: string; en?: string } }) : null
             const fallbackItem = !isCMSItem ? (value as typeof fallbackValues[0]) : null
+
+            const imageUrl = isCMSItem && cmsItem?.imageUrl
+              ? cmsItem.imageUrl
+              : `/images/core-values/${index + 1}.png`
 
             const IconComponent = isCMSItem && cmsItem?.icon && iconMap[cmsItem.icon]
               ? iconMap[cmsItem.icon]
@@ -108,19 +109,14 @@ export function CoreValuesSection() {
               : fallbackItem ? t(`${fallbackItem.key}Desc`) : ''
 
             const numStr = String(index + 1).padStart(2, '0')
-            const itemKey = isCMSItem && cmsItem?.id ? cmsItem.id : `core-val-${index}`
 
             return (
               <motion.div
-                key={itemKey}
-                variants={{
-                  hidden: { opacity: 0, y: 16 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: duration.normal, ease: easeOut },
-                  },
-                }}
+                key={`core-val-card-${index}`}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.45, delay: index * 0.05, ease: easeOut }}
                 className="relative group cursor-pointer h-full flex flex-col justify-between"
               >
                 {/* Giant watermark number sitting behind icon + title */}
@@ -138,15 +134,19 @@ export function CoreValuesSection() {
                 {/* Content top area: fills space so arrow button anchors to bottom */}
                 <div className="flex-1 flex flex-col">
                   {/* Header row: Icon + Title */}
-                  <div className="relative z-10 flex items-center gap-4 mb-3.5 min-h-[3.5rem]">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
-                      style={{
-                        backgroundColor: accent.bg,
-                        color: accent.color,
-                      }}
-                    >
-                      <IconComponent className="w-7 h-7" />
+                  <div className="relative z-10 flex items-center gap-4 mb-4 min-h-[4rem]">
+                    <div className="w-16 h-16 sm:w-[72px] sm:h-[72px] flex items-center justify-center shrink-0 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5">
+                      {imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={imageUrl}
+                          alt={title}
+                          className="w-full h-full object-contain"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <IconComponent className="w-9 h-9" style={{ color: accent.color }} />
+                      )}
                     </div>
 
                     <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 tracking-tight">
@@ -155,9 +155,11 @@ export function CoreValuesSection() {
                   </div>
 
                   {/* Description */}
-                  <p className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 flex-1 min-h-[3.25rem]">
-                    {description}
-                  </p>
+                  <RichTextRenderer
+                    html={description}
+                    compact
+                    className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 flex-1 min-h-[3.25rem] line-clamp-4 block"
+                  />
                 </div>
 
                 {/* iSchool expanding More button – anchored to bottom baseline */}
@@ -179,7 +181,7 @@ export function CoreValuesSection() {
               </motion.div>
             )
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   )
