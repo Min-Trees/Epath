@@ -429,7 +429,8 @@ export default function AboutPage() {
                 }))
             ).map((value, index) => {
               const accent = accentCycle[index % accentCycle.length]
-              const valTitle = pick(value.title, locale)
+              const rawValTitle = pick(value.title, locale)
+              const valTitle = rawValTitle.replace(/^\s*\d+[\.\s\-]+\s*/, '').trim()
               const valDesc = pick(value.description, locale)
               const imageUrl = (value as { imageUrl?: string }).imageUrl || `/images/core-values/${index + 1}.png`
 
