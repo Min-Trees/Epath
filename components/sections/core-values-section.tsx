@@ -71,13 +71,13 @@ export function CoreValuesSection() {
           transition={{ duration: duration.normal, ease: easeOut }}
           className="mb-14 sm:mb-16"
         >
-          <span className="block text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2E4A9E] mb-2 sm:mb-3">
+          <span className="block text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#2E4A9E] mb-2 sm:mb-3">
             {locale === 'en' ? 'Features' : 'Giá trị cốt lõi'}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#20242B] tracking-tight max-w-3xl leading-[1.15]">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#414042] tracking-tight max-w-3xl leading-[1.15]">
             {t('title')}
           </h2>
-          <p className="mt-3 text-base sm:text-lg text-[#5C6069] max-w-2xl">
+          <p className="mt-3 text-base sm:text-lg font-normal text-[#414042]/80 max-w-2xl">
             {t('subtitle')}
           </p>
         </motion.div>
@@ -100,9 +100,12 @@ export function CoreValuesSection() {
               ? iconMap[cmsItem.icon]
               : fallbackItem?.icon || Route
 
-            const title = isCMSItem && cmsItem?.title
+            const rawTitle = isCMSItem && cmsItem?.title
               ? pick(cmsItem.title, locale)
               : fallbackItem ? t(fallbackItem.key) : ''
+
+            // Remove numeric prefix (e.g., "1. ", "01. ", "1 - ", etc.)
+            const title = rawTitle.replace(/^\s*\d+[\.\s\-]+\s*/, '').trim()
 
             const description = isCMSItem && cmsItem?.description
               ? pick(cmsItem.description, locale)
@@ -119,46 +122,68 @@ export function CoreValuesSection() {
                 transition={{ duration: 0.45, delay: index * 0.05, ease: easeOut }}
                 className="relative group cursor-pointer h-full flex flex-col justify-between"
               >
-                {/* Giant watermark number sitting behind icon + title */}
-                <span
-                  className="absolute -top-8 sm:-top-10 lg:-top-12 -left-1 text-[5.5rem] sm:text-[7rem] lg:text-[8rem] xl:text-[9rem] font-black leading-none tracking-tighter select-none pointer-events-none transition-transform duration-700 ease-out group-hover:scale-105"
-                  style={{
-                    color: accent.color,
-                    opacity: 0.1,
-                  }}
-                  aria-hidden="true"
-                >
-                  {numStr}
-                </span>
-
                 {/* Content top area: fills space so arrow button anchors to bottom */}
                 <div className="flex-1 flex flex-col">
-                  {/* Header row: Icon + Title */}
-                  <div className="relative z-10 flex items-center gap-4 mb-4 min-h-[4rem]">
-                    <div className="w-16 h-16 sm:w-[72px] sm:h-[72px] flex items-center justify-center shrink-0 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-0.5">
-                      {imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={imageUrl}
-                          alt={title}
-                          className="w-full h-full object-contain"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <IconComponent className="w-9 h-9" style={{ color: accent.color }} />
-                      )}
+                  {/* Header row: Watermark Number (Bold, ~18-20px stroke) + Centered Icon in '0' + Title */}
+                  <div className="relative flex items-center min-h-[5.5rem] sm:min-h-[6.5rem] lg:min-h-[7.5rem] mb-5 sm:mb-6">
+                    {/* The Giant Watermark Number: Thinned down slightly to ~18-20px stroke (font-bold) */}
+                    <div
+                      className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center leading-none select-none pointer-events-none z-0"
+                      aria-hidden="true"
+                    >
+                      <span
+                        className="font-bold text-[5.5rem] sm:text-[6.5rem] lg:text-[7.5rem] xl:text-[8.5rem] leading-none tracking-tighter transition-transform duration-700 ease-out group-hover:scale-105 origin-left"
+                        style={{
+                          color: accent.color,
+                          opacity: 0.14,
+                        }}
+                      >
+                        {numStr}
+                      </span>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300 tracking-tight">
-                      {title}
-                    </h3>
+                    {/* Foreground: Icon anchored to digit 0 + Title (shifted down 10px to perfectly center with the number) */}
+                    <div className="relative z-10 flex items-center gap-2.5 sm:gap-3.5 w-full translate-y-[10px]">
+                      {/* Icon Container: Bounds matched exactly to digit 0 */}
+                      <div className="relative shrink-0 flex items-center justify-center">
+                        {/* Invisible 0: Guarantees exact width & height of the background's '0' on all screens */}
+                        <span
+                          className="font-bold text-[5.5rem] sm:text-[6.5rem] lg:text-[7.5rem] xl:text-[8.5rem] leading-none tracking-tighter opacity-0 select-none pointer-events-none"
+                          aria-hidden="true"
+                        >
+                          0
+                        </span>
+
+                        {/* Centered Icon: Scaled +20%, placed right in the visual center of digit 0 */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
+                          <div className="-translate-y-[4%] w-12 h-12 sm:w-[58px] sm:h-[58px] lg:w-[68px] lg:h-[68px] flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110">
+                            {imageUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={imageUrl}
+                                alt={title}
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <IconComponent className="w-10 h-10 sm:w-12 sm:h-12" style={{ color: accent.color }} />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Clean Title: Vertically centered with the icon and number */}
+                      <h3 className="-translate-y-[4%] text-lg sm:text-xl font-bold text-[#414042] group-hover:text-[#2E4A9E] transition-colors duration-300 leading-snug tracking-tight">
+                        {title}
+                      </h3>
+                    </div>
                   </div>
 
                   {/* Description */}
                   <RichTextRenderer
                     html={description}
                     compact
-                    className="relative z-10 text-[#5C6069] text-sm sm:text-base leading-relaxed mb-4 flex-1 min-h-[3.25rem] line-clamp-4 block"
+                    className="relative z-10 text-[#414042]/85 text-sm sm:text-[15px] font-normal leading-relaxed mb-4 flex-1 min-h-[3.25rem] line-clamp-4 block"
                   />
                 </div>
 
@@ -166,13 +191,13 @@ export function CoreValuesSection() {
                 <div className="relative z-10 mt-auto pt-2 flex items-center">
                   <Link
                     href={`/${locale}/about#values`}
-                    className="inline-flex items-center text-sm font-semibold text-[#20242B]"
+                    className="inline-flex items-center text-sm font-medium text-[#414042]"
                   >
                     <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
                       {locale === 'en' ? 'More' : 'Tìm hiểu thêm'}
                     </span>
                     <span
-                      className="w-9 h-9 rounded-full border border-[#DEDDD6] bg-white/70 flex items-center justify-center text-[#20242B] transition-all duration-500 ease-out group-hover:bg-[#2E4A9E] group-hover:border-[#2E4A9E] group-hover:text-white group-hover:scale-105 shadow-sm shrink-0"
+                      className="w-9 h-9 rounded-full border border-[#DEDDD6] bg-white/70 flex items-center justify-center text-[#414042] transition-all duration-500 ease-out group-hover:bg-[#2E4A9E] group-hover:border-[#2E4A9E] group-hover:text-white group-hover:scale-105 shadow-sm shrink-0"
                     >
                       <ArrowRight className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" />
                     </span>

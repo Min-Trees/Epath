@@ -5,6 +5,8 @@ import { SchemaMarkup } from '@/components/seo/schema-markup'
 
 const gilroy = localFont({
   src: [
+    { path: './fonts/SVN-Gilroy Thin.otf', weight: '100', style: 'normal' },
+    { path: './fonts/SVN-Gilroy Xlight.otf', weight: '200', style: 'normal' },
     { path: './fonts/SVN-Gilroy Light.otf', weight: '300', style: 'normal' },
     { path: './fonts/SVN-Gilroy Regular.otf', weight: '400', style: 'normal' },
     { path: './fonts/SVN-Gilroy Medium.otf', weight: '500', style: 'normal' },

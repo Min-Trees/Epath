@@ -109,8 +109,8 @@ const coreValuesData = [
   {
     icon: 'Navigation',
     title: {
-      vi: '1. Lộ trình học tập xuyên suốt',
-      en: '1. Seamless Learning Pathway',
+      vi: 'Lộ trình học tập xuyên suốt',
+      en: 'Seamless Learning Pathway',
     },
     description: {
       vi: 'Xây dựng hành trình học tập liền mạch từ nền tảng Mầm non (Little People) đến Trung học Phổ thông, đảm bảo tính liên tục và nhất quán trong phát triển học thuật.',
@@ -124,8 +124,8 @@ const coreValuesData = [
   {
     icon: 'Award',
     title: {
-      vi: '2. Chuẩn học thuật quốc tế được kiểm định',
-      en: '2. Accredited International Standards',
+      vi: 'Chuẩn học thuật quốc tế được kiểm định',
+      en: 'Accredited International Standards',
     },
     description: {
       vi: 'Triển khai chương trình hợp tác với tổ chức giáo dục Edmentum International (USA), được kiểm định bởi Cognia và WASC, đảm bảo chất lượng và giá trị công nhận toàn cầu.',
@@ -139,8 +139,8 @@ const coreValuesData = [
   {
     icon: 'Layers',
     title: {
-      vi: '3. Mô hình học tập kết hợp (Blended Learning)',
-      en: '3. Blended Learning Model',
+      vi: 'Mô hình học tập kết hợp (Blended Learning)',
+      en: 'Blended Learning Model',
     },
     description: {
       vi: 'Tích hợp linh hoạt giữa học trực tuyến và trực tiếp, tối ưu hiệu quả tiếp thu và cá nhân hóa trải nghiệm học tập.',
@@ -154,8 +154,8 @@ const coreValuesData = [
   {
     icon: 'UserCheck',
     title: {
-      vi: '4. Cá nhân hóa lộ trình học tập',
-      en: '4. Personalized Learning Pathways',
+      vi: 'Cá nhân hóa lộ trình học tập',
+      en: 'Personalized Learning Pathways',
     },
     description: {
       vi: 'Thiết kế lộ trình dựa trên năng lực, mục tiêu và định hướng của từng học sinh, thông qua hệ thống đánh giá học thuật và tư vấn chuyên sâu.',
@@ -169,8 +169,8 @@ const coreValuesData = [
   {
     icon: 'FileText',
     title: {
-      vi: '5. Phát triển năng lực toàn diện & hồ sơ cá nhân',
-      en: '5. Comprehensive Competency & Student Profile',
+      vi: 'Phát triển năng lực toàn diện & hồ sơ cá nhân',
+      en: 'Comprehensive Competency & Student Profile',
     },
     description: {
       vi: 'Kết hợp học thuật với hoạt động ngoại khóa, kỹ năng và trải nghiệm thực tiễn nhằm xây dựng student profile chuẩn quốc tế, nâng cao lợi thế cạnh tranh trong tuyển sinh toàn cầu.',
@@ -184,8 +184,8 @@ const coreValuesData = [
   {
     icon: 'Network',
     title: {
-      vi: '6. Hệ sinh thái kết nối giáo dục',
-      en: '6. Connected Educational Ecosystem',
+      vi: 'Hệ sinh thái kết nối giáo dục',
+      en: 'Connected Educational Ecosystem',
     },
     description: {
       vi: 'Phát triển môi trường học tập mở, kết nối nhà trường – gia đình – chuyên gia – đối tác quốc tế, mở rộng cơ hội học tập thông qua workshop, hoạt động trải nghiệm và định hướng giáo dục.',

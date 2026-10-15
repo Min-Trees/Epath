@@ -139,56 +139,49 @@ export function HeroSection({
       ? DEFAULT_HOME_SLIDES
       : []
 
-  const slideInterval =
-    typeof hero?.slideInterval === 'number' && hero.slideInterval > 0
-      ? hero.slideInterval
-      : 4
+  const descriptionText =
+    (hero && pickLocalized(hero.subtitle, locale)) ||
+    (hero && pickLocalized(hero.description, locale)) ||
+    t('subtitle') ||
+    t('description') ||
+    ''
 
-  // Hardware-accelerated infinite slider state
-  const extendedSlides =
-    slides.length > 1 ? [slides[slides.length - 1], ...slides, slides[0]] : slides
-  const [trackIndex, setTrackIndex] = useState(slides.length > 1 ? 1 : 0)
-  const [isTransitioning, setIsTransitioning] = useState(true)
+  // Slideshow active state & timer
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Reset when slides change
+  // Reset slide index when hero content or slides change
   useEffect(() => {
-    setTrackIndex(slides.length > 1 ? 1 : 0)
-    setIsTransitioning(true)
-  }, [slides.length, hero?.id])
+    setCurrentSlideIndex(0)
+  }, [hero?.id, slides.length])
 
-  // Seamless wrap-around on transition end
-  const handleTransitionEnd = useCallback(() => {
+  // Continuous auto-run timer: switches slide cleanly every interval
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
     if (slides.length <= 1) return
-    if (trackIndex === extendedSlides.length - 1) {
-      setIsTransitioning(false)
-      setTrackIndex(1)
-    } else if (trackIndex === 0) {
-      setIsTransitioning(false)
-      setTrackIndex(slides.length)
-    }
-  }, [slides.length, trackIndex, extendedSlides.length])
 
-  // Re-enable transition on next frame after seamless snap
-  useEffect(() => {
-    if (!isTransitioning) {
-      const frame = requestAnimationFrame(() => {
-        setIsTransitioning(true)
-      })
-      return () => cancelAnimationFrame(frame)
-    }
-  }, [isTransitioning])
+    const intervalSeconds =
+      typeof hero?.slideInterval === 'number' && hero.slideInterval >= 5
+        ? hero.slideInterval
+        : 6
+    const intervalMs = intervalSeconds * 1000
 
-  // Continuous auto-run timer: runs automatically, never stops
-  useEffect(() => {
-    if (slides.length <= 1) return
-    const intervalMs = (slideInterval || 4) * 1000
-    const timer = setInterval(() => {
-      setIsTransitioning(true)
-      setTrackIndex((prev) => prev + 1)
+    timerRef.current = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % slides.length)
     }, intervalMs)
+  }, [slides.length, hero?.slideInterval])
 
-    return () => clearInterval(timer)
-  }, [slides.length, slideInterval])
+  useEffect(() => {
+    resetTimer()
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [resetTimer])
+
+  const handleSelectSlide = (idx: number) => {
+    setCurrentSlideIndex(idx)
+    resetTimer()
+  }
 
 
   // Marquee items according to current locale
@@ -229,10 +222,7 @@ export function HeroSection({
       }
       return `/${locale}${map[url] || url.slice(1)}`
     }
-    return url
   }
-
-  const titleWords = titleText.split(' ')
 
   return (
     <>
@@ -254,7 +244,7 @@ export function HeroSection({
           aria-hidden="true"
         />
 
-        {/* ── Layer 1B: Hero media (slideshow / image / video) on top of gray ─── */}
+        {/* ── Layer 1B: Hero media (stacked cross-fade + Ken Burns) ─── */}
         <div className="absolute inset-0 z-[1] overflow-hidden">
           {videoUrl && !videoFailed ? (
             <>
@@ -280,48 +270,63 @@ export function HeroSection({
                 />
               )}
             </>
-          ) : slides.length > 1 ? (
-            <div className="absolute inset-0 w-full h-full overflow-hidden">
-              <div
-                className="flex h-full w-full will-change-transform"
-                style={{
-                  transform: `translate3d(-${trackIndex * 100}%, 0, 0)`,
-                  transition: isTransitioning
-                    ? 'transform 650ms cubic-bezier(0.25, 1, 0.5, 1)'
-                    : 'none',
-                }}
-                onTransitionEnd={handleTransitionEnd}
-              >
-                {extendedSlides.map((url, idx) => (
-                  <div
-                    key={idx}
-                    className="w-full h-full flex-shrink-0 relative overflow-hidden"
-                    style={{
-                      transform: 'translateZ(0)',
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt=""
-                      className="w-full h-full object-cover select-none pointer-events-none"
-                      loading="eager"
-                      decoding="async"
-                      draggable={false}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          ) : slides.length > 0 ? (
+            slides.map((url, idx) => {
+              const isActive = idx === currentSlideIndex
+              return (
+                <div
+                  key={idx}
+                  className="absolute inset-0 overflow-hidden pointer-events-none"
+                  style={{
+                    opacity: isActive ? 1 : 0,
+                    zIndex: isActive ? 2 : 1,
+                    transition: 'opacity 1.2s ease',
+                  }}
+                  aria-hidden={!isActive}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt=""
+                    className="w-full h-full object-cover select-none pointer-events-none"
+                    style={
+                      isActive
+                        ? {
+                            animation: 'heroKenBurns 9s linear forwards',
+                            willChange: 'transform',
+                            transformOrigin: 'center center',
+                          }
+                        : {
+                            animation: 'none',
+                            transform: 'scale(1)',
+                            transition: 'transform 1.2s ease',
+                            willChange: 'transform',
+                          }
+                    }
+                    loading="eager"
+                    decoding="async"
+                    draggable={false}
+                  />
+                </div>
+              )
+            })
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={slides[0] || activeBackground}
-              alt=""
-              className="w-full h-full object-cover hero-media-fade is-loaded"
-            />
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={activeBackground}
+                alt=""
+                className="w-full h-full object-cover select-none pointer-events-none"
+                style={{
+                  animation: 'heroKenBurns 9s linear forwards',
+                  willChange: 'transform',
+                  transformOrigin: 'center center',
+                }}
+                loading="eager"
+                decoding="async"
+                draggable={false}
+              />
+            </div>
           )}
         </div>
 
@@ -331,45 +336,52 @@ export function HeroSection({
         {/* ── Layer 3: Main content ─────────────────────────────────── */}
         <div className="relative z-30 flex-1 flex items-center pt-20 sm:pt-24 pb-16 sm:pb-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="max-w-3xl">
-              {/* Title */}
-              {titleLines.length === 1 ? (
-                <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-black leading-[1.08] tracking-[-0.03em] mb-4 sm:mb-6 text-[#1e3570]">
-                  {titleWords.map((word, i) => (
+            <div
+              key={`hero-text-content-${currentSlideIndex}`}
+              className="max-w-3xl"
+            >
+              {/* 1. Tiêu đề (Title) – trượt lên 28px, bắt đầu sau khi ảnh chuyển xong (0.55s) */}
+              <h1
+                className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-black leading-[1.08] tracking-[-0.03em] mb-4 sm:mb-6 text-[#1e3570]"
+                style={{
+                  animation: 'heroSlideUpFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both',
+                }}
+              >
+                {titleLines.length === 1 ? (
+                  titleText
+                ) : (
+                  titleLines.map((line, lineIdx) => (
                     <span
-                      key={`t-${i}`}
-                      className="inline-block mr-[0.22em] hero-word text-[#1e3570]"
-                      style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + i * 0.05}s` } as React.CSSProperties}
+                      key={`tl-${lineIdx}`}
+                      className="block leading-[1.02] sm:leading-[0.98] mt-1 sm:mt-1.5 first:mt-0"
+                      style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)' }}
                     >
-                      {word}
+                      {line}
                     </span>
-                  ))}
-                </h1>
-              ) : (
-                <h1 className="hero-title font-black tracking-[-0.03em] leading-[1.02] sm:leading-[0.98] mb-4 sm:mb-6 text-[#1e3570]">
-                  {titleLines.map((line, lineIdx) => {
-                    const words = line.trim().split(' ')
-                    return (
-                      <span key={`tl-${lineIdx}`} className="block leading-[1.02] sm:leading-[0.98] mt-1 sm:mt-1.5 first:mt-0">
-                        {words.map((word, i) => (
-                          <span
-                            key={`t-${lineIdx}-${i}`}
-                            className="inline-block mr-[0.25em] sm:mr-[0.28em] last:mr-0 hero-word text-[#1e3570]"
-                            style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', animation: `heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: `${0.15 + lineIdx * 0.1 + i * 0.05}s` } as React.CSSProperties}
-                          >
-                            {word}
-                          </span>
-                        ))}
-                      </span>
-                    )
-                  })}
-                </h1>
+                  ))
+                )}
+              </h1>
+
+              {/* 2. Mô tả (Description) – trượt lên 28px, trễ 0.15s sau tiêu đề (0.70s) */}
+              {descriptionText && (
+                <p
+                  className="hero-description text-base sm:text-lg md:text-xl text-[#1e3570]/90 font-medium leading-relaxed mb-6 sm:mb-8 max-w-2xl"
+                  style={{
+                    animation: 'heroSlideUpFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.70s both',
+                  }}
+                >
+                  {descriptionText}
+                </p>
               )}
 
-              {/* Round CTA Learn More button directly below title */}
+              {/* 3. Nút (CTA Button) – trượt lên 28px, trễ 0.15s sau mô tả (0.85s hoặc 0.70s nếu không có mô tả) */}
               <div
                 className="pt-2 sm:pt-4 relative z-30"
-                style={{ animation: `heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards`, animationDelay: '0.35s' } as React.CSSProperties}
+                style={{
+                  animation: `heroSlideUpFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) ${
+                    descriptionText ? '0.85s' : '0.70s'
+                  } both`,
+                }}
               >
                 <a
                   href={resolveUrl(ctaUrl)}
@@ -421,6 +433,25 @@ export function HeroSection({
             </div>
           </div>
         </div>
+
+        {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ─── */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-14 right-6 sm:right-12 z-30 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 shadow-lg">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSelectSlide(idx)}
+                aria-label={`Chuyển tới slide ${idx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === currentSlideIndex
+                    ? 'w-6 bg-[#8bc53f]'
+                    : 'w-2 bg-white/50 hover:bg-white/90'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
 
         {/* ── Layer 4: Tags Marquee Strip – floating over the hero ─────
