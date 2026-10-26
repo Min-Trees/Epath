@@ -303,11 +303,15 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
           </div>
 
           <div>
-            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">Phụ đề ({activeLang.toUpperCase()})</Label>
-            <Input
+            <Label className="text-xs font-bold text-[#495057] mb-1.5 block">
+              Phụ đề ({activeLang.toUpperCase()})
+              <span className="text-[11px] text-gray-500 font-normal ml-2">(Có thể nhấn Enter để xuống dòng)</span>
+            </Label>
+            <Textarea
               value={(form.subtitle as { vi?: string; en?: string } | undefined)?.[activeLang] ?? ''}
               onChange={(e) => setLocalized('subtitle', activeLang, e.target.value)}
               placeholder={activeLang === 'vi' ? 'Lộ trình học thuật quốc tế cá nhân hóa' : 'Personalized International Pathway'}
+              rows={2}
               className="rounded-xl border-[#CED4DA]"
             />
           </div>

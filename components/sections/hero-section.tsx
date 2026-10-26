@@ -146,6 +146,26 @@ export function HeroSection({
     t('description') ||
     ''
 
+  // Dòng phụ đề (subtitle) hiển thị phân đoạn:
+  // Dòng 1: Đưa giáo dục quốc tế chất lượng cao đến gần hơn
+  // Dòng 2: (xuống dòng và thụt lề trái) gia đình Việt
+  const descriptionLines: string[] = (() => {
+    if (!descriptionText) return []
+    if (descriptionText.includes('\n')) {
+      return descriptionText.split(/[\r\n]+/).map((s) => s.trim()).filter(Boolean)
+    }
+    const sloganPrefix = 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn'
+    if (descriptionText.includes(sloganPrefix)) {
+      const remainder = descriptionText
+        .replace(sloganPrefix, '')
+        .replace(/^[,\s–—-]+/, '')
+        .replace(/^với\s+/i, '')
+        .trim()
+      return [sloganPrefix, remainder || 'gia đình Việt']
+    }
+    return [descriptionText]
+  })()
+
   // Slideshow active state & timer
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -363,15 +383,28 @@ export function HeroSection({
               </h1>
 
               {/* 2. Mô tả (Description) – trượt lên 28px, trễ 0.15s sau tiêu đề (0.70s) */}
-              {descriptionText && (
-                <p
-                  className="hero-description text-base sm:text-lg md:text-xl text-[#1e3570]/90 font-medium leading-relaxed mb-6 sm:mb-8 max-w-2xl"
+              {descriptionLines.length > 0 && (
+                <div
+                  className="hero-description text-base sm:text-lg md:text-xl text-[#1e3570]/90 font-medium mb-6 sm:mb-8 max-w-2xl"
                   style={{
                     animation: 'heroSlideUpFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.70s both',
                   }}
                 >
-                  {descriptionText}
-                </p>
+                  {descriptionLines.length === 1 ? (
+                    <p className="leading-snug">{descriptionLines[0]}</p>
+                  ) : (
+                    <div className="space-y-0.5 sm:space-y-1">
+                      {descriptionLines.map((line, idx) => (
+                        <p
+                          key={`desc-line-${idx}`}
+                          className="leading-snug"
+                        >
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* 3. Nút (CTA Button) – trượt lên 28px, trễ 0.15s sau mô tả (0.85s hoặc 0.70s nếu không có mô tả) */}

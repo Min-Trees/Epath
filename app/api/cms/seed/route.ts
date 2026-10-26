@@ -31,7 +31,7 @@ const pageSectionsSeed: Record<string, PageSectionSeed[]> = {
       type: 'hero',
       title: { vi: 'EPath Education', en: 'EPath Education' },
       subtitle: {
-        vi: 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn với gia đình Việt',
+        vi: 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn\ngia đình Việt',
         en: 'Bringing high-quality international education closer to Vietnamese families',
       },
       body: {
@@ -1552,7 +1552,7 @@ const seedData = {
         en: 'EPath Education',
       },
       subtitle: {
-        vi: 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn với gia đình Việt',
+        vi: 'Đưa giáo dục quốc tế chất lượng cao đến gần hơn\ngia đình Việt',
         en: 'Bringing high-quality international education closer to Vietnamese families',
       },
       description: {

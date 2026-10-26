@@ -19,7 +19,8 @@ import { CollectionNames } from '@/lib/cms-types'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// Không giới hạn dung lượng ảnh – tệp có thể lớn tùy ý.
+// Tệp ảnh được khuyến nghị dưới 4.5MB để tương thích tốt nhất với cloud server.
+const MAX_SERVER_FILE_SIZE = 10 * 1024 * 1024 // 10MB safety limit
 const ALLOWED = new Set([
   'image/jpeg',
   'image/png',
@@ -97,6 +98,12 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: `Định dạng ${file.type || 'không xác định'} không được phép` },
       { status: 400 }
+    )
+  }
+  if (file.size > MAX_SERVER_FILE_SIZE) {
+    return NextResponse.json(
+      { error: `Dung lượng tệp (${(file.size / (1024 * 1024)).toFixed(1)}MB) vượt quá giới hạn 10MB.` },
+      { status: 413 }
     )
   }
 

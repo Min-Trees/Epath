@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { semanticColors } from '@/lib/design-tokens'
+import { compressImageForUpload } from '@/lib/client-image'
 
 interface MediaItem {
   id: string
@@ -88,12 +89,24 @@ export default function AdminMediaPage() {
         if (file.type && !ACCEPT.split(',').includes(file.type)) {
           throw new Error(`Tệp ${file.name} không đúng định dạng`)
         }
+        const optimizedFile = await compressImageForUpload(file)
         const fd = new FormData()
-        fd.append('file', file)
+        fd.append('file', optimizedFile)
         fd.append('folder', 'cms')
         const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Upload thất bại')
+        if (!res.ok) {
+          if (res.status === 413) {
+            throw new Error(`Tệp ${file.name} quá lớn (vượt quá giới hạn máy chủ 4.5MB). Vui lòng chọn ảnh nhỏ hơn.`)
+          }
+          let errMsg = `Upload ${file.name} thất bại`
+          try {
+            const data = await res.json()
+            errMsg = data.error || errMsg
+          } catch {
+            errMsg = `Lỗi máy chủ (${res.status} ${res.statusText})`
+          }
+          throw new Error(errMsg)
+        }
       }
       await refresh()
     } catch (err) {

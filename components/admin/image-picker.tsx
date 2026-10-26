@@ -18,6 +18,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { compressImageForUpload } from '@/lib/client-image'
 
 export interface MediaItem {
   id: string
@@ -95,12 +96,25 @@ export function ImagePicker({
     setError(null)
     setUploading(true)
     try {
+      const optimizedFile = await compressImageForUpload(file)
       const fd = new FormData()
-      fd.append('file', file)
+      fd.append('file', optimizedFile)
       fd.append('folder', folder)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      if (!res.ok) {
+        if (res.status === 413) {
+          throw new Error('Dung lượng tệp quá lớn (vượt quá giới hạn máy chủ 4.5MB). Vui lòng chọn ảnh nhỏ hơn.')
+        }
+        let errMsg = 'Upload thất bại'
+        try {
+          const data = await res.json()
+          errMsg = data.error || errMsg
+        } catch {
+          errMsg = `Lỗi máy chủ (${res.status} ${res.statusText})`
+        }
+        throw new Error(errMsg)
+      }
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Upload failed')
       onChange(data.media.url)
       setOpen(false)
     } catch (err) {
@@ -240,7 +254,7 @@ export function ImagePicker({
                   style={{ borderColor: 'rgba(35,31,32,0.15)' }}
                 >
                   <p className="text-sm mb-1 font-medium">Kéo thả hoặc chọn tệp để upload lên S3</p>
-                  <p className="text-xs mb-3 text-gray-500">JPG, PNG, WebP, GIF, AVIF, SVG</p>
+                  <p className="text-xs mb-3 text-gray-500">JPG, PNG, WebP, GIF, AVIF, SVG (tự động tối ưu dung lượng)</p>
                   <input
                     ref={fileInputRef}
                     type="file"
