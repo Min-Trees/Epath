@@ -5,23 +5,23 @@
  */
 
 export interface CompressOptions {
-  /** Maximum width in pixels (default: 2048) */
+  /** Maximum width in pixels (default: 2560) */
   maxWidth?: number
-  /** Maximum height in pixels (default: 2048) */
+  /** Maximum height in pixels (default: 2560) */
   maxHeight?: number
-  /** Compression quality between 0.1 and 1.0 (default: 0.85) */
+  /** Compression quality between 0.1 and 1.0 (default: 0.92) */
   quality?: number
-  /** Max file size threshold in bytes where compression kicks in (default: 1MB) */
+  /** Max file size threshold in bytes where compression kicks in (default: 3.5MB) */
   thresholdBytes?: number
   /** Hard upper limit in bytes for the server payload (default: 4.2MB, safely under Vercel's 4.5MB limit) */
   maxAllowedBytes?: number
 }
 
 const DEFAULT_OPTIONS: Required<CompressOptions> = {
-  maxWidth: 2048,
-  maxHeight: 2048,
-  quality: 0.85,
-  thresholdBytes: 1024 * 1024, // 1 MB
+  maxWidth: 2560,
+  maxHeight: 2560,
+  quality: 0.92,
+  thresholdBytes: Math.floor(3.5 * 1024 * 1024), // 3.5 MB
   maxAllowedBytes: Math.floor(4.2 * 1024 * 1024), // 4.2 MB
 }
 
@@ -120,20 +120,29 @@ async function performCompression(file: File, opts: Required<CompressOptions>): 
           return
         }
 
+        // Use high quality image interpolation to prevent blurriness
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
         ctx.drawImage(img, 0, 0, width, height)
 
         // Decide output MIME type:
-        // PNG with transparency -> webp retains alpha and compresses up to 80-90% smaller.
-        // JPEG/JPG -> image/jpeg.
-        // WebP -> image/webp.
-        let outputType = file.type === 'image/png' ? 'image/webp' : file.type
-        if (outputType !== 'image/jpeg' && outputType !== 'image/webp') {
+        // Keep PNG as PNG if within limit to preserve lossless sharpness and crisp alpha
+        let outputType = file.type
+        if (outputType !== 'image/png' && outputType !== 'image/jpeg' && outputType !== 'image/webp') {
           outputType = 'image/jpeg'
         }
 
         let blob = await new Promise<Blob | null>((res) =>
-          canvas.toBlob(res, outputType, opts.quality)
+          canvas.toBlob(res, outputType, outputType === 'image/png' ? undefined : opts.quality)
         )
+
+        // If PNG is still larger than maxAllowedBytes, convert to high-quality WebP with alpha preservation
+        if (outputType === 'image/png' && (!blob || blob.size > opts.maxAllowedBytes)) {
+          outputType = 'image/webp'
+          blob = await new Promise<Blob | null>((res) =>
+            canvas.toBlob(res, outputType, 0.95)
+          )
+        }
 
         // Fallback to jpeg if webp canvas export failed
         if (!blob && outputType === 'image/webp') {
@@ -156,13 +165,15 @@ async function performCompression(file: File, opts: Required<CompressOptions>): 
 
         // If still exceeds maxAllowedBytes, do a second more aggressive pass
         if (blob.size > opts.maxAllowedBytes) {
-          const secondPassWidth = Math.max(1, Math.round(width * 0.75))
-          const secondPassHeight = Math.max(1, Math.round(height * 0.75))
+          const secondPassWidth = Math.max(1, Math.round(width * 0.85))
+          const secondPassHeight = Math.max(1, Math.round(height * 0.85))
           canvas.width = secondPassWidth
           canvas.height = secondPassHeight
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
           ctx.drawImage(img, 0, 0, secondPassWidth, secondPassHeight)
           const secondBlob = await new Promise<Blob | null>((res) =>
-            canvas.toBlob(res, outputType, 0.7)
+            canvas.toBlob(res, outputType === 'image/png' ? 'image/webp' : outputType, 0.85)
           )
           if (secondBlob && secondBlob.size <= opts.maxAllowedBytes) {
             const finalName = renameExtension(file.name, outputType)

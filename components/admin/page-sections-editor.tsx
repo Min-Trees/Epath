@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/dialog'
 import { semanticColors } from '@/lib/design-tokens'
 import type { PageSection, SectionType } from '@/lib/pages-repo'
+import { FeaturedCoursesForm } from './featured-courses-form'
 import { RichTextEditorMultilang } from './rich-text-editor'
 import { ImagePicker } from './image-picker'
 import { useDraft } from '@/lib/use-draft'
@@ -423,6 +424,33 @@ function SectionContentDialog({
   onClose: () => void
   onSave: (data: SectionData, syncHero?: boolean) => Promise<void>
 }) {
+  if (section.type === 'featuredCourses') {
+    return (
+      <Dialog open onOpenChange={(o) => !o && onClose()}>
+        <DialogContent className="max-w-4xl w-[calc(100vw-2rem)] max-h-[92vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="px-6 pt-5 pb-3 border-b shrink-0 bg-slate-50">
+            <DialogTitle className="text-base font-bold text-[#1E3570]">
+              Sửa nội dung: {SECTION_LABELS[section.type]}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Điều chỉnh hình ảnh, tiêu đề, cấp học, mô tả và liên kết cho các khóa học hiển thị trên trang chủ.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0 bg-[#F8FAFC]">
+            <FeaturedCoursesForm
+              initialData={section.data as any}
+              onSave={async (newData) => {
+                await onSave(newData as any)
+                onClose()
+              }}
+              isDialogMode={true}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   const initial = (section.data ?? {}) as SectionData
   const [title, setTitle] = useState<SectionData['title']>(initial.title ?? emptyLocalized())
   const [subtitle, setSubtitle] = useState<SectionData['subtitle']>(initial.subtitle ?? emptyLocalized())

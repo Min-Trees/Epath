@@ -161,6 +161,24 @@ async function loadTestimonials() {
   }
 }
 
+async function loadHomeFeaturedCourses() {
+  try {
+    const db = getAdminDb()
+    const snap = await db
+      .collection(CollectionNames.pages)
+      .doc('home')
+      .collection('sections')
+      .where('type', '==', 'featuredCourses')
+      .limit(1)
+      .get()
+    if (snap.empty) return null
+    const s = snap.docs[0].data() as Record<string, unknown>
+    return s.data || null
+  } catch {
+    return null
+  }
+}
+
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
@@ -181,6 +199,7 @@ export async function GET() {
       heroContent,
       aboutContent,
       siteSettings,
+      featuredCourses,
     ] = await Promise.all([
       FaqsRepo.listPublished(),
       CoreValuesRepo.listPublished(),
@@ -196,6 +215,7 @@ export async function GET() {
       loadAllHeroContent(),
       loadSingleton(CollectionNames.aboutContent),
       loadSingleton(CollectionNames.siteSettings),
+      loadHomeFeaturedCourses(),
     ])
 
     const programsOut = programs.length > 0 ? programs : DEFAULT_PROGRAMS
@@ -223,6 +243,7 @@ export async function GET() {
       [CollectionNames.heroContent]: sanitize(heroContent),
       [CollectionNames.aboutContent]: sanitize(aboutContent),
       [CollectionNames.siteSettings]: sanitize(siteSettings),
+      featuredCourses: sanitize(featuredCourses),
     })
 
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')

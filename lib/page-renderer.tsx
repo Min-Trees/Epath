@@ -14,7 +14,10 @@ import { FAQSection } from '@/components/sections/faq-section'
 import { CTABanner } from '@/components/sections/cta-banner'
 import { AchievementsSection } from '@/components/sections/achievements-section'
 
-type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }) => React.JSX.Element | null
+type SectionComponent = (props: {
+  initialHero?: Record<string, unknown> | null
+  sectionData?: Record<string, unknown> | null
+}) => React.JSX.Element | null
 
 // Map each section type to its underlying component. We expose a single
 // canonical component per visual block so duplicate section types (e.g.
@@ -23,7 +26,7 @@ type SectionComponent = (props: { initialHero?: Record<string, unknown> | null }
 const SECTION_COMPONENT: Record<string, SectionComponent> = {
   hero: ({ initialHero }) => <HeroSection initialHero={initialHero ?? null} />,
   intro: () => <IntroSection />,
-  featuredCourses: () => <FeaturedCoursesSection />,
+  featuredCourses: ({ sectionData }) => <FeaturedCoursesSection initialData={sectionData as any} />,
   coreValues: () => <CoreValuesSection />,
   learningPathways: () => null,
   stepModel: () => <StepModelSection />,
@@ -135,6 +138,19 @@ export async function getActivePageSections(pageId: PageSlug): Promise<string[]>
 export async function PageSectionsRenderer({ pageId }: { pageId: PageSlug }) {
   const types = await getActivePageSections(pageId)
 
+  // Pre-load section data so components receive customized CMS data server-side
+  let sectionDataMap: Record<string, Record<string, unknown>> = {}
+  try {
+    const rawSections = await getPageSections(pageId)
+    for (const s of rawSections) {
+      if (s.data && typeof s.data === 'object') {
+        sectionDataMap[s.type] = s.data as Record<string, unknown>
+      }
+    }
+  } catch (err) {
+    console.warn(`[page-renderer] failed to load sectionData for ${pageId}:`, (err as Error).message)
+  }
+
   // Pre-fetch hero content server-side so the HeroSection renders with
   // the correct video/image on the first paint instead of flashing the
   // gradient fallback while the client-side CMS context catches up.
@@ -160,7 +176,13 @@ export async function PageSectionsRenderer({ pageId }: { pageId: PageSlug }) {
       {uniqueTypes.map((type, idx) => {
         const Renderer = SECTION_COMPONENT[type]
         if (!Renderer) return null
-        return <Renderer key={`${pageId}-${type}-${idx}`} initialHero={initialHero} />
+        return (
+          <Renderer
+            key={`${pageId}-${type}-${idx}`}
+            initialHero={initialHero}
+            sectionData={sectionDataMap[type] || null}
+          />
+        )
       })}
     </>
   )

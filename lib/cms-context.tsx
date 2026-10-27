@@ -38,6 +38,7 @@ export interface PublicCmsBundle {
   heroContent: Record<string, Record<string, unknown> | null>
   aboutContent: AboutContent | null
   siteSettings: SiteSettings | null
+  featuredCourses?: Record<string, unknown> | null
 }
 
 const EMPTY: PublicCmsBundle = {
@@ -56,6 +57,7 @@ const EMPTY: PublicCmsBundle = {
   heroContent: {},
   aboutContent: null,
   siteSettings: null,
+  featuredCourses: null,
 }
 
 interface CmsContextValue {
