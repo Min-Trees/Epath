@@ -255,9 +255,6 @@ function AdmissionsContent() {
       ? allFaqNums
       : allFaqNums.filter((num) => getFaqCategory(num) === activeFaqCategory)
 
-  // Admission steps from CMS
-  const admissionSteps = cms.admissionSteps || []
-
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
@@ -424,114 +421,7 @@ function AdmissionsContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. ADMISSIONS STEPS SECTION (#steps / #quy-trinh)
-      ─────────────────────────────────────────────────────────────── */}
-      {admissionsData.stepsSection.showSteps !== false && (
-        <section id="steps" className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6] scroll-mt-20 relative">
-          <div id="quy-trinh" className="absolute -top-24 pointer-events-none" />
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              {/* Header */}
-              <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EAEFFB] text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2.5">
-                  <ListOrdered className="w-3.5 h-3.5" />
-                  <span>
-                    {admissionsData.stepsSection.badge?.[locale as 'vi' | 'en'] ||
-                      admissionsData.stepsSection.badge?.vi}
-                  </span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-[#20242B] mb-2.5">
-                  {admissionsData.stepsSection.title?.[locale as 'vi' | 'en'] ||
-                    admissionsData.stepsSection.title?.vi}
-                </h2>
-                <p className="text-[#5C6069] text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
-                  {admissionsData.stepsSection.subtitle?.[locale as 'vi' | 'en'] ||
-                    admissionsData.stepsSection.subtitle?.vi}
-                </p>
-              </div>
-
-              {/* 5-Step Process Cards */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
-                {admissionSteps.map((step, sIdx) => {
-                  const stepNum = step.stepNumber || sIdx + 1
-                  const stepTitle =
-                    ((step.title as Record<string, string>)?.[locale] as string) ||
-                    ((step.title as Record<string, string>)?.vi as string) ||
-                    ''
-                  const stepDesc =
-                    ((step.description as Record<string, string>)?.[locale] as string) ||
-                    ((step.description as Record<string, string>)?.vi as string) ||
-                    ''
-                  const StepIcon = resolveIcon(step.icon, GraduationCap)
-
-                  return (
-                    <motion.div
-                      key={step.id || sIdx}
-                      initial={{ opacity: 0, y: 16 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={inViewViewport}
-                      transition={{ duration: duration.normal, delay: sIdx * 0.08, ease: easeOut }}
-                      className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] flex flex-col justify-between group hover:border-[#2E4A9E] hover:bg-white hover:shadow-sm transition-all duration-300"
-                    >
-                      <div>
-                        {/* Step Header */}
-                        <div className="flex items-center justify-between mb-3.5">
-                          <span className="w-7 h-7 rounded-lg bg-[#1E3570] text-white text-xs font-black flex items-center justify-center shadow-xs">
-                            {String(stepNum).padStart(2, '0')}
-                          </span>
-                          <div className="w-8 h-8 rounded-lg bg-white group-hover:bg-[#EAEFFB] flex items-center justify-center text-[#2E4A9E] border border-[#DEDDD6]/60 transition-colors">
-                            <StepIcon className="w-4 h-4" />
-                          </div>
-                        </div>
-
-                        {/* Title */}
-                        <h3 className="text-sm font-bold text-[#1E3570] mb-2 leading-snug group-hover:text-[#F26522] transition-colors">
-                          {stepTitle}
-                        </h3>
-
-                        {/* Description */}
-                        <p className="text-xs text-[#5C6069] leading-relaxed line-clamp-4">
-                          {stepDesc}
-                        </p>
-                      </div>
-
-                      {/* Photo Thumbnail if available */}
-                      {step.imageUrl && (
-                        <div className="mt-3 pt-3 border-t border-[#DEDDD6]/60">
-                          <div className="rounded-lg overflow-hidden aspect-[16/9] border border-[#DEDDD6]/80 bg-white">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={step.imageUrl}
-                              alt={stepTitle}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              loading="lazy"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </motion.div>
-                  )
-                })}
-              </div>
-
-              {/* Quick Consultation Trigger below Steps */}
-              <div className="mt-8 text-center">
-                <button
-                  type="button"
-                  onClick={() => scrollTo('form-tu-van')}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#1E3570] hover:bg-[#2E4A9E] text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer"
-                >
-                  <span>{isVi ? 'Đăng ký nhận tư vấn từng bước' : 'Book a Step-by-Step Consultation'}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8DC63F]" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          3. FINANCIAL POLICY & SUSTAINABLE INVESTMENT (#tuition / #hoc-phi)
+          2. FINANCIAL POLICY & SUSTAINABLE INVESTMENT (#tuition / #hoc-phi)
       ─────────────────────────────────────────────────────────────── */}
       <section id="tuition" className="py-12 sm:py-16 bg-[#F6F5F1] border-b border-[#DEDDD6] scroll-mt-20 relative">
         <div id="hoc-phi" className="absolute -top-24 pointer-events-none" />

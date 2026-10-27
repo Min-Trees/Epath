@@ -38,7 +38,7 @@ import {
   Percent,
 } from 'lucide-react'
 
-type TabKey = 'hero' | 'tuition' | 'policy' | 'steps' | 'campus'
+type TabKey = 'hero' | 'tuition' | 'policy' | 'campus'
 
 export function AdmissionsForm() {
   const [form, setForm] = useState<AdmissionsContentInput>(DEFAULT_ADMISSIONS_DATA)
@@ -293,8 +293,7 @@ export function AdmissionsForm() {
           { key: 'hero', label: '1. Hero & Điểm tin cậy', icon: ShieldCheck },
           { key: 'tuition', label: '2. Gói học phí (4 Tracks)', icon: Coins },
           { key: 'policy', label: '3. Chính sách & Cam kết', icon: Percent },
-          { key: 'steps', label: '4. Quy trình tuyển sinh', icon: ListOrdered },
-          { key: 'campus', label: '5. Campus & Form liên hệ', icon: Building2 },
+          { key: 'campus', label: '4. Campus & Form liên hệ', icon: Building2 },
         ].map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.key
@@ -1415,169 +1414,7 @@ export function AdmissionsForm() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          TAB 4: ADMISSIONS STEPS SECTION
-      ─────────────────────────────────────────────────────────────── */}
-      {activeTab === 'steps' && (
-        <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
-          <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">
-            <CardTitle className="text-base font-bold text-[#1E3570] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ListOrdered className="w-4 h-4 text-[#2E4A9E]" />
-                <span>Quy trình 5 Bước Nhập học Trên Trang Tuyển Sinh</span>
-              </div>
-              <a
-                href="/admin/admission-steps"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-colors"
-              >
-                <span>Quản lý 5 bước chi tiết</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-5 space-y-5">
-            <div className="p-4 rounded-xl bg-[#EAEFFB]/50 border border-[#2E4A9E]/20 text-xs text-[#1E3570] flex items-start gap-3">
-              <Sparkles className="w-4 h-4 text-[#2E4A9E] shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold mb-1">Đồng bộ tự động cùng danh sách bước tuyển sinh:</p>
-                <p className="text-[#5C6069] leading-relaxed">
-                  Các bước nhập học chi tiết (như Bước 1: Tiếp nhận & Tư vấn, Bước 2: Đánh giá năng lực,...) được lấy trực tiếp từ mục <strong>&ldquo;Các bước tuyển sinh&rdquo;</strong> trong cơ sở dữ liệu CMS. Bạn có thể bật/tắt hiển thị phần này và tùy chỉnh tiêu đề bên dưới.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="showStepsToggle"
-                checked={form.stepsSection.showSteps}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    stepsSection: {
-                      ...form.stepsSection,
-                      showSteps: e.target.checked,
-                    },
-                  })
-                }
-                className="rounded border-[#DEDDD6] text-[#2E4A9E] focus:ring-[#2E4A9E]"
-              />
-              <Label htmlFor="showStepsToggle" className="text-xs font-bold text-[#20242B] cursor-pointer">
-                Hiển thị khối Quy trình 5 bước tuyển sinh trên trang /admissions
-              </Label>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Badge đề mục (VI)</Label>
-                <Input
-                  value={form.stepsSection.badge.vi}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        badge: { ...form.stepsSection.badge, vi: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Badge đề mục (EN)</Label>
-                <Input
-                  value={form.stepsSection.badge.en}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        badge: { ...form.stepsSection.badge, en: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Tiêu đề chính (VI)</Label>
-                <Input
-                  value={form.stepsSection.title.vi}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        title: { ...form.stepsSection.title, vi: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Tiêu đề chính (EN)</Label>
-                <Input
-                  value={form.stepsSection.title.en}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        title: { ...form.stepsSection.title, en: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Mô tả quy trình (VI)</Label>
-                <Textarea
-                  rows={2}
-                  value={form.stepsSection.subtitle.vi}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        subtitle: { ...form.stepsSection.subtitle, vi: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs resize-none"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-[#20242B]">Mô tả quy trình (EN)</Label>
-                <Textarea
-                  rows={2}
-                  value={form.stepsSection.subtitle.en}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      stepsSection: {
-                        ...form.stepsSection,
-                        subtitle: { ...form.stepsSection.subtitle, en: e.target.value },
-                      },
-                    })
-                  }
-                  className="rounded-xl border-[#DEDDD6] text-xs resize-none"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          TAB 5: CAMPUS & CONTACT FORM
+          TAB 4: CAMPUS & CONTACT FORM
       ─────────────────────────────────────────────────────────────── */}
       {activeTab === 'campus' && (
         <div className="space-y-6">
