@@ -22,6 +22,10 @@ import {
   FileCheck2,
   HelpCircle,
   Check,
+  Laptop,
+  PhoneCall,
+  ListOrdered,
+  Calendar,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -36,11 +40,38 @@ import {
 } from '@/components/ui/accordion'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
-import { getSettingLocalized, getSettingStr } from '@/lib/settings-helpers'
+import { getSettingLocalized } from '@/lib/settings-helpers'
+import { DEFAULT_ADMISSIONS_DATA } from '@/lib/admissions-data'
+import type { AdmissionsContentInput } from '@/lib/cms-types'
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  ShieldCheck,
+  Coins,
+  FileCheck2,
+  UserCheck,
+  GraduationCap,
+  Award,
+  BookOpen,
+  Sparkles,
+  Clock,
+  Laptop,
+  PhoneCall,
+  Phone,
+  Mail,
+  MapPin,
+  CheckCircle2,
+  Check,
+  ListOrdered,
+  Calendar,
+}
+
+function resolveIcon(name?: string, defaultIcon = ShieldCheck) {
+  if (!name) return defaultIcon
+  return ICON_MAP[name] || defaultIcon
+}
 
 function AdmissionsContent() {
   const t = useTranslations('admissions')
-  const tFooter = useTranslations('footer')
   const searchParams = useSearchParams()
   const locale = useLocale()
   const isVi = locale === 'vi'
@@ -53,29 +84,95 @@ function AdmissionsContent() {
     >) || {}
   const settings = cms.siteSettings
 
-  const heroImage = (admissionsHero?.backgroundImage as string) || ''
+  // Resolve dynamic admissions page content with defaults
+  const rawAdmissions = cms.admissionsContent
+  const admissionsData: AdmissionsContentInput = {
+    hero: {
+      ...DEFAULT_ADMISSIONS_DATA.hero,
+      ...(rawAdmissions?.hero || {}),
+    },
+    trustBadges: rawAdmissions?.trustBadges?.length
+      ? rawAdmissions.trustBadges
+      : DEFAULT_ADMISSIONS_DATA.trustBadges,
+    stepsSection: {
+      ...DEFAULT_ADMISSIONS_DATA.stepsSection,
+      ...(rawAdmissions?.stepsSection || {}),
+    },
+    tuition: {
+      ...DEFAULT_ADMISSIONS_DATA.tuition,
+      ...(rawAdmissions?.tuition || {}),
+      tracks: rawAdmissions?.tuition?.tracks?.length
+        ? rawAdmissions.tuition.tracks
+        : DEFAULT_ADMISSIONS_DATA.tuition.tracks,
+    },
+    financialPolicy: {
+      ...DEFAULT_ADMISSIONS_DATA.financialPolicy,
+      ...(rawAdmissions?.financialPolicy || {}),
+      guarantees: rawAdmissions?.financialPolicy?.guarantees?.length
+        ? rawAdmissions.financialPolicy.guarantees
+        : DEFAULT_ADMISSIONS_DATA.financialPolicy.guarantees,
+    },
+    campusSection: {
+      ...DEFAULT_ADMISSIONS_DATA.campusSection,
+      ...(rawAdmissions?.campusSection || {}),
+    },
+    formSection: {
+      ...DEFAULT_ADMISSIONS_DATA.formSection,
+      ...(rawAdmissions?.formSection || {}),
+    },
+  }
+
+  // Hero Fields
+  const heroImage =
+    admissionsData.hero.imageUrl ||
+    (admissionsHero?.backgroundImage as string) ||
+    '/images/admissions/admissions-hero.jpg'
+
   const welcomeText =
+    admissionsData.hero.badge?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.badge?.vi ||
     (((admissionsHero?.welcomeTitle as Record<string, string | undefined>) || {})[
       locale as 'vi' | 'en'
     ] as string) ||
-    (((admissionsHero?.welcomeTitle as Record<string, string | undefined>) || {})?.vi as string) ||
     (isVi ? 'Tư vấn & Tuyển sinh K-12 Chuẩn Hoa Kỳ' : 'US-Standard K-12 Admissions & Advising')
 
   const mainTitle =
+    admissionsData.hero.title?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.title?.vi ||
     (((admissionsHero?.title as Record<string, string | undefined>) || {})[
       locale as 'vi' | 'en'
     ] as string) ||
-    (((admissionsHero?.title as Record<string, string | undefined>) || {})?.vi as string) ||
     (isVi ? 'Khởi Đầu Hành Trình Học Thuật Quốc Tế Bền Vững' : 'Begin Your Global Academic Journey')
 
   const heroSubtitle =
+    admissionsData.hero.subtitle?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.subtitle?.vi ||
     (((admissionsHero?.subtitle as Record<string, string | undefined>) || {})[
       locale as 'vi' | 'en'
     ] as string) ||
-    (((admissionsHero?.subtitle as Record<string, string | undefined>) || {})?.vi as string) ||
     (isVi
       ? 'Lộ trình rõ ràng từ đánh giá năng lực đầu vào đến nhận Bằng Tú tài Mỹ Cognia & WASC. Tối ưu chi phí giáo dục chỉ bằng 1/3 trường quốc tế.'
       : 'A structured pathway from diagnostic testing to Cognia & WASC US High School Diploma at 1/3 of international school costs.')
+
+  const primaryCta =
+    admissionsData.hero.primaryCtaText?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.primaryCtaText?.vi ||
+    (isVi ? 'Đăng ký tư vấn lộ trình ngay' : 'Register for Free Consultation')
+
+  const secondaryCta =
+    admissionsData.hero.secondaryCtaText?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.secondaryCtaText?.vi ||
+    (isVi ? 'Xem gói học phí' : 'View Tuition Packages')
+
+  const floatingBadgeTitle =
+    admissionsData.hero.floatingBadgeTitle?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.floatingBadgeTitle?.vi ||
+    (isVi ? 'Bằng Tú Tài Mỹ Cognia & WASC' : 'Cognia & WASC US Diploma')
+
+  const floatingBadgeSubtitle =
+    admissionsData.hero.floatingBadgeSubtitle?.[locale as 'vi' | 'en'] ||
+    admissionsData.hero.floatingBadgeSubtitle?.vi ||
+    (isVi ? 'Được công nhận chuyển tiếp toàn cầu' : 'Globally Recognized Credential')
 
   // Query parameter pre-population (e.g. /admissions?program=kindergarten)
   const initialProgram = searchParams.get('program') || ''
@@ -90,7 +187,6 @@ function AdmissionsContent() {
     message: '',
   })
 
-  // Update program if searchParams change
   useEffect(() => {
     if (initialProgram) {
       setFormData((prev) => ({ ...prev, program: initialProgram }))
@@ -115,7 +211,9 @@ function AdmissionsContent() {
           email: formData.email.trim(),
           childAge: formData.studentGrade || '',
           program: formData.program || 'Tư vấn Tuyển sinh & Lộ trình',
-          message: formData.message || `Học sinh: ${formData.studentName || 'Chưa cung cấp'}, Lớp: ${formData.studentGrade || 'Chưa cung cấp'}`,
+          message:
+            formData.message ||
+            `Học sinh: ${formData.studentName || 'Chưa cung cấp'}, Lớp: ${formData.studentGrade || 'Chưa cung cấp'}`,
           source: 'website',
           locale,
         }),
@@ -137,36 +235,6 @@ function AdmissionsContent() {
     }
   }
 
-  // Trust highlight badges above-the-fold
-  const trustBadges = [
-    {
-      icon: ShieldCheck,
-      color: '#2E4A9E',
-      title: isVi ? 'Kiểm Định Kép Hoa Kỳ' : 'US Dual Accreditation',
-      desc: isVi ? 'Cognia & WASC công nhận' : 'Cognia & WASC Certified',
-    },
-    {
-      icon: Coins,
-      color: '#5C9024',
-      title: isVi ? 'Chi Phí Bền Vững' : '1/3 Tuition Advantage',
-      desc: isVi ? 'Bằng 1/3 trường quốc tế' : 'Save 67% vs Int\'l Schools',
-    },
-    {
-      icon: FileCheck2,
-      color: '#F26522',
-      title: isVi ? 'Khảo Sát Chuẩn Xác' : 'Diagnostic Assessment',
-      desc: isVi ? 'Test Exact Path miễn phí' : 'Exact Path Benchmark',
-    },
-    {
-      icon: UserCheck,
-      color: '#1E3570',
-      title: isVi ? 'Cố Vấn 1:1 Đồng Hành' : '1:1 Academic Advisor',
-      desc: isVi ? 'Theo sát & báo cáo định kỳ' : 'Weekly Progress Reports',
-    },
-  ]
-
-
-
   // FAQ Categories and items
   const faqCategories = [
     { id: 'all', label: isVi ? 'Tất cả (12 câu)' : 'All FAQs (12)' },
@@ -175,11 +243,10 @@ function AdmissionsContent() {
     { id: 'tuition', label: isVi ? 'Học phí & Lịch học' : 'Tuition & Schedules' },
   ]
 
-  // Mapping FAQ items to category filters
   const getFaqCategory = (num: number): string => {
     if ([1, 2, 8].includes(num)) return 'diagnostic'
     if ([3, 4, 7, 9, 10].includes(num)) return 'curriculum'
-    return 'tuition' // 5, 6, 11, 12
+    return 'tuition'
   }
 
   const allFaqNums = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -187,6 +254,9 @@ function AdmissionsContent() {
     activeFaqCategory === 'all'
       ? allFaqNums
       : allFaqNums.filter((num) => getFaqCategory(num) === activeFaqCategory)
+
+  // Admission steps from CMS
+  const admissionSteps = cms.admissionSteps || []
 
   return (
     <>
@@ -202,15 +272,21 @@ function AdmissionsContent() {
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
           <div
             className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-40 pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(141,198,63,0.3) 0%, rgba(46,74,158,0.15) 70%, transparent 100%)' }}
+            style={{
+              background:
+                'radial-gradient(circle, rgba(141,198,63,0.3) 0%, rgba(46,74,158,0.15) 70%, transparent 100%)',
+            }}
           />
           <div
             className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-30 pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(46,74,158,0.25) 0%, rgba(240,90,40,0.1) 70%, transparent 100%)' }}
+            style={{
+              background:
+                'radial-gradient(circle, rgba(46,74,158,0.25) 0%, rgba(240,90,40,0.1) 70%, transparent 100%)',
+            }}
           />
           {heroImage && (
             <div
-              className="absolute inset-0 opacity-[0.04] bg-cover bg-center mix-blend-multiply"
+              className="absolute inset-0 opacity-[0.03] bg-cover bg-center mix-blend-multiply"
               style={{ backgroundImage: `url(${heroImage})` }}
             />
           )}
@@ -261,7 +337,7 @@ function AdmissionsContent() {
                   onClick={() => scrollTo('form-tu-van')}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#F26522] hover:bg-[#C94F16] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
                 >
-                  <span>{isVi ? 'Đăng ký tư vấn lộ trình ngay' : 'Register for Free Consultation'}</span>
+                  <span>{primaryCta}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
@@ -270,7 +346,7 @@ function AdmissionsContent() {
                   onClick={() => scrollTo('tuition')}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-[#F6F5F1] text-[#1E3570] text-xs sm:text-sm font-bold border border-[#DEDDD6] shadow-xs transition-all duration-300 cursor-pointer"
                 >
-                  <span>{isVi ? 'Xem gói học phí' : 'View Tuition Packages'}</span>
+                  <span>{secondaryCta}</span>
                   <ArrowDown className="w-3.5 h-3.5 text-[#8DC63F]" />
                 </button>
               </motion.div>
@@ -286,12 +362,13 @@ function AdmissionsContent() {
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-[#DEDDD6] bg-white aspect-[4/3] sm:aspect-[16/11]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/admissions/admissions-hero.jpg"
+                  src={heroImage}
                   alt="EPath Education Admissions"
                   className="w-full h-full object-cover"
                   loading="eager"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/80 via-transparent to-transparent" />
+                {/* Softened gradient overlay so photo preserves crisp contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/35 via-transparent to-transparent pointer-events-none" />
 
                 {/* Floating Badge on Image */}
                 <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-white/95 backdrop-blur-md text-[#20242B] border border-[#DEDDD6] shadow-md flex items-center gap-3">
@@ -300,10 +377,10 @@ function AdmissionsContent() {
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-black text-[#1E3570] truncate">
-                      {isVi ? 'Bằng Tú Tài Mỹ Cognia & WASC' : 'Cognia & WASC US Diploma'}
+                      {floatingBadgeTitle}
                     </div>
                     <div className="text-[11px] text-[#5C6069] truncate">
-                      {isVi ? 'Được công nhận chuyển tiếp toàn cầu' : 'Globally Recognized Credential'}
+                      {floatingBadgeSubtitle}
                     </div>
                   </div>
                 </div>
@@ -318,8 +395,10 @@ function AdmissionsContent() {
             transition={{ duration: duration.slow, delay: 0.32, ease: easeOut }}
             className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto mt-10 pt-6 border-t border-[#DEDDD6]"
           >
-            {trustBadges.map((badge, idx) => {
-              const Icon = badge.icon
+            {admissionsData.trustBadges.map((badge, idx) => {
+              const Icon = resolveIcon(badge.icon, ShieldCheck)
+              const badgeTitle = badge.title?.[locale as 'vi' | 'en'] || badge.title?.vi
+              const badgeDesc = badge.desc?.[locale as 'vi' | 'en'] || badge.desc?.vi
               return (
                 <div
                   key={idx}
@@ -332,8 +411,10 @@ function AdmissionsContent() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-bold text-[#1E3570] truncate group-hover:text-[#5C9024] transition-colors">{badge.title}</h4>
-                    <p className="text-[11px] sm:text-xs text-[#5C6069] truncate">{badge.desc}</p>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#1E3570] truncate group-hover:text-[#5C9024] transition-colors">
+                      {badgeTitle}
+                    </h4>
+                    <p className="text-[11px] sm:text-xs text-[#5C6069] truncate">{badgeDesc}</p>
                   </div>
                 </div>
               )
@@ -342,11 +423,113 @@ function AdmissionsContent() {
         </div>
       </section>
 
-
-
       {/* ─────────────────────────────────────────────────────────────
-          3. FINANCIAL POLICY & SUSTAINABLE INVESTMENT
+          2. ADMISSIONS STEPS SECTION (#steps / #quy-trinh)
       ─────────────────────────────────────────────────────────────── */}
+      {admissionsData.stepsSection.showSteps !== false && (
+        <section id="steps" className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6] scroll-mt-20 relative">
+          <div id="quy-trinh" className="absolute -top-24 pointer-events-none" />
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              {/* Header */}
+              <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EAEFFB] text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2.5">
+                  <ListOrdered className="w-3.5 h-3.5" />
+                  <span>
+                    {admissionsData.stepsSection.badge?.[locale as 'vi' | 'en'] ||
+                      admissionsData.stepsSection.badge?.vi}
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-[#20242B] mb-2.5">
+                  {admissionsData.stepsSection.title?.[locale as 'vi' | 'en'] ||
+                    admissionsData.stepsSection.title?.vi}
+                </h2>
+                <p className="text-[#5C6069] text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
+                  {admissionsData.stepsSection.subtitle?.[locale as 'vi' | 'en'] ||
+                    admissionsData.stepsSection.subtitle?.vi}
+                </p>
+              </div>
+
+              {/* 5-Step Process Cards */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
+                {admissionSteps.map((step, sIdx) => {
+                  const stepNum = step.stepNumber || sIdx + 1
+                  const stepTitle =
+                    ((step.title as Record<string, string>)?.[locale] as string) ||
+                    ((step.title as Record<string, string>)?.vi as string) ||
+                    ''
+                  const stepDesc =
+                    ((step.description as Record<string, string>)?.[locale] as string) ||
+                    ((step.description as Record<string, string>)?.vi as string) ||
+                    ''
+                  const StepIcon = resolveIcon(step.icon, GraduationCap)
+
+                  return (
+                    <motion.div
+                      key={step.id || sIdx}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={inViewViewport}
+                      transition={{ duration: duration.normal, delay: sIdx * 0.08, ease: easeOut }}
+                      className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] flex flex-col justify-between group hover:border-[#2E4A9E] hover:bg-white hover:shadow-sm transition-all duration-300"
+                    >
+                      <div>
+                        {/* Step Header */}
+                        <div className="flex items-center justify-between mb-3.5">
+                          <span className="w-7 h-7 rounded-lg bg-[#1E3570] text-white text-xs font-black flex items-center justify-center shadow-xs">
+                            {String(stepNum).padStart(2, '0')}
+                          </span>
+                          <div className="w-8 h-8 rounded-lg bg-white group-hover:bg-[#EAEFFB] flex items-center justify-center text-[#2E4A9E] border border-[#DEDDD6]/60 transition-colors">
+                            <StepIcon className="w-4 h-4" />
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-sm font-bold text-[#1E3570] mb-2 leading-snug group-hover:text-[#F26522] transition-colors">
+                          {stepTitle}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-xs text-[#5C6069] leading-relaxed line-clamp-4">
+                          {stepDesc}
+                        </p>
+                      </div>
+
+                      {/* Photo Thumbnail if available */}
+                      {step.imageUrl && (
+                        <div className="mt-3 pt-3 border-t border-[#DEDDD6]/60">
+                          <div className="rounded-lg overflow-hidden aspect-[16/9] border border-[#DEDDD6]/80 bg-white">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={step.imageUrl}
+                              alt={stepTitle}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  )
+                })}
+              </div>
+
+              {/* Quick Consultation Trigger below Steps */}
+              <div className="mt-8 text-center">
+                <button
+                  type="button"
+                  onClick={() => scrollTo('form-tu-van')}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#1E3570] hover:bg-[#2E4A9E] text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer"
+                >
+                  <span>{isVi ? 'Đăng ký nhận tư vấn từng bước' : 'Book a Step-by-Step Consultation'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8DC63F]" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ─────────────────────────────────────────────────────────────
           3. FINANCIAL POLICY & SUSTAINABLE INVESTMENT (#tuition / #hoc-phi)
       ─────────────────────────────────────────────────────────────── */}
@@ -358,166 +541,98 @@ function AdmissionsContent() {
             <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#8DC63F]/20 text-[#5C9024] text-xs font-bold uppercase tracking-wider mb-2.5">
                 <Coins className="w-3.5 h-3.5" />
-                <span>{isVi ? 'Đầu tư giáo dục bền vững' : 'Sustainable Investment'}</span>
+                <span>
+                  {admissionsData.tuition.badge?.[locale as 'vi' | 'en'] ||
+                    admissionsData.tuition.badge?.vi}
+                </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-[#20242B] mb-2.5">
-                {isVi
-                  ? 'Gói Học Phí & Chính Sách Tài Chính Minh Bạch'
-                  : 'Tuition Packages & Transparent Financial Policy'}
+                {admissionsData.tuition.title?.[locale as 'vi' | 'en'] ||
+                  admissionsData.tuition.title?.vi}
               </h2>
               <p className="text-[#5C6069] text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
-                {isVi
-                  ? 'EPath cung cấp các lộ trình học tập linh hoạt theo năng lực và mục tiêu từng học sinh, tối ưu ngân sách gia đình với chất lượng quốc tế được kiểm định.'
-                  : "EPath offers flexible learning tracks tailored to each student's goals, optimizing family investment with accredited US quality."}
+                {admissionsData.tuition.subtitle?.[locale as 'vi' | 'en'] ||
+                  admissionsData.tuition.subtitle?.vi}
               </p>
             </div>
 
             {/* 4 Flexible Tuition Tracks / Packages */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10 sm:mb-12 items-stretch">
-              {[
-                {
-                  id: 'foundation',
-                  programKey: 'kindergarten',
-                  badge: isVi ? 'Mầm non & Khởi đầu' : 'Early Foundation',
-                  title: isVi ? 'Foundation Track' : 'Foundation Track',
-                  target: isVi ? 'Mầm non & Lớp 1 – 2' : 'Kindy & Grade 1–2',
-                  hours: isVi ? '3 – 5 giờ / tuần' : '3 – 5 hrs / week',
-                  desc: isVi
-                    ? 'Thẩm thấu tiếng Anh tự nhiên qua Cambridge Phonics, Early Math và học tập tương tác đa giác quan.'
-                    : 'Natural English phonics, early math thinking, and topic-based interactive learning.',
-                  highlights: [
-                    isVi ? 'Giáo viên quốc tế & song ngữ' : 'International & bilingual faculty',
-                    isVi ? 'Chuẩn Cambridge English' : 'Official Cambridge English standard',
-                    isVi ? 'Sĩ số nhỏ, tương tác liên tục' : 'Small class size with high engagement',
-                  ],
-                  popular: false,
-                  badgeBg: '#EAEFFB',
-                  badgeColor: '#2E4A9E',
-                },
-                {
-                  id: 'standard',
-                  programKey: 'elementary',
-                  badge: isVi ? 'Tiểu học & THCS' : 'Elementary & Middle',
-                  title: isVi ? 'Standard & Advanced' : 'Standard & Advanced',
-                  target: isVi ? 'Lớp 3 – Lớp 8' : 'Grade 3 – Grade 8',
-                  hours: isVi ? '5 – 7 giờ / tuần' : '5 – 7 hrs / week',
-                  desc: isVi
-                    ? 'Toán & Khoa học bằng Tiếng Anh chuẩn Edmentum US Common Core kết hợp phát triển IELTS học thuật.'
-                    : 'US Common Core Math & Science via Edmentum plus Cambridge/IELTS academic preparation.',
-                  highlights: [
-                    isVi ? 'Tài khoản Edmentum 12 tháng' : '12-month licensed Edmentum access',
-                    isVi ? 'Học song song trường công' : 'Flexible schedule alongside school',
-                    isVi ? 'Cố vấn 1:1 kèm cặp tiến độ' : '1:1 mentor tracking & skill tutoring',
-                  ],
-                  popular: false,
-                  badgeBg: '#EDF7E2',
-                  badgeColor: '#5C9024',
-                },
-                {
-                  id: 'dual-diploma',
-                  programKey: 'high-dual-diploma',
-                  badge: isVi ? 'Song bằng Hoa Kỳ' : 'US Dual Diploma',
-                  title: isVi ? 'Dual Diploma Pathway' : 'US Dual Diploma',
-                  target: isVi ? 'Lớp 9 – Lớp 12' : 'Grade 9 – Grade 12',
-                  hours: isVi ? '5 Tín chỉ Mỹ tích lũy' : '5 US Credits earned',
-                  desc: isVi
-                    ? 'Hoàn thành 5 tín chỉ Mỹ với EdOptions Academy, nhận đồng thời Bằng THPT Việt Nam và Tú tài Mỹ.'
-                    : 'Complete 5 required US credits with EdOptions Academy to earn both VN and US diplomas.',
-                  highlights: [
-                    isVi ? 'Bằng Tú tài Mỹ Cognia & WASC' : 'Cognia & WASC accredited US Diploma',
-                    isVi ? 'Lợi thế vượt trội xét tuyển ĐH' : 'Significant edge for university admissions',
-                    isVi ? 'Chương trình song bằng phổ biến' : 'Most popular high school pathway',
-                  ],
-                  popular: true,
-                  badgeBg: '#FDF0EA',
-                  badgeColor: '#F26522',
-                },
-                {
-                  id: 'fulltime-homeschool',
-                  programKey: 'high-fulltime-homeschool',
-                  badge: isVi ? 'Homeschool Toàn phần' : 'Fulltime Homeschool',
-                  title: isVi ? 'Fulltime US Diploma' : 'Fulltime US Diploma',
-                  target: isVi ? 'Lớp 9 – Lớp 12' : 'Grade 9 – Grade 12',
-                  hours: isVi ? '21.5 Tín chỉ chuẩn Hoa Kỳ' : '21.5 US Common Core Credits',
-                  desc: isVi
-                    ? 'Học toàn thời gian với tư cách học sinh chính thức của trường phổ thông Mỹ trực thuộc Edmentum International.'
-                    : 'Fulltime enrollment as an official US high school student under Edmentum International.',
-                  highlights: [
-                    isVi ? 'Bảng điểm & Bằng Tú tài Mỹ 100%' : '100% official US transcripts & diploma',
-                    isVi ? 'Cố vấn chuẩn bị hồ sơ du học' : 'Comprehensive 1:1 college counseling',
-                    isVi ? 'Chuyển tiếp thẳng đại học quốc tế' : 'Direct pathway to global universities',
-                  ],
-                  popular: false,
-                  badgeBg: '#EAEFFB',
-                  badgeColor: '#1E3570',
-                },
-              ].map((track) => (
-                <div
-                  key={track.id}
-                  className={`bg-white rounded-3xl p-5 sm:p-6 border flex flex-col justify-between transition-all duration-300 relative group hover:shadow-md ${
-                    track.popular
-                      ? 'border-[#F26522] ring-2 ring-[#F26522]/20 shadow-sm'
-                      : 'border-[#DEDDD6]'
-                  }`}
-                >
-                  {track.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#F26522] text-white shadow-xs">
-                      {isVi ? 'Phổ biến nhất' : 'Most Popular'}
-                    </div>
-                  )}
+              {admissionsData.tuition.tracks.map((track) => {
+                const trackTitle = track.title?.[locale as 'vi' | 'en'] || track.title?.vi
+                const trackBadge = track.badge?.[locale as 'vi' | 'en'] || track.badge?.vi
+                const trackTarget = track.target?.[locale as 'vi' | 'en'] || track.target?.vi
+                const trackHours = track.hours?.[locale as 'vi' | 'en'] || track.hours?.vi
+                const trackDesc = track.desc?.[locale as 'vi' | 'en'] || track.desc?.vi
+                const trackHighlights =
+                  track.highlights?.[locale as 'vi' | 'en'] || track.highlights?.vi || []
 
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span
-                        className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider"
-                        style={{ backgroundColor: track.badgeBg, color: track.badgeColor }}
-                      >
-                        {track.badge}
-                      </span>
-                      <span className="text-[11px] font-semibold text-[#5C6069]">
-                        {track.target}
-                      </span>
-                    </div>
-
-                    <h3 className="text-base sm:text-lg font-black text-[#20242B] mb-1 group-hover:text-[#2E4A9E] transition-colors">
-                      {track.title}
-                    </h3>
-
-                    <div className="inline-block px-2.5 py-1 rounded-lg bg-[#F6F5F1] text-xs font-bold text-[#1E3570] mb-3">
-                      {track.hours}
-                    </div>
-
-                    <p className="text-xs text-[#5C6069] leading-relaxed mb-4">
-                      {track.desc}
-                    </p>
-
-                    <div className="space-y-2 pt-3 border-t border-[#DEDDD6]/60 mb-5">
-                      {track.highlights.map((h, hIdx) => (
-                        <div key={hIdx} className="flex items-start gap-2 text-xs text-[#20242B]">
-                          <Check className="w-3.5 h-3.5 text-[#5C9024] shrink-0 mt-0.5" />
-                          <span className="leading-snug">{h}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData((prev) => ({ ...prev, program: track.programKey }))
-                      scrollTo('form-tu-van')
-                    }}
-                    className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
+                return (
+                  <div
+                    key={track.id}
+                    className={`bg-white rounded-3xl p-5 sm:p-6 border flex flex-col justify-between transition-all duration-300 relative group hover:shadow-md ${
                       track.popular
-                        ? 'bg-[#F26522] hover:bg-[#C94F16] text-white shadow-xs'
-                        : 'bg-[#F6F5F1] hover:bg-[#2E4A9E] text-[#20242B] hover:text-white border border-[#DEDDD6]'
+                        ? 'border-[#F26522] ring-2 ring-[#F26522]/20 shadow-sm'
+                        : 'border-[#DEDDD6]'
                     }`}
                   >
-                    <span>{isVi ? 'Đăng ký tư vấn gói này' : 'Enquire This Track'}</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
+                    {track.popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#F26522] text-white shadow-xs">
+                        {isVi ? 'Phổ biến nhất' : 'Most Popular'}
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span
+                          className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider"
+                          style={{ backgroundColor: track.badgeBg, color: track.badgeColor }}
+                        >
+                          {trackBadge}
+                        </span>
+                        <span className="text-[11px] font-semibold text-[#5C6069]">
+                          {trackTarget}
+                        </span>
+                      </div>
+
+                      <h3 className="text-base sm:text-lg font-black text-[#20242B] mb-1 group-hover:text-[#2E4A9E] transition-colors">
+                        {trackTitle}
+                      </h3>
+
+                      <div className="inline-block px-2.5 py-1 rounded-lg bg-[#F6F5F1] text-xs font-bold text-[#1E3570] mb-3">
+                        {trackHours}
+                      </div>
+
+                      <p className="text-xs text-[#5C6069] leading-relaxed mb-4">{trackDesc}</p>
+
+                      <div className="space-y-2 pt-3 border-t border-[#DEDDD6]/60 mb-5">
+                        {trackHighlights.map((h, hIdx) => (
+                          <div key={hIdx} className="flex items-start gap-2 text-xs text-[#20242B]">
+                            <Check className="w-3.5 h-3.5 text-[#5C9024] shrink-0 mt-0.5" />
+                            <span className="leading-snug">{h}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({ ...prev, program: track.programKey }))
+                        scrollTo('form-tu-van')
+                      }}
+                      className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
+                        track.popular
+                          ? 'bg-[#F26522] hover:bg-[#C94F16] text-white shadow-xs'
+                          : 'bg-[#F6F5F1] hover:bg-[#2E4A9E] text-[#20242B] hover:text-white border border-[#DEDDD6]'
+                      }`}
+                    >
+                      <span>{isVi ? 'Đăng ký tư vấn gói này' : 'Enquire This Track'}</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Two-Column Financial Policy & 5 Core Guarantees */}
@@ -535,13 +650,17 @@ function AdmissionsContent() {
                   <div className="relative rounded-2xl overflow-hidden mb-5 border border-[#DEDDD6] aspect-[16/10] bg-[#F6F5F1]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/images/admissions/admissions-consultation.jpg"
+                      src={
+                        admissionsData.financialPolicy.leftBoxImage ||
+                        '/images/admissions/admissions-consultation.jpg'
+                      }
                       alt="EPath Academic Consultation"
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
                     <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11px] font-black bg-[#1E3570] text-white shadow-sm">
-                      {isVi ? 'Kiểm định Cognia & WASC' : 'Cognia & WASC Certified'}
+                      {admissionsData.financialPolicy.leftBoxBadge?.[locale as 'vi' | 'en'] ||
+                        admissionsData.financialPolicy.leftBoxBadge?.vi}
                     </div>
                   </div>
 
@@ -550,19 +669,18 @@ function AdmissionsContent() {
                   </div>
 
                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#EAEFFB] text-[#2E4A9E] mb-2.5 inline-block">
-                    {isVi ? 'Mô hình Blended Learning tối ưu' : 'Blended Learning Model'}
+                    {admissionsData.financialPolicy.badge?.[locale as 'vi' | 'en'] ||
+                      admissionsData.financialPolicy.badge?.vi}
                   </span>
 
                   <h3 className="text-xl sm:text-2xl font-black text-[#20242B] mb-3 leading-tight">
-                    {isVi
-                      ? 'Vì sao lộ trình tại EPath tối ưu ngân sách cho gia đình?'
-                      : 'Why is EPath the most cost-efficient pathway for families?'}
+                    {admissionsData.financialPolicy.leftBoxTitle?.[locale as 'vi' | 'en'] ||
+                      admissionsData.financialPolicy.leftBoxTitle?.vi}
                   </h3>
 
                   <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-5">
-                    {isVi
-                      ? 'Thông qua mô hình học tập kết hợp (Blended Learning) trên nền tảng số hóa của Edmentum International cùng sự đồng hành của đội ngũ giáo viên tại Campus, EPath loại bỏ những chi phí cơ sở vật chất cồng kềnh không cần thiết, tập trung toàn bộ nguồn lực vào chất lượng giảng dạy, cố vấn học thuật 1:1 và chứng nhận quốc tế.'
-                      : "By leveraging Edmentum's digital curriculum and campus-based teachers, EPath eliminates bloated campus overheads and invests directly in faculty excellence, 1:1 mentorship, and accredited diploma credentials."}
+                    {admissionsData.financialPolicy.leftBoxDesc?.[locale as 'vi' | 'en'] ||
+                      admissionsData.financialPolicy.leftBoxDesc?.vi}
                   </p>
                 </div>
 
@@ -572,7 +690,10 @@ function AdmissionsContent() {
                     onClick={() => scrollTo('form-tu-van')}
                     className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#2E4A9E] hover:bg-[#1E3570] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
                   >
-                    <span>{isVi ? 'Nhận Bảng Báo Học Phí Chi Tiết' : 'Request Detailed Tuition Plan'}</span>
+                    <span>
+                      {admissionsData.financialPolicy.buttonText?.[locale as 'vi' | 'en'] ||
+                        admissionsData.financialPolicy.buttonText?.vi}
+                    </span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -589,66 +710,42 @@ function AdmissionsContent() {
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#2E4A9E] uppercase tracking-wider mb-4 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#5C9024]" />
-                    <span>{isVi ? '5 Cam Kết Quyền Lợi Tài Chính Minh Bạch:' : '5 Core Financial Guarantees:'}</span>
+                    <span>
+                      {admissionsData.financialPolicy.rightBoxTitle?.[locale as 'vi' | 'en'] ||
+                        admissionsData.financialPolicy.rightBoxTitle?.vi}
+                    </span>
                   </h4>
 
                   <div className="space-y-3">
-                    {[
-                      {
-                        title: isVi ? 'Biểu phí minh bạch, không chi phí ẩn' : 'Transparent Agreement, Zero Hidden Fees',
-                        desc: isVi
-                          ? 'Toàn bộ chi phí đào tạo và bản quyền học liệu được nêu rõ trước niên khóa, cam kết không phát sinh bất kỳ khoản phụ phí nào.'
-                          : 'Clear fee schedule with zero surprise costs throughout the academic school year.',
-                      },
-                      {
-                        title: isVi ? 'Tài khoản Edmentum bản quyền 12 tháng' : '12-Month Licensed Edmentum Account',
-                        desc: isVi
-                          ? 'Kho bài giảng số hóa không giới hạn với hơn 400 môn học chuẩn Common Core và chứng nhận Cognia & WASC.'
-                          : 'Full access to 400+ digital courses aligned with US Common Core and accredited by Cognia & WASC.',
-                      },
-                      {
-                        title: isVi ? 'Khảo sát đầu vào & Tư vấn 1:1 miễn phí' : 'Free Diagnostic Test & 1:1 Consultation',
-                        desc: isVi
-                          ? 'Hoàn toàn miễn phí bài khảo sát Exact Path Diagnostic và buổi phân tích báo cáo cùng chuyên gia.'
-                          : 'Complimentary diagnostic testing and personalized roadmap strategy consultation.',
-                      },
-                      {
-                        title: isVi ? 'Học bổng học thuật cho học sinh xuất sắc' : 'Merit Scholarships for High Achievers',
-                        desc: isVi
-                          ? 'Chính sách học bổng khuyến học dành cho các học sinh đạt thành tích cao trong học tập và các kỳ thi quốc tế.'
-                          : 'Scholarships awarded to students demonstrating exceptional academic and Olympiad performance.',
-                      },
-                      {
-                        title: isVi ? 'Chi phí bền vững, hiệu quả dài hạn' : 'Sustainable & Long-Term Efficiency',
-                        desc: isVi
-                          ? 'Thụ hưởng giáo dục Hoa Kỳ đẳng cấp với mức đầu tư hợp lý, hoàn thành trọn vẹn lộ trình học tập từ K–12.'
-                          : 'Access elite US education at optimal cost, ensuring smooth academic progression from K to 12.',
-                      },
-                    ].map((item, i) => (
-                      <div
-                        key={i}
-                        className="p-3.5 rounded-2xl bg-[#F6F5F1] border border-[#DEDDD6]/80 flex items-start gap-3 text-left"
-                      >
-                        <div className="w-6 h-6 rounded-full bg-[#8DC63F]/20 text-[#5C9024] flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-3.5 h-3.5" />
+                    {admissionsData.financialPolicy.guarantees.map((item, i) => {
+                      const gTitle = item.title?.[locale as 'vi' | 'en'] || item.title?.vi
+                      const gDesc = item.desc?.[locale as 'vi' | 'en'] || item.desc?.vi
+                      return (
+                        <div
+                          key={i}
+                          className="p-3.5 rounded-2xl bg-[#F6F5F1] border border-[#DEDDD6]/80 flex items-start gap-3 text-left"
+                        >
+                          <div className="w-6 h-6 rounded-full bg-[#8DC63F]/20 text-[#5C9024] flex items-center justify-center shrink-0 mt-0.5">
+                            <Check className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <h5 className="text-xs sm:text-sm font-bold text-[#20242B] mb-0.5">{gTitle}</h5>
+                            <p className="text-xs text-[#5C6069] leading-relaxed">{gDesc}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h5 className="text-xs sm:text-sm font-bold text-[#20242B] mb-0.5">{item.title}</h5>
-                          <p className="text-xs text-[#5C6069] leading-relaxed">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-[#DEDDD6]/60 flex items-center justify-between text-xs text-[#5C6069]">
                   <span>{isVi ? 'Cần tư vấn biểu phí từng lớp?' : 'Need specific grade tuition?'}</span>
                   <a
-                    href="tel:0937514896"
+                    href={`tel:${admissionsData.campusSection.hotline.replace(/\s+/g, '')}`}
                     className="font-bold text-[#F26522] hover:underline flex items-center gap-1"
                   >
                     <Phone className="w-3 h-3" />
-                    <span>0937 514 896</span>
+                    <span>{admissionsData.campusSection.hotline}</span>
                   </a>
                 </div>
               </motion.div>
@@ -663,7 +760,6 @@ function AdmissionsContent() {
       <section id="form-tu-van" className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6]">
         <div id="contact" className="container mx-auto px-4">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start max-w-6xl mx-auto">
-            
             {/* Form Column */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -674,15 +770,16 @@ function AdmissionsContent() {
             >
               <div className="mb-6">
                 <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#EAEFFB] text-[#2E4A9E] mb-2 inline-block">
-                  {isVi ? 'Đồng hành cùng gia đình' : 'Admissions & Mentorship'}
+                  {admissionsData.formSection.badge?.[locale as 'vi' | 'en'] ||
+                    admissionsData.formSection.badge?.vi}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-[#20242B] mb-1.5">
-                  {isVi ? 'Bắt đầu hành trình học tập của con cùng EPath' : "Begin Your Child's Learning Journey with EPath"}
+                  {admissionsData.formSection.title?.[locale as 'vi' | 'en'] ||
+                    admissionsData.formSection.title?.vi}
                 </h2>
                 <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                  {isVi
-                    ? 'Mỗi học sinh có một năng lực, sở thích và định hướng khác nhau. EPath Education đồng hành cùng phụ huynh trong việc tìm hiểu chương trình học, đánh giá nhu cầu và xây dựng lộ trình giáo dục phù hợp cho từng giai đoạn phát triển của học sinh.'
-                    : 'Each student has unique strengths, interests, and aspirations. EPath Education partners with parents to explore curricula, evaluate needs, and tailor educational pathways suited to each developmental stage.'}
+                  {admissionsData.formSection.description?.[locale as 'vi' | 'en'] ||
+                    admissionsData.formSection.description?.vi}
                 </p>
               </div>
 
@@ -696,9 +793,7 @@ function AdmissionsContent() {
                   <div className="w-14 h-14 bg-[#8DC63F]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckCircle className="w-7 h-7 text-[#5C9024]" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#20242B] mb-2">
-                    {t('form.success')}
-                  </h3>
+                  <h3 className="text-xl font-bold text-[#20242B] mb-2">{t('form.success')}</h3>
                   <p className="text-[#5C6069] mb-6 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
                     {t('form.successText')}
                   </p>
@@ -715,9 +810,7 @@ function AdmissionsContent() {
                   {/* Row 1: Parent Name & Phone */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.parentName')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.parentName')}</Label>
                       <Input
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -728,9 +821,7 @@ function AdmissionsContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.phone')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.phone')}</Label>
                       <Input
                         type="tel"
                         value={formData.phone}
@@ -745,9 +836,7 @@ function AdmissionsContent() {
                   {/* Row 2: Email & Student Name */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.email')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.email')}</Label>
                       <Input
                         type="email"
                         value={formData.email}
@@ -759,9 +848,7 @@ function AdmissionsContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.studentName')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.studentName')}</Label>
                       <Input
                         value={formData.studentName}
                         onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
@@ -774,9 +861,7 @@ function AdmissionsContent() {
                   {/* Row 3: Grade Level & Program of Interest */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.grade')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.grade')}</Label>
                       <select
                         value={formData.studentGrade}
                         onChange={(e) => setFormData({ ...formData, studentGrade: e.target.value })}
@@ -792,30 +877,38 @@ function AdmissionsContent() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-[#20242B]">
-                        {t('form.program')}
-                      </Label>
+                      <Label className="text-xs font-bold text-[#20242B]">{t('form.program')}</Label>
                       <select
                         value={formData.program}
                         onChange={(e) => setFormData({ ...formData, program: e.target.value })}
                         className="w-full rounded-xl border border-[#DEDDD6] bg-white px-3 h-10 text-xs sm:text-sm text-[#20242B] focus:border-[#2E4A9E] focus:outline-none focus:ring-2 focus:ring-[#2E4A9E]/20 transition-all cursor-pointer"
                       >
                         <option value="">{t('form.selectProgram')}</option>
-                        <option value="kindergarten">{isVi ? 'Tiếng Anh Mầm non Song ngữ' : 'Kindergarten Bilingual English'}</option>
-                        <option value="elementary">{isVi ? 'Tiểu học Tiêu chuẩn & Quốc tế (Edmentum)' : 'Elementary US Curriculum'}</option>
-                        <option value="middle">{isVi ? 'THCS Tích hợp & IELTS Foundation' : 'Middle School Integrated & IELTS'}</option>
-                        <option value="high-dual-diploma">{isVi ? 'Song bằng Tú tài Mỹ (US Dual Diploma)' : 'US Dual Diploma (5 Credits)'}</option>
-                        <option value="high-fulltime-homeschool">{isVi ? 'Bằng THPT Mỹ Toàn phần (21.5 Tín chỉ)' : 'Fulltime US High School Diploma'}</option>
-                        <option value="other">{isVi ? 'Tư vấn theo mục tiêu riêng của con' : 'Personalized Consultation'}</option>
+                        <option value="kindergarten">
+                          {isVi ? 'Tiếng Anh Mầm non Song ngữ' : 'Kindergarten Bilingual English'}
+                        </option>
+                        <option value="elementary">
+                          {isVi ? 'Tiểu học Tiêu chuẩn & Quốc tế (Edmentum)' : 'Elementary US Curriculum'}
+                        </option>
+                        <option value="middle">
+                          {isVi ? 'THCS Tích hợp & IELTS Foundation' : 'Middle School Integrated & IELTS'}
+                        </option>
+                        <option value="high-dual-diploma">
+                          {isVi ? 'Song bằng Tú tài Mỹ (US Dual Diploma)' : 'US Dual Diploma (5 Credits)'}
+                        </option>
+                        <option value="high-fulltime-homeschool">
+                          {isVi ? 'Bằng THPT Mỹ Toàn phần (21.5 Tín chỉ)' : 'Fulltime US High School Diploma'}
+                        </option>
+                        <option value="other">
+                          {isVi ? 'Tư vấn theo mục tiêu riêng của con' : 'Personalized Consultation'}
+                        </option>
                       </select>
                     </div>
                   </div>
 
                   {/* Row 4: Notes / Message */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-[#20242B]">
-                      {t('form.message')}
-                    </Label>
+                    <Label className="text-xs font-bold text-[#20242B]">{t('form.message')}</Label>
                     <textarea
                       rows={2}
                       value={formData.message}
@@ -824,7 +917,7 @@ function AdmissionsContent() {
                       placeholder={
                         isVi
                           ? 'Chia sẻ mong muốn của gia đình về mục tiêu học tập, thời gian dự kiến bắt đầu...'
-                          : 'Share your child\'s current level, target goals, or expected start date...'
+                          : "Share your child's current level, target goals, or expected start date..."
                       }
                     />
                   </div>
@@ -840,9 +933,8 @@ function AdmissionsContent() {
                   </Button>
 
                   <p className="text-center text-[11px] text-[#5C6069] pt-1">
-                    {isVi
-                      ? '🔒 EPath cam kết bảo mật 100% thông tin phụ huynh và học sinh.'
-                      : '🔒 EPath commits to 100% confidentiality of your contact details.'}
+                    {admissionsData.formSection.confidentialityNote?.[locale as 'vi' | 'en'] ||
+                      admissionsData.formSection.confidentialityNote?.vi}
                   </p>
                 </form>
               )}
@@ -860,33 +952,37 @@ function AdmissionsContent() {
               <div className="relative rounded-2xl overflow-hidden border border-[#DEDDD6] shadow-sm aspect-[16/9] bg-[#F6F5F1]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/admissions/admissions-campus.jpg"
+                  src={
+                    admissionsData.campusSection.campusImage ||
+                    '/images/admissions/admissions-campus.jpg'
+                  }
                   alt="EPath Campus"
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/70 via-transparent to-transparent" />
+                {/* Softened gradient overlay so campus photo preserves crisp contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/35 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-bold flex items-center gap-1.5 drop-shadow">
                   <MapPin className="w-3.5 h-3.5 text-[#8DC63F] shrink-0" />
                   <span className="truncate">
-                    {isVi
-                      ? 'Campus EPath · 38 Trần Phú, Phường Thủ Dầu Một, Hồ Chí Minh'
-                      : 'EPath Campus · 38 Tran Phu St, Thu Dau Mot Ward, Ho Chi Minh City'}
+                    {admissionsData.campusSection.addressValue?.[locale as 'vi' | 'en'] ||
+                      admissionsData.campusSection.addressValue?.vi}
                   </span>
                 </div>
               </div>
 
               <div>
                 <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#EAEFFB] text-[#2E4A9E] mb-2 inline-block">
-                  {isVi ? 'Địa chỉ & Thông tin liên hệ' : 'Address & Contact Information'}
+                  {admissionsData.campusSection.badge?.[locale as 'vi' | 'en'] ||
+                    admissionsData.campusSection.badge?.vi}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-[#20242B] mb-1.5">
-                  {isVi ? 'Thông Tin Liên Hệ' : 'Contact Information'}
+                  {admissionsData.campusSection.title?.[locale as 'vi' | 'en'] ||
+                    admissionsData.campusSection.title?.vi}
                 </h2>
                 <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                  {isVi
-                    ? 'Phụ huynh luôn được chào đón đến thăm quan cơ sở vật chất và trao đổi trực tiếp cùng ban giám đốc học thuật.'
-                    : 'Parents are always welcome to tour our campus and meet our academic leadership team.'}
+                  {admissionsData.campusSection.subtitle?.[locale as 'vi' | 'en'] ||
+                    admissionsData.campusSection.subtitle?.vi}
                 </p>
               </div>
 
@@ -896,12 +992,14 @@ function AdmissionsContent() {
                   <MapPin className="w-5 h-5 text-[#2E4A9E]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">{isVi ? 'Địa chỉ' : 'Address'}</h3>
+                  <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">
+                    {admissionsData.campusSection.addressLabel?.[locale as 'vi' | 'en'] ||
+                      admissionsData.campusSection.addressLabel?.vi}
+                  </h3>
                   <p className="text-xs font-bold text-[#1E3570] mb-0.5">EPath Education</p>
                   <p className="text-[#5C6069] text-xs leading-relaxed">
-                    {isVi
-                      ? '38 Trần Phú, Phường Thủ Dầu Một, Hồ Chí Minh'
-                      : '38 Tran Phu Street, Thu Dau Mot Ward, Ho Chi Minh City'}
+                    {admissionsData.campusSection.addressValue?.[locale as 'vi' | 'en'] ||
+                      admissionsData.campusSection.addressValue?.vi}
                   </p>
                 </div>
               </div>
@@ -912,17 +1010,22 @@ function AdmissionsContent() {
                   <Phone className="w-5 h-5 text-[#5C9024]" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">{isVi ? 'Thông tin liên hệ' : 'Contact Information'}</h3>
+                  <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">
+                    {isVi ? 'Thông tin liên hệ' : 'Contact Information'}
+                  </h3>
                   <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
                     Hotline:{' '}
                     <a
-                      href="tel:0937514896"
+                      href={`tel:${admissionsData.campusSection.hotline.replace(/\s+/g, '')}`}
                       className="text-[#1E3570] font-bold hover:text-[#F26522] transition-colors"
                     >
-                      0937 514 896
+                      {admissionsData.campusSection.hotline}
                     </a>
                   </p>
-                  <p className="text-[11px] text-[#5C6069]">{isVi ? 'Hỗ trợ tư vấn học vụ 24/7' : '24/7 Academic Support'}</p>
+                  <p className="text-[11px] text-[#5C6069]">
+                    {admissionsData.campusSection.hotlineNote?.[locale as 'vi' | 'en'] ||
+                      admissionsData.campusSection.hotlineNote?.vi}
+                  </p>
                 </div>
               </div>
 
@@ -934,10 +1037,10 @@ function AdmissionsContent() {
                 <div className="flex-1">
                   <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">Email</h3>
                   <a
-                    href="mailto:infor@epath.edu.vn"
+                    href={`mailto:${admissionsData.campusSection.email}`}
                     className="text-[#5C6069] text-xs sm:text-sm hover:text-[#2E4A9E] transition-colors font-medium"
                   >
-                    infor@epath.edu.vn
+                    {admissionsData.campusSection.email}
                   </a>
                 </div>
               </div>
@@ -950,7 +1053,9 @@ function AdmissionsContent() {
                 <div>
                   <h3 className="font-bold text-[#20242B] text-xs sm:text-sm mb-0.5">{t('contact.hours')}</h3>
                   <p className="text-[#5C6069] text-xs">
-                    {getSettingLocalized(settings as Record<string, unknown>, 'workingHoursVi', 'workingHoursEn', locale) ||
+                    {admissionsData.campusSection.workingHours?.[locale as 'vi' | 'en'] ||
+                      admissionsData.campusSection.workingHours?.vi ||
+                      getSettingLocalized(settings as Record<string, unknown>, 'workingHoursVi', 'workingHoursEn', locale) ||
                       (isVi ? 'Thứ 2 – Thứ 7: 08:00 – 17:30' : 'Mon – Sat: 08:00 – 17:30')}
                   </p>
                 </div>
@@ -964,19 +1069,23 @@ function AdmissionsContent() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-sm font-bold text-[#1E3570] mb-1">
-                      {isVi ? 'Hẹn Lịch Thăm Quan Campus' : 'Schedule a Campus Tour'}
+                      {admissionsData.campusSection.tourTitle?.[locale as 'vi' | 'en'] ||
+                        admissionsData.campusSection.tourTitle?.vi}
                     </h4>
                     <p className="text-xs text-[#5C6069] leading-relaxed mb-3.5">
-                      {isVi
-                        ? 'Trải nghiệm không gian học tập thực tế và trao đổi 1:1 với Ban Giám Đốc Học Vụ.'
-                        : 'Tour our modern classrooms and speak directly with academic directors.'}
+                      {admissionsData.campusSection.tourDesc?.[locale as 'vi' | 'en'] ||
+                        admissionsData.campusSection.tourDesc?.vi}
                     </p>
                     <a
-                      href="tel:0937514896"
+                      href={`tel:${admissionsData.campusSection.hotline.replace(/\s+/g, '')}`}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2E4A9E] hover:bg-[#1E3570] text-white text-xs font-bold shadow-xs hover:shadow transition-all duration-200"
                     >
                       <Phone className="w-3.5 h-3.5" />
-                      <span>{isVi ? 'Gọi đặt hẹn ngay: 0937 514 896' : 'Book via Hotline: 0937 514 896'}</span>
+                      <span>
+                        {isVi
+                          ? `Gọi đặt hẹn ngay: ${admissionsData.campusSection.hotline}`
+                          : `Book via Hotline: ${admissionsData.campusSection.hotline}`}
+                      </span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </a>
                   </div>

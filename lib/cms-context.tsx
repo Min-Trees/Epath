@@ -17,6 +17,7 @@ import type {
   AboutContent,
   SiteSettings,
   PromoPopup,
+  AdmissionsContent,
 } from '@/lib/cms-types'
 
 export interface PublicCmsBundle {
@@ -41,6 +42,7 @@ export interface PublicCmsBundle {
   siteSettings: SiteSettings | null
   featuredCourses?: Record<string, unknown> | null
   promoPopup?: PromoPopup | null
+  admissionsContent?: AdmissionsContent | null
 }
 
 const EMPTY: PublicCmsBundle = {
@@ -61,6 +63,7 @@ const EMPTY: PublicCmsBundle = {
   siteSettings: null,
   featuredCourses: null,
   promoPopup: null,
+  admissionsContent: null,
 }
 
 interface CmsContextValue {

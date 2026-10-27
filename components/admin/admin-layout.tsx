@@ -59,10 +59,11 @@ export const adminNavGroups: AdminNavGroup[] = [
     id: 'academics',
     title: 'Học vụ & Tuyển sinh',
     items: [
+      { href: '/admin/admissions', label: 'Trang tuyển sinh K-12' },
+      { href: '/admin/admission-steps', label: 'Các bước tuyển sinh' },
       { href: '/admin/programs', label: 'Chương trình đào tạo' },
       { href: '/admin/pathways', label: 'Lộ trình học thuật' },
       { href: '/admin/team', label: 'Giảng viên & Cố vấn 1:1' },
-      { href: '/admin/admission-steps', label: 'Quy trình tuyển sinh' },
     ],
   },
   {

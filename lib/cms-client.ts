@@ -21,6 +21,8 @@ import type {
   AboutContentInput,
   PromoPopupInput,
   PromoPopup,
+  AdmissionsContentInput,
+  AdmissionsContent,
   LeadInput,
   BlogPostInput,
   Lead,
@@ -273,6 +275,15 @@ export const cms = {
       request<{ ok: true }>(`${listUrl('promo-popup')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) =>
       request<{ ok: true }>(`${listUrl('promo-popup')}/${id}`, { method: 'DELETE' }),
+  },
+  admissionsContent: {
+    list: () => request<CmsListResponse<AdmissionsContent>>(listUrl('admissions-content')).then((r) => r.items),
+    create: (data: AdmissionsContentInput) =>
+      request<{ id: string }>(listUrl('admissions-content'), { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<AdmissionsContentInput>) =>
+      request<{ ok: true }>(`${listUrl('admissions-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('admissions-content')}/${id}`, { method: 'DELETE' }),
   },
   activityLogs: {
     list: (params: { collection?: string; action?: string; limit?: number } = {}) => {

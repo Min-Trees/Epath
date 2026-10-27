@@ -376,6 +376,7 @@ export const CollectionNames = {
   media: 'media',
   backups: 'backups',
   promoPopup: 'promo-popup',
+  admissionsContent: 'admissions-content',
 } as const
 
 export type CollectionName = (typeof CollectionNames)[keyof typeof CollectionNames]
@@ -649,3 +650,95 @@ export const PromoPopupSchema = z.object({
 })
 export type PromoPopupInput = z.infer<typeof PromoPopupSchema>
 export type PromoPopup = Omit<PromoPopupInput, 'id'> & { id: string }
+
+// ----------- Admissions Page Content -----------
+export const TrustBadgeSchema = z.object({
+  icon: z.string().default('ShieldCheck'),
+  color: z.string().default('#2E4A9E'),
+  title: LocalizedStringSchema,
+  desc: LocalizedStringSchema,
+})
+export type TrustBadge = z.infer<typeof TrustBadgeSchema>
+
+export const TuitionTrackSchema = z.object({
+  id: z.string(),
+  programKey: z.string().default(''),
+  badge: LocalizedStringSchema,
+  title: LocalizedStringSchema,
+  target: LocalizedStringSchema,
+  hours: LocalizedStringSchema,
+  desc: LocalizedStringSchema,
+  highlights: z.object({
+    vi: z.array(z.string()).default([]),
+    en: z.array(z.string()).default([]),
+  }),
+  popular: z.boolean().default(false),
+  badgeBg: z.string().default('#EAEFFB'),
+  badgeColor: z.string().default('#2E4A9E'),
+})
+export type TuitionTrack = z.infer<typeof TuitionTrackSchema>
+
+export const FinancialGuaranteeSchema = z.object({
+  title: LocalizedStringSchema,
+  desc: LocalizedStringSchema,
+})
+export type FinancialGuarantee = z.infer<typeof FinancialGuaranteeSchema>
+
+export const AdmissionsContentSchema = z.object({
+  id: z.string().optional(),
+  hero: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    imageUrl: z.string().default('/images/admissions/admissions-hero.jpg'),
+    floatingBadgeTitle: LocalizedStringSchema,
+    floatingBadgeSubtitle: LocalizedStringSchema,
+    primaryCtaText: LocalizedStringSchema,
+    secondaryCtaText: LocalizedStringSchema,
+  }),
+  trustBadges: z.array(TrustBadgeSchema).default([]),
+  stepsSection: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    showSteps: z.boolean().default(true),
+  }),
+  tuition: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    tracks: z.array(TuitionTrackSchema).default([]),
+  }),
+  financialPolicy: z.object({
+    badge: LocalizedStringSchema,
+    leftBoxTitle: LocalizedStringSchema,
+    leftBoxDesc: LocalizedStringSchema,
+    leftBoxImage: z.string().default('/images/admissions/admissions-consultation.jpg'),
+    leftBoxBadge: LocalizedStringSchema,
+    buttonText: LocalizedStringSchema,
+    rightBoxTitle: LocalizedStringSchema,
+    guarantees: z.array(FinancialGuaranteeSchema).default([]),
+  }),
+  campusSection: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    campusImage: z.string().default('/images/admissions/admissions-campus.jpg'),
+    addressLabel: LocalizedStringSchema,
+    addressValue: LocalizedStringSchema,
+    hotline: z.string().default('0937 514 896'),
+    hotlineNote: LocalizedStringSchema,
+    email: z.string().default('infor@epath.edu.vn'),
+    workingHours: LocalizedStringSchema,
+    tourTitle: LocalizedStringSchema,
+    tourDesc: LocalizedStringSchema,
+  }),
+  formSection: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    description: LocalizedStringSchema,
+    confidentialityNote: LocalizedStringSchema,
+  }),
+})
+export type AdmissionsContentInput = z.infer<typeof AdmissionsContentSchema>
+export type AdmissionsContent = Omit<AdmissionsContentInput, 'id'> & { id: string }
