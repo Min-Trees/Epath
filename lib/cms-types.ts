@@ -375,6 +375,7 @@ export const CollectionNames = {
   navigation: 'navigation',
   media: 'media',
   backups: 'backups',
+  promoPopup: 'promo-popup',
 } as const
 
 export type CollectionName = (typeof CollectionNames)[keyof typeof CollectionNames]
@@ -620,3 +621,31 @@ export const AboutContentSchema = z.object({
 })
 export type AboutContentInput = z.infer<typeof AboutContentSchema>
 export type AboutContent = Omit<AboutContentInput, 'id'> & { id: string }
+
+// ----------- Promo / Advisory Lead Popup -----------
+export const PromoPopupSchema = z.object({
+  id: z.string().optional(),
+  isActive: z.boolean().default(true),
+  delaySeconds: z.number().int().nonnegative().default(15),
+  cooldownHours: z.number().int().nonnegative().default(12),
+  // Left Visual Column
+  imageUrl: z.string().default('/images/admissions/admissions-consultation.jpg'),
+  tag: LocalizedStringSchema,
+  tagDescription: LocalizedStringSchema,
+  // Right Content Column
+  badge: LocalizedStringSchema,
+  title: LocalizedStringSchema,
+  description: LocalizedStringSchema,
+  benefits: z.object({
+    vi: z.array(z.string()).default([]),
+    en: z.array(z.string()).default([]),
+  }),
+  // Action Buttons
+  showChatbotButton: z.boolean().default(true),
+  chatbotButtonText: LocalizedStringSchema,
+  ctaText: LocalizedStringSchema,
+  ctaLink: z.string().default('/admissions#contact'),
+  dismissText: LocalizedStringSchema,
+})
+export type PromoPopupInput = z.infer<typeof PromoPopupSchema>
+export type PromoPopup = Omit<PromoPopupInput, 'id'> & { id: string }

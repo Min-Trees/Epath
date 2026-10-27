@@ -48,6 +48,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { href: '/admin/pages', label: 'Bố cục trang (Page Builder)' },
       { href: '/admin/hero-content', label: 'Banner & Slide Hero' },
       { href: '/admin/featured-courses', label: 'Khóa học nổi bật (Home)' },
+      { href: '/admin/promo-popup', label: 'Popup quảng cáo & Tư vấn' },
       { href: '/admin/about-content', label: 'Giới thiệu & Tầm nhìn' },
       { href: '/admin/core-values', label: 'Giá trị cốt lõi' },
       { href: '/admin/achievements', label: 'Thành tích học sinh' },

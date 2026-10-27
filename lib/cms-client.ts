@@ -19,6 +19,8 @@ import type {
   SiteSettingsInput,
   HeroContentInput,
   AboutContentInput,
+  PromoPopupInput,
+  PromoPopup,
   LeadInput,
   BlogPostInput,
   Lead,
@@ -262,6 +264,15 @@ export const cms = {
       request<{ ok: true }>(`${listUrl('about-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) =>
       request<{ ok: true }>(`${listUrl('about-content')}/${id}`, { method: 'DELETE' }),
+  },
+  promoPopup: {
+    list: () => request<CmsListResponse<PromoPopup>>(listUrl('promo-popup')).then((r) => r.items),
+    create: (data: PromoPopupInput) =>
+      request<{ id: string }>(listUrl('promo-popup'), { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<PromoPopupInput>) =>
+      request<{ ok: true }>(`${listUrl('promo-popup')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('promo-popup')}/${id}`, { method: 'DELETE' }),
   },
   activityLogs: {
     list: (params: { collection?: string; action?: string; limit?: number } = {}) => {
