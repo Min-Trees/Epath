@@ -8,8 +8,6 @@ import { useCmsContext } from '@/lib/cms-context'
 import type { Program, Locale } from '@/lib/cms-types'
 import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import {
-  ProgramsHero,
-  ProgramsToolbar,
   ProgramsRoadmap,
   ProgramsCatalog,
   ProgramsEdOptions,
@@ -98,64 +96,24 @@ export default function ProgramsPage() {
 
   const isVi = locale === 'vi'
 
-  const heroWelcome =
-    pc?.hero?.welcomeBadge?.[locale] ||
-    (isVi ? 'LỘ TRÌNH ĐÀO TẠO CHUẨN QUỐC TẾ' : 'ACCREDITED US & CAMBRIDGE CURRICULUM')
-  const heroTitle =
-    pc?.hero?.title?.[locale] ||
-    (isVi ? 'Hệ Thống Chương Trình Đào Tạo EPath Education' : 'EPath Education Academic Curriculum & Programs')
-  const heroSubtitle =
-    pc?.hero?.subtitle?.[locale] ||
-    (isVi
-      ? 'Hành trình đào tạo liền mạch từ Mầm non đến THPT, trang bị năng lực học thuật chuẩn Hoa Kỳ và bằng Tú tài Mỹ Cognia & WASC.'
-      : 'A continuous academic journey from Kindergarten to Grade 12, equipping learners with US academic competencies and accredited diplomas.')
+  const isRoadmapVisible =
+    pc?.showRoadmap !== false && pc?.roadmap?.isActive !== false
 
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          1. HERO BANNER (Solves header overlap & establishes visual hierarchy)
+          1. CONTINUOUS K-12 ROADMAP INFOGRAPHIC (Toggleable via Admin)
       ─────────────────────────────────────────────────────────────── */}
-      <ProgramsHero
-        welcomeText={heroWelcome}
-        title={heroTitle}
-        subtitle={heroSubtitle}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          2. PROGRAMS TOOLBAR (6 Program Categories Filter Bar)
-      ─────────────────────────────────────────────────────────────── */}
-      <ProgramsToolbar
-        locale={locale}
-        selectedLevel={selectedLevel}
-        onChangeSelectedLevel={setSelectedLevel}
-        levelDefs={levelDefs}
-        translations={{
-          all: isVi ? 'Tất cả chương trình' : 'All Programs',
-          filter: isVi ? 'Nhóm chương trình' : 'Filter by Track',
-          levels: {
-            'breakthrough-english': isVi ? 'Tiếng Anh Bứt Phá' : 'SpeedUp English',
-            'science-foundation': isVi ? 'Nền tảng Khoa học (Mầm non - Gr 2)' : 'Science & Academic Foundation',
-            'elementary': isVi ? 'Tiểu học (Lớp 3 – 5)' : 'Elementary (Gr 3–5)',
-            'middle': isVi ? 'THCS (Lớp 6 – 8)' : 'Middle School (Gr 6–8)',
-            'high': isVi ? 'THPT (Lớp 9 – 12)' : 'High School (Gr 9–12)',
-            'personal-development': isVi ? 'Phát triển Năng lực Cá nhân' : 'Personal Development',
-            kindergarten: isVi ? 'Mầm non' : 'Kindergarten',
-          },
-        }}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          3. CONTINUOUS K-12 ROADMAP INFOGRAPHIC (Toggleable via Admin)
-      ─────────────────────────────────────────────────────────────── */}
-      {pc?.showRoadmap !== false && pc?.roadmap?.isActive !== false && (
-        <ProgramsRoadmap locale={locale} isTop={false} />
+      {isRoadmapVisible && (
+        <ProgramsRoadmap locale={locale} isTop={true} />
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          4. CURRICULUM CATALOG SHOWCASE (Cards grouped by 6 categories)
+          2. CURRICULUM CATALOG SHOWCASE (Cards grouped by 6 categories)
       ─────────────────────────────────────────────────────────────── */}
       <ProgramsCatalog
         locale={locale}
+        isTop={!isRoadmapVisible}
         programs={programs}
         filteredLevels={filteredLevels}
         searchQuery={searchQuery}

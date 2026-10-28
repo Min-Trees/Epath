@@ -18,6 +18,7 @@ interface Props {
   onResetSearch: () => void
   onSelectProgram?: (program: Program) => void
   compact?: boolean
+  isTop?: boolean
   translations: {
     curriculum: string
     register: string
@@ -76,6 +77,7 @@ export function ProgramsCatalog({
   onResetSearch,
   onSelectProgram,
   compact,
+  isTop = false,
   translations,
 }: Props) {
   const isVi = locale === 'vi'
@@ -109,7 +111,7 @@ export function ProgramsCatalog({
 
   if (totalMatching === 0 && searchQuery) {
     return (
-      <section className={`${compact ? 'py-12' : 'py-20'} bg-white`}>
+      <section className={`${compact ? 'py-12' : isTop ? 'pt-28 sm:pt-32 pb-16' : 'py-20'} bg-white`}>
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto text-center p-8 bg-[#F6F5F1] rounded-3xl border border-[#DEDDD6]">
             <AlertCircle className="w-12 h-12 text-[#F26522] mx-auto mb-4" />
@@ -136,7 +138,7 @@ export function ProgramsCatalog({
   }
 
   return (
-    <section className={`${compact ? 'py-8 sm:py-10' : 'py-10 sm:py-14'} bg-white`}>
+    <section className={`${compact ? 'py-8 sm:py-10' : isTop ? 'pt-28 sm:pt-32 pb-10 sm:pb-14' : 'py-10 sm:py-14'} bg-white`}>
       <div className="container mx-auto px-4">
         <div className="space-y-10 sm:space-y-12 max-w-6xl mx-auto">
           {filteredLevels.map((level, levelIndex) => {
