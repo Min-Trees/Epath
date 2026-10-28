@@ -95,16 +95,19 @@ export function Header() {
         { label: t('vision'), href: `/${locale}/about#vision` },
         { label: t('mission'), href: `/${locale}/about#mission` },
         { label: t('values'), href: `/${locale}/about#values` },
+        { label: t('achievements'), href: `/${locale}/about#achievements` },
       ],
     },
     {
       label: t('programs'),
       href: `/${locale}/programs`,
       children: [
-        { label: t('kindergarten'), href: `/${locale}/programs?level=kindergarten` },
-        { label: t('elementary'), href: `/${locale}/programs?level=elementary` },
-        { label: t('middle'), href: `/${locale}/programs?level=middle` },
-        { label: t('high'), href: `/${locale}/programs?level=high` },
+        { label: t('breakthroughEnglish'), href: `/${locale}/programs#breakthrough-english` },
+        { label: t('scienceFoundation'), href: `/${locale}/programs#science-foundation` },
+        { label: t('elementary'), href: `/${locale}/programs#elementary` },
+        { label: t('middle'), href: `/${locale}/programs#middle` },
+        { label: t('high'), href: `/${locale}/programs#high` },
+        { label: t('personalDevelopment'), href: `/${locale}/programs#personal-development` },
       ],
     },
     { label: t('partners'), href: `/${locale}/partners` },
@@ -112,12 +115,20 @@ export function Header() {
       label: t('admissions'),
       href: `/${locale}/admissions`,
       children: [
+        { label: t('admissionsProcess'), href: `/${locale}/admissions#steps` },
         { label: t('tuition'), href: `/${locale}/admissions#tuition` },
         { label: t('faq'), href: `/${locale}/admissions#faq` },
         { label: t('contact'), href: `/${locale}/admissions#contact` },
       ],
     },
-    { label: t('events'), href: `/${locale}/events` },
+    {
+      label: t('events'),
+      href: `/${locale}/events`,
+      children: [
+        { label: t('featuredEvents'), href: `/${locale}/events#featured` },
+        { label: t('news'), href: `/${locale}/events#news` },
+      ],
+    },
   ]
 
   return (
@@ -195,7 +206,7 @@ export function Header() {
                           transition={{ duration: duration.fast, ease: easeOut }}
                           // z-[60] sits above chat-bubble (z-50) and any
                           // sticky / positioned siblings.
-                          className="absolute top-full left-0 mt-1 min-w-[240px] epath-dropdown-panel z-[60] rounded-none"
+                          className="absolute top-full left-0 mt-1 min-w-[280px] sm:min-w-[340px] epath-dropdown-panel z-[60] rounded-none"
                           onMouseEnter={() => setActiveDropdown(item.label)}
                           onMouseLeave={() => setActiveDropdown(null)}
                         >
