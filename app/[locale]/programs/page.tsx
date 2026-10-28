@@ -127,12 +127,12 @@ export default function ProgramsPage() {
             isVi ? 'Không tìm thấy chương trình phù hợp' : 'No matching programs found',
           clearFilters: isVi ? 'Xóa bộ lọc & tìm kiếm' : 'Clear filters',
           levels: {
-            'breakthrough-english': isVi ? '1. Chương trình Tiếng Anh Bứt Phá' : '1. SpeedUp English Programs',
-            'science-foundation': isVi ? '2. Khóa học Nền tảng Khoa học Quốc tế (Mầm non, Grade 1 & 2)' : '2. International Science & Academic Foundation',
-            elementary: isVi ? '3. Chương trình Tiểu học (Lớp 3 – 5: Tiêu chuẩn & Quốc tế)' : '3. Elementary Programs (Grades 3–5)',
-            middle: isVi ? '4. Chương trình Trung học Cơ sở (Lớp 6 – 8: Foundation & U.S. Middle School)' : '4. Middle School Programs (Grades 6–8)',
-            high: isVi ? '5. Chương trình Trung học Phổ thông (Lớp 9 – 12: Dual Diploma & U.S. Diploma)' : '5. High School Programs (Grades 9–12)',
-            'personal-development': isVi ? '6. Phát triển Năng lực Cá nhân (Personal Development & FabLab EIU)' : '6. Personal Development & Extracurriculars',
+            'breakthrough-english': isVi ? 'Chương trình Tiếng Anh Bứt Phá' : 'SpeedUp English Programs',
+            'science-foundation': isVi ? 'Khóa học Nền tảng Khoa học Quốc tế (Mầm non, Grade 1 & 2)' : 'International Science & Academic Foundation (PreK – Grade 2)',
+            elementary: isVi ? 'Chương trình Tiểu học (Lớp 3 – 5: Tiêu chuẩn & Quốc tế)' : 'Elementary Programs (Grades 3–5)',
+            middle: isVi ? 'Chương trình Trung học Cơ sở (Lớp 6 – 8: Foundation & U.S. Middle School)' : 'Middle School Programs (Grades 6–8)',
+            high: isVi ? 'Chương trình Trung học Phổ thông (Lớp 9 – 12: Dual Diploma & U.S. Diploma)' : 'High School Programs (Grades 9–12)',
+            'personal-development': isVi ? 'Phát triển Năng lực Cá nhân (Personal Development & FabLab EIU)' : 'Personal Development & Extracurriculars',
             kindergarten: isVi ? 'Mầm non' : 'Kindergarten',
           },
         }}

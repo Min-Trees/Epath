@@ -166,14 +166,9 @@ export function ProgramsCatalog({
                     <LevelIcon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: level.color }} />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl sm:text-2xl font-bold text-[#20242B]">
-                        {translations.levels[level.id] || level.id}
-                      </h2>
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#F6F5F1] border border-[#DEDDD6] text-[#5C6069]">
-                        {levelPrograms.length} {isVi ? 'chương trình' : 'programs'}
-                      </span>
-                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#20242B]">
+                      {translations.levels[level.id] || level.id}
+                    </h2>
                     <p className="text-xs sm:text-sm text-[#5C6069]">{translations.curriculum}</p>
                   </div>
                 </div>

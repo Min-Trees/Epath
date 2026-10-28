@@ -187,7 +187,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#breakthrough-english`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '1. Tiếng Anh Bứt Phá' : '1. SpeedUp English'}
+                  {isVi ? 'Tiếng Anh Bứt Phá' : 'SpeedUp English'}
                 </Link>
               </li>
               <li>
@@ -195,7 +195,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#science-foundation`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '2. Nền tảng Khoa học Quốc tế (Mầm non - Gr 2)' : '2. Science & Academic Foundation'}
+                  {isVi ? 'Nền tảng Khoa học Quốc tế (Mầm non - Gr 2)' : 'Science & Academic Foundation'}
                 </Link>
               </li>
               <li>
@@ -203,7 +203,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#elementary`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '3. Chương trình Tiểu học (Lớp 3 – 5)' : '3. Elementary Programs (Grades 3–5)'}
+                  {isVi ? 'Chương trình Tiểu học (Lớp 3 – 5)' : 'Elementary Programs (Grades 3–5)'}
                 </Link>
               </li>
               <li>
@@ -211,7 +211,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#middle`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '4. Chương trình THCS (Lớp 6 – 8)' : '4. Middle School Programs (Grades 6–8)'}
+                  {isVi ? 'Chương trình THCS (Lớp 6 – 8)' : 'Middle School Programs (Grades 6–8)'}
                 </Link>
               </li>
               <li>
@@ -219,7 +219,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#high`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '5. Chương trình THPT (Lớp 9 – 12)' : '5. High School Programs (Grades 9–12)'}
+                  {isVi ? 'Chương trình THPT (Lớp 9 – 12)' : 'High School Programs (Grades 9–12)'}
                 </Link>
               </li>
               <li>
@@ -227,7 +227,7 @@ export function Footer(props: FooterProps) {
                   href={`/${locale}/programs#personal-development`}
                   className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
                 >
-                  {isVi ? '6. Phát triển Năng lực Cá nhân' : '6. Personal Development'}
+                  {isVi ? 'Phát triển Năng lực Cá nhân' : 'Personal Development'}
                 </Link>
               </li>
             </ul>
