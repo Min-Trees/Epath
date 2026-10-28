@@ -792,7 +792,9 @@ export type RoadmapStage = z.infer<typeof RoadmapStageSchema>
 
 export const ProgramsContentSchema = z.object({
   id: z.string().optional(),
+  showRoadmap: z.boolean().default(true),
   roadmap: z.object({
+    isActive: z.boolean().default(true),
     badge: LocalizedStringSchema,
     title: LocalizedStringSchema,
     subtitle: LocalizedStringSchema,

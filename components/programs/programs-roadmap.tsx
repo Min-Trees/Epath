@@ -224,6 +224,10 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
   const isVi = locale === 'vi'
   const { data: cms } = useCmsContext()
 
+  if (cms.programsContent?.showRoadmap === false || cms.programsContent?.roadmap?.isActive === false) {
+    return null
+  }
+
   const roadmapData = cms.programsContent?.roadmap
   const hasCustomStages = Boolean(roadmapData?.stages && roadmapData.stages.length > 0)
 

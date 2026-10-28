@@ -83,7 +83,9 @@ export default function ProgramsPage() {
       {/* ─────────────────────────────────────────────────────────────
           1. CONTINUOUS K-12 ROADMAP INFOGRAPHIC
       ─────────────────────────────────────────────────────────────── */}
-      <ProgramsRoadmap locale={locale} />
+      {pc?.showRoadmap !== false && pc?.roadmap?.isActive !== false && (
+        <ProgramsRoadmap locale={locale} />
+      )}
 
       {/* ─────────────────────────────────────────────────────────────
           2. CURRICULUM CATALOG SHOWCASE (Cards with View Details & Register)

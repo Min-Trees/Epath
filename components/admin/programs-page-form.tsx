@@ -51,8 +51,13 @@ export function ProgramsPageForm() {
         if (items.length > 0) {
           const item = items[0]
           setDocId(item.id)
+          const isRoadmapActive = item.showRoadmap !== false && item.roadmap?.isActive !== false
           setForm({
-            roadmap: item.roadmap || DEFAULT_PROGRAMS_CONTENT.roadmap,
+            showRoadmap: isRoadmapActive,
+            roadmap: {
+              ...(item.roadmap || DEFAULT_PROGRAMS_CONTENT.roadmap),
+              isActive: isRoadmapActive,
+            },
             edoptions: item.edoptions || DEFAULT_PROGRAMS_CONTENT.edoptions,
             personalized: item.personalized || DEFAULT_PROGRAMS_CONTENT.personalized,
             cta: item.cta || DEFAULT_PROGRAMS_CONTENT.cta,
@@ -252,6 +257,52 @@ export function ProgramsPageForm() {
       ─────────────────────────────────────────────────────────────── */}
       {subTab === 'roadmap' && (
         <div className="space-y-6">
+          {/* Roadmap Visibility Toggle Card */}
+          <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
+            <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">
+              <CardTitle className="text-base font-bold text-[#1E3570] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-[#8DC63F]" />
+                  <span>Trạng thái Hiển thị Khối &ldquo;Hành Trình Học Thuật Xuyên Suốt Từ Mầm Non Đến Tú Tài Hoa Kỳ&rdquo;</span>
+                </div>
+                <span
+                  className={`text-xs px-2.5 py-1 rounded-full font-bold ${
+                    form.showRoadmap !== false && form.roadmap.isActive !== false
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'bg-gray-100 text-gray-500 border border-gray-200'
+                  }`}
+                >
+                  {form.showRoadmap !== false && form.roadmap.isActive !== false ? 'Đang Hiển Thị' : 'Đang Tắt (Ẩn)'}
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-5">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.showRoadmap !== false && form.roadmap.isActive !== false}
+                  onChange={(e) => {
+                    const checked = e.target.checked
+                    setForm({
+                      ...form,
+                      showRoadmap: checked,
+                      roadmap: {
+                        ...form.roadmap,
+                        isActive: checked,
+                      },
+                    })
+                  }}
+                  className="rounded border-[#DEDDD6] text-[#2E4A9E] focus:ring-[#2E4A9E] w-4 h-4"
+                />
+                <span className="text-xs font-bold text-[#20242B]">
+                  Bật hiển thị khối Lộ trình đào tạo K-12 liên thông trên trang https://www.epath.edu.vn/vi/programs
+                </span>
+              </label>
+              <p className="text-[11px] text-[#5C6069] mt-2 ml-7 leading-relaxed">
+                Khi tắt tùy chọn này, toàn bộ khối &ldquo;Hành Trình Học Thuật Xuyên Suốt Từ Mầm Non Đến Tú Tài Hoa Kỳ&rdquo; (gồm tiêu đề và 4 giai đoạn Mầm non, Tiểu học, THCS, THPT) sẽ được ẩn khỏi trang Chương trình đào tạo phía người dùng.
+              </p>
+            </CardContent>
+          </Card>
           <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
             <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">
               <CardTitle className="text-base font-bold text-[#1E3570] flex items-center gap-2">

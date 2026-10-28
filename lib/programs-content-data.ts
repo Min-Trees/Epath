@@ -1,7 +1,9 @@
 import type { ProgramsContentInput } from './cms-types'
 
 export const DEFAULT_PROGRAMS_CONTENT: ProgramsContentInput = {
+  showRoadmap: true,
   roadmap: {
+    isActive: true,
     badge: {
       vi: 'LỘ TRÌNH ĐÀO TẠO K-12 LIÊN THÔNG',
       en: 'CONTINUOUS K-12 PATHWAY',
