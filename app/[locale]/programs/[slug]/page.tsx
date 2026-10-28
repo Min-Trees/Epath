@@ -23,6 +23,7 @@ import {
   ChevronRight,
   Calendar,
   Share2,
+  Compass,
 } from 'lucide-react'
 
 import { useCmsContext } from '@/lib/cms-context'
@@ -43,23 +44,32 @@ interface LevelDef {
 }
 
 const levelDefs: Record<string, LevelDef> = {
-  kindergarten: {
-    id: 'kindergarten',
-    labelKey: 'kindergarten',
-    icon: Sprout,
+  'breakthrough-english': {
+    id: 'breakthrough-english',
+    labelKey: 'breakthrough-english',
+    icon: Sparkles,
     color: '#2E4A9E',
     bgColor: 'rgba(46, 74, 158, 0.1)',
     lightBg: '#EAEFFB',
     borderColor: '#2E4A9E',
   },
-  elementary: {
-    id: 'elementary',
-    labelKey: 'elementary',
-    icon: Book,
+  'science-foundation': {
+    id: 'science-foundation',
+    labelKey: 'science-foundation',
+    icon: Sprout,
     color: '#5C9024',
     bgColor: 'rgba(141, 198, 63, 0.15)',
     lightBg: '#F4F9EC',
     borderColor: '#8DC63F',
+  },
+  elementary: {
+    id: 'elementary',
+    labelKey: 'elementary',
+    icon: Book,
+    color: '#2E4A9E',
+    bgColor: 'rgba(46, 74, 158, 0.1)',
+    lightBg: '#EAEFFB',
+    borderColor: '#2E4A9E',
   },
   middle: {
     id: 'middle',
@@ -79,13 +89,34 @@ const levelDefs: Record<string, LevelDef> = {
     lightBg: '#EAEFFB',
     borderColor: '#1E3570',
   },
+  'personal-development': {
+    id: 'personal-development',
+    labelKey: 'personal-development',
+    icon: Compass,
+    color: '#7C3AED',
+    bgColor: 'rgba(124, 58, 237, 0.1)',
+    lightBg: '#F5F3FF',
+    borderColor: '#7C3AED',
+  },
+  kindergarten: {
+    id: 'kindergarten',
+    labelKey: 'kindergarten',
+    icon: Sprout,
+    color: '#2E4A9E',
+    bgColor: 'rgba(46, 74, 158, 0.1)',
+    lightBg: '#EAEFFB',
+    borderColor: '#2E4A9E',
+  },
 }
 
 const DEFAULT_LEVEL_IMAGES: Record<string, string> = {
-  kindergarten: '/images/programs/program-kindy.jpg',
+  'breakthrough-english': '/images/programs/program-kindy.jpg',
+  'science-foundation': '/images/programs/program-elementary.jpg',
   elementary: '/images/programs/program-elementary.jpg',
   middle: '/images/programs/program-middle.jpg',
   high: '/images/programs/program-high.jpg',
+  'personal-development': '/images/programs/program-dual-diploma.jpg',
+  kindergarten: '/images/programs/program-kindy.jpg',
 }
 
 function formatAgeRange(ageRange: string | undefined, locale: Locale): string {
