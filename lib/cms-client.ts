@@ -23,6 +23,10 @@ import type {
   PromoPopup,
   AdmissionsContentInput,
   AdmissionsContent,
+  AchievementsContentInput,
+  AchievementsContent,
+  ProgramsContentInput,
+  ProgramsContent,
   LeadInput,
   BlogPostInput,
   Lead,
@@ -284,6 +288,24 @@ export const cms = {
       request<{ ok: true }>(`${listUrl('admissions-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) =>
       request<{ ok: true }>(`${listUrl('admissions-content')}/${id}`, { method: 'DELETE' }),
+  },
+  achievementsContent: {
+    list: () => request<CmsListResponse<AchievementsContent>>(listUrl('achievements-content')).then((r) => r.items),
+    create: (data: AchievementsContentInput) =>
+      request<{ id: string }>(listUrl('achievements-content'), { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<AchievementsContentInput>) =>
+      request<{ ok: true }>(`${listUrl('achievements-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('achievements-content')}/${id}`, { method: 'DELETE' }),
+  },
+  programsContent: {
+    list: () => request<CmsListResponse<ProgramsContent>>(listUrl('programs-content')).then((r) => r.items),
+    create: (data: ProgramsContentInput) =>
+      request<{ id: string }>(listUrl('programs-content'), { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<ProgramsContentInput>) =>
+      request<{ ok: true }>(`${listUrl('programs-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('programs-content')}/${id}`, { method: 'DELETE' }),
   },
   activityLogs: {
     list: (params: { collection?: string; action?: string; limit?: number } = {}) => {

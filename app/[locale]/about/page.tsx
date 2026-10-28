@@ -10,6 +10,7 @@ import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
 import type { Locale } from '@/lib/cms-types'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
+import { AchievementsOverviewSection } from '@/components/sections/achievements-overview-section'
 
 
 // Fallback Faculty & Academic Board
@@ -678,150 +679,7 @@ export default function AboutPage() {
       {/* ─────────────────────────────────────────────────────────────
           ACHIEVEMENTS – Verified Academic Metrics & Olympiad Records
       ─────────────────────────────────────────────────────────────── */}
-      <section className="py-12 sm:py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={inViewViewport}
-            transition={{ duration: duration.normal, ease: easeOut }}
-            className="text-center mb-10 max-w-2xl mx-auto"
-          >
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#F26522]/10 text-[#F26522] text-xs font-semibold mb-3">
-              <Trophy className="w-3.5 h-3.5" />
-              {t('achievements.title')}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
-              {t('achievements.title')}
-            </h2>
-            <p className="text-sm sm:text-base text-[#5C6069]">
-              {t('achievements.subtitle')}
-            </p>
-          </motion.div>
-
-          <div className="max-w-6xl mx-auto space-y-8">
-            {/* 4 Major Academic Metrics */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inViewViewport}
-                transition={{ duration: duration.slow, delay: 0.05, ease: easeOut }}
-                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/30 hover:shadow-md transition-all text-center"
-              >
-                <div className="text-3xl sm:text-4xl font-black text-[#2E4A9E] mb-1">
-                  {t('achievements.stat1Number')}
-                </div>
-                <h4 className="font-bold text-[#20242B] text-sm mb-1">
-                  {t('achievements.stat1Label')}
-                </h4>
-                <p className="text-xs text-[#5C6069] leading-relaxed">
-                  {t('achievements.stat1Desc')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inViewViewport}
-                transition={{ duration: duration.slow, delay: 0.1, ease: easeOut }}
-                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#5C9024]/40 hover:shadow-md transition-all text-center"
-              >
-                <div className="text-3xl sm:text-4xl font-black text-[#5C9024] mb-1">
-                  {t('achievements.stat2Number')}
-                </div>
-                <h4 className="font-bold text-[#20242B] text-sm mb-1">
-                  {t('achievements.stat2Label')}
-                </h4>
-                <p className="text-xs text-[#5C6069] leading-relaxed">
-                  {t('achievements.stat2Desc')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inViewViewport}
-                transition={{ duration: duration.slow, delay: 0.15, ease: easeOut }}
-                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#F26522]/30 hover:shadow-md transition-all text-center"
-              >
-                <div className="text-3xl sm:text-4xl font-black text-[#F26522] mb-1">
-                  {t('achievements.stat3Number')}
-                </div>
-                <h4 className="font-bold text-[#20242B] text-sm mb-1">
-                  {t('achievements.stat3Label')}
-                </h4>
-                <p className="text-xs text-[#5C6069] leading-relaxed">
-                  {t('achievements.stat3Desc')}
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={inViewViewport}
-                transition={{ duration: duration.slow, delay: 0.2, ease: easeOut }}
-                className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#1E3570]/30 hover:shadow-md transition-all text-center"
-              >
-                <div className="text-3xl sm:text-4xl font-black text-[#1E3570] mb-1">
-                  {t('achievements.stat4Number')}
-                </div>
-                <h4 className="font-bold text-[#20242B] text-sm mb-1">
-                  {t('achievements.stat4Label')}
-                </h4>
-                <p className="text-xs text-[#5C6069] leading-relaxed">
-                  {t('achievements.stat4Desc')}
-                </p>
-              </motion.div>
-            </div>
-
-            {/* Olympiad & STEAM Maker Highlight Banner with Image */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={inViewViewport}
-              transition={{ duration: duration.slow, delay: 0.25, ease: easeOut }}
-              className="rounded-3xl border border-[#2E4A9E]/20 bg-gradient-to-br from-[#1E3570]/5 via-white to-[#8DC63F]/5 shadow-md overflow-hidden grid md:grid-cols-12 gap-0 items-stretch"
-            >
-              <div className="md:col-span-5 relative min-h-[220px] md:min-h-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/about/about-achievements.jpg"
-                  alt={t('achievements.olympiadTitle')}
-                  className="w-full h-full object-cover absolute inset-0"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#20242B] text-xs font-bold shadow-md">
-                  <Trophy className="w-4 h-4 text-[#F26522]" />
-                  <span>SASMO • AMC • TIMO • Vanda</span>
-                </div>
-              </div>
-              <div className="md:col-span-7 p-6 sm:p-8 flex flex-col justify-center">
-                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-bold mb-3 w-fit">
-                  <Trophy className="w-3.5 h-3.5 text-[#2E4A9E]" />
-                  <span>{locale === 'vi' ? 'Dấu Ấn Xuất Sắc' : 'Outstanding Milestone'}</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#20242B] mb-2.5 leading-snug">
-                  {t('achievements.olympiadTitle')}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed mb-6">
-                  {t('achievements.olympiadDesc')}
-                </p>
-                <div className="flex items-center gap-4">
-                  <Link
-                    href={`/${locale}/programs`}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2E4A9E] text-white font-bold text-xs shadow-md hover:bg-[#1E3570] transition-colors"
-                  >
-                    <span>{locale === 'vi' ? 'Xem Lộ Trình Học Thuật' : 'Explore Academic Pathways'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <AchievementsOverviewSection />
 
       {/* ─────────────────────────────────────────────────────────────
           BOTTOM CTA

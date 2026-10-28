@@ -377,6 +377,8 @@ export const CollectionNames = {
   backups: 'backups',
   promoPopup: 'promo-popup',
   admissionsContent: 'admissions-content',
+  achievementsContent: 'achievements-content',
+  programsContent: 'programs-content',
 } as const
 
 export type CollectionName = (typeof CollectionNames)[keyof typeof CollectionNames]
@@ -742,3 +744,114 @@ export const AdmissionsContentSchema = z.object({
 })
 export type AdmissionsContentInput = z.infer<typeof AdmissionsContentSchema>
 export type AdmissionsContent = Omit<AdmissionsContentInput, 'id'> & { id: string }
+
+// ----------- Achievements Overview Content -----------
+export const AchievementMetricSchema = z.object({
+  number: z.string().default(''),
+  label: LocalizedStringSchema,
+  desc: LocalizedStringSchema,
+})
+export type AchievementMetric = z.infer<typeof AchievementMetricSchema>
+
+export const AchievementsContentSchema = z.object({
+  id: z.string().optional(),
+  badge: LocalizedStringSchema.optional(),
+  title: LocalizedStringSchema,
+  subtitle: LocalizedStringSchema,
+  desc: LocalizedStringSchema,
+  metrics: z.array(AchievementMetricSchema).default([]),
+  olympiad: z.object({
+    imageUrl: z.string().default('/images/about/about-achievements.jpg'),
+    badge: z.string().default('SASMO • AMC • TIMO • Vanda'),
+    tag: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    desc: LocalizedStringSchema,
+    ctaText: LocalizedStringSchema,
+    ctaLink: z.string().default('/programs'),
+  }),
+})
+export type AchievementsContentInput = z.infer<typeof AchievementsContentSchema>
+export type AchievementsContent = Omit<AchievementsContentInput, 'id'> & { id: string }
+
+// ----------- Programs Page Content -----------
+export const RoadmapStageSchema = z.object({
+  step: z.string().default('01'),
+  level: z.string().default('kindergarten'),
+  image: z.string().default('/images/programs/program-kindy.jpg'),
+  title: LocalizedStringSchema,
+  subtitle: LocalizedStringSchema,
+  color: z.string().default('#2E4A9E'),
+  badges: z.array(z.string()).default([]),
+  modelTag: LocalizedStringSchema,
+  outcomes: z.object({
+    vi: z.array(z.string()).default([]),
+    en: z.array(z.string()).default([]),
+  }),
+})
+export type RoadmapStage = z.infer<typeof RoadmapStageSchema>
+
+export const ProgramsContentSchema = z.object({
+  id: z.string().optional(),
+  roadmap: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    stages: z.array(RoadmapStageSchema).default([]),
+  }),
+  edoptions: z.object({
+    badge: LocalizedStringSchema,
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    dual: z.object({
+      label: LocalizedStringSchema,
+      title: LocalizedStringSchema,
+      desc: LocalizedStringSchema,
+      p2: LocalizedStringSchema,
+      imageUrl: z.string().default('/images/programs/program-dual-diploma.jpg'),
+      diplomasTitle: LocalizedStringSchema,
+      diplomas: z.object({
+        vi: z.array(z.string()).default([]),
+        en: z.array(z.string()).default([]),
+      }),
+      p3: LocalizedStringSchema.optional(),
+      p4: LocalizedStringSchema.optional(),
+      note: LocalizedStringSchema,
+    }),
+    fulltime: z.object({
+      label: LocalizedStringSchema,
+      title: LocalizedStringSchema,
+      desc: LocalizedStringSchema,
+      p2: LocalizedStringSchema,
+      imageUrl: z.string().default('/images/programs/program-high-school.jpg'),
+      fitTitle: LocalizedStringSchema,
+      fit: z.object({
+        vi: z.array(z.string()).default([]),
+        en: z.array(z.string()).default([]),
+      }),
+      p3: LocalizedStringSchema.optional(),
+      p4: LocalizedStringSchema.optional(),
+    }),
+  }),
+  personalized: z.object({
+    title: LocalizedStringSchema,
+    desc: LocalizedStringSchema,
+    goalsTitle: LocalizedStringSchema,
+    goals: z.object({
+      vi: z.array(z.string()).default([]),
+      en: z.array(z.string()).default([]),
+    }),
+    p2: LocalizedStringSchema,
+  }),
+  cta: z.object({
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    buttonText: LocalizedStringSchema,
+    buttonLink: z.string().default('/admissions#contact'),
+  }),
+  showAchievements: z.boolean().default(true),
+  achievementsTitle: LocalizedStringSchema.optional(),
+  achievementsSubtitle: LocalizedStringSchema.optional(),
+})
+export type ProgramsContentInput = z.infer<typeof ProgramsContentSchema>
+export type ProgramsContent = Omit<ProgramsContentInput, 'id'> & { id: string }
+

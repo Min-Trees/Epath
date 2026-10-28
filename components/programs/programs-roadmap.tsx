@@ -224,11 +224,44 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
   const isVi = locale === 'vi'
   const { data: cms } = useCmsContext()
 
+  const roadmapData = cms.programsContent?.roadmap
+  const hasCustomStages = Boolean(roadmapData?.stages && roadmapData.stages.length > 0)
+
   const rawPathways = (cms.pathways || cms.learningPathways || [])
     .filter((p) => p.isActive !== false)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
-  const steps = rawPathways.length > 0
+  const steps = hasCustomStages
+    ? roadmapData!.stages.map((stage) => {
+        const config = LEVEL_CONFIG[stage.level] || {
+          color: stage.color || '#2E4A9E',
+          icon: Sprout,
+          defaultImage: '/images/programs/program-kindy.jpg',
+        }
+        const title = getLocalized(stage.title, locale)
+        const subtitle = getLocalized(stage.subtitle, locale)
+        const modelTag = getLocalized(stage.modelTag, locale)
+        const badges = stage.badges || []
+        const outcomes = (stage.outcomes && stage.outcomes[locale]?.length)
+          ? stage.outcomes[locale]
+          : (stage.outcomes?.vi || [])
+
+        return {
+          id: stage.step,
+          step: stage.step,
+          level: stage.level,
+          title,
+          subtitle,
+          modelTag,
+          badges,
+          outcomes,
+          image: stage.image || config.defaultImage,
+          ctaUrl: `/${locale}/admissions?program=${stage.level}`,
+          color: stage.color || config.color,
+          icon: config.icon,
+        }
+      })
+    : rawPathways.length > 0
     ? rawPathways.map((p, idx) => {
         const config = LEVEL_CONFIG[p.level] || {
           color: '#2E4A9E',
@@ -285,15 +318,15 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
         <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EAEFFB] text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2.5">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{isVi ? 'Hành trình phát triển bền vững' : 'Continuous Educational Pathway'}</span>
+            <span>{getLocalized(roadmapData?.badge, locale) || (isVi ? 'Hành trình phát triển bền vững' : 'Continuous Educational Pathway')}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#20242B] mb-2">
-            {isVi ? 'Lộ Trình Học Tập Xuyên Suốt' : 'Continuous Learning Pathway'}
+            {getLocalized(roadmapData?.title, locale) || (isVi ? 'Lộ Trình Học Tập Xuyên Suốt' : 'Continuous Learning Pathway')}
           </h2>
           <p className="text-[#5C6069] text-xs sm:text-sm leading-relaxed">
-            {isVi
+            {getLocalized(roadmapData?.subtitle, locale) || (isVi
               ? 'Xây dựng năng lực học thuật và kỹ năng hội nhập quốc tế từ Mầm non đến khi nhận Bằng tốt nghiệp THPT Hoa Kỳ.'
-              : 'Building academic capabilities and global competency from Kindergarten to US High School Diploma.'}
+              : 'Building academic capabilities and global competency from Kindergarten to US High School Diploma.')}
           </p>
         </div>
 
