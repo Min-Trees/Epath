@@ -69,14 +69,30 @@ export function PartnersPageForm() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form),
         })
-        if (!res.ok) throw new Error('Không thể cập nhật cấu hình Trang Đối tác Quốc tế')
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}))
+          const detailMsg = errData.details?.fieldErrors
+            ? Object.entries(errData.details.fieldErrors)
+                .map(([k, v]) => `${k}: ${(v as string[]).join(', ')}`)
+                .join('; ')
+            : errData.error || `Không thể cập nhật cấu hình Trang Đối tác Quốc tế (${res.status})`
+          throw new Error(detailMsg)
+        }
       } else {
         const res = await fetch('/api/cms/partners-content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form),
         })
-        if (!res.ok) throw new Error('Không thể tạo mới cấu hình Trang Đối tác Quốc tế')
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}))
+          const detailMsg = errData.details?.fieldErrors
+            ? Object.entries(errData.details.fieldErrors)
+                .map(([k, v]) => `${k}: ${(v as string[]).join(', ')}`)
+                .join('; ')
+            : errData.error || `Không thể tạo mới cấu hình Trang Đối tác Quốc tế (${res.status})`
+          throw new Error(detailMsg)
+        }
         const json = await res.json()
         setDocId(json.id)
       }

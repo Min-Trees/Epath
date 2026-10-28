@@ -61,7 +61,10 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   })
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
-    throw new Error(data.error || `Request failed: ${res.status}`)
+    const errorMsg = data.details
+      ? JSON.stringify(data)
+      : data.error || `Request failed: ${res.status}`
+    throw new Error(errorMsg)
   }
   return res.json() as Promise<T>
 }

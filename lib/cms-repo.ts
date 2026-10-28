@@ -87,7 +87,7 @@ export async function updateDocument(
   id: string,
   data: Record<string, unknown>
 ): Promise<void> {
-  await coll(name).doc(id).update({ ...data, updatedAt: new Date() })
+  await coll(name).doc(id).set({ ...data, updatedAt: new Date() }, { merge: true })
 }
 
 export async function deleteDocument(name: string, id: string): Promise<void> {

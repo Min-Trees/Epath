@@ -102,7 +102,7 @@ function makePartial(schema: ZodTypeAny): ZodTypeAny {
     const shape: Record<string, ZodTypeAny> = inner.shape()
     const partialShape: Record<string, ZodTypeAny> = {}
     for (const key of Object.keys(shape)) {
-      partialShape[key] = shape[key].optional()
+      partialShape[key] = makePartial(shape[key]).optional()
     }
     return z.object(partialShape).passthrough()
   }

@@ -128,7 +128,7 @@ export const FAQSchema = z.object({
   question: LocalizedStringSchema,
   answer: LocalizedStringSchema,
   category: z.enum(['admissions', 'program', 'general']),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -141,7 +141,7 @@ export const CoreValueSchema = z.object({
   icon: z.string().default('Compass'),
   title: LocalizedStringSchema,
   description: LocalizedStringSchema,
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -189,7 +189,7 @@ export const ProgramSchema = z.object({
   ageRange: z.string().default(''),
   objectives: z.array(LocalizedStringSchema).default([]),
   highlights: z.array(LocalizedStringSchema).default([]),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().default(''),
   ctaLabel: LocalizedStringSchema.optional(),
   ctaUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
@@ -209,9 +209,9 @@ export const PartnerCategoryEnum = z.enum([
 export const PartnerSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
-  logoUrl: z.string().url().or(z.literal('')).default(''),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
-  website: z.string().url().or(z.literal('')).default(''),
+  logoUrl: z.string().default(''),
+  imageUrl: z.string().default(''),
+  website: z.string().default(''),
   category: PartnerCategoryEnum,
   badgeLabel: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   description: LocalizedStringSchema,
@@ -235,9 +235,9 @@ export const EventSchema = z.object({
   startDate: z.string().min(1), // ISO date string
   endDate: z.string().optional().default(''),
   location: z.string().default(''),
-  coverImage: z.string().url().or(z.literal('')).default(''), // backward compat alias
-  imageUrl: z.string().url().or(z.literal('')).default(''),
-  registerUrl: z.string().url().or(z.literal('')).default(''),
+  coverImage: z.string().default(''), // backward compat alias
+  imageUrl: z.string().default(''),
+  registerUrl: z.string().default(''),
   status: EventStatusEnum,
   isFeatured: z.boolean().default(false),
   order: z.number().int().nonnegative().default(0),
@@ -252,7 +252,7 @@ export const AdmissionStepSchema = z.object({
   title: LocalizedStringSchema,
   description: LocalizedStringSchema,
   icon: z.string().default('ListChecks'),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
   stepNumber: z.number().int().nonnegative().optional(),
@@ -266,7 +266,7 @@ export const AchievementSchema = z.object({
   title: LocalizedStringSchema,
   description: LocalizedStringSchema,
   images: z.array(z.string()).default([]),
-  coverImage: z.string().url().or(z.literal('')).default(''),
+  coverImage: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -451,7 +451,7 @@ export const BlogPostSchema = z.object({
   title: LocalizedStringSchema,
   excerpt: LocalizedStringSchema,
   content: LocalizedStringSchema,
-  coverImage: z.string().url().or(z.literal('')).default(''),
+  coverImage: z.string().default(''),
   coverImageAlt: z.string().default(''),
   tags: z.array(z.string()).default([]),
   category: z.string().default(''),
@@ -514,7 +514,7 @@ export const StatisticSchema = z.object({
   value: z.string().min(1), // e.g., "10+", "100%", "5000"
   suffix: z.string().default(''), // e.g., "+", "%", " students"
   icon: z.string().default('TrendingUp'),
-  imageUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().default(''),
   order: z.number().int().nonnegative().default(0),
   isActive: z.boolean().default(true),
 }).merge(reviewable)
@@ -526,7 +526,7 @@ export const TestimonialSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
   role: z.string().default(''), // e.g., "Phụ huynh học sinh", "Học sinh"
-  avatarUrl: z.string().url().or(z.literal('')).default(''),
+  avatarUrl: z.string().default(''),
   content: LocalizedStringSchema,
   rating: z.number().int().min(1).max(5).default(5),
   isFeatured: z.boolean().default(false),
@@ -546,22 +546,22 @@ export const SiteSettingsSchema = z.object({
   workingHoursVi: z.string().default(''),
   workingHoursEn: z.string().default(''),
   // Logo & Brand
-  logoUrl: z.string().url().or(z.literal('')).default(''),
-  faviconUrl: z.string().url().or(z.literal('')).default(''),
+  logoUrl: z.string().default(''),
+  faviconUrl: z.string().default(''),
   // Contact Information
   address: LocalizedStringSchema,
   phone: z.string().default(''),
   email: z.string().default(''),
-  zaloUrl: z.string().url().or(z.literal('')).default(''),
-  facebookUrl: z.string().url().or(z.literal('')).default(''),
-  youtubeUrl: z.string().url().or(z.literal('')).default(''),
-  tiktokUrl: z.string().url().or(z.literal('')).default(''),
-  instagramUrl: z.string().url().or(z.literal('')).default(''),
+  zaloUrl: z.string().default(''),
+  facebookUrl: z.string().default(''),
+  youtubeUrl: z.string().default(''),
+  tiktokUrl: z.string().default(''),
+  instagramUrl: z.string().default(''),
   hotline: z.string().default(''),
   // Business Hours
   workingHours: LocalizedStringSchema,
   // Map
-  mapEmbedUrl: z.string().url().or(z.literal('')).default(''),
+  mapEmbedUrl: z.string().default(''),
   mapCoordinates: z.object({
     lat: z.number(),
     lng: z.number(),
@@ -580,7 +580,7 @@ export const SiteSettingsSchema = z.object({
   ctaPrimaryUrl: z.string().default(''),
   ctaSecondaryLabel: LocalizedStringSchema.optional(),
   ctaSecondaryUrl: z.string().default(''),
-  ctaBackgroundImage: z.string().url().or(z.literal('')).default(''),
+  ctaBackgroundImage: z.string().default(''),
 })
 export type SiteSettingsInput = z.infer<typeof SiteSettingsSchema>
 export type SiteSettings = Omit<SiteSettingsInput, 'id'> & { id: string }
@@ -597,9 +597,9 @@ export const HeroContentSchema = z.object({
   ctaUrl: z.string().default('#programs'),
   secondaryCtaLabel: LocalizedStringSchema.optional(),
   secondaryCtaUrl: z.string().default('#contact'),
-  videoUrl: z.string().url().or(z.literal('')).default(''),
-  videoThumbnail: z.string().url().or(z.literal('')).default(''),
-  backgroundImage: z.string().url().or(z.literal('')).default(''),
+  videoUrl: z.string().default(''),
+  videoThumbnail: z.string().default(''),
+  backgroundImage: z.string().default(''),
   slides: z.array(z.string()).optional().default([]),
   finalSlideIndex: z.number().optional().default(-1),
   slideInterval: z.number().optional().default(4),
@@ -626,7 +626,7 @@ export const AboutContentSchema = z.object({
   // Milestones (stored as JSON string of array)
   milestones: z.string().default('[]'), // JSON array of { year, title, description }
   // About Hero Image
-  heroImage: z.string().url().or(z.literal('')).default(''),
+  heroImage: z.string().default(''),
 })
 export type AboutContentInput = z.infer<typeof AboutContentSchema>
 export type AboutContent = Omit<AboutContentInput, 'id'> & { id: string }
@@ -874,7 +874,7 @@ export const PartnersContentSchema = z.object({
   hero: z.object({
     title: LocalizedStringSchema,
     subtitle: LocalizedStringSchema,
-    bannerUrl: z.string().url().or(z.literal('')).default(''),
+    bannerUrl: z.string().default(''),
   }),
   cta: z.object({
     title: LocalizedStringSchema,
