@@ -29,10 +29,30 @@ interface Props {
 }
 
 const DEFAULT_LEVEL_IMAGES: Record<string, string> = {
-  kindergarten: '/images/programs/program-kindy.jpg',
+  'breakthrough-english': '/images/programs/program-kindy.jpg',
+  'science-foundation': '/images/programs/program-elementary.jpg',
   elementary: '/images/programs/program-elementary.jpg',
   middle: '/images/programs/program-middle.jpg',
   high: '/images/programs/program-high.jpg',
+  'personal-development': '/images/programs/program-dual-diploma.jpg',
+  kindergarten: '/images/programs/program-kindy.jpg',
+}
+
+function matchesLevel(p: Program, levelId: string): boolean {
+  if (p.level === levelId) return true
+  if (levelId === 'breakthrough-english') {
+    return p.level === 'kindergarten' && (p.slug.includes('english') || p.slug.includes('speedup'))
+  }
+  if (levelId === 'science-foundation') {
+    return p.level === 'kindergarten' && !(p.slug.includes('english') || p.slug.includes('speedup'))
+  }
+  if (levelId === 'personal-development') {
+    return p.slug.includes('portfolio') || p.slug.includes('counseling') || p.slug.includes('development')
+  }
+  if (levelId === 'high') {
+    return p.level === 'high' && !p.slug.includes('portfolio') && !p.slug.includes('counseling') && !p.slug.includes('development')
+  }
+  return false
 }
 
 function formatAgeRange(ageRange: string | undefined, locale: Locale): string {
@@ -83,7 +103,7 @@ export function ProgramsCatalog({
 
   // Count total matching
   const totalMatching = filteredLevels.reduce((acc, lvl) => {
-    const lvlProgs = programs.filter((p) => p.level === lvl.id)
+    const lvlProgs = programs.filter((p) => matchesLevel(p, lvl.id))
     return acc + filterBySearch(lvlProgs).length
   }, 0)
 
@@ -120,7 +140,7 @@ export function ProgramsCatalog({
       <div className="container mx-auto px-4">
         <div className="space-y-10 sm:space-y-12 max-w-6xl mx-auto">
           {filteredLevels.map((level, levelIndex) => {
-            const levelPrograms = filterBySearch(programs.filter((p) => p.level === level.id))
+            const levelPrograms = filterBySearch(programs.filter((p) => matchesLevel(p, level.id)))
             if (levelPrograms.length === 0 && searchQuery) return null
 
             const LevelIcon = level.icon

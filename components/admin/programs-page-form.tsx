@@ -53,6 +53,7 @@ export function ProgramsPageForm() {
           setDocId(item.id)
           const isRoadmapActive = item.showRoadmap !== false && item.roadmap?.isActive !== false
           setForm({
+            hero: item.hero || DEFAULT_PROGRAMS_CONTENT.hero,
             showRoadmap: isRoadmapActive,
             roadmap: {
               ...(item.roadmap || DEFAULT_PROGRAMS_CONTENT.roadmap),
@@ -257,6 +258,129 @@ export function ProgramsPageForm() {
       ─────────────────────────────────────────────────────────────── */}
       {subTab === 'roadmap' && (
         <div className="space-y-6">
+          {/* Hero Banner Editor Card */}
+          <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
+            <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">
+              <CardTitle className="text-base font-bold text-[#1E3570] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#8DC63F]" />
+                <span>Tiêu Đề & Lời Chào Đầu Trang (Hero Banner)</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-5 space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Huy hiệu chào mừng (VI)</Label>
+                  <Input
+                    value={form.hero?.welcomeBadge?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          welcomeBadge: { vi: e.target.value, en: form.hero?.welcomeBadge?.en || '' },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs"
+                    placeholder="LỘ TRÌNH ĐÀO TẠO CHUẨN QUỐC TẾ"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Huy hiệu chào mừng (EN)</Label>
+                  <Input
+                    value={form.hero?.welcomeBadge?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          welcomeBadge: { vi: form.hero?.welcomeBadge?.vi || '', en: e.target.value },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs"
+                    placeholder="ACCREDITED US & CAMBRIDGE CURRICULUM"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Tiêu đề trang lớn (VI)</Label>
+                  <Input
+                    value={form.hero?.title?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          title: { vi: e.target.value, en: form.hero?.title?.en || '' },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs font-bold"
+                    placeholder="Hệ Thống Chương Trình Đào Tạo EPath Education"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Tiêu đề trang lớn (EN)</Label>
+                  <Input
+                    value={form.hero?.title?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          title: { vi: form.hero?.title?.vi || '', en: e.target.value },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs font-bold"
+                    placeholder="EPath Education Academic Curriculum & Programs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Đoạn mô tả phụ (VI)</Label>
+                  <Textarea
+                    rows={2}
+                    value={form.hero?.subtitle?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          subtitle: { vi: e.target.value, en: form.hero?.subtitle?.en || '' },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs resize-none"
+                    placeholder="Hành trình đào tạo liền mạch từ Mầm non đến THPT..."
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Đoạn mô tả phụ (EN)</Label>
+                  <Textarea
+                    rows={2}
+                    value={form.hero?.subtitle?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        hero: {
+                          ...form.hero,
+                          subtitle: { vi: form.hero?.subtitle?.vi || '', en: e.target.value },
+                        },
+                      })
+                    }
+                    className="rounded-xl border-[#DEDDD6] text-xs resize-none"
+                    placeholder="A continuous academic journey from Kindergarten to Grade 12..."
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           {/* Roadmap Visibility Toggle Card */}
           <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
             <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">

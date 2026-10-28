@@ -311,10 +311,13 @@
       "p2": "Thông qua quá trình đánh giá năng lực, định hướng học tập và tư vấn cá nhân hóa, EPath sẽ hỗ trợ phụ huynh và học sinh lựa chọn con đường phù hợp nhất, dù mục tiêu là chương trình Song bằng, Tú tài Quốc tế, dự bị đại học, du học hay các chương trình chuyển tiếp quốc tế khác."
     },
     "levels": {
-      "kindergarten": "Mầm non",
-      "elementary": "Tiểu học",
-      "middle": "THCS",
-      "high": "THPT"
+      "kindergarten": "Mầm non (3 – 6 tuổi)",
+      "elementary": "Tiểu học (Lớp 3 – 5)",
+      "middle": "Trung học Cơ sở (Lớp 6 – 8)",
+      "high": "Trung học Phổ thông (Lớp 9 – 12)",
+      "breakthrough-english": "Tiếng Anh Bứt Phá",
+      "science-foundation": "Nền tảng Khoa học Quốc tế (Mầm non - Gr 2)",
+      "personal-development": "Phát triển Năng lực Cá nhân"
     },
     "cta": {
       "title": "Cần tư vấn thêm về chương trình học?",

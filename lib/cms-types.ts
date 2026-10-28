@@ -170,11 +170,14 @@ export type LearningPathway = Omit<LearningPathwayInput, 'id'> & { id: string }
 
 // ----------- Program -----------
 export const ProgramLevelEnum = z.enum([
-  'kindergarten',
+  'breakthrough-english',
+  'science-foundation',
   'elementary',
   'middle',
   'high',
-])
+  'personal-development',
+  'kindergarten',
+]).or(z.string())
 
 export const ProgramSchema = z.object({
   id: z.string().optional(),
@@ -792,6 +795,11 @@ export type RoadmapStage = z.infer<typeof RoadmapStageSchema>
 
 export const ProgramsContentSchema = z.object({
   id: z.string().optional(),
+  hero: z.object({
+    welcomeBadge: LocalizedStringSchema.optional(),
+    title: LocalizedStringSchema.optional(),
+    subtitle: LocalizedStringSchema.optional(),
+  }).optional(),
   showRoadmap: z.boolean().default(true),
   roadmap: z.object({
     isActive: z.boolean().default(true),

@@ -17,7 +17,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-kindy-speedup',
     slug: 'kindy-speedup-english',
-    level: 'kindergarten',
+    level: 'breakthrough-english',
     title: {
       vi: 'Tiếng Anh Bứt phá – Mầm non',
       en: 'SpeedUp English – Kindergarten',
@@ -62,7 +62,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-kindy-foundation',
     slug: 'kindy-academic-foundation',
-    level: 'kindergarten',
+    level: 'science-foundation',
     title: {
       vi: 'Nền tảng Học thuật Quốc tế – Mầm non',
       en: 'Academic Foundation – Kindergarten',
@@ -111,7 +111,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-elementary-speedup',
     slug: 'elementary-speedup-english',
-    level: 'elementary',
+    level: 'breakthrough-english',
     title: {
       vi: 'Tiếng Anh Bứt phá – Tiểu học',
       en: 'SpeedUp English – Elementary',
@@ -250,7 +250,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-middle-speedup',
     slug: 'middle-speedup-english',
-    level: 'middle',
+    level: 'breakthrough-english',
     title: {
       vi: 'Tiếng Anh Bứt phá – THCS (IELTS Academic)',
       en: 'SpeedUp English – Middle School (IELTS Track)',
@@ -479,7 +479,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-high-portfolio',
     slug: 'high-personal-development',
-    level: 'high',
+    level: 'personal-development',
     title: {
       vi: 'Phát triển Năng lực Cá nhân – Beyond the Classroom',
       en: 'Beyond the Classroom Portfolio',
@@ -524,7 +524,7 @@ export const DEFAULT_PROGRAMS: Program[] = [
   {
     id: 'default-program-high-counseling',
     slug: 'high-international-counseling',
-    level: 'high',
+    level: 'personal-development',
     title: {
       vi: 'Cố vấn Lộ trình Học tập Quốc tế – Academic Counseling',
       en: 'International Academic Counseling',

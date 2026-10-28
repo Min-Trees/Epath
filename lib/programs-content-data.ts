@@ -1,6 +1,20 @@
 import type { ProgramsContentInput } from './cms-types'
 
 export const DEFAULT_PROGRAMS_CONTENT: ProgramsContentInput = {
+  hero: {
+    welcomeBadge: {
+      vi: 'LỘ TRÌNH ĐÀO TẠO CHUẨN QUỐC TẾ',
+      en: 'ACCREDITED US & CAMBRIDGE CURRICULUM',
+    },
+    title: {
+      vi: 'Hệ Thống Chương Trình Đào Tạo EPath Education',
+      en: 'EPath Education Academic Curriculum & Programs',
+    },
+    subtitle: {
+      vi: 'Hành trình đào tạo liền mạch từ Mầm non đến THPT, trang bị năng lực học thuật chuẩn Hoa Kỳ và bằng Tú tài Mỹ Cognia & WASC.',
+      en: 'A continuous academic journey from Kindergarten to Grade 12, equipping learners with US academic competencies and accredited diplomas.',
+    },
+  },
   showRoadmap: true,
   roadmap: {
     isActive: true,

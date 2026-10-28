@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { Sprout, Book, GraduationCap, Trophy } from 'lucide-react'
+import { Sparkles, Sprout, Book, GraduationCap, Trophy, Compass } from 'lucide-react'
 
 import { useCmsContext } from '@/lib/cms-context'
 import type { Program, Locale } from '@/lib/cms-types'
 import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import {
+  ProgramsHero,
+  ProgramsToolbar,
   ProgramsRoadmap,
   ProgramsCatalog,
   ProgramsEdOptions,
@@ -19,22 +21,31 @@ import { AchievementsOverviewSection } from '@/components/sections/achievements-
 
 const levelDefs: LevelDef[] = [
   {
-    id: 'kindergarten',
-    labelKey: 'kindergarten',
-    icon: Sprout,
+    id: 'breakthrough-english',
+    labelKey: 'breakthrough-english',
+    icon: Sparkles,
     color: '#2E4A9E',
     bgColor: 'rgba(46, 74, 158, 0.1)',
     lightBg: '#EAEFFB',
     borderColor: '#2E4A9E',
   },
   {
-    id: 'elementary',
-    labelKey: 'elementary',
-    icon: Book,
+    id: 'science-foundation',
+    labelKey: 'science-foundation',
+    icon: Sprout,
     color: '#5C9024',
     bgColor: 'rgba(141, 198, 63, 0.15)',
     lightBg: '#F4F9EC',
     borderColor: '#8DC63F',
+  },
+  {
+    id: 'elementary',
+    labelKey: 'elementary',
+    icon: Book,
+    color: '#2E4A9E',
+    bgColor: 'rgba(46, 74, 158, 0.1)',
+    lightBg: '#EAEFFB',
+    borderColor: '#2E4A9E',
   },
   {
     id: 'middle',
@@ -53,6 +64,15 @@ const levelDefs: LevelDef[] = [
     bgColor: 'rgba(30, 53, 112, 0.12)',
     lightBg: '#EAEFFB',
     borderColor: '#1E3570',
+  },
+  {
+    id: 'personal-development',
+    labelKey: 'personal-development',
+    icon: Compass,
+    color: '#7C3AED',
+    bgColor: 'rgba(124, 58, 237, 0.1)',
+    lightBg: '#F5F3FF',
+    borderColor: '#7C3AED',
   },
 ]
 
@@ -78,17 +98,61 @@ export default function ProgramsPage() {
 
   const isVi = locale === 'vi'
 
+  const heroWelcome =
+    pc?.hero?.welcomeBadge?.[locale] ||
+    (isVi ? 'LỘ TRÌNH ĐÀO TẠO CHUẨN QUỐC TẾ' : 'ACCREDITED US & CAMBRIDGE CURRICULUM')
+  const heroTitle =
+    pc?.hero?.title?.[locale] ||
+    (isVi ? 'Hệ Thống Chương Trình Đào Tạo EPath Education' : 'EPath Education Academic Curriculum & Programs')
+  const heroSubtitle =
+    pc?.hero?.subtitle?.[locale] ||
+    (isVi
+      ? 'Hành trình đào tạo liền mạch từ Mầm non đến THPT, trang bị năng lực học thuật chuẩn Hoa Kỳ và bằng Tú tài Mỹ Cognia & WASC.'
+      : 'A continuous academic journey from Kindergarten to Grade 12, equipping learners with US academic competencies and accredited diplomas.')
+
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          1. CONTINUOUS K-12 ROADMAP INFOGRAPHIC
+          1. HERO BANNER (Solves header overlap & establishes visual hierarchy)
+      ─────────────────────────────────────────────────────────────── */}
+      <ProgramsHero
+        welcomeText={heroWelcome}
+        title={heroTitle}
+        subtitle={heroSubtitle}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. PROGRAMS TOOLBAR (6 Program Categories Filter Bar)
+      ─────────────────────────────────────────────────────────────── */}
+      <ProgramsToolbar
+        locale={locale}
+        selectedLevel={selectedLevel}
+        onChangeSelectedLevel={setSelectedLevel}
+        levelDefs={levelDefs}
+        translations={{
+          all: isVi ? 'Tất cả chương trình' : 'All Programs',
+          filter: isVi ? 'Nhóm chương trình' : 'Filter by Track',
+          levels: {
+            'breakthrough-english': isVi ? 'Tiếng Anh Bứt Phá' : 'SpeedUp English',
+            'science-foundation': isVi ? 'Nền tảng Khoa học (Mầm non - Gr 2)' : 'Science & Academic Foundation',
+            'elementary': isVi ? 'Tiểu học (Lớp 3 – 5)' : 'Elementary (Gr 3–5)',
+            'middle': isVi ? 'THCS (Lớp 6 – 8)' : 'Middle School (Gr 6–8)',
+            'high': isVi ? 'THPT (Lớp 9 – 12)' : 'High School (Gr 9–12)',
+            'personal-development': isVi ? 'Phát triển Năng lực Cá nhân' : 'Personal Development',
+            kindergarten: isVi ? 'Mầm non' : 'Kindergarten',
+          },
+        }}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. CONTINUOUS K-12 ROADMAP INFOGRAPHIC (Toggleable via Admin)
       ─────────────────────────────────────────────────────────────── */}
       {pc?.showRoadmap !== false && pc?.roadmap?.isActive !== false && (
-        <ProgramsRoadmap locale={locale} />
+        <ProgramsRoadmap locale={locale} isTop={false} />
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          2. CURRICULUM CATALOG SHOWCASE (Cards with View Details & Register)
+          4. CURRICULUM CATALOG SHOWCASE (Cards grouped by 6 categories)
       ─────────────────────────────────────────────────────────────── */}
       <ProgramsCatalog
         locale={locale}
@@ -107,20 +171,23 @@ export default function ProgramsPage() {
             isVi ? 'Không tìm thấy chương trình phù hợp' : 'No matching programs found',
           clearFilters: isVi ? 'Xóa bộ lọc & tìm kiếm' : 'Clear filters',
           levels: {
-            kindergarten: t('levels.kindergarten'),
-            elementary: t('levels.elementary'),
-            middle: t('levels.middle'),
-            high: t('levels.high'),
+            'breakthrough-english': isVi ? '1. Chương trình Tiếng Anh Bứt Phá' : '1. SpeedUp English Programs',
+            'science-foundation': isVi ? '2. Khóa học Nền tảng Khoa học Quốc tế (Mầm non, Grade 1 & 2)' : '2. International Science & Academic Foundation',
+            elementary: isVi ? '3. Chương trình Tiểu học (Lớp 3 – 5: Tiêu chuẩn & Quốc tế)' : '3. Elementary Programs (Grades 3–5)',
+            middle: isVi ? '4. Chương trình Trung học Cơ sở (Lớp 6 – 8: Foundation & U.S. Middle School)' : '4. Middle School Programs (Grades 6–8)',
+            high: isVi ? '5. Chương trình Trung học Phổ thông (Lớp 9 – 12: Dual Diploma & U.S. Diploma)' : '5. High School Programs (Grades 9–12)',
+            'personal-development': isVi ? '6. Phát triển Năng lực Cá nhân (Personal Development & FabLab EIU)' : '6. Personal Development & Extracurriculars',
+            kindergarten: isVi ? 'Mầm non' : 'Kindergarten',
           },
         }}
       />
 
       {/* ─────────────────────────────────────────────────────────────
-          3. SPOTLIGHT: US DUAL DIPLOMA & EDOPTIONS ACADEMY
+          5. SPOTLIGHT: US DUAL DIPLOMA & EDOPTIONS ACADEMY
       ─────────────────────────────────────────────────────────────── */}
       {(() => {
-        const dualProgram = programs.find((p) => p.slug === 'high-dual-diploma')
-        const fulltimeProgram = programs.find((p) => p.slug === 'high-fulltime-homeschool')
+        const dualProgram = programs.find((p) => p.slug === 'high-dual-diploma' || p.slug === 'high-dual')
+        const fulltimeProgram = programs.find((p) => p.slug === 'high-fulltime-homeschool' || p.slug === 'high-fulltime')
         const dualTitle =
           pc?.edoptions?.dual?.title?.[locale] ||
           (dualProgram?.title as Record<string, string>)?.[locale] ||
@@ -181,7 +248,7 @@ export default function ProgramsPage() {
       })()}
 
       {/* ─────────────────────────────────────────────────────────────
-          4. PERSONALIZED LEARNING & ACADEMIC ADVISOR ECOSYSTEM
+          6. PERSONALIZED LEARNING & ACADEMIC ADVISOR ECOSYSTEM
       ─────────────────────────────────────────────────────────────── */}
       <ProgramsPersonalized
         translations={{
@@ -196,7 +263,7 @@ export default function ProgramsPage() {
       />
 
       {/* ─────────────────────────────────────────────────────────────
-          5. OUTSTANDING ACHIEVEMENTS & EDUCATIONAL OUTCOMES
+          7. OUTSTANDING ACHIEVEMENTS & EDUCATIONAL OUTCOMES
       ─────────────────────────────────────────────────────────────── */}
       {pc?.showAchievements !== false && (
         <AchievementsOverviewSection
@@ -206,7 +273,7 @@ export default function ProgramsPage() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          6. BOTTOM CTA BANNER
+          8. BOTTOM CTA BANNER
       ─────────────────────────────────────────────────────────────── */}
       <ProgramsCta
         locale={locale}

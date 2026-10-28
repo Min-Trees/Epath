@@ -311,10 +311,13 @@
       "p2": "Through capability assessment, learning orientation and personalized advising, EPath supports parents and students in choosing the most suitable path — whether the goal is Dual Diploma, International Baccalaureate, university foundation, study abroad or other international transfer programs."
     },
     "levels": {
-      "kindergarten": "Kindergarten",
-      "elementary": "Elementary",
-      "middle": "Middle School",
-      "high": "High School"
+      "kindergarten": "Kindergarten (Ages 3–6)",
+      "elementary": "Elementary (Grades 3–5)",
+      "middle": "Middle School (Grades 6–8)",
+      "high": "High School (Grades 9–12)",
+      "breakthrough-english": "SpeedUp English",
+      "science-foundation": "Science & Academic Foundation (K–Gr 2)",
+      "personal-development": "Personal Development"
     },
     "cta": {
       "title": "Need more advice on academic programs?",

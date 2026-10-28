@@ -19,10 +19,13 @@ const fields: CrudFieldDef[] = [
     label: 'Cấp học',
     kind: 'select',
     options: [
-      { value: 'kindergarten', label: 'Mầm non (3 – 6 tuổi)' },
-      { value: 'elementary', label: 'Tiểu học (Lớp 1 – 5)' },
-      { value: 'middle', label: 'Trung học cơ sở (Lớp 6 – 8)' },
-      { value: 'high', label: 'Trung học phổ thông (Lớp 9 – 12) – Dual Diploma & Fulltime Homeschool' },
+      { value: 'breakthrough-english', label: '1. Chương trình Tiếng Anh Bứt Phá' },
+      { value: 'science-foundation', label: '2. Nền tảng Khoa học & Học thuật Quốc tế (Mầm non, Grade 1 & 2)' },
+      { value: 'elementary', label: '3. Chương trình Tiểu học (Lớp 3 – 5: Tiêu chuẩn, Quốc tế)' },
+      { value: 'middle', label: '4. Chương trình Trung học Cơ sở (Lớp 6 – 8: Foundation IELTS, U.S. Middle School)' },
+      { value: 'high', label: '5. Chương trình Trung học Phổ thông (Lớp 9 – 12: Dual Diploma, U.S. Diploma)' },
+      { value: 'personal-development', label: '6. Phát triển Năng lực Cá nhân (Personal Development, FabLab, Olympic)' },
+      { value: 'kindergarten', label: 'Mầm non (Phân nhóm cũ)' },
     ],
   },
   { key: 'shortDescription', label: 'Mô tả ngắn / Phân mục (Song ngữ)', kind: 'richtext', multilang: true },
@@ -32,16 +35,19 @@ const fields: CrudFieldDef[] = [
 ]
 
 const levelBadges: Record<string, { label: string; color: string; bg: string }> = {
-  kindergarten: { label: 'Mầm non (3–6 tuổi)', color: '#5C9024', bg: '#8DC63F25' },
-  elementary: { label: 'Tiểu học (Lớp 1–5)', color: '#2E4A9E', bg: '#2E4A9E15' },
-  middle: { label: 'THCS (Lớp 6–8)', color: '#1E3570', bg: '#1E357015' },
-  high: { label: 'THPT (Lớp 9–12)', color: '#F26522', bg: '#F2652215' },
+  'breakthrough-english': { label: 'Tiếng Anh Bứt Phá', color: '#2E4A9E', bg: '#2E4A9E15' },
+  'science-foundation': { label: 'Nền tảng Khoa học (Mầm non - Gr 2)', color: '#5C9024', bg: '#8DC63F25' },
+  elementary: { label: 'Tiểu học (Lớp 3–5)', color: '#2E4A9E', bg: '#2E4A9E15' },
+  middle: { label: 'THCS (Lớp 6–8)', color: '#F26522', bg: '#F2652215' },
+  high: { label: 'THPT (Lớp 9–12)', color: '#1E3570', bg: '#1E357015' },
+  'personal-development': { label: 'Phát triển Năng lực Cá nhân', color: '#7C3AED', bg: '#7C3AED15' },
+  kindergarten: { label: 'Mầm non (Cũ)', color: '#5C9024', bg: '#8DC63F25' },
 }
 
 export default function AdminProgramsPage() {
   const user = useRequireAdmin()
   const [mainTab, setMainTab] = useState<'page-content' | 'catalog'>('page-content')
-  const [levelFilter, setLevelFilter] = useState<'all' | 'kindergarten' | 'elementary' | 'middle' | 'high'>('all')
+  const [levelFilter, setLevelFilter] = useState<string>('all')
 
   if (user === undefined) return null
 
@@ -108,63 +114,30 @@ export default function AdminProgramsPage() {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-1 border border-[#DEDDD6] bg-white p-1 rounded-xl">
               <div className="px-2 text-xs font-semibold text-[#5C6069]">
-                Cấp học:
+                Nhóm chương trình:
               </div>
-              <button
-                type="button"
-                onClick={() => setLevelFilter('all')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  levelFilter === 'all'
-                    ? 'bg-slate-900 text-white'
-                    : 'text-[#5C6069] hover:text-[#20242B]'
-                }`}
-              >
-                Tất cả
-              </button>
-              <button
-                type="button"
-                onClick={() => setLevelFilter('kindergarten')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  levelFilter === 'kindergarten'
-                    ? 'bg-[#5C9024] text-white'
-                    : 'text-[#5C6069] hover:text-[#5C9024]'
-                }`}
-              >
-                Mầm non
-              </button>
-              <button
-                type="button"
-                onClick={() => setLevelFilter('elementary')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  levelFilter === 'elementary'
-                    ? 'bg-[#2E4A9E] text-white'
-                    : 'text-[#5C6069] hover:text-[#2E4A9E]'
-                }`}
-              >
-                Tiểu học
-              </button>
-              <button
-                type="button"
-                onClick={() => setLevelFilter('middle')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  levelFilter === 'middle'
-                    ? 'bg-[#1E3570] text-white'
-                    : 'text-[#5C6069] hover:text-[#1E3570]'
-                }`}
-              >
-                THCS
-              </button>
-              <button
-                type="button"
-                onClick={() => setLevelFilter('high')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  levelFilter === 'high'
-                    ? 'bg-[#F26522] text-white'
-                    : 'text-[#5C6069] hover:text-[#F26522]'
-                }`}
-              >
-                THPT
-              </button>
+              {[
+                { id: 'all', label: 'Tất cả' },
+                { id: 'breakthrough-english', label: 'Tiếng Anh Bứt Phá' },
+                { id: 'science-foundation', label: 'Khoa học (Mầm non - Gr 2)' },
+                { id: 'elementary', label: 'Tiểu học (Lớp 3–5)' },
+                { id: 'middle', label: 'THCS (Lớp 6–8)' },
+                { id: 'high', label: 'THPT (Lớp 9–12)' },
+                { id: 'personal-development', label: 'Năng lực Cá nhân' },
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setLevelFilter(btn.id)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    levelFilter === btn.id
+                      ? 'bg-[#1E3570] text-white shadow-xs'
+                      : 'text-[#5C6069] hover:text-[#1E3570] hover:bg-slate-100'
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
             </div>
 
             <Button
