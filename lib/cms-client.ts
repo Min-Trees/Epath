@@ -27,6 +27,8 @@ import type {
   AchievementsContent,
   ProgramsContentInput,
   ProgramsContent,
+  PartnersContentInput,
+  PartnersContent,
   LeadInput,
   BlogPostInput,
   Lead,
@@ -306,6 +308,15 @@ export const cms = {
       request<{ ok: true }>(`${listUrl('programs-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     remove: (id: string) =>
       request<{ ok: true }>(`${listUrl('programs-content')}/${id}`, { method: 'DELETE' }),
+  },
+  partnersContent: {
+    list: () => request<CmsListResponse<PartnersContent>>(listUrl('partners-content')).then((r) => r.items),
+    create: (data: PartnersContentInput) =>
+      request<{ id: string }>(listUrl('partners-content'), { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Partial<PartnersContentInput>) =>
+      request<{ ok: true }>(`${listUrl('partners-content')}/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) =>
+      request<{ ok: true }>(`${listUrl('partners-content')}/${id}`, { method: 'DELETE' }),
   },
   activityLogs: {
     list: (params: { collection?: string; action?: string; limit?: number } = {}) => {

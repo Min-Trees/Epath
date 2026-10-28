@@ -10,8 +10,6 @@ import { DEFAULT_PROGRAMS } from '@/lib/default-programs'
 import {
   ProgramsRoadmap,
   ProgramsCatalog,
-  ProgramsEdOptions,
-  ProgramsPersonalized,
   ProgramsCta,
   type LevelDef,
 } from '@/components/programs'
@@ -141,87 +139,7 @@ export default function ProgramsPage() {
       />
 
       {/* ─────────────────────────────────────────────────────────────
-          5. SPOTLIGHT: US DUAL DIPLOMA & EDOPTIONS ACADEMY
-      ─────────────────────────────────────────────────────────────── */}
-      {(() => {
-        const dualProgram = programs.find((p) => p.slug === 'high-dual-diploma' || p.slug === 'high-dual')
-        const fulltimeProgram = programs.find((p) => p.slug === 'high-fulltime-homeschool' || p.slug === 'high-fulltime')
-        const dualTitle =
-          pc?.edoptions?.dual?.title?.[locale] ||
-          (dualProgram?.title as Record<string, string>)?.[locale] ||
-          (dualProgram?.title as Record<string, string>)?.vi ||
-          (dualProgram?.title as unknown as string) ||
-          t('edoptions.dual.title')
-        const fulltimeTitle =
-          pc?.edoptions?.fulltime?.title?.[locale] ||
-          (fulltimeProgram?.title as Record<string, string>)?.[locale] ||
-          (fulltimeProgram?.title as Record<string, string>)?.vi ||
-          (fulltimeProgram?.title as unknown as string) ||
-          t('edoptions.fulltime.title')
-
-        const dualImage = pc?.edoptions?.dual?.imageUrl || dualProgram?.imageUrl
-        const fulltimeImage = pc?.edoptions?.fulltime?.imageUrl || fulltimeProgram?.imageUrl
-
-        const dualDiplomas = pc?.edoptions?.dual?.diplomas?.[locale]?.length
-          ? pc.edoptions.dual.diplomas[locale]
-          : (t.raw('edoptions.dual.diplomas') as string[])
-
-        const fulltimeFit = pc?.edoptions?.fulltime?.fit?.[locale]?.length
-          ? pc.edoptions.fulltime.fit[locale]
-          : (t.raw('edoptions.fulltime.fit') as string[])
-
-        return (
-          <ProgramsEdOptions
-            locale={locale}
-            dualImage={dualImage}
-            fulltimeImage={fulltimeImage}
-            translations={{
-              title: pc?.edoptions?.title?.[locale] || t('edoptions.title'),
-              subtitle: pc?.edoptions?.subtitle?.[locale] || t('edoptions.subtitle'),
-              dual: {
-                label: pc?.edoptions?.dual?.label?.[locale] || t('edoptions.dual.label'),
-                title: dualTitle,
-                desc: pc?.edoptions?.dual?.desc?.[locale] || t('edoptions.dual.desc'),
-                p2: pc?.edoptions?.dual?.p2?.[locale] || t('edoptions.dual.p2'),
-                diplomasTitle: pc?.edoptions?.dual?.diplomasTitle?.[locale] || t('edoptions.dual.diplomasTitle'),
-                diplomas: dualDiplomas,
-                p3: t('edoptions.dual.p3'),
-                p4: t('edoptions.dual.p4'),
-                note: t('edoptions.dual.note'),
-              },
-              fulltime: {
-                label: pc?.edoptions?.fulltime?.label?.[locale] || t('edoptions.fulltime.label'),
-                title: fulltimeTitle,
-                desc: pc?.edoptions?.fulltime?.desc?.[locale] || t('edoptions.fulltime.desc'),
-                p2: pc?.edoptions?.fulltime?.p2?.[locale] || t('edoptions.fulltime.p2'),
-                fitTitle: pc?.edoptions?.fulltime?.fitTitle?.[locale] || t('edoptions.fulltime.fitTitle'),
-                fit: fulltimeFit,
-                p3: t('edoptions.fulltime.p3'),
-                p4: t('edoptions.fulltime.p4'),
-              },
-              ctaButton: t('cta.button'),
-            }}
-          />
-        )
-      })()}
-
-      {/* ─────────────────────────────────────────────────────────────
-          6. PERSONALIZED LEARNING & ACADEMIC ADVISOR ECOSYSTEM
-      ─────────────────────────────────────────────────────────────── */}
-      <ProgramsPersonalized
-        translations={{
-          title: pc?.personalized?.title?.[locale] || t('personalized.title'),
-          desc: pc?.personalized?.desc?.[locale] || t('personalized.desc'),
-          goalsTitle: pc?.personalized?.goalsTitle?.[locale] || t('personalized.goalsTitle'),
-          goals: pc?.personalized?.goals?.[locale]?.length
-            ? pc.personalized.goals[locale]
-            : (t.raw('personalized.goals') as string[]),
-          p2: pc?.personalized?.p2?.[locale] || t('personalized.p2'),
-        }}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          7. OUTSTANDING ACHIEVEMENTS & EDUCATIONAL OUTCOMES
+          5. OUTSTANDING ACHIEVEMENTS & EDUCATIONAL OUTCOMES
       ─────────────────────────────────────────────────────────────── */}
       {pc?.showAchievements !== false && (
         <AchievementsOverviewSection

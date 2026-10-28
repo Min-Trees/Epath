@@ -1,157 +1,29 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
-import { ExternalLink, Award, ArrowRight, Check } from 'lucide-react'
+import { ExternalLink, Award, ArrowRight, Check, Globe2, Sparkles } from 'lucide-react'
 import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
 import { useCmsContext } from '@/lib/cms-context'
-import type { Partner } from '@/lib/cms-types'
+import type { Partner, PartnersContent } from '@/lib/cms-types'
+import { DEFAULT_PARTNERS, DEFAULT_PARTNERS_CONTENT } from '@/lib/default-partners'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
-
-const fallbackPartners: Partner[] = [
-  {
-    id: 'edmentum',
-    name: 'Edmentum International & EdOptions Academy',
-    logoUrl: '',
-    website: 'https://www.edmentum.com',
-    category: 'curriculum',
-    description: {
-      vi: 'Tổ chức giáo dục K-12 hàng đầu Hoa Kỳ với hơn 60 năm kinh nghiệm, phục vụ 5.2 triệu học sinh mỗi năm trên 100 quốc gia. Trường trực tuyến EdOptions Academy được kiểm định toàn diện bởi Cognia và WASC, cấp bằng Tú tài Mỹ (U.S. High School Diploma) và cung cấp hơn 400 khóa học chuẩn quốc tế gồm các môn Tín chỉ nâng cao AP® được College Board phê duyệt.',
-      en: 'Leading US K-12 digital curriculum and accredited online schooling provider with 60+ years of educational excellence, serving 5.2 million students annually across 100+ countries. EdOptions Academy is fully accredited by Cognia and WASC, awarding the official U.S. High School Diploma with 400+ courses including College Board approved AP® courses.',
-    },
-    features: [
-      { vi: 'Kiểm định chất lượng giáo dục bởi Cognia và WASC', en: 'Accredited by Cognia and WASC' },
-      { vi: 'Chương trình AP® được College Board phê duyệt & NCAA công nhận', en: 'College Board approved AP® courses and NCAA eligible' },
-      { vi: 'Hơn 400 khóa học chuẩn Hoa Kỳ từ lớp 6 đến lớp 12', en: '400+ US curriculum courses from Grade 6 to Grade 12' },
-      { vi: '92% học sinh hoàn tất đỗ vào các trường đại học uy tín tại Hoa Kỳ', en: '92% of graduates accepted into leading universities' },
-    ],
-    isFeatured: true,
-    order: 0,
-    isActive: true,
-    status: 'PUBLISHED' as const,
-    rejectionReason: '',
-    scheduledAt: '',
-    publishedAt: '',
-    createdByUid: '',
-    createdByEmail: '',
-    createdByName: '',
-    lastReviewerUid: '',
-    lastReviewerEmail: '',
-    lastReviewerName: '',
-    submittedAt: '',
-    reviewedAt: '',
-  },
-  {
-    id: 'cambridge',
-    name: 'Cambridge Assessment English',
-    logoUrl: '',
-    website: 'https://www.cambridgeenglish.org',
-    category: 'certification',
-    description: {
-      vi: 'Hội đồng Khảo thí tiếng Anh thuộc Đại học Cambridge (Vương quốc Anh) – tổ chức hàng đầu thế giới trong đánh giá năng lực ngôn ngữ. Khung năng lực Cambridge English Qualifications được tích hợp xuyên suốt tại EPath, xác định chính xác trình độ và chuẩn bị nền tảng tiếng Anh học thuật để học sinh tự tin học các môn phổ thông quốc tế.',
-      en: 'World-renowned English language assessment organization part of the University of Cambridge (UK). The Cambridge English Qualifications framework is integrated throughout EPath tracks, setting clear benchmarks from Young Learners to IELTS Academic.',
-    },
-    features: [
-      { vi: 'Đánh giá khách quan theo khung Cambridge English Qualifications', en: 'Standardized assessment on Cambridge English Qualifications' },
-      { vi: 'Lộ trình chuẩn hóa từ Starters, Movers, Flyers đến IELTS', en: 'Structured progression from Young Learners to IELTS' },
-      { vi: 'Xây dựng tiếng Anh học thuật như một công cụ học tập đa môn', en: 'Develops academic English as a multidisciplinary study tool' },
-      { vi: 'Rút ngắn lộ trình nền tảng, tối ưu thời gian và chi phí cho gia đình', en: 'Streamlined foundational pathway saving time and investment' },
-    ],
-    isFeatured: true,
-    order: 1,
-    isActive: true,
-    status: 'PUBLISHED' as const,
-    rejectionReason: '',
-    scheduledAt: '',
-    publishedAt: '',
-    createdByUid: '',
-    createdByEmail: '',
-    createdByName: '',
-    lastReviewerUid: '',
-    lastReviewerEmail: '',
-    lastReviewerName: '',
-    submittedAt: '',
-    reviewedAt: '',
-  },
-  {
-    id: 'fablab',
-    name: 'FabLab EIU – Trường Đại học Quốc tế Miền Đông',
-    logoUrl: '',
-    website: 'https://eiu.edu.vn',
-    category: 'lab',
-    description: {
-      vi: 'Không gian sáng tạo (makerspace) công nghệ cao trực thuộc Trường Đại học Quốc tế Miền Đông (EIU). EPath hợp tác cùng FabLab EIU mang đến cho học sinh môi trường thực hành sáng tạo với công nghệ in 3D, thiết kế CAD, lập trình Robotics và các dự án STEAM thực nghiệm, kết nối lý thuyết học thuật với ứng dụng thực tế.',
-      en: 'State-of-the-art makerspace affiliated with Eastern International University (EIU). EPath partners with FabLab EIU to provide hands-on STEM education, 3D printing, CAD design, robotics, and applied STEAM innovation projects.',
-    },
-    features: [
-      { vi: 'Makerspace hiện đại với máy in 3D, máy cắt laser và xưởng Robotics', en: 'Modern makerspace equipped with 3D printers and robotics labs' },
-      { vi: 'Trực tiếp trải nghiệm và ứng dụng kiến thức khoa học vào thực tế', en: 'Hands-on application of scientific principles to real projects' },
-      { vi: 'Phát triển tư duy sáng tạo, giải quyết vấn đề và kỹ năng thực hành', en: 'Fosters creative problem-solving and maker engineering skills' },
-      { vi: 'Nuôi dưỡng năng lực công nghệ và tinh thần đổi mới sáng tạo thế kỷ 21', en: 'Nurtures 21st-century technological fluency and innovation' },
-    ],
-    isFeatured: true,
-    order: 2,
-    isActive: true,
-    status: 'PUBLISHED' as const,
-    rejectionReason: '',
-    scheduledAt: '',
-    publishedAt: '',
-    createdByUid: '',
-    createdByEmail: '',
-    createdByName: '',
-    lastReviewerUid: '',
-    lastReviewerEmail: '',
-    lastReviewerName: '',
-    submittedAt: '',
-    reviewedAt: '',
-  },
-  {
-    id: 'cognia',
-    name: 'Cognia & WASC Accreditation',
-    logoUrl: '',
-    website: 'https://www.cognia.org',
-    category: 'certification',
-    description: {
-      vi: 'Hai tổ chức kiểm định giáo dục uy tín bậc nhất Hoa Kỳ và toàn cầu. Chứng nhận kiểm định đảm bảo giá trị pháp lý quốc tế của Bằng tốt nghiệp Phổ thông Mỹ (U.S. High School Diploma) và bảng điểm (transcript) để học sinh EPath được công nhận và xét tuyển thẳng vào các trường đại học hàng đầu thế giới.',
-      en: 'Two of the most recognized educational accrediting organizations globally. Their accreditation guarantees full international recognition and academic rigor for the U.S. High School Diploma and transcripts for direct admission to top global universities.',
-    },
-    features: [
-      { vi: 'Tổ chức kiểm định chất lượng giáo dục hàng đầu của Hoa Kỳ', en: 'Premier education accreditation agencies in the United States' },
-      { vi: 'Bằng Tú tài Mỹ và bảng điểm được công nhận trên toàn thế giới', en: 'US High School Diploma and transcripts recognized worldwide' },
-      { vi: 'Bảo đảm tính liên thông và chuẩn mực học thuật quốc tế cao nhất', en: 'Ensures highest international academic standards and transferability' },
-      { vi: 'Mở rộng cơ hội săn học bổng và xét tuyển thẳng vào đại học danh tiếng', en: 'Maximizes scholarship opportunities at world-ranked universities' },
-    ],
-    isFeatured: false,
-    order: 3,
-    isActive: true,
-    status: 'PUBLISHED' as const,
-    rejectionReason: '',
-    scheduledAt: '',
-    publishedAt: '',
-    createdByUid: '',
-    createdByEmail: '',
-    createdByName: '',
-    lastReviewerUid: '',
-    lastReviewerEmail: '',
-    lastReviewerName: '',
-    submittedAt: '',
-    reviewedAt: '',
-  },
-]
 
 const partnerImages: Record<string, string> = {
   edmentum: '/images/partners/partner-edmentum.jpg',
   cambridge: '/images/partners/partner-cambridge.jpg',
   fablab: '/images/partners/partner-fablab.jpg',
-  cognia: '/images/partners/partner-cognia.jpg',
+  network: '/images/partners/partner-cognia.jpg',
+  other: '/images/partners/partner-cognia.jpg',
 }
 
 const partnerBadges: Record<string, { label: { vi: string; en: string }; bg: string }> = {
   edmentum: {
-    label: { vi: 'Chương Trình Chuẩn Hoa Kỳ', en: 'Accredited US Curriculum' },
+    label: { vi: 'Chương Trình Chuẩn Hoa Kỳ & Bằng Tú Tài Mỹ', en: 'Accredited US Curriculum & High School Diploma' },
     bg: '#2E4A9E',
   },
   cambridge: {
@@ -159,11 +31,11 @@ const partnerBadges: Record<string, { label: { vi: string; en: string }; bg: str
     bg: '#5C9024',
   },
   fablab: {
-    label: { vi: 'Không Gian Đổi Mới Sáng Tạo STEAM', en: 'STEAM Makerspace & Robotics' },
+    label: { vi: 'Không Gian Sáng Tạo STEAM & Robotics', en: 'STEAM Makerspace & Applied Tech' },
     bg: '#F26522',
   },
-  cognia: {
-    label: { vi: 'Kiểm Định Giáo Dục Toàn Cầu', en: 'Global Educational Accreditation' },
+  network: {
+    label: { vi: 'Mạng Lưới Giáo Dục Toàn Cầu', en: 'Global Educational Network' },
     bg: '#1E3570',
   },
 }
@@ -176,24 +48,48 @@ function initials(name: string) {
     .join('')
 }
 
-function getPartnerKey(partner: Partner): 'edmentum' | 'cambridge' | 'fablab' | 'cognia' {
+function getPartnerKey(partner: Partner): 'edmentum' | 'cambridge' | 'fablab' | 'network' {
   const raw = `${partner.id || ''} ${partner.name || ''}`.toLowerCase()
   if (raw.includes('edmentum') || raw.includes('edoptions')) return 'edmentum'
   if (raw.includes('cambridge') || raw.includes('esol')) return 'cambridge'
   if (raw.includes('fablab') || raw.includes('eiu')) return 'fablab'
-  if (raw.includes('cognia') || raw.includes('wasc')) return 'cognia'
-  return 'edmentum'
+  return 'network'
 }
 
 export default function PartnersPage() {
   const t = useTranslations('partnersPage')
-  const tFeature = useTranslations('partnersPage.featureList')
   const locale = useLocale()
+  const isVi = locale === 'vi'
   const { data: cms } = useCmsContext()
   const { openRegistrationModal } = useRegistrationModal()
+  const [pageContent, setPageContent] = useState<PartnersContent | null>(null)
+
+  useEffect(() => {
+    async function loadContent() {
+      try {
+        const res = await fetch('/api/cms/partners-content')
+        const data = await res.json()
+        const items: PartnersContent[] = data.items || []
+        if (items.length > 0) {
+          setPageContent(items[0])
+        }
+      } catch (e) {
+        console.error('Failed to load partners-content:', e)
+      }
+    }
+    loadContent()
+  }, [])
+
+  const content = (cms.partnersContent as PartnersContent | null) || pageContent || DEFAULT_PARTNERS_CONTENT
+  const heroTitle = content?.hero?.title?.[locale as 'vi' | 'en'] || (isVi ? 'Đối tác Quốc tế' : 'International Partners')
+  const heroSubtitle =
+    content?.hero?.subtitle?.[locale as 'vi' | 'en'] ||
+    (isVi
+      ? 'EPath Education đồng hành cùng các tổ chức giáo dục, khảo thí và công nghệ hàng đầu thế giới để kiến tạo hệ sinh thái học thuật chuẩn mực, toàn diện và bền vững cho học sinh.'
+      : 'EPath Education partners with premier global academic, testing, and technology organizations to provide a certified, comprehensive K-12 learning ecosystem.')
 
   // Deduplicate partners by semantic key to guarantee no repeated entries
-  const rawPartners: Partner[] = cms.partners.length > 0 ? cms.partners : fallbackPartners
+  const rawPartners: Partner[] = cms.partners.length > 0 ? cms.partners : DEFAULT_PARTNERS
   const partners: Partner[] = rawPartners
     .filter((p) => p.isActive !== false)
     .filter((p, index, self) => {
@@ -205,9 +101,38 @@ export default function PartnersPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          PARTNER SHOWCASE ROWS
+          1. HERO HEADER SECTION
       ─────────────────────────────────────────────────────────────── */}
-      <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white">
+      <section className="pt-28 sm:pt-32 pb-10 sm:pb-14 bg-gradient-to-b from-[#F6F5F1] to-white border-b border-[#DEDDD6]/60">
+        <div className="container mx-auto px-4 max-w-5xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: duration.normal, ease: easeOut }}
+          >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] border border-[#2E4A9E]/20 mb-4 shadow-2xs">
+              <Globe2 className="w-3.5 h-3.5" />
+              <span>{isVi ? 'Hệ sinh thái Giáo dục Chuẩn Quốc tế' : 'Accredited Global Education Ecosystem'}</span>
+            </div>
+
+            <h1
+              className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1E3570] mb-4 tracking-tight"
+              style={{ fontFamily: "'SVN-Gilroy', var(--font-gilroy), system-ui, sans-serif" }}
+            >
+              {heroTitle}
+            </h1>
+
+            <p className="text-sm sm:text-base md:text-lg text-[#5C6069] leading-relaxed max-w-3xl mx-auto">
+              {heroSubtitle}
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. PARTNER SHOWCASE ROWS
+      ─────────────────────────────────────────────────────────────── */}
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="space-y-12 sm:space-y-16 max-w-6xl mx-auto">
             {partners.map((partner, index) => {
@@ -218,12 +143,21 @@ export default function PartnersPage() {
                   : partner.name
               const desc = partner.description[locale as 'vi' | 'en'] || partner.description.vi
               const pKey = getPartnerKey(partner)
-              const partnerImg = partnerImages[pKey] || '/images/partners/partner-edmentum.jpg'
-              const badge = partnerBadges[pKey] || {
+
+              // Prefer partner.imageUrl set by admin, fallback to preset images
+              const partnerImg = partner.imageUrl || partnerImages[pKey] || '/images/partners/partner-edmentum.jpg'
+
+              // Prefer partner.badgeLabel set by admin
+              const customBadge =
+                typeof partner.badgeLabel === 'object'
+                  ? partner.badgeLabel[locale as 'vi' | 'en'] || partner.badgeLabel.vi
+                  : partner.badgeLabel
+              const defaultBadge = partnerBadges[pKey] || {
                 label: { vi: 'Đối Tác Học Thuật', en: 'Academic Partner' },
                 bg: accent.color,
               }
-              const badgeLabel = badge.label[locale as 'vi' | 'en'] || badge.label.vi
+              const badgeLabel = customBadge || defaultBadge.label[locale as 'vi' | 'en'] || defaultBadge.label.vi
+              const badgeBg = defaultBadge.bg || accent.color
 
               return (
                 <motion.div
@@ -250,7 +184,7 @@ export default function PartnersPage() {
                       <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
                         <span
                           className="px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-md tracking-wide"
-                          style={{ backgroundColor: badge.bg }}
+                          style={{ backgroundColor: badgeBg }}
                         >
                           {badgeLabel}
                         </span>
@@ -274,7 +208,7 @@ export default function PartnersPage() {
                               {badgeLabel}
                             </span>
                             <span className="text-[11px] text-white/80 block uppercase tracking-wider">
-                              {partner.category.toUpperCase()} • EPATH VERIFIED
+                              {partner.category.toUpperCase()} • EPATH ACCREDITED
                             </span>
                           </div>
                         </div>
@@ -313,36 +247,37 @@ export default function PartnersPage() {
                       </div>
 
                       {desc && (
-                        <RichTextRenderer
-                          html={desc}
-                          className="text-[#5C6069] text-xs sm:text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_p:last-child]:mb-0"
-                        />
+                        <div className="text-[#5C6069] text-xs sm:text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_p:last-child]:mb-0">
+                          <RichTextRenderer html={desc} />
+                        </div>
                       )}
 
-                      <div className="pt-4 border-t border-[#DEDDD6]">
-                        <h3 className="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{ color: accent.color }}>
-                          <Award className="w-4 h-4" />
-                          <span>{t('features')}</span>
-                        </h3>
-                        <ul className="space-y-2.5">
-                          {(partner.features.length > 0
-                            ? partner.features
-                            : [1, 2, 3, 4].map((i) => ({ vi: tFeature(`f${i}` as 'f1' | 'f2' | 'f3' | 'f4'), en: tFeature(`f${i}` as 'f1' | 'f2' | 'f3' | 'f4') }))
-                          ).map((feat, i) => (
-                            <li key={i} className="flex items-start gap-2.5">
-                              <div
-                                className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-[10px]"
-                                style={{ backgroundColor: accent.color }}
-                              >
-                                <Check className="w-2.5 h-2.5" />
-                              </div>
-                              <span className="text-[#20242B] text-xs sm:text-sm font-medium leading-relaxed">
-                                {feat[locale as 'vi' | 'en'] || feat.vi || feat.en}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {partner.features && partner.features.length > 0 && (
+                        <div className="pt-4 border-t border-[#DEDDD6]">
+                          <h3
+                            className="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5"
+                            style={{ color: accent.color }}
+                          >
+                            <Award className="w-4 h-4" />
+                            <span>{t('features')}</span>
+                          </h3>
+                          <ul className="space-y-2.5">
+                            {partner.features.map((feat, i) => (
+                              <li key={i} className="flex items-start gap-2.5">
+                                <div
+                                  className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-[10px]"
+                                  style={{ backgroundColor: accent.color }}
+                                >
+                                  <Check className="w-2.5 h-2.5" />
+                                </div>
+                                <span className="text-[#20242B] text-xs sm:text-sm font-medium leading-relaxed">
+                                  {feat[locale as 'vi' | 'en'] || feat.vi || feat.en}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -353,7 +288,7 @@ export default function PartnersPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          BOTTOM CTA
+          3. BOTTOM CTA
       ─────────────────────────────────────────────────────────────── */}
       <section
         className="py-12 sm:py-16 relative overflow-hidden"
@@ -367,14 +302,18 @@ export default function PartnersPage() {
             transition={{ duration: duration.normal, ease: easeOut }}
             className="max-w-lg mx-auto"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2.5">{t('cta.title')}</h2>
-            <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">{t('cta.subtitle')}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2.5">
+              {content?.cta?.title?.[locale as 'vi' | 'en'] || t('cta.title')}
+            </h2>
+            <p className="text-white/85 text-sm sm:text-base mb-6 leading-relaxed">
+              {content?.cta?.subtitle?.[locale as 'vi' | 'en'] || t('cta.subtitle')}
+            </p>
             <button
               type="button"
               onClick={() => openRegistrationModal({ source: 'partners-bottom-cta' })}
               className="inline-flex items-center gap-2.5 bg-[#F26522] hover:bg-[#C94F16] text-white px-7 py-3 rounded-full font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
             >
-              <span>{t('cta.button')}</span>
+              <span>{content?.cta?.buttonText?.[locale as 'vi' | 'en'] || t('cta.button')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>

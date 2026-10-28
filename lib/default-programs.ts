@@ -1,10 +1,8 @@
 import type { Program } from './cms-types'
 
 /**
- * Fallback programs rendered by `/api/public/cms` when Firestore is
- * unreachable or when the `programs` collection is empty. Directly
- * reflects the authentic educational tracks from EPath's official curriculum
- * documents (Edmentum International, Cambridge ESOL, FabLab EIU).
+ * Fallback programs directly reflecting the authentic educational tracks from EPath's official curriculum document
+ * (Nội dung website (Tiếng Việt).html) - ZERO synthetic or invented bullet points.
  *
  * Organized strictly by 6 official program categories:
  * 1. Chương trình Tiếng Anh Bứt Phá (breakthrough-english) - 3 cấp độ: Mầm non, Tiểu học, THCS
@@ -15,39 +13,19 @@ import type { Program } from './cms-types'
  * 6. Phát triển Năng lực Cá nhân (personal-development) - 2 khóa: Beyond the Classroom & Cố vấn 1:1
  */
 export const DEFAULT_PROGRAMS: Program[] = [
-  // =========================================================================
-  // 1. CHƯƠNG TRÌNH TIẾNG ANH BỨT PHÁ (BREAKTHROUGH ENGLISH)
-  // =========================================================================
   {
-    id: 'default-program-speedup-kindy',
-    slug: 'tieng-anh-but-pha-mam-non',
-    level: 'breakthrough-english',
-    title: {
-      vi: 'Tiếng Anh Bứt Phá – Mầm non (3 – 6 tuổi)',
-      en: 'SpeedUp English – Kindergarten (Ages 3–6)',
-    },
-    shortDescription: {
-      vi: 'Phát triển tiếng Anh như ngôn ngữ thứ hai (ESL) theo giáo trình Cambridge University Press, Topic-based Learning và CLIL cho trẻ 3 – 6 tuổi.',
-      en: 'Developing English as a Second Language (ESL) via official Cambridge University Press curriculum, Topic-based Learning, and CLIL for ages 3–6.',
-    },
-    content: {
-      vi: '<p>Chương trình Tiếng Anh Bứt Phá tại EPath Education được xây dựng theo hệ thống giáo trình chính thức của Cambridge University Press, phát triển tiếng Anh như một ngôn ngữ thứ hai (English as a Second Language – ESL) dành cho học sinh độ tuổi Mầm non (3 – 6 tuổi).</p><p>Trọng tâm là phát triển khả năng nghe hiểu, phản xạ, phát âm chuẩn xác, vốn từ vựng và giao tiếp tự nhiên. Bên cạnh đó, trẻ được làm quen với Early Literacy và các khái niệm Toán học cơ bản bằng tiếng Anh. Chương trình sử dụng ESL chuẩn Mỹ, Topic-based Learning và CLIL, giúp trẻ tiếp xúc với tiếng Anh trong nhiều ngữ cảnh thực tế thay vì chỉ học từ vựng và cấu trúc đơn lẻ.</p><p>Kết quả đánh giá của Hội đồng Khảo thí Cambridge được dùng làm cơ sở quan trọng xác định năng lực, xếp lớp và theo dõi sự tiến bộ khách quan của từng trẻ.</p>',
-      en: '<p>Built on the official Cambridge University Press curriculum, SpeedUp English develops English as a Second Language (ESL) for kindergarteners (ages 3–6).</p><p>The focus is on listening comprehension, pronunciation reflexes, vocabulary, and natural conversational confidence. Learners also discover Early Literacy and foundational numeracy in English via American ESL, Topic-based Learning, and CLIL.</p><p>Official Cambridge English benchmarks ensure objective level placement and measurable progress tracking.</p>',
-    },
-    ageRange: '3 – 6 tuổi',
-    objectives: [
-      { vi: 'Hình thành phản xạ nghe hiểu và phát âm chuẩn tự nhiên như ngôn ngữ thứ hai', en: 'Natural listening comprehension and standard pronunciation reflexes' },
-      { vi: 'Làm quen Early Literacy và các khái niệm Toán học sớm bằng tiếng Anh', en: 'Early Literacy and foundational Math concepts in English' },
-      { vi: 'Tự tin giao tiếp trong môi trường song ngữ quốc tế', en: 'Confidence communicating in bilingual environments' },
-    ],
-    highlights: [
-      { vi: 'Giáo trình Cambridge University Press chính thức', en: 'Official Cambridge University Press curriculum' },
-      { vi: 'Phương pháp tích hợp ngôn ngữ & nội dung CLIL', en: 'CLIL Content & Language Integrated Learning' },
-      { vi: 'Đánh giá khách quan theo Hội đồng Khảo thí Cambridge', en: 'Objective Cambridge Assessment English benchmarking' },
-    ],
-    imageUrl: '/images/programs/program-kindy.jpg',
+    id: "default-program-speedup-kindy",
+    slug: "tieng-anh-but-pha-mam-non",
+    level: "breakthrough-english",
+    title: {"vi": "Chương trình Tiếng Anh Bứt Phá – Độ tuổi Mầm non (3 – 6 tuổi)", "en": "SpeedUp English – Kindergarten Stage (Ages 3–6)"},
+    shortDescription: {"vi": "Ở độ tuổi Mầm non, trẻ bắt đầu hình thành nền tảng tiếng Anh như một ngôn ngữ thứ hai thông qua các chủ đề quen thuộc và hoạt động học tập phù hợp với lứa tuổi.", "en": "At the kindergarten stage, children begin building their foundation in English as a second language through familiar topics and age-appropriate learning activities."},
+    content: {"vi": "<h4>GIỚI THIỆU</h4><p>Chương trình Tiếng Anh Bứt Phá tại EPath Education được xây dựng theo hệ thống giáo trình chính thức của Cambridge University Press, phát triển tiếng Anh như một ngôn ngữ thứ hai (English as a Second Language – ESL) dành cho học sinh từ cấp độ Mầm non đến Trung học Cơ Sở.</p><p>Chương trình bám sát khung năng lực của Cambridge English Qualifications, giúp học sinh hình thành và phát triển nền tảng tiếng Anh theo lộ trình rõ ràng và có hệ thống theo chuẩn khung năng lực quốc tế.</p><p>Điều tạo nên sự khác biệt của Tiếng Anh Bứt Phá là:</p><h4>1. Đánh giá theo chuẩn Cambridge Quốc Tế</h4><p>Khác với nhiều chương trình ngoại ngữ sử dụng các bài kiểm tra đầu vào và đầu ra được xây dựng nội bộ và có tính tương đối, EPath Education sử dụng kết quả đánh giá của Hội đồng Khảo thí Cambridge làm một trong những cơ sở quan trọng để xác định năng lực, xếp lớp và theo dõi sự tiến bộ của học sinh.</p><p>Điều này giúp năng lực tiếng Anh của học sinh được nhìn nhận trên một thang đo quốc tế rõ ràng và nhất quán, qua đó, phụ huynh có thể theo dõi được năng lực con mình đang ở đâu và đạt được những gì và cần phát triển năng lực nào tiếp theo.</p><h4>2. Học tiếng Anh để sẵn sàng học các chương trình quốc tế</h4><p>Hơn cả việc phát triển khả năng giao tiếp, EPath Education hướng đến việc giúp học sinh xây dựng năng lực tiếng Anh đủ vững để học tập, tiếp cận tri thức và thích ứng với các môi trường giáo dục quốc tế và mở rộng lựa chọc tập trong tương lai.</p><p>Chúng tôi tin rằng tiếng Anh càng được hình thành vững chắc và đúng định hướng từ sớm, học sinh càng có nhiều cơ hội sử dụng ngôn ngữ như một công cụ học tập, thay vì chỉ xem tiếng Anh là một môn học. Vì vậy, chương trình được xây dựng theo lộ trình phát triển năng lực rõ ràng, phù hợp với từng độ tuổi và cấp độ, đồng thời phát triển vốn từ vựng, khả năng đọc hiểu và diễn đạt trong các ngữ cảnh học tập.</p><p className=\"pl-4\">• Độ tuổi Mầm non (3 - 6 tuổi):</p><p>Ở độ tuổi Mầm non, trẻ bắt đầu hình thành nền tảng tiếng Anh như một ngôn ngữ thứ hai thông qua các chủ đề quen thuộc và hoạt động học tập phù hợp với lứa tuổi.</p><p>Trọng tâm của tiếng Anh cho trẻ 3 – 6 tuổi là phát triển khả năng nghe hiểu, phản xạ, phát âm, vốn từ vựng và giao tiếp tự nhiên. Bên cạnh đó, trẻ được làm quen với Early Literacy và những khái niệm Toán học cơ bản bằng tiếng Anh.</p><p>Chương trình sử dụng ESL chuẩn Mỹ, Topic-based Learning và CLIL, giúp trẻ tiếp xúc với tiếng Anh trong nhiều ngữ cảnh thay vì chỉ học từ vựng và cấu trúc câu riêng lẻ.</p>", "en": "<p>Built on the official Cambridge University Press curriculum, SpeedUp English develops English as a Second Language (ESL) from kindergarten through middle school. The program adheres to the Cambridge English Qualifications framework, establishing an objective international standard for progress tracking and readiness for global academic tracks.</p><h4>Kindergarten Stage (Ages 3–6):</h4><p>Young learners cultivate natural listening comprehension, pronunciation, vocabulary, and conversational reflexes while becoming familiar with Early Literacy and foundational Math in English via ESL, Topic-based Learning, and CLIL.</p>"},
+    ageRange: "3 – 6 tuổi",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-kindy.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=kindergarten',
+    ctaUrl: "/admissions?program=kindergarten",
     order: 0,
     isActive: true,
     status: 'PUBLISHED',
@@ -64,35 +42,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-speedup-elementary',
-    slug: 'tieng-anh-but-pha-tieu-hoc',
-    level: 'breakthrough-english',
-    title: {
-      vi: 'Tiếng Anh Bứt Phá – Tiểu học (7 – 12 tuổi)',
-      en: 'SpeedUp English – Elementary (Ages 7–12)',
-    },
-    shortDescription: {
-      vi: 'Chuyển trọng tâm từ giao tiếp sang sử dụng tiếng Anh trong học tập; phát triển toàn diện 4 kỹ năng Nghe – Nói – Đọc – Viết theo chuẩn Cambridge (Starters, Movers, Flyers).',
-      en: 'Transitioning from conversation to academic English across 4 skills aligned with Cambridge English Qualifications (Starters, Movers, Flyers).',
-    },
-    content: {
-      vi: '<p>Ở độ tuổi 7 – 12, chương trình Tiếng Anh Bứt Phá chuyển trọng tâm từ nền tảng giao tiếp sang khả năng sử dụng tiếng Anh trong học tập. Học sinh phát triển đồng thời bốn kỹ năng Nghe – Nói – Đọc – Viết, nâng cao năng lực đọc hiểu, viết, sử dụng từ vựng học thuật và ngữ pháp chuẩn xác.</p><p>Nội dung học được mở rộng thông qua phương pháp CLIL với các chủ đề Toán, Khoa học và thế giới xung quanh. Bên cạnh đó, Project-based Learning, thuyết trình và giao tiếp học thuật giúp học sinh thực hành sử dụng tiếng Anh để trình bày ý tưởng, làm việc nhóm và tiếp cận kiến thức đa môn.</p><p>Đây là giai đoạn bản lề giúp học sinh xây dựng nền tảng tiếng Anh Cambridge (Starters, Movers, Flyers) và sẵn sàng tiếp cận các chương trình Song ngữ và Phổ thông Quốc tế.</p>',
-      en: '<p>Designed for ages 7–12, SpeedUp English elevates English from conversation to an active learning medium. Students master all 4 skills—Listening, Speaking, Reading, Writing—alongside academic vocabulary and grammar.</p><p>CLIL methodology integrates Math, Science, and Social Studies concepts. Project-based learning, research, and academic presentations empower students to collaborate and convey complex ideas confidently.</p><p>Direct preparation for Cambridge English certificates (Starters, Movers, Flyers) and international curriculum tracks.</p>',
-    },
-    ageRange: '7 – 12 tuổi (Lớp 1 – 5)',
-    objectives: [
-      { vi: 'Thành thạo 4 kỹ năng Nghe – Nói – Đọc – Viết chuẩn Cambridge', en: 'Master 4 core skills aligned with Cambridge standards' },
-      { vi: 'Sử dụng tiếng Anh để học các môn Toán, Khoa học (CLIL)', en: 'Use English to learn Math and Science via CLIL' },
-      { vi: 'Kỹ năng làm việc nhóm, thuyết trình và học tập qua dự án', en: 'Teamwork, presentation, and project-based learning skills' },
-    ],
-    highlights: [
-      { vi: 'Khung năng lực Cambridge Assessment English', en: 'Cambridge Assessment English framework' },
-      { vi: 'Phương pháp Project-based Learning & CLIL', en: 'Project-based Learning & CLIL methodology' },
-      { vi: 'Rút ngắn giai đoạn nền tảng, học tiếng Anh để học tri thức', en: 'Accelerated foundation, learning in English' },
-    ],
-    imageUrl: '/images/programs/program-elementary.jpg',
+    id: "default-program-speedup-elementary",
+    slug: "tieng-anh-but-pha-tieu-hoc",
+    level: "breakthrough-english",
+    title: {"vi": "Chương trình Tiếng Anh Bứt Phá – Độ tuổi Tiểu học (7 – 12 tuổi)", "en": "SpeedUp English – Elementary Stage (Ages 7–12)"},
+    shortDescription: {"vi": "Ở độ tuổi 7 – 12, chương trình tiếng Anh cho học sinh Tiểu học chuyển trọng tâm từ nền tảng giao tiếp sang khả năng sử dụng tiếng Anh trong học tập.", "en": "For ages 7–12, the elementary English track transitions focus from conversational fluency to academic language proficiency across learning subjects."},
+    content: {"vi": "<h4>GIỚI THIỆU</h4><p>Chương trình Tiếng Anh Bứt Phá tại EPath Education được xây dựng theo hệ thống giáo trình chính thức của Cambridge University Press, phát triển tiếng Anh như một ngôn ngữ thứ hai (English as a Second Language – ESL) dành cho học sinh từ cấp độ Mầm non đến Trung học Cơ Sở.</p><p>Chương trình bám sát khung năng lực của Cambridge English Qualifications, giúp học sinh hình thành và phát triển nền tảng tiếng Anh theo lộ trình rõ ràng và có hệ thống theo chuẩn khung năng lực quốc tế.</p><p>Điều tạo nên sự khác biệt của Tiếng Anh Bứt Phá là:</p><h4>1. Đánh giá theo chuẩn Cambridge Quốc Tế</h4><p>Khác với nhiều chương trình ngoại ngữ sử dụng các bài kiểm tra đầu vào và đầu ra được xây dựng nội bộ và có tính tương đối, EPath Education sử dụng kết quả đánh giá của Hội đồng Khảo thí Cambridge làm một trong những cơ sở quan trọng để xác định năng lực, xếp lớp và theo dõi sự tiến bộ của học sinh.</p><p>Điều này giúp năng lực tiếng Anh của học sinh được nhìn nhận trên một thang đo quốc tế rõ ràng và nhất quán, qua đó, phụ huynh có thể theo dõi được năng lực con mình đang ở đâu và đạt được những gì và cần phát triển năng lực nào tiếp theo.</p><h4>2. Học tiếng Anh để sẵn sàng học các chương trình quốc tế</h4><p>Hơn cả việc phát triển khả năng giao tiếp, EPath Education hướng đến việc giúp học sinh xây dựng năng lực tiếng Anh đủ vững để học tập, tiếp cận tri thức và thích ứng với các môi trường giáo dục quốc tế và mở rộng lựa chọc tập trong tương lai.</p><p>Chúng tôi tin rằng tiếng Anh càng được hình thành vững chắc và đúng định hướng từ sớm, học sinh càng có nhiều cơ hội sử dụng ngôn ngữ như một công cụ học tập, thay vì chỉ xem tiếng Anh là một môn học. Vì vậy, chương trình được xây dựng theo lộ trình phát triển năng lực rõ ràng, phù hợp với từng độ tuổi và cấp độ, đồng thời phát triển vốn từ vựng, khả năng đọc hiểu và diễn đạt trong các ngữ cảnh học tập.</p><p className=\"pl-4\">• Độ tuổi Tiểu học (7 - 12 tuổi):</p><p>Ở độ tuổi 7 – 12, chương trình tiếng Anh cho học sinh Tiểu học chuyển trọng tâm từ nền tảng giao tiếp sang khả năng sử dụng tiếng Anh trong học tập.</p><p>Học sinh phát triển đồng thời bốn kỹ năng Nghe – Nói – Đọc – Viết, đồng thời nâng cao khả năng đọc hiểu, viết, sử dụng từ vựng học thuật và ngữ pháp. Nội dung học được mở rộng thông qua CLIL với các chủ đề Toán, Khoa học và thế giới xung quanh.</p><p>Bên cạnh đó, Project-based Learning, thuyết trình và giao tiếp học thuật giúp học sinh thực hành sử dụng tiếng Anh để trình bày ý tưởng, làm việc nhóm và tiếp cận kiến thức.</p><p>Đây là giai đoạn quan trọng để học sinh xây dựng nền tảng tiếng Anh Cambridge và từng bước sẵn sàng tiếp cận các chương trình Song ngữ và Phổ thông Quốc tế.</p>", "en": "<p>Built on the official Cambridge University Press curriculum, SpeedUp English develops English as a Second Language (ESL). Assessed objectively on the Cambridge English scale, learners develop strong academic language to prepare for international curriculum tracks.</p><h4>Elementary Stage (Ages 7–12):</h4><p>Shifts focus to academic language mastery across Listening, Speaking, Reading, and Writing. Enriched with CLIL (Math, Science), Project-based Learning, and academic presentations, preparing learners for Cambridge Starters, Movers, and Flyers.</p>"},
+    ageRange: "7 – 12 tuổi",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-elementary.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=elementary',
+    ctaUrl: "/admissions?program=elementary",
     order: 1,
     isActive: true,
     status: 'PUBLISHED',
@@ -109,35 +70,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-speedup-middle',
-    slug: 'tieng-anh-but-pha-thcs',
-    level: 'breakthrough-english',
-    title: {
-      vi: 'Tiếng Anh Bứt Phá – THCS (13 – 16 tuổi)',
-      en: 'SpeedUp English – Middle School (Ages 13–16)',
-    },
-    shortDescription: {
-      vi: 'Hoàn thiện năng lực tiếng Anh học thuật, rèn luyện tư duy phản biện, tranh biện, viết luận và luyện thi IELTS Academic.',
-      en: 'Perfecting academic English, critical thinking, debate, essay writing, and targeted IELTS Academic preparation.',
-    },
-    content: {
-      vi: '<p>Đối với học sinh 13 – 16 tuổi, chương trình Tiếng Anh Bứt Phá tập trung hoàn thiện năng lực tiếng Anh học thuật và chuẩn bị cho các mục tiêu học tập cao hơn. Học sinh tiếp tục phát triển bốn kỹ năng Nghe – Nói – Đọc – Viết theo định hướng IELTS, đồng thời mở rộng vốn từ vựng học thuật chuyên sâu (Academic Word List), ngữ pháp nâng cao và kỹ năng đọc hiểu các văn bản học thuật phức tạp.</p><p>Các kỹ năng viết luận (Essay Writing), thuyết trình học thuật, tranh biện (Debate) và tư duy phản biện (Critical Thinking) được rèn luyện thường xuyên nhằm giúp học sinh sử dụng tiếng Anh để phân tích vấn đề, xây dựng lập luận và bảo vệ quan điểm rõ ràng.</p><p>Giai đoạn này tạo nền tảng vững chắc để học sinh chinh phục chứng chỉ IELTS, đồng thời chuẩn bị năng lực ngôn ngữ hoàn hảo cho môi trường học tập Song ngữ và Phổ thông Quốc tế.</p>',
-      en: '<p>For students aged 13–16, this track refines advanced academic English and readies learners for higher academic targets. Comprehensive 4 skills training is aligned with the IELTS Academic format, featuring academic vocabulary, advanced syntax, and complex text comprehension.</p><p>Essay writing, academic presentations, debate, and critical inquiry train students to analyze issues, formulate structured arguments, and articulate stances persuasively.</p><p>Establishes an unshakeable foundation for IELTS targets and international secondary education.</p>',
-    },
-    ageRange: '13 – 16 tuổi (Lớp 6 – 9)',
-    objectives: [
-      { vi: 'Phát triển 4 kỹ năng Nghe – Nói – Đọc – Viết định hướng IELTS Academic', en: '4 skills development oriented toward IELTS Academic' },
-      { vi: 'Thành thạo kỹ năng viết luận, thuyết trình và tranh biện học thuật', en: 'Master academic essay writing, presentation, and debate' },
-      { vi: 'Rèn luyện tư duy phản biện và khả năng nghiên cứu độc lập', en: 'Develop critical thinking and independent research capacity' },
-    ],
-    highlights: [
-      { vi: 'Định hướng mục tiêu chứng chỉ IELTS Academic quốc tế', en: 'International IELTS Academic certification focus' },
-      { vi: 'Tư duy phản biện và kỹ năng học thuật bậc cao', en: 'Higher-order critical thinking and academic skills' },
-      { vi: 'Sẵn sàng tích lũy tín chỉ Phổ thông Quốc tế và Song bằng', en: 'Ready for international credit accumulation and Dual Diploma' },
-    ],
-    imageUrl: '/images/programs/program-middle.jpg',
+    id: "default-program-speedup-middle",
+    slug: "tieng-anh-but-pha-thcs",
+    level: "breakthrough-english",
+    title: {"vi": "Chương trình Tiếng Anh Bứt Phá – Độ tuổi THCS (13 – 16 tuổi)", "en": "SpeedUp English – Middle School Stage (Ages 13–16)"},
+    shortDescription: {"vi": "Đối với học sinh 13 – 16 tuổi, chương trình này tập trung hoàn thiện năng lực tiếng Anh học thuật và chuẩn bị cho các mục tiêu học tập cao hơn.", "en": "For ages 13–16, the program focuses on mastering academic English and preparing for advanced academic goals aligned with IELTS."},
+    content: {"vi": "<h4>GIỚI THIỆU</h4><p>Chương trình Tiếng Anh Bứt Phá tại EPath Education được xây dựng theo hệ thống giáo trình chính thức của Cambridge University Press, phát triển tiếng Anh như một ngôn ngữ thứ hai (English as a Second Language – ESL) dành cho học sinh từ cấp độ Mầm non đến Trung học Cơ Sở.</p><p>Chương trình bám sát khung năng lực của Cambridge English Qualifications, giúp học sinh hình thành và phát triển nền tảng tiếng Anh theo lộ trình rõ ràng và có hệ thống theo chuẩn khung năng lực quốc tế.</p><p>Điều tạo nên sự khác biệt của Tiếng Anh Bứt Phá là:</p><h4>1. Đánh giá theo chuẩn Cambridge Quốc Tế</h4><p>Khác với nhiều chương trình ngoại ngữ sử dụng các bài kiểm tra đầu vào và đầu ra được xây dựng nội bộ và có tính tương đối, EPath Education sử dụng kết quả đánh giá của Hội đồng Khảo thí Cambridge làm một trong những cơ sở quan trọng để xác định năng lực, xếp lớp và theo dõi sự tiến bộ của học sinh.</p><p>Điều này giúp năng lực tiếng Anh của học sinh được nhìn nhận trên một thang đo quốc tế rõ ràng và nhất quán, qua đó, phụ huynh có thể theo dõi được năng lực con mình đang ở đâu và đạt được những gì và cần phát triển năng lực nào tiếp theo.</p><h4>2. Học tiếng Anh để sẵn sàng học các chương trình quốc tế</h4><p>Hơn cả việc phát triển khả năng giao tiếp, EPath Education hướng đến việc giúp học sinh xây dựng năng lực tiếng Anh đủ vững để học tập, tiếp cận tri thức và thích ứng với các môi trường giáo dục quốc tế và mở rộng lựa chọc tập trong tương lai.</p><p>Chúng tôi tin rằng tiếng Anh càng được hình thành vững chắc và đúng định hướng từ sớm, học sinh càng có nhiều cơ hội sử dụng ngôn ngữ như một công cụ học tập, thay vì chỉ xem tiếng Anh là một môn học. Vì vậy, chương trình được xây dựng theo lộ trình phát triển năng lực rõ ràng, phù hợp với từng độ tuổi và cấp độ, đồng thời phát triển vốn từ vựng, khả năng đọc hiểu và diễn đạt trong các ngữ cảnh học tập.</p><p className=\"pl-4\">• Độ tuổi THCS (13 - 16 tuổi):</p><p>Đối với học sinh 13 - 16 tuổi, chương trình này tập trung hoàn thiện năng lực tiếng Anh học thuật và chuẩn bị cho các mục tiêu học tập cao hơn.</p><p>Học sinh tiếp tục phát triển bốn kỹ năng Nghe – Nói – Đọc – Viết theo định hướng IELTS, đồng thời mở rộng vốn từ vựng học thuật, ngữ pháp nâng cao và kỹ năng đọc hiểu các văn bản có tính học thuật.</p><p>Các kỹ năng viết luận, thuyết trình, tranh biện và tư duy phản biện được phát triển nhằm giúp học sinh sử dụng tiếng Anh để phân tích vấn đề, xây dựng lập luận và trình bày quan điểm một cách rõ ràng.</p><p>Giai đoạn này tạo nền tảng cho học sinh theo đuổi IELTS, đồng thời chuẩn bị khả năng sử dụng tiếng Anh trong môi trường học tập Song ngữ và Quốc tế.</p>", "en": "<p>SpeedUp English prepares students to use English as an academic tool for international studies, evaluated via Cambridge English qualifications.</p><h4>Middle School Stage (Ages 13–16):</h4><p>Focuses on advanced academic English, IELTS orientation, essay writing, debate, and critical thinking to analyze complex topics and succeed in bilingual and international environments.</p>"},
+    ageRange: "13 – 16 tuổi",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-middle.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=middle',
+    ctaUrl: "/admissions?program=middle",
     order: 2,
     isActive: true,
     status: 'PUBLISHED',
@@ -153,40 +97,19 @@ export const DEFAULT_PROGRAMS: Program[] = [
     submittedAt: '',
     reviewedAt: '',
   },
-
-  // =========================================================================
-  // 2. KHÓA HỌC NỀN TẢNG KHOA HỌC & HỌC THUẬT QUỐC TẾ (MẦM NON – GRADE 2)
-  // =========================================================================
   {
-    id: 'default-program-foundation-kindy',
-    slug: 'khoa-hoc-nen-tang-mam-non',
-    level: 'science-foundation',
-    title: {
-      vi: 'Nền tảng Khoa học & Tiền học thuật – Mầm non (4 – 6 tuổi)',
-      en: 'Science & Academic Foundation – Kindergarten (Ages 4–6)',
-    },
-    shortDescription: {
-      vi: 'Xây dựng nền tảng tiền học thuật: Letter Sounds, Phonics, Blending Sounds, Toán tư duy và khám phá Science & STEM bằng tiếng Anh.',
-      en: 'Pre-academic foundations: Letter Sounds, Phonics, Blending Sounds, early math, and hands-on STEM exploration in English.',
-    },
-    content: {
-      vi: '<p>Chương trình tập trung xây dựng nền tảng tiền học thuật, giúp trẻ làm quen với việc đọc, viết, học Toán và khám phá Khoa học bằng tiếng Anh trước khi bước vào môi trường học tập có tính học thuật cao hơn.</p><p><strong>Nội dung học tập:</strong> Trẻ bắt đầu với Letter Sounds và Phonics để hiểu mối liên hệ giữa chữ cái và âm thanh trong tiếng Anh. Thông qua luyện Blending Sounds, trẻ học cách ghép âm và đánh vần từ các từ đơn giản phụ âm - nguyên âm - phụ âm (CVC) đến cấu trúc phức tạp. Song song đó, trẻ được làm quen các khái niệm Toán học bằng tiếng Anh như số đếm, phép tính, hình học, đo lường và tư duy logic. Các hoạt động Science & STEM được tích hợp để trẻ quan sát, đặt câu hỏi, thử nghiệm và mô tả phát hiện bằng tiếng Anh.</p><p><strong>Mục tiêu:</strong> Sau giai đoạn 4–6 tuổi, trẻ có nền tảng ban đầu về đọc – viết, Toán học và Khoa học bằng tiếng Anh, sẵn sàng tiếp cận kiến thức học thuật ở bậc Tiểu học theo định hướng Song ngữ hoặc Phổ thông Quốc tế.</p>',
-      en: '<p>Builds essential pre-academic foundations: letter-sound correspondence, Phonics, and Blending Sounds from simple CVC words to complex phonetic patterns.</p><p>Integrates early mathematical thinking in English (counting, operations, geometry, measurement, logic) and hands-on Science & STEM experimentation.</p><p>Prepares young learners for seamless entry into bilingual or international primary education.</p>',
-    },
-    ageRange: '4 – 6 tuổi',
-    objectives: [
-      { vi: 'Phonics & Blending Sounds chuẩn xác từ các từ CVC đến phức tạp', en: 'Phonics & Blending Sounds mastery from CVC to complex words' },
-      { vi: 'Làm quen Toán học và tư duy logic bằng tiếng Anh', en: 'Early numeracy and mathematical reasoning in English' },
-      { vi: 'Khám phá Science & STEM qua quan sát và thực nghiệm', en: 'Hands-on Science & STEM exploration and discovery' },
-    ],
-    highlights: [
-      { vi: 'Chuyển tiếp tự nhiên từ "học tiếng Anh" sang "học bằng tiếng Anh"', en: 'Natural progression from learning English to learning in English' },
-      { vi: 'Nền tảng vững chắc trước khi bước vào Lớp 1 Song ngữ/Quốc tế', en: 'Solid foundation for Grade 1 bilingual or international school' },
-      { vi: 'Tích hợp STEM thực hành khơi dậy đam mê khoa học', en: 'Integrated hands-on STEM nurturing scientific curiosity' },
-    ],
-    imageUrl: '/images/programs/program-kindy.jpg',
+    id: "default-program-science-foundation-kindy",
+    slug: "khoa-hoc-nen-tang-mam-non",
+    level: "science-foundation",
+    title: {"vi": "1. Mầm non (3 – 6 tuổi)", "en": "1. Kindergarten (Ages 3–6)"},
+    shortDescription: {"vi": "Chương trình tập trung xây dựng nền tảng tiền học thuật, giúp trẻ từng làm quen với việc đọc, viết, học Toán và khám phá Khoa học bằng tiếng Anh.", "en": "Focuses on pre-academic foundation, introducing reading, writing, early math, and science inquiry in English."},
+    content: {"vi": "<p>Chương trình tập trung xây dựng nền tảng tiền học thuật, giúp trẻ từng làm quen với việc đọc, viết, học Toán và khám phá Khoa học bằng tiếng Anh. Đây là giai đoạn trẻ hình thành những kỹ năng cần thiết trước khi bước vào môi trường học tập có tính học thuật cao hơn.</p><h4>Nội dung học tập:</h4><p>Trẻ bắt đầu với Letter Sounds và Phonics để hiểu mối liên hệ giữa chữ cái và âm thanh trong tiếng Anh. Thông qua việc luyện Blending Sounds, trẻ học cách ghép âm và đánh vần từ, từ những từ đơn giản như phụ âm - nguyên âm - phụ âm (CVC) đến các cấu trúc phức tạp hơn. Song song với quá trình phát triển Literacy, trẻ được làm quen với các khái niệm Toán học bằng tiếng Anh như số đếm, phép tính, hình học, đo lường và tư duy logic.</p><p>Các hoạt động Science & STEM cũng được tích hợp để trẻ quan sát, đặt câu hỏi, thử nghiệm và mô tả những điều mình khám phá bằng tiếng Anh. Nhờ đó, tiếng Anh được sử dụng trong quá trình tìm hiểu và giải quyết vấn đề, thay vì chỉ được học như một môn ngôn ngữ riêng biệt.</p><h4>Phương pháp học tập:</h4><p>Chương trình kết hợp Phonics, Early Literacy, Early Mathematics và STEM trong các hoạt động phù hợp với đặc điểm phát triển của trẻ. Việc kết hợp ngôn ngữ với nội dung kiến thức giúp trẻ từng bước hình thành khả năng tiếp nhận thông tin và diễn đạt những hiểu biết của mình bằng tiếng Anh.</p><h4>Mục tiêu phát triển:</h4><p>Sau giai đoạn 4–6 tuổi, trẻ có nền tảng ban đầu về đọc – viết, Toán học và Khoa học bằng tiếng Anh, đồng thời hình thành những kỹ năng học tập cần thiết để sẵn sàng tiếp cận kiến thức học thuật bằng tiếng Anh ở bậc Tiểu học theo định hướng theo học chương trình Song ngữ hoặc Phổ thông quốc tế.</p>", "en": "<p>Focuses on pre-academic foundation, introducing reading, writing, early mathematics, and STEM inquiry in English. Children learn Letter Sounds, Phonics, Blending Sounds (CVC), number concepts, and hands-on science observations, laying the groundwork for elementary bilingual and international schooling.</p>"},
+    ageRange: "3 – 6 tuổi",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-kindy.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=kindergarten',
+    ctaUrl: "/admissions?program=kindergarten",
     order: 3,
     isActive: true,
     status: 'PUBLISHED',
@@ -203,35 +126,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-foundation-grade-1-2',
-    slug: 'khoa-hoc-nen-tang-grade-1-2',
-    level: 'science-foundation',
-    title: {
-      vi: 'Nền tảng Khoa học Quốc tế – Grade 1 & Grade 2 (Lớp 1 & 2)',
-      en: 'International Science & Academic Foundation – Grades 1 & 2',
-    },
-    shortDescription: {
-      vi: 'Chuyển từ xây dựng ngôn ngữ sang sử dụng tiếng Anh để học tập với 2 môn cốt lõi: Ngữ văn Mỹ (ELA) và Toán tiếng Anh; thời lượng 5 giờ/tuần cùng 50% GV Quốc tế + 50% GV Song ngữ.',
-      en: 'Transitioning to learning in English with ELA and Math in English; 5 hours/week taught by 50% International + 50% Bilingual teachers.',
-    },
-    content: {
-      vi: '<p>Ở Grade 1 & 2, học sinh bắt đầu chuyển từ việc xây dựng nền tảng ngôn ngữ sang sử dụng tiếng Anh như một công cụ để học tập. Chương trình tập trung xây dựng nền tảng Ngữ văn Mỹ (ELA) học thuật và làm quen các kiến thức cốt lõi Toán học bằng tiếng Anh, với thời lượng khoảng 5 giờ mỗi tuần.</p><p><strong>Nội dung học tập:</strong></p><ul><li><strong>ELA (Ngữ văn Mỹ):</strong> Học sinh phát triển khả năng đọc, đọc hiểu, viết và diễn đạt ý tưởng bằng tiếng Anh. Từng bước mở rộng vốn từ vựng, củng cố cấu trúc ngôn ngữ và hình thành khả năng tiếp nhận thông tin từ các nội dung học tập.</li><li><strong>Toán học bằng tiếng Anh:</strong> Học sinh học các khái niệm Toán bằng tiếng Anh, làm quen với ngôn ngữ chuyên ngành, đọc hiểu đề bài, xác định dữ kiện, chọn cách giải và trình bày suy luận logic bằng tiếng Anh.</li></ul><p><strong>Môi trường học tập:</strong> Giảng dạy bởi <strong>50% Giáo viên Nước Ngoài</strong> (chuyên Elementary Education) + <strong>50% Giáo viên Song ngữ</strong> (IELTS 7.0+), hỗ trợ học sinh Việt Nam tiếp thu kiến thức tự nhiên không bị quá tải.</p>',
-      en: '<p>In Grades 1 & 2, students transition to using English as an academic learning tool. Focuses on core US English Language Arts (ELA) and Mathematics in English (5 hours/week).</p><p>Curriculum: Reading comprehension, structured writing, vocabulary enrichment, and mathematical problem-solving in English.</p><p>Instruction: 50% International Elementary Educators + 50% Bilingual Specialists (IELTS 7.0+) providing balanced pedagogical support.</p>',
-    },
-    ageRange: 'Lớp 1 – 2 (6 – 8 tuổi)',
-    objectives: [
-      { vi: 'Làm chủ kỹ năng đọc hiểu và viết câu đoạn Ngữ văn Mỹ (ELA)', en: 'Master reading comprehension and paragraph writing in US ELA' },
-      { vi: 'Giải toán và trình bày suy luận logic hoàn toàn bằng tiếng Anh', en: 'Solve math problems and articulate reasoning in English' },
-      { vi: 'Hình thành năng lực học tập môn học bằng ngôn ngữ thứ hai', en: 'Build multidisciplinary academic capacity in a second language' },
-    ],
-    highlights: [
-      { vi: 'Đội ngũ 50% GV Quốc tế + 50% GV Song ngữ IELTS 7.0+', en: '50% International + 50% Bilingual faculty (IELTS 7.0+)' },
-      { vi: 'Thời lượng chuẩn 5 giờ/tuần tối ưu cho học sinh tiểu học', en: 'Optimized 5 hours/week schedule avoiding academic fatigue' },
-      { vi: 'Bản lề vững chắc cho chặng Tiểu học Quốc tế Lớp 3 – 5', en: 'Pivotal springboard for Grades 3–5 International Elementary' },
-    ],
-    imageUrl: '/images/programs/program-elementary.jpg',
+    id: "default-program-science-foundation-grade-1-2",
+    slug: "khoa-hoc-nen-tang-grade-1-2",
+    level: "science-foundation",
+    title: {"vi": "2. Grade 1 & Grade 2 (6 – 8 tuổi)", "en": "2. Grade 1 & Grade 2 (Ages 6–8)"},
+    shortDescription: {"vi": "Ở Grade 1 & 2, học sinh bắt đầu chuyển từ việc xây dựng nền tảng ngôn ngữ sang sử dụng tiếng Anh như một công cụ để học tập.", "en": "In Grades 1 & 2, students transition from foundational language acquisition to using English as an active learning medium for US ELA and core Mathematics."},
+    content: {"vi": "<p>Ở Grade 1 & 2, học sinh bắt đầu chuyển từ việc xây dựng nền tảng ngôn ngữ sang sử dụng tiếng Anh như một công cụ để học tập. Chương trình tập trung vào xây dựng nền tảng Ngữ Văn Mỹ (ELA) học thuật và làm quen với các kiến thức cốt lõi Toán học bằng tiếng Anh, với thời lượng khoảng 5 giờ mỗi tuần.</p><h4>Nội dung học tập:</h4><p>Trong ELA, học sinh phát triển khả năng đọc, đọc hiểu, viết và diễn đạt ý tưởng bằng tiếng Anh. Các em từng bước mở rộng vốn từ vựng, củng cố cấu trúc ngôn ngữ và hình thành khả năng tiếp nhận thông tin từ các nội dung học tập.</p><p>Ở Toán học, học sinh học các khái niệm Toán bằng tiếng Anh và đồng thời làm quen với ngôn ngữ được sử dụng trong môn học. Các em từng bước phát triển khả năng đọc hiểu đề bài, xác định thông tin, lựa chọn cách giải và trình bày suy luận bằng tiếng Anh.</p><h4>Môi trường học tập:</h4><p>Chương trình được triển khai với đội ngũ gồm 50% Giáo viên Nước Ngoài và 50% Giáo viên Song ngữ.</p><p>Giáo viên Quốc tế được ưu tiên có nền tảng về Elementary Education, kinh nghiệm giảng dạy các môn học học thuật và khả năng giảng dạy bằng tiếng Anh. Giáo viên Song ngữ có năng lực tiếng Anh từ IELTS 7.0+, có khả năng sử dụng tiếng Anh học thuật và hỗ trợ học sinh Việt Nam tiếp cận, củng cố kiến thức trong quá trình học.</p><p>Sự kết hợp này tạo môi trường để học sinh được tiếp xúc với cách giảng dạy bằng tiếng Anh, đồng thời vẫn nhận được sự hỗ trợ phù hợp với quá trình chuyển sang học kiến thức bằng ngôn ngữ thứ hai.</p><h4>Mục tiêu phát triển:</h4><p>Giúp học sinh hình thành khả năng học kiến thức bằng tiếng Anh thay vì chỉ học tiếng Anh như một môn học. Từ nền tảng ELA và Toán học, học sinh có cơ sở để tiếp tục phát triển năng lực học thuật bằng tiếng Anh ở các cấp độ cao hơn.</p>", "en": "<p>In Grades 1 & 2, students transition to using English as a learning tool, focusing on US English Language Arts (ELA) and core Mathematics with approximately 5 hours per week. Delivered by 50% International Teachers and 50% Bilingual Specialists (IELTS 7.0+), nurturing analytical thinking and academic expression.</p>"},
+    ageRange: "6 – 8 tuổi (Grade 1 & 2)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-elementary.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=elementary',
+    ctaUrl: "/admissions?program=elementary",
     order: 4,
     isActive: true,
     status: 'PUBLISHED',
@@ -247,40 +153,19 @@ export const DEFAULT_PROGRAMS: Program[] = [
     submittedAt: '',
     reviewedAt: '',
   },
-
-  // =========================================================================
-  // 3. CHƯƠNG TRÌNH TIỂU HỌC (GRADE 3 – GRADE 5)
-  // =========================================================================
   {
-    id: 'default-program-elementary-foundation',
-    slug: 'tieu-hoc-foundation-program',
-    level: 'elementary',
-    title: {
-      vi: 'Tiểu học Tiêu chuẩn – Foundation Program (Lớp 3 – 5)',
-      en: 'Elementary Standard Foundation Program (Grades 3–5)',
-    },
-    shortDescription: {
-      vi: 'Phát triển kiến thức học thuật, tư duy và kỹ năng theo lộ trình vừa sức với 3 môn cốt lõi: Toán học, Ngữ văn Mỹ (ELA) và Khoa học (Science); thời lượng 5 giờ/tuần.',
-      en: 'Standard foundation track in 3 core subjects: Math, ELA, and Science (5 hrs/week) balancing local schoolwork.',
-    },
-    content: {
-      vi: '<p>Foundation Program dành cho học sinh muốn phát triển kiến thức học thuật, tư duy và kỹ năng học tập bằng tiếng Anh theo một lộ trình vừa sức, duy trì học tốt tại trường chính khóa Việt Nam mà không bị quá tải. Chương trình tập trung vào các kiến thức cốt lõi của 3 môn: Toán học, Ngữ văn Mỹ (ELA) và Khoa học (Science).</p><p><strong>Nội dung 3 môn cốt lõi:</strong></p><ul><li><strong>Toán học:</strong> Phát triển tư duy và khả năng giải quyết vấn đề bằng tiếng Anh, đọc hiểu đề bài, phân tích thông tin và trình bày cách giải logic.</li><li><strong>Ngữ văn Mỹ (ELA):</strong> Tập trung đọc hiểu văn bản học thuật, viết diễn đạt ý tưởng và mở rộng vốn từ vựng chuyên sâu.</li><li><strong>Khoa học (Science):</strong> Khám phá khái niệm khoa học qua quan sát, đặt câu hỏi, phân tích và giải thích các hiện tượng thực tế bằng tiếng Anh.</li></ul><p><strong>Mô hình học tập:</strong> Kết hợp Online và Onsite (~5 giờ/tuần) với GV Quốc tế và GV Song ngữ hỗ trợ, trang bị tài khoản số hóa Edmentum International thời hạn 12 tháng.</p>',
-      en: '<p>Balanced foundation track for elementary students pursuing Vietnamese education while building US academic competencies in Math, ELA, and Science (5 hours/week).</p><p>Blended Online and Onsite format with International and Bilingual instructors, complemented by a 12-month Edmentum digital learning subscription.</p>',
-    },
-    ageRange: 'Lớp 3 – 5 (8 – 11 tuổi)',
-    objectives: [
-      { vi: 'Làm chủ kiến thức cốt lõi 3 môn: Toán học, ELA và Khoa học chuẩn Mỹ', en: 'Master 3 core disciplines: US Math, ELA, and Science' },
-      { vi: 'Rèn luyện khả năng đọc hiểu, tư duy phân tích và viết học thuật', en: 'Cultivate reading comprehension, analytical inquiry, and academic writing' },
-      { vi: 'Cân bằng hoàn hảo giữa chương trình Việt Nam và học thuật quốc tế', en: 'Perfect balance between Vietnamese curriculum and international studies' },
-    ],
-    highlights: [
-      { vi: '3 môn cốt lõi chuẩn US: Math, ELA & Science', en: '3 core US subjects: Math, ELA & Science' },
-      { vi: '50% GV Quốc tế + 50% GV Song ngữ kèm cặp sát sao', en: '50% International + 50% Bilingual personalized support' },
-      { vi: 'Tài khoản Edmentum International 12 tháng không giới hạn', en: '12-month full access to Edmentum International platform' },
-    ],
-    imageUrl: '/images/programs/program-elementary.jpg',
+    id: "default-program-elem-standard",
+    slug: "tieu-hoc-foundation-standard",
+    level: "elementary",
+    title: {"vi": "Chương trình Tiêu chuẩn – Foundation Program (Grade 3 – 5)", "en": "Standard Foundation Program (Grades 3–5)"},
+    shortDescription: {"vi": "Chương trình Tiêu chuẩn (Foundation Program) với các kiến thức cốt lõi giúp các con từng bước bồi đắp nền tảng kỹ năng và kiến thức học thuật quốc tế theo một lộ trình vừa sức.", "en": "Core knowledge foundation program designed to build international academic skills and knowledge at a balanced, tailored pace."},
+    content: {"vi": "<p>Sau giai đoạn xây dựng nền tảng ngôn ngữ, từ lớp 3 trở đi là giai đoạn EPath xây dựng lộ trình cá nhân tuỳ theo năng lực của các bạn nhỏ và định hướng riêng của từng gia đình. EPath cung cấp 2 lộ trình học gồm:</p><p>(1) Chương trình Tiêu chuẩn (Foundation Program) với các kiến thức cốt lõi giúp các con từng bước bồi đắp nền tảng kỹ năng và kiến thức học thuật quốc tế.</p><p>(2) Chương trình Tiểu học Quốc tế (U.S Academic Program) dành cho các gia đình mong muốn theo đuổi lộ trình quốc tế với toàn bộ các môn học và đầy đủ nội dung kiến thức của một năm học chính khoá như một học sinh Mỹ bản địa.</p><p>Foundation Program</p><p>dành cho học sinh muốn phát triển kiến thức học thuật, tư duy và kỹ năng học tập bằng tiếng Anh theo một lộ trình vừa sức. Chương trình tập trung vào các kiến thức cốt lõi của 3 môn Toán học, Ngữ Văn Mỹ (ELA) và Khoa học, giúp học sinh tiếp tục củng cố năng lực ngôn ngữ đồng thời sử dụng tiếng Anh để tiếp cận các nội dung học thuật.</p><h4>Nội dung học tập:</h4><p>Toán học giúp học sinh phát triển tư duy và khả năng giải quyết vấn đề bằng tiếng Anh. Học sinh không chỉ tiếp cận các khái niệm Toán mà còn làm quen với cách đọc hiểu đề bài, phân tích thông tin và trình bày cách giải.</p><p>Ngữ văn Mỹ (ELA) tập trung phát triển khả năng đọc hiểu, viết và sử dụng tiếng Anh trong học tập. Học sinh từng bước mở rộng vốn từ vựng, khả năng diễn đạt và kỹ năng tiếp nhận thông tin từ các nội dung học thuật.</p><p>Khoa học giúp học sinh khám phá các khái niệm thông qua quan sát, đặt câu hỏi, phân tích và giải thích các hiện tượng. Tiếng Anh được sử dụng xuyên suốt quá trình tiếp nhận và trình bày kiến thức.</p><h4>Mô hình học tập:</h4><p>Foundation Program kết hợp Online và Onsite, với tổng thời lượng học tương đương khoảng 5 giờ/tuần. Học sinh được học cùng Giáo viên Quốc tế và Giáo viên Song ngữ, kết hợp giữa việc tiếp cận nội dung học thuật bằng tiếng Anh và sự hỗ trợ phù hợp với năng lực của học sinh Việt Nam.</p>", "en": "<p>Foundation Program for students seeking a balanced pace in academic English, focusing on core concepts across Mathematics, US ELA, and Science. Combining Online and Onsite learning (~5 hours/week) with international and bilingual faculty.</p>"},
+    ageRange: "8 – 11 tuổi (Grade 3 – 5)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-elementary.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=elementary',
+    ctaUrl: "/admissions?program=elementary",
     order: 5,
     isActive: true,
     status: 'PUBLISHED',
@@ -297,35 +182,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-elementary-us-academic',
-    slug: 'tieu-hoc-us-academic-program',
-    level: 'elementary',
-    title: {
-      vi: 'Tiểu học Quốc tế – U.S. Academic Program (Lớp 3 – 5)',
-      en: 'Elementary U.S. Academic Program (Grades 3–5)',
-    },
-    shortDescription: {
-      vi: 'Chương trình chính khóa chuẩn phổ thông Mỹ với 4 môn bắt buộc: Toán, Ngữ văn Mỹ (ELA), Khoa học, Xã hội học (Social Studies) trên Edmentum cùng Cố vấn học tập (Academic Advisor) 1:1.',
-      en: 'Official US elementary core curriculum (Math, ELA, Science, Social Studies) on Edmentum with dedicated 1:1 Academic Advisor.',
-    },
-    content: {
-      vi: '<p>U.S Academic Program là lựa chọn phù hợp với học sinh có nền tảng học tập tốt và mong muốn chuẩn bị toàn diện cho môi trường giáo dục Song ngữ hoặc Quốc tế, theo đuổi toàn bộ nội dung của một năm học chính khóa như học sinh Mỹ bản địa.</p><p><strong>Nội dung học tập:</strong> Toàn bộ 4 môn bắt buộc chuẩn phổ thông Mỹ gồm: Toán (Math), Ngôn ngữ Mỹ (ELA), Khoa học (Science), và Xã hội học (Social Studies) cùng các môn tự chọn (Electives) trên tài khoản cá nhân.</p><p><strong>Mô hình học tập & Cố vấn 1 kèm 1:</strong> Mỗi học sinh sở hữu tài khoản Edmentum 12 tháng gồm toàn bộ bài giảng số hóa, bài tập và bài kiểm tra (Blended Learning). Học sinh tham gia lớp giảng dạy kiến thức cốt lõi cùng GV Quốc tế & Song ngữ, đồng thời được phân công riêng một <strong>Cố vấn học tập (Academic Advisor) 1 kèm 1</strong> theo sát lộ trình và tutor kèm bù kiến thức.</p><p><strong>Lợi ích vượt trội:</strong> Xây dựng năng lực tương đương học sinh trường quốc tế với <strong>chi phí chưa đến 1/3</strong>, chuẩn bị nền tảng vững vàng để chinh phục lộ trình Phổ thông toàn phần (Full-time US Diploma).</p>',
-      en: '<p>Comprehensive US elementary academic track covering all 4 core subjects: Math, ELA, Science, and Social Studies plus electives on Edmentum International.</p><p>Features blended learning, core subject classes with faculty, and a dedicated 1:1 Academic Advisor to tutor knowledge gaps.</p><p>Delivers educational outcomes equivalent to top international schools at less than one-third the tuition.</p>',
-    },
-    ageRange: 'Lớp 3 – 5 (8 – 11 tuổi)',
-    objectives: [
-      { vi: 'Hoàn thành trọn vẹn 4 môn chính khóa Tiểu học chuẩn Hoa Kỳ', en: 'Complete full 4-subject US elementary core curriculum' },
-      { vi: 'Đồng hành 1 kèm 1 cùng Cố vấn học tập (Academic Advisor) riêng', en: '1:1 dedicated Academic Advisor mentorship and tutoring' },
-      { vi: 'Năng lực học thuật quốc tế vượt trội với chi phí tiết kiệm 70%', en: 'Elite international academic capability saving 70% tuition' },
-    ],
-    highlights: [
-      { vi: 'Toàn bộ 4 môn chính khóa: Math, ELA, Science, Social Studies', en: 'Full 4 core subjects: Math, ELA, Science, Social Studies' },
-      { vi: 'Cố vấn học tập (Academic Advisor) theo sát 1 kèm 1', en: 'Dedicated 1:1 Academic Advisor tracking progress' },
-      { vi: 'Chuẩn bị hoàn hảo cho lộ trình Tú tài Mỹ toàn phần', en: 'Perfect preparation for Full-time US Diploma pathway' },
-    ],
-    imageUrl: '/images/programs/program-elementary.jpg',
+    id: "default-program-elem-us-academic",
+    slug: "tieu-hoc-us-academic",
+    level: "elementary",
+    title: {"vi": "Chương trình Tiểu học Quốc tế – U.S Academic Program (Grade 3 – 5)", "en": "U.S. Academic Program (Grades 3–5)"},
+    shortDescription: {"vi": "Chương trình gồm toàn bộ các môn học chính của Chương trình Tiểu học Mỹ gồm Toán học, Ngữ văn Mỹ, Xã hội học, Khoa học, Giáo dục Thể chất và Sức khoẻ.", "en": "Full elementary curriculum aligned with US standards: Mathematics, English Language Arts (ELA), Science, Social Studies, and Electives."},
+    content: {"vi": "<p>U.S Academic Program</p><p>là lựa chọn phù hợp với học sinh có nền tảng học tập tốt và mong muốn từng bước chuẩn bị cho môi trường giáo dục Song ngữ hoặc Quốc tế.</p><p>Chương trình gồm toàn bộ các môn học chính của Chương trình Tiểu học Mỹ gồm Toán học, Ngữ văn Mỹ, Xã hội học, Khoa học, Giáo dục Thể chất và Sức khoẻ. Việc tiếp cận đa dạng nội dung theo khung chuẩn Giáo dục Mỹ sẽ giúp học sinh hình thành khả năng tiếp nhận kiến thức đa môn, tư duy phân tích và sử dụng tiếng Anh thuần thục trong các nội dung học tập của các chương trình tiểu học quốc tế. Với việc xây dựng lộ trình học tập phù hợp, kinh động từ nền tảng Edmentum International, các con vẫn có đủ thời gian duy trì lịch học ở trường công Việt Nam và hoàn thành các nội dung học tập quốc tế với việc tham gia các lớp học và hướng dẫn riêng từ đội ngũ EPath Education mà hoàn toàn không bị quá tải.</p><h4>Nội dung học tập:</h4><p>Toàn bộ nội dung chính khoá của các lớp Tiểu học thuộc Chương trình Tiểu học Mỹ gồm 4 môn bắt buộc là Toán (Math), Ngôn ngữ (ELA), Khoa học (Science) và Xã hội học (Social Studies). Ngoài ra, tuỳ theo năng lực học sinh còn có thể tự học thêm các môn phụ (Elective) có sẵn trên tài khoản học tập cá nhân.</p><h4>Mô hình học tập:</h4><p>Mỗi học sinh sẽ có một tài khoản học tập gồm toàn bộ nội dung kiến thức và các bài tập, bài kiểm tra... cần hoàn tất theo hình thức tự học (Blended learning) có thời hạn lên đến 12 tháng. Để đảm bảo các bạn có khả năng hoàn thành tốt chương trình học, các bạn cần tham gia các lớp học giảng dạy kiến thức cốt lõi với đội ngũ Giáo viên Quốc tế và Song ngữ. Đồng thời, các bạn sẽ được phân công riêng một Cố vấn học tập (Academic Advisor) giúp theo dõi lộ trình và hỗ trợ tutor các lỗ hổng kiến thức nếu cần. Thời lượng làm việc với Cố vấn học tập sẽ tuỳ thuộc vào năng lực và mức độ cần hỗ trợ của mỗi cá nhân.</p><h4>Lợi ích của lộ trình này tại EPath Education chính là xây dựng cho con năng lực học tập tương đương với một học sinh của các trường Tiểu học Song ngữ Quốc tế với mức đầu tư chưa đến 1/3 học phí mỗi năm. Việc tiếp cận đa môn và đầy đủ các nội dung kiến thức theo khung Tiểu học Mỹ sẽ có giúp con đủ năng lực chinh phục lộ trình Phổ thông toàn phần (Full time US Diploma) như một học sinh Mỹ bản địa.</h4>", "en": "<p>Comprehensive US Elementary Curriculum powered by Edmentum International, covering Math, ELA, Science, and Social Studies. Students learn via Blended Learning with dedicated Academic Advisors and international teachers, achieving competence comparable to international school students at a fraction of the cost.</p>"},
+    ageRange: "8 – 11 tuổi (Grade 3 – 5)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-elementary.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=elementary',
+    ctaUrl: "/admissions?program=elementary",
     order: 6,
     isActive: true,
     status: 'PUBLISHED',
@@ -341,40 +209,19 @@ export const DEFAULT_PROGRAMS: Program[] = [
     submittedAt: '',
     reviewedAt: '',
   },
-
-  // =========================================================================
-  // 4. CHƯƠNG TRÌNH TRUNG HỌC CƠ SỞ (GRADE 6 – GRADE 8)
-  // =========================================================================
   {
-    id: 'default-program-middle-foundation',
-    slug: 'thcs-foundation-program',
-    level: 'middle',
-    title: {
-      vi: 'THCS Tiêu chuẩn – Foundation Program (Lộ trình IELTS & Kiến thức cốt lõi)',
-      en: 'Middle School Standard Foundation Program (IELTS & Core Track)',
-    },
-    shortDescription: {
-      vi: 'Lớp 6–7 tập trung xây dựng nền tảng ngôn ngữ đạt chuẩn IELTS 5.5; hè lớp 8 học thử 1 tín chỉ Toán hoặc Khoa học để định hướng phân luồng THPT.',
-      en: 'Grades 6–7 focus on IELTS 5.5; summer of Grade 8 trials 1 official credit course (Math or Science) to determine high school track.',
-    },
-    content: {
-      vi: '<p>Trung học Cơ sở (Grade 6–8) là giai đoạn chuyển tiếp quan trọng trước khi học sinh chính thức chọn lựa định hướng học tập ở bậc THPT (Grade 9–12). Lộ trình Foundation dành cho học sinh cần thêm thời gian bồi đắp ngôn ngữ học thuật, học vừa sức song song với lịch học trường công.</p><p><strong>Lộ trình học tập:</strong></p><ul><li><strong>Lớp 6 và 7:</strong> Tập trung gần như toàn bộ thời gian xây dựng nền tảng ngôn ngữ cho bài test IELTS Academic, hướng tới mục tiêu tối thiểu Band 5.5 khi hoàn thành lớp 8.</li><li><strong>Từ hè lớp 8:</strong> Song song với khóa học IELTS, học sinh được trải nghiệm học thử 1 tín chỉ quan trọng (Toán hoặc Khoa học) theo sở thích để nhà trường và phụ huynh đánh giá năng lực học thuật thực tế.</li></ul><p>Kết quả lớp 8 chính là căn cứ khoa học quyết định hướng đi tiếp theo: tiếp tục theo lộ trình Song bằng Việt – Mỹ hay chuyển sang lộ trình Tú tài Mỹ toàn phần.</p>',
-      en: '<p>Strategic transitional track for Grades 6–8 balancing local secondary schooling with academic English and foundational subject mastery.</p><p>Grades 6–7 focus intensively on achieving IELTS Academic Band 5.5. In the summer of Grade 8, students trial an official US credit course (Math or Science) to evaluate readiness for Dual Diploma or Full-time US Diploma tracks.</p>',
-    },
-    ageRange: 'Lớp 6 – 8 (11 – 14 tuổi)',
-    objectives: [
-      { vi: 'Chinh phục IELTS Academic Band 5.5 vào cuối năm lớp 8', en: 'Achieve IELTS Academic Band 5.5 by the end of Grade 8' },
-      { vi: 'Trải nghiệm học thử 1 tín chỉ Toán hoặc Khoa học chuẩn Mỹ vào hè lớp 8', en: 'Trial an official US credit course in Math or Science in summer Grade 8' },
-      { vi: 'Xác định định hướng phân luồng chính xác cho bậc Phổ thông', en: 'Accurately determine high school academic pathway' },
-    ],
-    highlights: [
-      { vi: 'Mục tiêu IELTS 5.5 – điều kiện tiên quyết tích lũy tín chỉ THPT', en: 'Target IELTS 5.5 prerequisite for high school credits' },
-      { vi: 'Học thử tín chỉ thật đánh giá năng lực trước khi cam kết', en: 'Real credit trial assessing capability before committing' },
-      { vi: 'Lịch học linh hoạt không gây áp lực lên việc học chính khóa', en: 'Flexible schedule avoiding pressure on local schoolwork' },
-    ],
-    imageUrl: '/images/programs/program-middle.jpg',
+    id: "default-program-middle-foundation-ielts",
+    slug: "thcs-foundation-ielts",
+    level: "middle",
+    title: {"vi": "Foundation Program – Lộ trình IELTS và kiến thức cốt lõi (Grade 6 – 8)", "en": "Foundation Program – IELTS Pathway & Core Academics (Grades 6–8)"},
+    shortDescription: {"vi": "Chinh phục IELTS Band 5.5 và tích luỹ thêm năng lực học thuật, làm quen với 1 tín chỉ Toán hoặc Khoa học từ hè lớp 8.", "en": "Master IELTS Band 5.5 and develop core academic competencies, experiencing 1 credit in Math or Science starting in Grade 8."},
+    content: {"vi": "<p>Trung học Cơ sở (Grade 6-8) là giai đoạn chuyển tiếp quan trọng trước khi học sinh chính thức chọn lựa định hướng học tập và cách thức mình hoàn tất chương trình Phổ thông Trung học (Grade 9-12) theo năng lực và mong muốn của Gia đình cho bậc Đại học. Tuỳ theo năng lực cá nhân, các bạn có thể chọn lựa 1 trong 2 định hướng sau:</p><h4>1. Chinh phục IELTS Band 5.5 và tích luỹ thêm năng lực học thuật:</h4><p>Đây là lộ trình dành cho các bạn cần tích luỹ thêm thời gian trải nghiệm do chưa có quá trình học tập trước đó với EPath Education hoặc chưa tự tin theo đuổi chương trình Phổ thông Mỹ mà cần tập trung vào năng lực Anh ngữ và làm quen dần với các kiến thức cốt lõi ở mức vừa phải, phù hợp với năng lực và thời gian hạn chế. Với lộ trình này, ở lớp 6 và 7, các bạn sẽ tập trung gần như toàn bộ thời gian để xây dựng nền tảng ngôn ngữ cho bài test IELTS Academic Band 5.5 khi hoàn thành chương trình lớp 8.</p><p>Từ Hè năm lớp 8, song song với khoá học IELTS, học sinh có thể trải nghiệm học thử 1 tín chỉ quan trọng là Toán (Math) hoặc Khoa học (Science) theo sở thích để qua đó nhà trường và phụ huynh có cơ sở đánh giá năng lực học thuật của con đang ở mức nào. Kết quả của lớp 8 chính là căn cứ để quyết định hướng đi tiếp theo: tiếp tục theo lộ trình Song bằng Việt – Mỹ, hay chuyển sang lộ trình Tú tài Mỹ toàn thời gian nếu con có năng lực và định hướng phù hợp.</p><p>Với lộ trình này, khi hoàn thành chương trình lớp 8, học sinh cần đạt tối thiểu IELTS Band 5.5 - điều kiện tiên quyết để đảm bảo các em có đủ năng lực ngôn ngữ khi bước vào giai đoạn tích lũy tín chỉ chính thức ở bậc THPT.</p>", "en": "<p>Designed for students needing time to build strong language skills before entering high school credit accumulation. Focuses on IELTS Academic Band 5.5 target by Grade 8 and introduces 1 trial US credit in Math or Science during summer of Grade 8.</p>"},
+    ageRange: "11 – 14 tuổi (Grade 6 – 8)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-middle.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=middle',
+    ctaUrl: "/admissions?program=middle",
     order: 7,
     isActive: true,
     status: 'PUBLISHED',
@@ -391,35 +238,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-middle-us-pathway',
-    slug: 'thcs-us-middle-school-pathway',
-    level: 'middle',
-    title: {
-      vi: 'THCS Quốc tế – U.S. Middle School Pathway (EdOptions Academy)',
-      en: 'U.S. Middle School Pathway (EdOptions Academy)',
-    },
-    shortDescription: {
-      vi: 'Trở thành học sinh trường trực tuyến EdOptions Academy, chinh phục IELTS 6.0 cuối lớp 7 và tích lũy tối đa 3.0 tín chỉ vào bằng Tú tài Mỹ.',
-      en: 'Official EdOptions Academy enrollment, targeting IELTS 6.0 by Grade 7 and earning up to 3.0 credits toward the US Diploma.',
-    },
-    content: {
-      vi: '<p>Dành cho học sinh đã hoàn thành Tiểu học Quốc tế tại EPath hoặc có nền tảng học thuật tốt. Học sinh chính thức trở thành học sinh của <strong>Trường học Trực tuyến EdOptions Academy</strong> (trực thuộc Edmentum International, kiểm định bởi Cognia và WASC).</p><p><strong>Mục tiêu & Tích lũy tín chỉ sớm:</strong></p><ul><li>Mục tiêu chinh phục bài thi IELTS được nâng lên <strong>Band 6.0 vào cuối năm lớp 7</strong> để chuẩn bị năng lực chuyên sâu tương đương học sinh phổ thông song ngữ quốc tế.</li><li>Đăng ký học theo tín chỉ với toàn bộ nội dung của 1–2 môn học chính (Math và Science). Hoàn thành đạt từ 80% trở lên ở các bài test cuối kỳ, các tín chỉ này sẽ được <strong>tích lũy chính thức (tối đa 3.0 tín chỉ)</strong> vào tổng 21.5 tín chỉ của bằng Tú tài Mỹ (U.S. Diploma) ở cấp 3.</li></ul><p>Phụ huynh đầu tư mức học phí chỉ bằng 1/3 so với trường quốc tế tại Việt Nam để con sở hữu bảng điểm chính thức của trường Mỹ ngay từ bậc THCS.</p>',
-      en: '<p>Official enrollment in EdOptions Academy (accredited by Cognia & WASC). Students advance to IELTS Band 6.0 by Grade 7 and take accredited middle school credit courses in Math and Science.</p><p>Passing with 80%+ allows students to bank up to 3.0 official credits toward the 21.5 credits needed for the US High School Diploma at one-third international school tuition.</p>',
-    },
-    ageRange: 'Lớp 6 – 8 (11 – 14 tuổi)',
-    objectives: [
-      { vi: 'Đạt IELTS Band 6.0 vào cuối năm lớp 7', en: 'Attain IELTS Band 6.0 by the conclusion of Grade 7' },
-      { vi: 'Tích lũy tối đa 3.0 tín chỉ chính thức vào bằng Tú tài Mỹ', en: 'Bank up to 3.0 official credits toward the US Diploma' },
-      { vi: 'Sở hữu bảng điểm chính thức từ trường kiểm định Cognia & WASC', en: 'Hold official transcripts from Cognia & WASC accredited school' },
-    ],
-    highlights: [
-      { vi: 'Học sinh chính thức của trường trực tuyến EdOptions Academy', en: 'Official student status at EdOptions Academy' },
-      { vi: 'Tín chỉ được công nhận và chuyển tiếp vào THPT Hoa Kỳ', en: 'Accredited credits transferable to US High School Diploma' },
-      { vi: 'Mức học phí chỉ bằng 1/3 so với trường quốc tế tại Việt Nam', en: 'One-third tuition compared to local international schools' },
-    ],
-    imageUrl: '/images/programs/program-middle.jpg',
+    id: "default-program-middle-us-pathway",
+    slug: "thcs-us-middle-school",
+    level: "middle",
+    title: {"vi": "U.S. Middle School Pathway – Lộ trình Trung học Cơ sở Mỹ (Grade 6 – 8)", "en": "U.S. Middle School Pathway (Grades 6–8)"},
+    shortDescription: {"vi": "Học sinh chính thức trở thành học sinh của Trường học Trực tuyến EdOptions Academy, học theo tín chỉ và tích lũy vào tổng yêu cầu 21.5 tín chỉ Tú tài Mỹ.", "en": "Enrolled directly in EdOptions Academy, taking credit-bearing courses that count toward the 21.5 credits required for the U.S. High School Diploma."},
+    content: {"vi": "<p>Với các bạn đã theo học Chương trình Tiểu học Quốc tế tại EPath và tích luỹ đủ năng lực học tập nền tảng thì ở giai đoạn này, các em sẽ chính thức trở thành học sinh của Trường học Trực tuyến EdOption Academy trực thuộc sự quản lý của Edmentum International để tham gia học Chương trình theo tín chỉ và môn học mình muốn thử thách.</p><h4>2. U.S Middle School Pathway:</h4><p>Ở lộ trình này, mục tiêu chinh phục bài test IELTS sẽ được nâng lên Band 6.0 vào cuối năm lớp 7 để chuẩn bị năng lực ngôn ngữ ở mức độ chuyên sâu, tương đương với các học sinh của chương trình phổ thông song ngữ quốc tế cùng trình độ. Song song đó, các bạn sẽ đăng ký học theo tín chỉ với toàn bộ nội dung đầy đủ của 1 đến 2 môn học chính (Math và Science) theo khung chuẩn chương trình Mỹ tuỳ theo khả năng. Nếu hoàn thành đúng yêu cầu bài học với tỷ lệ 80% đạt các bài test cuối kỳ, các tín chỉ học này sẽ được tích luỹ (tính điểm chính thức) vào tổng yêu cầu 21,5 tín chỉ cần có để được cấp bằng U.S Diploma (Tú Tài Mỹ) ở giai đoạn cấp 3.</p><p>Việc đăng ký số lượng tín chỉ và môn học ở giai đoạn này hoàn toàn tuỳ thuộc vào năng lực cá nhân và mức độ đầu tư tài chính của mỗi gia đình. Tương tự như Chương trình Tiểu học Quốc tế ở chặng Grade 3-5, ngoài việc đăng ký theo tín chỉ cho các bạn làm quen, Phụ huynh cũng có thể đầu tư mức học phí chỉ bằng 1/3 so với Học phí của các trường Quốc tế tại Việt Nam để con em mình có cơ hội sở hữu bảng điểm của đầy đủ các môn học và chứng nhận hoàn thành các cấp lớp như một học sinh Mỹ bản địa.</p>", "en": "<p>Enrolled directly in EdOptions Academy (accredited by Cognia & WASC). Students aim for IELTS 6.0 and complete 1–2 official US credits in Math and Science, counting towards the 21.5 credits needed for the U.S. High School Diploma.</p>"},
+    ageRange: "11 – 14 tuổi (Grade 6 – 8)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-middle.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=middle',
+    ctaUrl: "/admissions?program=middle",
     order: 8,
     isActive: true,
     status: 'PUBLISHED',
@@ -435,40 +265,19 @@ export const DEFAULT_PROGRAMS: Program[] = [
     submittedAt: '',
     reviewedAt: '',
   },
-
-  // =========================================================================
-  // 5. CHƯƠNG TRÌNH TRUNG HỌC PHỔ THÔNG (GRADE 9 – GRADE 12)
-  // =========================================================================
   {
-    id: 'default-program-high-dual-diploma',
-    slug: 'high-dual-diploma',
-    level: 'high',
-    title: {
-      vi: 'Dual Diploma Pathway – Lộ trình Song bằng Việt – Mỹ',
-      en: 'Dual Diploma Pathway – Vietnam & US High School Dual Diploma',
-    },
-    shortDescription: {
-      vi: 'Học đồng thời THPT Việt Nam và chương trình THPT Mỹ qua EdOptions Academy, tích lũy 5.0 tín chỉ tiêu chuẩn + 1 tín chỉ AP để sở hữu 2 bằng tốt nghiệp.',
-      en: 'Concurrent study for both Vietnamese & US High School Diplomas via EdOptions Academy, earning 5.0 standard credits + 1 AP credit.',
-    },
-    content: {
-      vi: '<p>Dual Diploma là lựa chọn phù hợp cho gia đình muốn con hoàn thành trọn vẹn chương trình THPT Việt Nam, giữ vững văn bằng trong nước, đồng thời sở hữu hồ sơ học thuật quốc tế cạnh tranh để mở rộng cánh cửa vào các đại học hàng đầu trong và ngoài nước.</p><p><strong>Đặc trưng lộ trình:</strong> Các môn học quốc tế được bố trí chủ yếu vào các kỳ hè và một phần trong năm học để không làm gián đoạn việc học chính khóa. Học sinh tích lũy dần 5.0 tín chỉ chuẩn Mỹ đến cuối lớp 11. Hè trước lớp 12, học sinh chọn thêm 1 môn AP (Advanced Placement – College Board) phù hợp ngành học đại học để nâng tổng tín chỉ lên 6.0.</p><p><strong>Văn bằng & Chứng chỉ tốt nghiệp:</strong></p><ul><li>Bằng tốt nghiệp THPT Việt Nam</li><li>Bằng Tú tài Mỹ (U.S. High School Diploma) do EdOptions Academy cấp, kiểm định bởi Cognia & WASC</li><li>Chứng chỉ IELTS Academic 7.0+</li><li>Chứng chỉ tín chỉ đại học sớm Advanced Placement (AP)</li></ul><p>Tạo lợi thế cạnh tranh rất lớn và cơ hội nhận học bổng giá trị cao khi xét tuyển vào các đại học quốc tế tại Việt Nam và trên thế giới.</p>',
-      en: '<p>Allows students to maintain Vietnamese high school enrollment while earning an accredited US High School Diploma via EdOptions Academy.</p><p>Credits are scheduled during summer terms and flexible sessions (5.0 standard credits + 1.0 College Board AP credit = 6.0 credits total).</p><p>Graduates receive both Vietnamese and US diplomas, IELTS 7.0+, and AP college credits, creating immense competitive advantage for university admissions and scholarships.</p>',
-    },
-    ageRange: 'Lớp 9 – 12 (14 – 18 tuổi)',
-    objectives: [
-      { vi: 'Nhận đồng thời 2 bằng tốt nghiệp THPT Việt Nam và Tú tài Mỹ', en: 'Earn dual Vietnamese and US High School Diplomas' },
-      { vi: 'Tích lũy 5 tín chỉ chuẩn Mỹ + 1 tín chỉ đại học sớm AP (College Board)', en: 'Earn 5.0 US credits + 1.0 College Board AP university credit' },
-      { vi: 'Đạt chứng chỉ IELTS Academic 7.0+ và hồ sơ du học nổi bật', en: 'Achieve IELTS 7.0+ and an outstanding college admissions profile' },
-    ],
-    highlights: [
-      { vi: '2 bằng tốt nghiệp chính quy Việt Nam & Hoa Kỳ', en: '2 official credentials: Vietnam & US High School Diplomas' },
-      { vi: 'Kiểm định bởi 2 tổ chức giáo dục uy tín Cognia & WASC', en: 'Dual accredited by prestigious Cognia & WASC bodies' },
-      { vi: 'Học vào kỳ hè không làm gián đoạn chương trình trong nước', en: 'Summer-intensive coursework avoiding local school conflict' },
-    ],
-    imageUrl: '/images/programs/program-dual-diploma.jpg',
+    id: "default-program-high-dual-diploma",
+    slug: "thpt-dual-diploma",
+    level: "high",
+    title: {"vi": "Dual Diploma Pathway – Lộ trình Song bằng Việt – Mỹ (Grade 9 – 12)", "en": "Dual Diploma Pathway (Grades 9–12)"},
+    shortDescription: {"vi": "Hoàn thành trọn vẹn chương trình THPT Việt Nam kết hợp tích lũy 5.0 - 6.0 tín chỉ Mỹ và chứng chỉ AP để sở hữu đồng thời bằng THPT Việt Nam và U.S. High School Diploma.", "en": "Complete Vietnamese High School Diploma while earning 5.0–6.0 US credits and AP courses for the accredited U.S. High School Diploma."},
+    content: {"vi": "<h4>1. Dual Diploma Pathway - Lộ trình Song bằng Việt Mỹ:</h4><p>Đây là lựa chọn phù hợp với những gia đình mong muốn con vẫn hoàn thành trọn vẹn chương trình THPT Việt Nam, giữ vững nền tảng học tập và bằng cấp trong nước nhưng đồng thời muốn con có thêm một hồ sơ học thuật quốc tế để mở rộng cánh cửa vào các trường đại học có ranking cao, dù chưa xác định chắc chắn sẽ du học hay không. Với một số Trường Đại học Quốc tế hiện đang hoạt động tại Việt Nam, bằng cấp mà các bạn đạt được trong lộ trình này bao gồm chứng chỉ IELTS Academic 7.0, Bằng tốt nghiệp Trung học Mỹ với 5 tín chỉ tiêu chuẩn và 1 tín chỉ AP cũng sẽ là lợi thế cạnh tranh rất lớn so với các ứng viên chỉ có bằng Tốt nghiệp PTTH Việt Nam và chứng chỉ IELTS. Một số trường Đại học còn cân nhắc hỗ trợ học bổng cho các thí sinh có hồ sơ năng lực cạnh tranh thuộc lộ trình học tập này.</p><p>Điểm đặc trưng của giai đoạn này là các môn học quốc tế được sắp xếp chủ yếu vào các kỳ hè và một phần nhỏ trong năm học, để không làm gián đoạn việc học chính khóa trong nước. Lộ trình bắt đầu bằng một kỳ đánh giá năng lực tiếng Anh vào cuối năm lớp 8, đầu năm lớp 9 làm cơ sở xây dựng kế hoạch học tập phù hợp cho từng học sinh. Sau đó, các em lần lượt học qua các môn học, với mỗi môn tương ứng 1.0 tín chỉ, tích lũy dần qua từng năm học và kỳ hè. Đến cuối lớp 11, học sinh thường đã hoàn thành 5.0 tín chỉ, đủ điều kiện tối thiểu để nhận bằng song bằng. Vào kỳ hè trước lớp 12, tùy năng lực và định hướng ngành học, học sinh có thể lựa chọn môn AP phù hợp - Hệ thống các môn học nâng cao theo chuẩn College Board của Hoa Kỳ, được thiết kế với độ khó tương đương môn đại cương ở bậc đại học, để nâng tổng tín chỉ lên 6.0 vừa củng cố hồ sơ, giúp học sinh vừa làm quen sớm với cách học và thi cử ở bậc đại học.</p><p>Khi hoàn tất, học sinh nhận được đồng thời bằng tốt nghiệp THPT Việt Nam, bằng U.S High School Diploma, chứng chỉ IELTS 7.0, và tùy theo lựa chọn môn học, sẽ có thêm chứng chỉ AP. Đây là lộ trình phù hợp với những gia đình muốn con giữ vững nền tảng học tập trong nước, đồng thời sở hữu thêm một hồ sơ học thuật quốc tế để mở rộng cơ hội khi nộp hồ sơ vào đại học trong và ngoài nước.</p>", "en": "<p>Enables students to complete the full Vietnamese national curriculum while earning 5.0–6.0 US credits and College Board AP courses during summers. Graduates receive both the Vietnamese High School Diploma, the accredited U.S. High School Diploma from EdOptions Academy, and IELTS 7.0+.</p>"},
+    ageRange: "14 – 18 tuổi (Grade 9 – 12)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-high.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=high',
+    ctaUrl: "/admissions?program=high",
     order: 9,
     isActive: true,
     status: 'PUBLISHED',
@@ -485,35 +294,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-high-fulltime-homeschool',
-    slug: 'high-fulltime-homeschool',
-    level: 'high',
-    title: {
-      vi: 'U.S. Diploma Pathway – Lộ trình Tú tài Mỹ Toàn phần',
-      en: 'U.S. Diploma Pathway – Full-time US High School Diploma',
-    },
-    shortDescription: {
-      vi: 'Học toàn thời gian 100% theo khung chương trình phổ thông Mỹ qua EdOptions Academy, tích lũy 21.5 tín chỉ và tốt nghiệp như học sinh bản xứ.',
-      en: '100% full-time US high school curriculum via EdOptions Academy, earning 21.5 credits and graduating with US native status.',
-    },
-    content: {
-      vi: '<p>Đây là đích đến dành cho các gia đình xác định mục tiêu cho con theo đuổi con đường học thuật Hoa Kỳ toàn diện để ứng tuyển vào các trường đại học quốc tế có thứ hạng cao đòi hỏi hồ sơ học lực thực sự vượt trội. Học sinh học toàn thời gian từ lớp 10 trở đi theo đúng khung chương trình của một trường trung học tại Mỹ qua EdOptions Academy.</p><p><strong>Tích lũy 21.5 tín chỉ chuẩn Hoa Kỳ:</strong> Trong 4 năm, chương trình bao phủ đầy đủ các môn bắt buộc: Ngữ văn, Toán, Khoa học, Xã hội, Ngoại ngữ, Nghệ thuật và Tự chọn. Học sinh tích lũy 18.5 tín chỉ THPT cộng 3.0 tín chỉ đã có từ THCS = Đủ 21.5 tín chỉ để nhận bằng Tú tài Mỹ.</p><p><strong>Lợi thế vượt trội:</strong></p><ul><li>Được các đại học quốc tế công nhận như <strong>học sinh bản địa Mỹ</strong> khi xét tuyển.</li><li><strong>Cơ hội tốt nghiệp sớm:</strong> Học sinh hoàn thành đủ 21.5 tín chỉ có thể nộp hồ sơ sớm vào các đại học danh tiếng mà không cần hoàn tất lớp 12 VN.</li><li>Nhiều thời gian tập trung ôn luyện SAT/ACT và các môn AP nâng cao; rèn luyện kỹ năng thế kỷ 21 (WEF) và xây dựng Hồ sơ Ngoại khóa cùng EPath để săn học bổng du học Mỹ, Canada, Úc.</li></ul>',
-      en: '<p>Dedicated full-time US curriculum for students aiming for top global universities. Enrolled in EdOptions Academy from Grade 10 onward.</p><p>Earns 21.5 total credits (18.5 high school + 3.0 middle school), covering all required US core and elective disciplines.</p><p>Graduates are recognized as US native applicants, qualify for potential early graduation, and prepare thoroughly for SAT/ACT and AP exams with dedicated extracurricular profile advising.</p>',
-    },
-    ageRange: 'Lớp 9 – 12 (14 – 18 tuổi)',
-    objectives: [
-      { vi: 'Tốt nghiệp với Bằng Tú tài Mỹ và được công nhận như học sinh bản xứ', en: 'Graduate with US Diploma and native applicant status' },
-      { vi: 'Hoàn thành 21.5 tín chỉ chuẩn Hoa Kỳ và có cơ hội tốt nghiệp sớm', en: 'Complete 21.5 US credits with early graduation opportunities' },
-      { vi: 'Chinh phục điểm số cao SAT/ACT và các môn AP của College Board', en: 'Master SAT/ACT and College Board AP advanced coursework' },
-    ],
-    highlights: [
-      { vi: 'Xét tuyển đại học với tư cách học sinh bản địa Hoa Kỳ', en: 'Evaluated as a US domestic applicant by global universities' },
-      { vi: 'Hoàn thành 21.5 tín chỉ chuẩn kiểm định Cognia & WASC', en: 'Complete 21.5 credits accredited by Cognia & WASC' },
-      { vi: 'Xây dựng Hồ sơ Ngoại khóa & săn học bổng du học top đầu', en: 'Extracurricular portfolio coaching for elite scholarships' }
-    ],
-    imageUrl: '/images/programs/program-high.jpg',
+    id: "default-program-high-us-diploma-fulltime",
+    slug: "thpt-us-diploma-fulltime",
+    level: "high",
+    title: {"vi": "U.S. Diploma Pathway – Lộ trình bằng Tú Tài Mỹ toàn phần (Grade 9 – 12)", "en": "U.S. Diploma Full-time Pathway (Grades 9–12)"},
+    shortDescription: {"vi": "Lộ trình Tú tài Mỹ toàn phần: Hoàn thành trọn vẹn 21.5 tín chỉ theo chuẩn Hoa Kỳ với EdOptions Academy, tốt nghiệp với tư cách học sinh bản địa Mỹ.", "en": "Full-time US high school pathway completing 21.5 credits with EdOptions Academy, recognized for admissions with native student status."},
+    content: {"vi": "<h4>2. U.S Diploma Pathway - Lộ trình Tú tài Mỹ toàn phần:</h4><p>Đây là đích đến dành cho các gia đình đã xác định rõ mục tiêu: con sẽ theo đuổi con đường học thuật Hoa Kỳ ngay từ bậc Trung học Cơ sở và hướng đến việc ứng tuyển vào các trường đại học quốc tế có thứ hạng cao, nơi đòi hỏi một hồ sơ học lực thực sự cạnh tranh chứ không chỉ dừng ở mức bổ sung. Khác với lộ trình Song bằng, đây là lựa chọn dành cho phụ huynh sẵn sàng để con học toàn thời gian ở các năm cuối cấp (Lớp 10 trở đi) theo đúng khung chương trình của một trường trung học tại Mỹ và đã tham gia học trải nghiệm Chương trình Middle School với EdOptions Academy từ giai đoạn Trung học Cơ sở.</p><p>Trong suốt 4 năm, chương trình bao phủ đầy đủ các nhóm môn học bắt buộc theo chuẩn Hoa Kỳ. Bên cạnh đó, học sinh còn học Nghệ thuật, Ngoại ngữ và các môn tự chọn khác, đảm bảo một hồ sơ học thuật toàn diện thay vì chỉ tập trung vào một vài môn cốt lõi.</p><p>Tổng cộng, học sinh tích lũy 18.5 tín chỉ trong 4 năm THPT, cộng thêm 3.0 tín chỉ đã có từ bậc THCS, đạt tổng 21.5 tín chỉ, đáp ứng đầy đủ điều kiện để nhận bằng Tú tài Mỹ. Ngoài ra, các bạn học sinh có nhiều thời gian hơn để tập trung ôn luyện thêm SAT/ACT (2 kỳ thi chuẩn hóa được hầu hết các trường đại học tại Mỹ và nhiều quốc gia chấp nhận để xét tuyển) và các môn AP (Hệ thống các môn học nâng cao theo chuẩn College Board của Hoa Kỳ, tương đương môn đại cương bậc Đại học) là yếu tố quan trọng giúp hồ sơ nổi bật hơn khi nộp hộp sơ vào các trường đại học top đầu, đặc biệt là những trường có mức độ cạnh tranh cao và yêu cầu điểm chuẩn hóa quốc tế.</p><p>Giá trị nổi bật nhất của lộ trình này nằm ở việc học sinh, khi tốt nghiệp, được các trường đại học công nhận như một học sinh bản địa Mỹ, một lợi thế đáng kể so với việc ứng tuyển theo diện học sinh quốc tế thông thường. Đây là lộ trình phù hợp với những gia đình mong muốn con xây dựng một hồ sơ học thuật có chiều sâu, gắn liền và nhất quán với hệ thống giáo dục Hoa Kỳ ngay từ bậc Phổ thông.</p><p>Điểm thuận lợi tiếp theo của học sinh theo học lộ trình này là các bạn có cơ hội tốt nghiệp sớm hơn thời hạn nếu có khả năng hoàn thành toàn bộ 21,5 tín chỉ theo yêu cầu để có thể nộp hồ sơ sớm vào các Trường Đại học danh tiếng trên thế giới mà không cần phải hoàn tất Chương trình lớp 12 và lấy bằng Phổ thông Trung học Việt Nam. Với hình thức học 100% Blended Learning, tự chủ động quản lý lịch trình học tập bản thân với sự hỗ trợ từ EPath Education, lộ trình học tập này sẽ giúp các bạn dần hình thành rất tốt nhóm Năng lực (Competencies) và Phẩm chất Tính cách (Character Qualities) trong các Kỹ năng học tập suốt đời của thế kỷ 21 (Diễn đàn Kinh tế Thế giới - WEF) - một trong những điều kiện tiên quyết của công dân thời đại số. Ngoài ra, EPath cũng sẽ đồng hành cùng các gia đình xây dựng Hồ sơ Ngoại khoá cho các bạn để tăng cơ hội ứng tuyển và săn học bổng du học cho các ứng viên này.</p>", "en": "<p>Complete 4-year US High School curriculum totaling 21.5 credits via EdOptions Academy (Cognia & WASC accredited). Graduates are recognized as native US students by world-ranking universities, with extensive preparation for SAT/ACT and AP courses.</p>"},
+    ageRange: "14 – 18 tuổi (Grade 9 – 12)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-high.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=high',
+    ctaUrl: "/admissions?program=high",
     order: 10,
     isActive: true,
     status: 'PUBLISHED',
@@ -529,40 +321,19 @@ export const DEFAULT_PROGRAMS: Program[] = [
     submittedAt: '',
     reviewedAt: '',
   },
-
-  // =========================================================================
-  // 6. PHÁT TRIỂN NĂNG LỰC CÁ NHÂN (PERSONAL DEVELOPMENT)
-  // =========================================================================
   {
-    id: 'default-program-personal-dev-portfolio',
-    slug: 'phat-trien-nang-luc-ca-nhan',
-    level: 'personal-development',
-    title: {
-      vi: 'Khóa học Kỹ năng, Ngoại khóa, Trải nghiệm – Beyond the Classroom Portfolio',
-      en: 'Skills, Extracurriculars & Experiences – Beyond the Classroom',
-    },
-    shortDescription: {
-      vi: 'Trải nghiệm công nghệ Robotics & 3D FabLab EIU, thi đấu trường quốc tế (IMEC, STEMCO, TIMO), rèn luyện 5 kỹ năng thế kỷ 21 và xây dựng Academic Portfolio.',
-      en: 'Hands-on tech at FabLab EIU, international Olympiads (IMEC, STEMCO, TIMO), 21st-century skills, and Academic Portfolio.',
-    },
-    content: {
-      vi: '<p>Bên cạnh chương trình học thuật, EPath Education xây dựng hệ thống khóa học kỹ năng, hoạt động ngoại khóa và trải nghiệm thực tế nhằm tạo điều kiện để học sinh vận dụng kiến thức vào cuộc sống, khám phá sở thích và hình thành năng lực toàn diện.</p><p><strong>Các hoạt động nổi bật:</strong></p><ul><li><strong>Giao lưu & Trải nghiệm công nghệ FabLab EIU:</strong> Hợp tác cùng FabLab thuộc Đại học Quốc tế Miền Đông (EIU) trải nghiệm thiết kế 3D, in 3D, lập trình, Robotics và chế tạo sản phẩm thực tiễn.</li><li><strong>Đấu trường học thuật quốc tế:</strong> Tham gia các kỳ thi Olympiad uy tín: IMEC, STEMCO, GMEC, TIMO... để thử thách bản thân và tích lũy huy chương.</li><li><strong>Sự kiện thường niên:</strong> Lễ hội Văn học Việt Nam & Quốc tế, Trại hè, Dã ngoại và Dự án STEAM.</li><li><strong>Dự án kỹ năng & Hồ sơ cá nhân:</strong> Rèn luyện 5 kỹ năng thế kỷ 21: Critical Thinking (Tư duy phản biện), Research Skills (Kỹ năng nghiên cứu), Public Speaking (Thuyết trình), Leadership (Lãnh đạo), Community Service (Hoạt động cộng đồng) để trực tiếp hoàn thiện Academic Portfolio chuẩn quốc tế.</li></ul>',
-      en: '<p>Comprehensive extracurricular ecosystem: hands-on 3D printing and Robotics at FabLab EIU (Eastern International University), prestigious Olympiad competitions (IMEC, STEMCO, GMEC, TIMO), Literature Festivals, and Summer Camps.</p><p>Builds essential 21st-century competencies—Critical Thinking, Research, Public Speaking, Leadership, and Community Service—to craft an elite Academic Portfolio.</p>',
-    },
-    ageRange: 'Lớp 1 – 12 (6 – 18 tuổi)',
-    objectives: [
-      { vi: 'Hoàn thiện Academic Portfolio (Hồ sơ học thuật cá nhân) chuẩn quốc tế', en: 'Build an elite, credentialed personal Academic Portfolio' },
-      { vi: 'Trải nghiệm công nghệ Robotics và sáng chế tại FabLab EIU', en: 'Hands-on robotics and engineering innovation at FabLab EIU' },
-      { vi: 'Rèn luyện 5 kỹ năng thế kỷ 21 và tham gia các kỳ thi Olympiad', en: 'Master 5 21st-century skills and compete in global Olympiads' },
-    ],
-    highlights: [
-      { vi: 'Không gian sáng tạo công nghệ Makerspace FabLab EIU', en: 'FabLab EIU modern makerspace tech partnership' },
-      { vi: 'Tích lũy huy chương tại các kỳ thi IMEC, STEMCO, TIMO', en: 'Medals and honors at IMEC, STEMCO, TIMO Olympiads' },
-      { vi: 'Tạo lợi thế cạnh tranh vượt trội khi xin học bổng du học', en: 'Unrivaled competitive edge for international scholarships' },
-    ],
-    imageUrl: '/images/programs/program-high.jpg',
+    id: "default-program-personal-dev-portfolio",
+    slug: "personal-development-portfolio",
+    level: "personal-development",
+    title: {"vi": "Khóa học Kỹ năng, Ngoại khóa, Trải nghiệm – Beyond the Classroom Portfolio", "en": "Skills, Extracurriculars & Experiences – Beyond the Classroom Portfolio"},
+    shortDescription: {"vi": "Bên cạnh chương trình học thuật, EPath Education xây dựng hệ thống khóa học kỹ năng, hoạt động ngoại khóa và trải nghiệm thực tế nhằm tạo điều kiện để học sinh vận dụng kiến thức vào cuộc sống.", "en": "Practical skill courses, extracurriculars, FabLab experiences, and Olympiad academic competitions building a competitive Academic Portfolio."},
+    content: {"vi": "<p>Bên cạnh chương trình học thuật, EPath Education xây dựng hệ thống khóa học kỹ năng, hoạt động ngoại khóa và trải nghiệm thực tế nhằm tạo điều kiện để học sinh vận dụng kiến thức vào những tình huống gần với cuộc sống.</p><p>Thông qua các hoạt động đa dạng, học sinh có cơ hội khám phá sở thích, phát triển thế mạnh cá nhân và từng bước hình thành những năng lực cần thiết cho học tập, giao tiếp và cuộc sống.</p><h4>Giao lưu & Trải nghiệm học thuật</h4><p>Học sinh được tham gia các buổi học tập, tham quan và giao lưu cùng các đối tác giáo dục, doanh nghiệp và tổ chức trong nước và quốc tế, giúp mở rộng hiểu biết, định hướng nghề nghiệp và tăng cường khả năng kết nối cộng đồng.</p><h4>Đấu trường học thuật quốc tế</h4><p>EPath tạo điều kiện để học sinh tham gia các kỳ thi Olympiad và sân chơi học thuật uy tín: IMEC, STEMCO, GMEC, TIMO... Đây là cơ hội để học sinh thử thách bản thân, ghi nhận năng lực và tích lũy thành tích học tập.</p><h4>Sự kiện & Lễ hội thường niên</h4><p>Lễ hội Văn học Việt Nam và Quốc tế được tổ chức xuyên suốt năm học, tạo cơ hội cho học sinh khám phá sự đa dạng văn hoá và phát triển kỹ năng giao tiếp trong môi trường quốc tế. Hoạt động ngoại khoá được tích hợp với chương trình học, giúp học sinh vận dụng kiến thức vào thực tiễn thông qua các chuyến tham quan, trải nghiệm Robotics, dự án STEAM, hoạt động dã ngoại và Trại Hè. Đây là cơ hội để các em phát triển tư duy, kỹ năng hợp tác và sự tự tin trong môi trường học tập hiện đại.</p><h4>Dự án kỹ năng & Hồ sơ học tập cá nhân</h4><p>Học sinh được hướng dẫn thực hiện các dự án cá nhân và nhóm nhằm phát triển:</p><p className=\"pl-4\">• Critical Thinking (Tư duy phản biện)</p><p className=\"pl-4\">• Research Skills (Kỹ năng nghiên cứu)</p><p className=\"pl-4\">• Public Speaking (Kỹ năng thuyết trình)</p><p className=\"pl-4\">• Leadership (Năng lực lãnh đạo)</p><p className=\"pl-4\">• Community Service (Hoạt động cộng đồng)</p><p>Các sản phẩm và thành tích từ dự án sẽ góp phần xây dựng Academic Portfolio (Hồ sơ học tập cá nhân), tạo nền tảng cho các chương trình quốc tế và định hướng tương lai.</p>", "en": "<p>Holistic development beyond textbooks: academic exchanges, FabLab EIU technology makerspace, international Olympiad competitions (IMEC, STEMCO, TIMO), Literature Festivals, and hands-on projects cultivating Critical Thinking, Research, Public Speaking, Leadership, and Community Service for an outstanding Academic Portfolio.</p>"},
+    ageRange: "K-12 (Tất cả cấp học)",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-middle.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=high',
+    ctaUrl: "/admissions?program=middle",
     order: 11,
     isActive: true,
     status: 'PUBLISHED',
@@ -579,35 +350,18 @@ export const DEFAULT_PROGRAMS: Program[] = [
     reviewedAt: '',
   },
   {
-    id: 'default-program-personal-dev-counseling',
-    slug: 'co-van-lo-trinh-quoc-te',
-    level: 'personal-development',
-    title: {
-      vi: 'Cố vấn Lộ trình Học thuật Quốc tế – International Pathway Advisory',
-      en: 'International Academic Pathway Advisory (1:1 Mentorship)',
-    },
-    shortDescription: {
-      vi: 'Dịch vụ cố vấn giáo dục chuyên sâu 1 kèm 1, đánh giá năng lực định kỳ, tư vấn lộ trình học phù hợp và chiến lược săn học bổng đại học toàn cầu.',
-      en: 'Personalized 1:1 educational advising, diagnostic assessments, pathway selection, and global university scholarship strategy.',
-    },
-    content: {
-      vi: '<p>Lộ trình học tập quốc tế không giống nhau đối với mọi học sinh. Năng lực, sở thích, mục tiêu nghề nghiệp và kế hoạch tương lai của mỗi em đều có sự khác biệt.</p><p>EPath Education cung cấp dịch vụ <strong>Cố vấn Lộ trình Học thuật Quốc tế 1 kèm 1</strong>, đồng hành cùng học sinh và phụ huynh trong suốt hành trình:</p><ul><li>Đánh giá năng lực đầu vào và định kỳ bằng các bài kiểm tra chuẩn quốc tế (Exact Path chẩn đoán AI, Cambridge English).</li><li>Xác định mục tiêu học thuật và hoạch định kế hoạch dài hạn theo từng cấp lớp.</li><li>Tư vấn lựa chọn chương trình phù hợp: Song ngữ, Song bằng (Dual Diploma), Tú tài Mỹ toàn phần, hoặc chuẩn bị du học.</li><li>Lựa chọn môn học, tối ưu hóa tích lũy tín chỉ và môn AP®.</li><li>Xây dựng chiến lược hồ sơ năng lực cá nhân và cố vấn săn học bổng vào các đại học hàng đầu thế giới.</li></ul>',
-      en: '<p>Personalized 1:1 academic advising guiding families through every stage: AI-driven diagnostic testing (Exact Path), Cambridge benchmarks, long-term pathway planning (Dual Diploma vs. Full-time US Diploma), course and AP credit selection, and elite college admissions and scholarship strategies.</p>',
-    },
-    ageRange: 'Mầm non – Lớp 12',
-    objectives: [
-      { vi: 'Hoạch định lộ trình học tập cá nhân hóa tối ưu tiềm năng của con', en: 'Design a personalized educational pathway maximizing learner potential' },
-      { vi: 'Đánh giá năng lực học thuật khách quan định kỳ cùng phụ huynh', en: 'Periodic objective academic benchmarking aligned with parents' },
-      { vi: 'Chiến lược tối ưu săn học bổng vào các đại học hàng đầu thế giới', en: 'Strategic guidance for scholarships at top global universities' },
-    ],
-    highlights: [
-      { vi: 'Cố vấn chuyên môn 1 kèm 1 theo sát toàn bộ hành trình', en: 'Dedicated expert Advisor 1:1 accompaniment throughout' },
-      { vi: 'Đánh giá năng lực khách quan bằng hệ thống AI Exact Path', en: 'Objective AI diagnostic benchmarking via Exact Path' },
-      { vi: 'Đồng hành từ bậc Mầm non đến khi đỗ vào Đại học mơ ước', en: 'Continuous guidance from Kindergarten to target University' },
-    ],
-    imageUrl: '/images/programs/program-high.jpg',
+    id: "default-program-personal-dev-advisor",
+    slug: "personal-development-advisor",
+    level: "personal-development",
+    title: {"vi": "Cố vấn Lộ trình Học tập Quốc tế – International Pathway", "en": "Academic Pathway Advisory – International Pathway"},
+    shortDescription: {"vi": "Lộ trình học tập quốc tế không giống nhau đối với mọi học sinh. EPath Education cung cấp dịch vụ cố vấn lộ trình học tập quốc tế, đồng hành cùng học sinh và phụ huynh trong quá trình xác định mục tiêu và xây dựng kế hoạch dài hạn.", "en": "Personalized academic pathway consulting partnering with parents and students to evaluate competencies, select suitable tracks, and build long-term plans."},
+    content: {"vi": "<p>Lộ trình học tập quốc tế không giống nhau đối với mọi học sinh. Năng lực, sở thích, mục tiêu nghề nghiệp và kế hoạch tương lai của mỗi em đều có thể khác nhau.</p><p>Vì vậy, EPath Education cung cấp dịch vụ cố vấn lộ trình học tập quốc tế, đồng hành cùng học sinh và phụ huynh trong quá trình xác định mục tiêu, lựa chọn chương trình phù hợp và xây dựng kế hoạch học tập dài hạn.</p>", "en": "<p>Every student has unique strengths, interests, and career ambitions. EPath Education provides 1-on-1 international pathway advisory, assessing competencies, designing customized learning trajectories, and supporting university admissions and scholarships.</p>"},
+    ageRange: "K-12 & Phụ huynh",
+    objectives: [],
+    highlights: [],
+    imageUrl: "/images/programs/program-high.jpg",
     ctaLabel: undefined,
-    ctaUrl: '/admissions?program=high',
+    ctaUrl: "/admissions",
     order: 12,
     isActive: true,
     status: 'PUBLISHED',

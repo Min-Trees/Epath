@@ -204,6 +204,7 @@ export async function GET() {
       admissionsContent,
       achievementsContent,
       programsContent,
+      partnersContent,
     ] = await Promise.all([
       FaqsRepo.listPublished(),
       CoreValuesRepo.listPublished(),
@@ -224,6 +225,7 @@ export async function GET() {
       loadSingleton(CollectionNames.admissionsContent),
       loadSingleton(CollectionNames.achievementsContent),
       loadSingleton(CollectionNames.programsContent),
+      loadSingleton(CollectionNames.partnersContent),
     ])
 
     const programsOut = programs.length > 0 ? programs : DEFAULT_PROGRAMS
@@ -260,6 +262,8 @@ export async function GET() {
       achievementsContent: sanitize(achievementsContent),
       [CollectionNames.programsContent]: sanitize(programsContent),
       programsContent: sanitize(programsContent),
+      [CollectionNames.partnersContent]: sanitize(partnersContent),
+      partnersContent: sanitize(partnersContent),
     })
 
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')

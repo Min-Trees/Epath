@@ -210,8 +210,10 @@ export const PartnerSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
   logoUrl: z.string().url().or(z.literal('')).default(''),
+  imageUrl: z.string().url().or(z.literal('')).default(''),
   website: z.string().url().or(z.literal('')).default(''),
   category: PartnerCategoryEnum,
+  badgeLabel: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   description: LocalizedStringSchema,
   features: z.array(LocalizedStringSchema).default([]),
   isFeatured: z.boolean().default(false),
@@ -382,6 +384,7 @@ export const CollectionNames = {
   admissionsContent: 'admissions-content',
   achievementsContent: 'achievements-content',
   programsContent: 'programs-content',
+  partnersContent: 'partners-content',
 } as const
 
 export type CollectionName = (typeof CollectionNames)[keyof typeof CollectionNames]
@@ -865,3 +868,21 @@ export const ProgramsContentSchema = z.object({
 export type ProgramsContentInput = z.infer<typeof ProgramsContentSchema>
 export type ProgramsContent = Omit<ProgramsContentInput, 'id'> & { id: string }
 
+// ----------- Partners Content (Page settings & Hero/CTA) -----------
+export const PartnersContentSchema = z.object({
+  id: z.string().optional(),
+  hero: z.object({
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    bannerUrl: z.string().url().or(z.literal('')).default(''),
+  }),
+  cta: z.object({
+    title: LocalizedStringSchema,
+    subtitle: LocalizedStringSchema,
+    buttonText: LocalizedStringSchema,
+    buttonLink: z.string().default('/admissions#contact'),
+  }),
+  isActive: z.boolean().default(true),
+}).merge(reviewable)
+export type PartnersContentInput = z.infer<typeof PartnersContentSchema>
+export type PartnersContent = Omit<PartnersContentInput, 'id'> & { id: string }

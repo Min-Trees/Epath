@@ -20,6 +20,7 @@ import type {
   AdmissionsContent,
   AchievementsContent,
   ProgramsContent,
+  PartnersContent,
 } from '@/lib/cms-types'
 
 export interface PublicCmsBundle {
@@ -47,6 +48,7 @@ export interface PublicCmsBundle {
   admissionsContent?: AdmissionsContent | null
   achievementsContent?: AchievementsContent | null
   programsContent?: ProgramsContent | null
+  partnersContent?: PartnersContent | null
 }
 
 const EMPTY: PublicCmsBundle = {
@@ -70,6 +72,7 @@ const EMPTY: PublicCmsBundle = {
   admissionsContent: null,
   achievementsContent: null,
   programsContent: null,
+  partnersContent: null,
 }
 
 interface CmsContextValue {
