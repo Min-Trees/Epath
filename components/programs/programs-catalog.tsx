@@ -238,18 +238,6 @@ export function ProgramsCatalog({
                                 }
                               }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                            <div
-                              className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs backdrop-blur-md"
-                              style={{ backgroundColor: `${level.color}E6` }}
-                            >
-                              {translations.levels[level.id] || level.id}
-                            </div>
-                            {p.ageRange && (
-                              <span className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/95 backdrop-blur-xs text-[#20242B] border border-[#DEDDD6] shadow-2xs">
-                                {formatAgeRange(p.ageRange, locale)}
-                              </span>
-                            )}
                           </Link>
 
                           {/* Card Content */}

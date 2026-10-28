@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
-import { ExternalLink, Award, ArrowRight, Check, Globe2, Sparkles } from 'lucide-react'
+import { ExternalLink, Award, ArrowRight, Check, Globe2, Sparkles, ChevronDown } from 'lucide-react'
 import { useRegistrationModal } from '@/components/registration-modal-context'
 import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { accentCycle } from '@/lib/design-tokens'
@@ -63,6 +63,14 @@ export default function PartnersPage() {
   const { data: cms } = useCmsContext()
   const { openRegistrationModal } = useRegistrationModal()
   const [pageContent, setPageContent] = useState<PartnersContent | null>(null)
+  const [expandedPartners, setExpandedPartners] = useState<Record<string, boolean>>({})
+
+  const toggleExpand = (id: string) => {
+    setExpandedPartners((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
 
   useEffect(() => {
     async function loadContent() {
@@ -159,6 +167,8 @@ export default function PartnersPage() {
               const badgeLabel = customBadge || defaultBadge.label[locale as 'vi' | 'en'] || defaultBadge.label.vi
               const badgeBg = defaultBadge.bg || accent.color
 
+              const isExpanded = !!expandedPartners[partner.id]
+
               return (
                 <motion.div
                   key={partner.id}
@@ -166,22 +176,24 @@ export default function PartnersPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={inViewViewport}
                   transition={{ duration: duration.slow, ease: easeOut }}
-                  className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch"
+                  className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start"
                 >
-                  {/* Visual Image Card with Badge & Branding */}
+                  {/* Visual Image Card with Badge & Branding - Fixed aspect ratio 1389 x 1132 */}
                   <div className={`lg:col-span-5 ${index % 2 === 1 ? 'lg:order-2' : ''} flex flex-col`}>
-                    <div className="relative rounded-2xl overflow-hidden border border-[#DEDDD6] shadow-sm hover:shadow-lg transition-all duration-500 group h-64 sm:h-72 lg:h-full min-h-[260px] bg-slate-900">
+                    <div className="relative w-full aspect-[1389/1132] rounded-2xl overflow-hidden border border-[#DEDDD6] shadow-sm hover:shadow-lg transition-all duration-500 group bg-slate-900 shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={partnerImg}
                         alt={partnerName}
+                        width={1389}
+                        height={1132}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100"
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent pointer-events-none" />
 
                       {/* Top Category Badge */}
-                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
                         <span
                           className="px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-md tracking-wide"
                           style={{ backgroundColor: badgeBg }}
@@ -191,9 +203,9 @@ export default function PartnersPage() {
                       </div>
 
                       {/* Bottom Info on Image */}
-                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
                         <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-white/95 backdrop-blur-md p-1.5 flex items-center justify-center shrink-0 shadow-md">
+                          <div className="w-10 h-10 rounded-xl bg-white/95 backdrop-blur-md p-1.5 flex items-center justify-center shrink-0 shadow-md">
                             {partner.logoUrl ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img src={partner.logoUrl} alt={partnerName} className="w-full h-full object-contain" />
@@ -207,7 +219,7 @@ export default function PartnersPage() {
                             <span className="text-xs sm:text-sm font-bold text-white drop-shadow-sm block truncate">
                               {badgeLabel}
                             </span>
-                            <span className="text-[11px] text-white/80 block uppercase tracking-wider">
+                            <span className="text-[10px] sm:text-[11px] text-white/80 block uppercase tracking-wider">
                               {partner.category.toUpperCase()} • EPATH ACCREDITED
                             </span>
                           </div>
@@ -216,9 +228,9 @@ export default function PartnersPage() {
                     </div>
                   </div>
 
-                  {/* Partner Details & Features */}
+                  {/* Partner Details & Features (Collapsible with 'Xem thêm' button) */}
                   <div
-                    className={`lg:col-span-7 bg-[#F6F5F1] hover:bg-white rounded-2xl p-6 sm:p-8 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group ${index % 2 === 1 ? 'lg:order-1' : ''}`}
+                    className={`lg:col-span-7 bg-[#F6F5F1] hover:bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                   >
                     {/* Watermark Numeral */}
                     <span className="absolute -top-6 -right-2 text-7xl sm:text-8xl font-black text-[#1E3570]/[0.04] pointer-events-none select-none font-mono">
@@ -247,8 +259,28 @@ export default function PartnersPage() {
                       </div>
 
                       {desc && (
-                        <div className="text-[#5C6069] text-xs sm:text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_p:last-child]:mb-0">
-                          <RichTextRenderer html={desc} />
+                        <div className="relative mb-4">
+                          <div
+                            className={`text-[#5C6069] text-xs sm:text-sm leading-relaxed transition-all duration-300 [&_p]:mb-2.5 [&_p:last-child]:mb-0 ${
+                              isExpanded ? '' : 'max-h-24 sm:max-h-28 overflow-hidden relative'
+                            }`}
+                          >
+                            <RichTextRenderer html={desc} />
+                            {!isExpanded && (
+                              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#F6F5F1] group-hover:from-white to-transparent pointer-events-none transition-colors duration-300" />
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => toggleExpand(partner.id)}
+                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#2E4A9E] hover:text-[#F26522] mt-2 transition-colors cursor-pointer"
+                          >
+                            <span>{isExpanded ? (isVi ? 'Thu gọn' : 'Show less') : (isVi ? 'Xem thêm' : 'Read more')}</span>
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                            />
+                          </button>
                         </div>
                       )}
 
@@ -261,7 +293,7 @@ export default function PartnersPage() {
                             <Award className="w-4 h-4" />
                             <span>{t('features')}</span>
                           </h3>
-                          <ul className="space-y-2.5">
+                          <ul className="space-y-2 sm:space-y-2.5">
                             {partner.features.map((feat, i) => (
                               <li key={i} className="flex items-start gap-2.5">
                                 <div
