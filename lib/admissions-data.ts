@@ -115,6 +115,34 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
         desktopImageUrl: '/images/admissions/admissions-hero.jpg',
         mobileImageUrl: '/images/admissions/admissions-consultation.jpg',
         targetProgram: 'high-dual-diploma',
+        applicableFor: {
+          vi: 'Học sinh chuẩn bị vào Lớp 1 đến Lớp 12 trên toàn quốc đăng ký lộ trình học thuật song bằng hoặc tăng cường quốc tế.',
+          en: 'K-12 students nationwide enrolling in US Dual Diploma or academic enrichment pathways.',
+        },
+        validUntil: {
+          vi: 'Áp dụng cho 30 suất đăng ký sớm nhất trong tháng',
+          en: 'Valid for the first 30 early applications this month',
+        },
+        content: {
+          vi: '<p>Chương trình <strong>Học Bổng Khởi Đầu Sớm (Early Bird Scholarship)</strong> là chính sách trợ cấp tài chính đặc biệt từ Quỹ Hỗ trợ Tài năng Học thuật EPath Education hợp tác cùng Edmentum Hoa Kỳ.</p><p>Học bổng được áp dụng trực tiếp vào học phí trọn gói khóa học khi phụ huynh hoàn tất thủ tục đăng ký và khảo sát năng lực trong giai đoạn tuyển sinh vàng. Mục tiêu nhằm tạo điều kiện cho học sinh tiếp cận chương trình giáo dục phổ thông chuẩn Hoa Kỳ đạt kiểm định kép Cognia & WASC với chi phí hợp lý nhất.</p>',
+          en: '<p>The <strong>Early Bird Scholarship</strong> is a special tuition grant funded by EPath Education Academic Talent Fund in partnership with Edmentum US.</p><p>The grant applies directly to full course tuition upon early registration and diagnostic testing during the golden admissions intake. Designed to provide accessible pathways to US Cognia & WASC accredited diplomas at optimized tuition.</p>',
+        },
+        benefits: {
+          vi: [
+            'Giảm trực tiếp 30% tổng học phí niên khóa đầu tiên',
+            'Miễn phí 100% bài khảo sát năng lực đầu vào chuẩn Edmentum trị giá 2.500.000 VNĐ',
+            'Cố vấn học thuật 1:1 xây dựng lộ trình du học hoặc nhận Tú tài Mỹ tại chỗ',
+            'Tặng trọn bộ tài liệu học thuật trực tuyến và tài khoản Edmentum bản quyền 1 năm',
+            'Cam kết giữ nguyên mức học phí ưu đãi cho toàn bộ lộ trình liên cấp',
+          ],
+          en: [
+            'Direct 30% tuition reduction for the first academic year',
+            '100% Free Edmentum Exact Path diagnostic assessment (valued at 2,500,000 VND)',
+            'Dedicated 1:1 Academic Advisor mapping out study-abroad & US diploma pathways',
+            'Full proprietary academic digital materials & 1-year licensed Edmentum account',
+            'Guaranteed tuition lock policy across the entire continuous pathway',
+          ],
+        },
         ctaText: {
           vi: 'Đăng ký nhận ưu đãi',
           en: 'Claim This Offer',
@@ -139,6 +167,34 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
         desktopImageUrl: '/images/admissions/admissions-assessment.jpg',
         mobileImageUrl: '/images/admissions/admissions-assessment.jpg',
         targetProgram: 'elementary',
+        applicableFor: {
+          vi: 'Tất cả học sinh từ 5 đến 18 tuổi có nhu cầu định vị năng lực học thuật theo thang đo chuẩn mực quốc tế.',
+          en: 'All learners aged 5 to 18 seeking academic benchmarking against international standards.',
+        },
+        validUntil: {
+          vi: 'Số lượng có hạn – Ưu tiên đăng ký trước thứ Sáu hàng tuần',
+          en: 'Limited assessment slots – Priority booking before each Friday',
+        },
+        content: {
+          vi: '<p>Bài kiểm tra <strong>Exact Path Diagnostic Assessment</strong> thuộc Tập đoàn Edmentum (Hoa Kỳ) là công cụ khảo sát thích ứng (Adaptive Test) hàng đầu thế giới được hàng triệu trường học quốc tế sử dụng.</p><p>Học sinh sẽ được đo lường chính xác các chỉ số: Ngôn ngữ & Đọc hiểu (Lexile), Toán học (Quantile) và Khoa học ứng dụng. Sau khảo sát, phụ huynh nhận báo cáo phân tích chi tiết 15 trang nêu rõ điểm mạnh, lỗ hổng kiến thức và lộ trình bứt phá điểm số tối ưu.</p>',
+          en: '<p>The <strong>Exact Path Diagnostic Assessment</strong> by Edmentum US is a world-class adaptive benchmarking tool utilized by thousands of international schools worldwide.</p><p>Learners receive accurate Lexile reading levels, Quantile mathematical ratings, and applied science diagnostics. Parents receive a comprehensive 15-page analytical report outlining strengths, learning gaps, and targeted growth pathways.</p>',
+        },
+        benefits: {
+          vi: [
+            'Miễn 100% lệ phí khảo sát tiêu chuẩn Hoa Kỳ (tiết kiệm 2.500.000 VNĐ)',
+            'Nhận Báo cáo phân tích năng lực chi tiết (Diagnostic Detailed Report) sau 24h',
+            'Buổi phân tích học thuật 1 kèm 1 cùng Chuyên gia Giáo dục & Cố vấn Trưởng EPath',
+            'Được thiết kế lộ trình cá nhân hóa riêng biệt phù hợp mục tiêu của từng học sinh',
+            'Tặng buổi học thử trực tuyến trải nghiệm lớp học bản ngữ Edmentum Hoa Kỳ',
+          ],
+          en: [
+            '100% assessment fee waiver (saving 2,500,000 VND)',
+            'Comprehensive Diagnostic Detailed Report delivered within 24 hours',
+            '1-on-1 Academic debrief session with EPath Senior Education Specialist',
+            'Customized individualized learning pathway tailored to student aspirations',
+            'Complimentary trial session experiencing live US Edmentum classroom instruction',
+          ],
+        },
         ctaText: {
           vi: 'Đăng ký kiểm tra miễn phí',
           en: 'Book Free Test',

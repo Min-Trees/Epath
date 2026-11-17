@@ -1211,6 +1211,62 @@ export function AdmissionsForm() {
                         />
                       </div>
                     </div>
+
+                    {/* Applicable For & Validity */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Đối tượng áp dụng (VI)</Label>
+                        <Input
+                          value={flyer.applicableFor?.vi || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              applicableFor: { ...(flyer.applicableFor || { vi: '', en: '' }), vi: e.target.value },
+                            })
+                          }
+                          placeholder="VD: Học sinh chuẩn bị vào Lớp 1 đến Lớp 12 trên toàn quốc"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Thời hạn ưu đãi (VI)</Label>
+                        <Input
+                          value={flyer.validUntil?.vi || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              validUntil: { ...(flyer.validUntil || { vi: '', en: '' }), vi: e.target.value },
+                            })
+                          }
+                          placeholder="VD: Áp dụng cho 30 suất đăng ký sớm nhất trong tháng"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Detailed Content / Terms */}
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-[#20242B]">Nội dung & Thể lệ chi tiết (Hiển thị tại Trang Chi Tiết Ưu Đãi)</Label>
+                      <Textarea
+                        rows={3}
+                        value={flyer.content?.vi || ''}
+                        onChange={(e) =>
+                          updateFlyer(idx, {
+                            content: { ...(flyer.content || { vi: '', en: '' }), vi: e.target.value },
+                          })
+                        }
+                        placeholder="Nhập nội dung chi tiết, điều kiện và thể lệ chương trình ưu đãi..."
+                        className="rounded-xl border-[#DEDDD6] text-xs font-mono"
+                      />
+                      <div className="flex items-center justify-between text-[11px] text-[#5C6069] pt-1">
+                        <span>Được mở ra khi người dùng ấn vào &quot;Xem chi tiết&quot; trên card ưu đãi.</span>
+                        <a
+                          href={`/vi/admissions/promotions/${flyer.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#2E4A9E] hover:underline flex items-center gap-1 font-bold"
+                        >
+                          <span>Xem trang chi tiết</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 ))
               )}

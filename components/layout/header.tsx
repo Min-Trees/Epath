@@ -59,12 +59,23 @@ export function Header() {
     const cleanId = hash.replace(/^#/, '')
     const el = document.getElementById(cleanId)
     if (!el) return false
+
+    // Ensure body overflow lock is removed
+    document.body.style.overflow = ''
+
     const headerHeight = headerRef.current?.offsetHeight || 72
-    const elTop = el.getBoundingClientRect().top + window.scrollY - headerHeight - 16
-    window.scrollTo({
-      top: Math.max(0, elTop),
-      behavior: 'smooth',
-    })
+    const rect = el.getBoundingClientRect()
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0
+    const targetY = Math.max(0, rect.top + scrollTop - headerHeight - 16)
+
+    try {
+      window.scrollTo({
+        top: targetY,
+        behavior: 'smooth',
+      })
+    } catch {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
     return true
   }, [])
 
@@ -74,6 +85,11 @@ export function Header() {
     href: string,
     onSuccess?: () => void
   ) => {
+    // Immediately unlock body overflow so page can scroll right away
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = ''
+    }
+
     const [targetPath, hash] = href.split('#')
     const currentPath = (pathname || '').replace(/\/$/, '')
     const normalizedTargetPath = (targetPath || '').replace(/\/$/, '')
@@ -90,9 +106,13 @@ export function Header() {
         window.history.pushState(null, '', `#${hash}`)
       }
 
-      setTimeout(() => {
-        scrollToAnchor(hash)
-      }, 100)
+      // Retry scrolling across animation ticks so closing menu animation does not cancel scroll
+      const delays = [40, 120, 250, 400]
+      delays.forEach((delay) => {
+        setTimeout(() => {
+          scrollToAnchor(hash)
+        }, delay)
+      })
       return
     }
 
@@ -106,14 +126,14 @@ export function Header() {
     if (!hash) return
 
     let attempts = 0
-    const maxAttempts = 12
+    const maxAttempts = 15
     const interval = setInterval(() => {
       attempts++
       const scrolled = scrollToAnchor(hash)
       if (scrolled || attempts >= maxAttempts) {
         clearInterval(interval)
       }
-    }, 120)
+    }, 100)
 
     return () => clearInterval(interval)
   }, [pathname, scrollToAnchor])
@@ -378,14 +398,10 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.22, ease: easeOut }}
-              className="epath-mobile-nav lg:hidden mt-2.5 z-[65] bg-white rounded-2xl shadow-2xl border border-[#DEDDD6] max-h-[calc(100dvh-84px)] flex flex-col overflow-hidden"
+              className="epath-mobile-nav lg:hidden mt-2 z-[65] bg-white rounded-2xl shadow-2xl border border-[#DEDDD6] max-h-[calc(100vh-80px)] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain p-3 space-y-1 scrollbar-thin touch-pan-y"
+              style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              {/* Scrollable list container with momentum scrolling */}
-              <div
-                className="overflow-y-auto overscroll-contain px-3 py-3 space-y-1 scrollbar-thin"
-                style={{ WebkitOverflowScrolling: 'touch' }}
-              >
-                {navItems.map((item, idx) => {
+              {navItems.map((item, idx) => {
                   const sectionKey = `item-${idx}`
                   const hasChildren = Boolean(item.children && item.children.length > 0)
                   const isExpanded = openMobileSections[sectionKey] ?? true
@@ -453,6 +469,9 @@ export function Header() {
                     type="button"
                     className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base cursor-pointer"
                     onClick={() => {
+                      if (typeof document !== 'undefined') {
+                        document.body.style.overflow = ''
+                      }
                       setIsMobileMenuOpen(false)
                       openRegistrationModal({ source: 'header-mobile' })
                     }}
@@ -460,7 +479,6 @@ export function Header() {
                     <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
                   </button>
                 </div>
-              </div>
             </motion.nav>
           )}
         </AnimatePresence>

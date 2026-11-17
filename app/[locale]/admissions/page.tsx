@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   MapPin,
@@ -497,16 +498,10 @@ function AdmissionsContent() {
                         transition={{ duration: duration.slow, ease: easeOut }}
                         className="bg-white rounded-3xl border border-[#DEDDD6] hover:border-[#F26522]/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                       >
-                        {/* Flyer Image Container - Content only displays image (flyer PNG) */}
-                        <div
-                          className="relative w-full aspect-[16/10] sm:aspect-[16/10] bg-[#F6F5F1] overflow-hidden cursor-pointer"
-                          onClick={() =>
-                            openRegistrationModal({
-                              source: 'admissions-promotion-flyer',
-                              initialTitle: flyerTitle,
-                              initialProgram: flyer.targetProgram || flyerTitle,
-                            })
-                          }
+                        {/* Flyer Image Container - Click opens detail page */}
+                        <Link
+                          href={`/${locale}/admissions/promotions/${flyer.id}`}
+                          className="relative w-full aspect-[16/10] sm:aspect-[16/10] bg-[#F6F5F1] overflow-hidden block group/img"
                         >
                           <picture className="w-full h-full block">
                             {flyer.mobileImageUrl && (
@@ -516,7 +511,7 @@ function AdmissionsContent() {
                             <img
                               src={desktopImg}
                               alt={flyerTitle}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-[1.03]"
                               loading="lazy"
                             />
                           </picture>
@@ -528,20 +523,26 @@ function AdmissionsContent() {
                             </div>
                           )}
 
-                          {/* Hover Overlay Hint */}
-                          <div className="absolute inset-0 bg-[#1E3570]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#1E3570] text-xs font-bold shadow-lg">
-                              {isVi ? 'Bấm để nhận ưu đãi' : 'Click to claim offer'}
+                          {/* Hover Overlay Hint: View Details */}
+                          <div className="absolute inset-0 bg-[#1E3570]/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#1E3570] text-xs font-bold shadow-lg flex items-center gap-1.5">
+                              <span>{isVi ? 'Xem chi tiết chương trình' : 'View Program Details'}</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
                             </span>
                           </div>
-                        </div>
+                        </Link>
 
                         {/* Bottom Action Bar */}
                         <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 bg-white">
                           <div className="mb-4">
-                            <h3 className="text-base sm:text-lg font-black text-[#1E3570] mb-1.5 leading-snug group-hover:text-[#F26522] transition-colors">
-                              {flyerTitle}
-                            </h3>
+                            <Link
+                              href={`/${locale}/admissions/promotions/${flyer.id}`}
+                              className="block group/title"
+                            >
+                              <h3 className="text-base sm:text-lg font-black text-[#1E3570] mb-1.5 leading-snug group-hover/title:text-[#F26522] transition-colors">
+                                {flyerTitle}
+                              </h3>
+                            </Link>
                             {flyerSubtitle && (
                               <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed line-clamp-2">
                                 {flyerSubtitle}
@@ -549,21 +550,30 @@ function AdmissionsContent() {
                             )}
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openRegistrationModal({
-                                source: 'admissions-promotion-flyer',
-                                initialTitle: flyerTitle,
-                                initialProgram: flyer.targetProgram || flyerTitle,
-                              })
-                            }
-                            className="w-full py-3 px-4 rounded-xl bg-[#F26522] hover:bg-[#C94F16] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer group/btn"
-                          >
-                            <Sparkles className="w-4 h-4 text-white" />
-                            <span>{ctaText}</span>
-                            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                          </button>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#DEDDD6]/60">
+                            <Link
+                              href={`/${locale}/admissions/promotions/${flyer.id}`}
+                              className="py-2.5 px-3 rounded-xl bg-white hover:bg-[#F6F5F1] text-[#1E3570] font-bold text-xs sm:text-sm border border-[#DEDDD6] hover:border-[#2E4A9E] transition-all flex items-center justify-center gap-1.5 text-center group/detail"
+                            >
+                              <span>{isVi ? 'Xem chi tiết' : 'View Details'}</span>
+                              <ArrowRight className="w-3.5 h-3.5 text-[#2E4A9E] group-hover/detail:translate-x-1 transition-transform" />
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openRegistrationModal({
+                                  source: 'admissions-promotion-flyer',
+                                  title: flyerTitle,
+                                  program: flyer.targetProgram || flyerTitle,
+                                })
+                              }
+                              className="py-2.5 px-3 rounded-xl bg-[#F26522] hover:bg-[#C94F16] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer group/btn"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-white" />
+                              <span>{ctaText}</span>
+                            </button>
+                          </div>
                         </div>
                       </motion.div>
                     )

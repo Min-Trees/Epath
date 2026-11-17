@@ -703,6 +703,15 @@ export const AdmissionPromotionFlyerSchema = z.object({
   mobileImageUrl: z.string().optional().default(''),
   targetProgram: z.string().optional().default(''),
   ctaText: LocalizedStringSchema.optional(),
+  content: LocalizedStringSchema.optional(),
+  applicableFor: LocalizedStringSchema.optional(),
+  validUntil: LocalizedStringSchema.optional(),
+  benefits: z
+    .object({
+      vi: z.array(z.string()).default([]),
+      en: z.array(z.string()).default([]),
+    })
+    .optional(),
   isActive: z.boolean().default(true),
   order: z.number().default(0),
 })
