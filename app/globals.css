@@ -730,8 +730,6 @@
     border-color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
     backdrop-filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
     -webkit-backdrop-filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  /* Promote to its own GPU layer – one-time cost, huge payoff. */
-  transform: translateZ(0);
   will-change: background-color;
 }
 

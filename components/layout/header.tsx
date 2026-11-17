@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, useTransition, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Menu, ChevronDown } from 'lucide-react'
+import { Menu, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -37,6 +38,7 @@ export function Header() {
   const t = useTranslations('nav')
   const { openRegistrationModal } = useRegistrationModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   // Track open sections on mobile accordion (default all expanded)
   const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({
@@ -45,6 +47,10 @@ export function Header() {
     'item-4': true,
     'item-5': true,
   })
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const toggleMobileSection = (key: string) => {
     setOpenMobileSections((prev) => ({
@@ -103,9 +109,21 @@ export function Header() {
     href: string,
     onSuccess?: () => void
   ) => {
-    // 1. Immediately unlock body overflow so page can scroll right away
+    // 1. Immediately unlock fixed body scroll and retrieve locked Y offset
+    let currentY = window.pageYOffset || document.documentElement.scrollTop || 0
     if (typeof document !== 'undefined') {
+      const savedYStr = document.body.getAttribute('data-epath-locked-scroll')
+      if (savedYStr) {
+        currentY = parseInt(savedYStr, 10)
+      }
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      document.body.style.width = ''
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+      document.body.removeAttribute('data-epath-locked-scroll')
     }
 
     onSuccess?.()
@@ -122,6 +140,7 @@ export function Header() {
     if (hash) {
       if (isSamePage) {
         e.preventDefault()
+        window.scrollTo(0, currentY)
         if (window.location.hash !== `#${hash}`) {
           window.history.pushState(null, '', `#${hash}`)
         }
@@ -166,13 +185,34 @@ export function Header() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [triggerHashScroll])
 
-  // Lock body scroll when mobile menu is open to prevent page bounce & ensure smooth menu scroll
+  // Bulletproof mobile body scroll lock: freeze window.scrollY via position: fixed
   useEffect(() => {
+    if (typeof document === 'undefined') return
+
     if (isMobileMenuOpen) {
-      const originalOverflow = document.body.style.overflow
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0
+      document.body.setAttribute('data-epath-locked-scroll', scrollY.toString())
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+
       return () => {
-        document.body.style.overflow = originalOverflow
+        const savedY = parseInt(document.body.getAttribute('data-epath-locked-scroll') || '0', 10)
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.left = ''
+        document.body.style.right = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        document.documentElement.style.overflow = ''
+        document.body.removeAttribute('data-epath-locked-scroll')
+        if (savedY > 0) {
+          window.scrollTo(0, savedY)
+        }
       }
     }
   }, [isMobileMenuOpen])
@@ -272,12 +312,13 @@ export function Header() {
   ]
 
   return (
-    <header
-      ref={headerRef}
-      className={cn('epath-header', !isHomePage && 'epath-header--solid')}
-      data-scrolled={!isHomePage ? 'true' : undefined}
-      data-solid={!isHomePage ? 'true' : undefined}
-    >
+    <>
+      <header
+        ref={headerRef}
+        className={cn('epath-header', !isHomePage && 'epath-header--solid')}
+        data-scrolled={!isHomePage ? 'true' : undefined}
+        data-solid={!isHomePage ? 'true' : undefined}
+      >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6 lg:gap-8 xl:gap-12">
@@ -407,18 +448,80 @@ export function Header() {
             </button>
           </div>
         </div>
+      </div>
+    </header>
 
+    {/* Fullscreen Mobile Navigation Drawer via React Portal */}
+    {isMounted &&
+      createPortal(
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.nav
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.22, ease: easeOut }}
-              className="epath-mobile-nav lg:hidden mt-2 z-[65] bg-white rounded-2xl shadow-2xl border border-[#DEDDD6] max-h-[calc(100vh-80px)] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain p-3 space-y-1 scrollbar-thin touch-pan-y"
-              style={{ WebkitOverflowScrolling: 'touch' }}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: easeOut }}
+              className="fixed inset-0 z-[100] lg:hidden flex flex-col bg-white h-screen h-[100dvh]"
             >
-              {navItems.map((item, idx) => {
+              {/* Header bar inside mobile drawer */}
+              <div className="flex-shrink-0 h-[64px] sm:h-[72px] px-4 sm:px-6 flex items-center justify-between border-b border-[#DEDDD6] bg-white">
+                <Link
+                  href={`/${locale}`}
+                  className="flex items-center group py-0.5"
+                  onClick={(e) =>
+                    handleNavClick(e, `/${locale}`, () => setIsMobileMenuOpen(false))
+                  }
+                  aria-label="EPath Education"
+                >
+                  <Image
+                    src="/epath-logo-background-white.png"
+                    alt="EPath Education"
+                    width={160}
+                    height={76}
+                    className="w-auto h-9 sm:h-11 object-contain"
+                    priority
+                  />
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <LanguageSwitcher />
+                  <button
+                    type="button"
+                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#F6F5F1] text-[#1E3570] hover:bg-[#2E4A9E]/10 transition-colors cursor-pointer"
+                    onClick={() => {
+                      if (typeof document !== 'undefined') {
+                        const savedYStr = document.body.getAttribute('data-epath-locked-scroll')
+                        const currentY = savedYStr ? parseInt(savedYStr, 10) : 0
+                        document.body.style.position = ''
+                        document.body.style.top = ''
+                        document.body.style.left = ''
+                        document.body.style.right = ''
+                        document.body.style.width = ''
+                        document.body.style.overflow = ''
+                        document.documentElement.style.overflow = ''
+                        document.body.removeAttribute('data-epath-locked-scroll')
+                        if (currentY > 0) {
+                          window.scrollTo(0, currentY)
+                        }
+                      }
+                      setIsMobileMenuOpen(false)
+                    }}
+                    aria-label="Close menu"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Scrollable Nav Items */}
+              <div
+                className="epath-mobile-nav flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-white px-4 py-3 space-y-1 scrollbar-thin"
+                style={{
+                  WebkitOverflowScrolling: 'touch',
+                  touchAction: 'pan-y',
+                }}
+              >
+                {navItems.map((item, idx) => {
                   const sectionKey = `item-${idx}`
                   const hasChildren = Boolean(item.children && item.children.length > 0)
                   const isExpanded = openMobileSections[sectionKey] ?? true
@@ -433,7 +536,7 @@ export function Header() {
                           href={item.href}
                           scroll={false}
                           className={cn(
-                            'epath-mobile-link flex-1 block px-3 py-2 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
+                            'epath-mobile-link flex-1 block px-3 py-2.5 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
                             'text-[#1E3570] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
                           )}
                           onClick={(e) =>
@@ -446,7 +549,7 @@ export function Header() {
                           <button
                             type="button"
                             onClick={() => toggleMobileSection(sectionKey)}
-                            className="w-9 h-9 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
+                            className="w-10 h-10 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
                             aria-label={`Toggle ${item.label} submenu`}
                           >
                             <ChevronDown
@@ -483,13 +586,26 @@ export function Header() {
                   )
                 })}
 
-                <div className="pt-3 pb-1 px-1">
+                {/* CTA Register Button */}
+                <div className="pt-4 pb-8 px-1">
                   <button
                     type="button"
-                    className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base cursor-pointer"
+                    className="flex items-center justify-center w-full py-3.5 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-base cursor-pointer"
                     onClick={() => {
                       if (typeof document !== 'undefined') {
+                        const savedYStr = document.body.getAttribute('data-epath-locked-scroll')
+                        const currentY = savedYStr ? parseInt(savedYStr, 10) : 0
+                        document.body.style.position = ''
+                        document.body.style.top = ''
+                        document.body.style.left = ''
+                        document.body.style.right = ''
+                        document.body.style.width = ''
                         document.body.style.overflow = ''
+                        document.documentElement.style.overflow = ''
+                        document.body.removeAttribute('data-epath-locked-scroll')
+                        if (currentY > 0) {
+                          window.scrollTo(0, currentY)
+                        }
                       }
                       setIsMobileMenuOpen(false)
                       openRegistrationModal({ source: 'header-mobile' })
@@ -498,10 +614,12 @@ export function Header() {
                     <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
                   </button>
                 </div>
-            </motion.nav>
+              </div>
+            </motion.div>
           )}
-        </AnimatePresence>
-      </div>
-    </header>
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
   )
 }
