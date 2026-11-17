@@ -178,7 +178,7 @@ export function ProgramDetailModal({
 
           {/* Curriculum & Detailed Content */}
           {content && (
-            <div className="rounded-2xl p-5 sm:p-6 bg-[#F6F5F1]/70 border border-[#DEDDD6]">
+            <div className="rounded-2xl p-5 sm:p-6 bg-white border border-[#DEDDD6] shadow-xs">
               <h3 className="text-xs font-bold uppercase tracking-wider text-[#2E4A9E] mb-3 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#2E4A9E]" />
                 <span>{isVi ? 'Nội dung & Cấu trúc chương trình' : 'Curriculum & Course Structure'}</span>
@@ -203,7 +203,7 @@ export function ProgramDetailModal({
                   return (
                     <div
                       key={i}
-                      className="flex items-start gap-2.5 p-3 rounded-xl bg-white border border-[#DEDDD6] text-xs sm:text-sm text-[#20242B]"
+                      className="flex items-start gap-2.5 py-1 text-xs sm:text-sm text-[#20242B]"
                     >
                       <CheckCircle2 className="w-4 h-4 text-[#5C9024] flex-shrink-0 mt-0.5" />
                       <span className="leading-snug">{text}</span>
@@ -221,16 +221,16 @@ export function ProgramDetailModal({
                 <Award className="w-4 h-4 text-[#F26522]" />
                 <span>{isVi ? 'Ưu điểm & Điểm nổi bật' : 'Program Highlights'}</span>
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {highlights.map((hl, i) => {
                   const text = getItemText(hl)
                   if (!text) return null
                   return (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FEF0E9] border border-[#FDDDCF] text-xs font-semibold text-[#C94F16]"
+                      className="inline-flex items-center gap-1.5 py-1 text-xs font-semibold text-[#C94F16]"
                     >
-                      <Sparkles className="w-3 h-3 text-[#F26522]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#F26522]" />
                       <span>{text}</span>
                     </span>
                   )
@@ -241,7 +241,7 @@ export function ProgramDetailModal({
         </div>
 
         {/* Footer Bar with CTA */}
-        <div className="px-5 sm:px-7 py-3.5 sm:py-4 border-t border-[#DEDDD6] bg-[#F6F5F1] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 flex-shrink-0">
+        <div className="px-5 sm:px-7 py-3.5 sm:py-4 border-t border-[#DEDDD6] bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 flex-shrink-0">
           <div className="flex items-center gap-2 text-xs text-[#5C6069] order-2 sm:order-1">
             <Phone className="w-3.5 h-3.5 text-[#F26522]" />
             <span>Hotline tư vấn: <strong className="text-[#20242B]">0937 514 896</strong></span>

@@ -489,8 +489,9 @@ function AdmissionsContent() {
                         {trackTitle}
                       </h3>
 
-                      <div className="inline-block px-2.5 py-1 rounded-lg bg-[#F6F5F1] text-xs font-bold text-[#1E3570] mb-3">
-                        {trackHours}
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E3570] mb-3">
+                        <Clock className="w-3.5 h-3.5 text-[#2E4A9E] shrink-0" />
+                        <span>{trackHours}</span>
                       </div>
 
                       <p className="text-xs text-[#5C6069] leading-relaxed mb-4">{trackDesc}</p>
@@ -613,7 +614,7 @@ function AdmissionsContent() {
                       return (
                         <div
                           key={i}
-                          className="p-3.5 rounded-2xl bg-[#F6F5F1] border border-[#DEDDD6]/80 flex items-start gap-3 text-left"
+                          className="py-2.5 border-b border-[#DEDDD6]/50 last:border-b-0 flex items-start gap-3 text-left"
                         >
                           <div className="w-6 h-6 rounded-full bg-[#8DC63F]/20 text-[#5C9024] flex items-center justify-center shrink-0 mt-0.5">
                             <Check className="w-3.5 h-3.5" />
@@ -877,7 +878,7 @@ function AdmissionsContent() {
               </div>
 
               {/* Campus Address Card */}
-              <div className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] shadow-xs hover:shadow-sm transition-all group flex items-start gap-3.5">
+              <div className="py-3 sm:py-3.5 border-b border-[#DEDDD6]/50 last:border-b-0 transition-all group flex items-start gap-3.5">
                 <div className="w-10 h-10 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
                   <MapPin className="w-5 h-5 text-[#2E4A9E]" />
                 </div>
@@ -895,7 +896,7 @@ function AdmissionsContent() {
               </div>
 
               {/* Hotline Card */}
-              <div className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] shadow-xs hover:shadow-sm transition-all group flex items-start gap-3.5">
+              <div className="py-3 sm:py-3.5 border-b border-[#DEDDD6]/50 last:border-b-0 transition-all group flex items-start gap-3.5">
                 <div className="w-10 h-10 bg-[#8DC63F]/20 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
                   <Phone className="w-5 h-5 text-[#5C9024]" />
                 </div>
@@ -920,7 +921,7 @@ function AdmissionsContent() {
               </div>
 
               {/* Email Card */}
-              <div className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] shadow-xs hover:shadow-sm transition-all group flex items-start gap-3.5">
+              <div className="py-3 sm:py-3.5 border-b border-[#DEDDD6]/50 last:border-b-0 transition-all group flex items-start gap-3.5">
                 <div className="w-10 h-10 bg-[#F26522]/15 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
                   <Mail className="w-5 h-5 text-[#F26522]" />
                 </div>
@@ -936,7 +937,7 @@ function AdmissionsContent() {
               </div>
 
               {/* Working Hours Card */}
-              <div className="bg-[#F6F5F1] rounded-2xl p-4 sm:p-5 border border-[#DEDDD6] shadow-xs hover:shadow-sm transition-all group flex items-start gap-3.5">
+              <div className="py-3 sm:py-3.5 border-b border-[#DEDDD6]/50 last:border-b-0 transition-all group flex items-start gap-3.5">
                 <div className="w-10 h-10 bg-[#1E3570]/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
                   <Clock className="w-5 h-5 text-[#1E3570]" />
                 </div>

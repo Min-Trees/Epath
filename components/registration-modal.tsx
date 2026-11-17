@@ -221,10 +221,19 @@ export function RegistrationModal({
                       : 'Thank you for your interest in EPath Education. Our academic advisory board will reach out to you shortly.'}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-[#F6F5F1] border border-[#DEDDD6] max-w-sm mx-auto mb-6 text-xs text-[#5C6069] text-left space-y-1.5">
-                    <p><strong className="text-[#20242B]">{isVi ? 'Hotline hỗ trợ:' : 'Support Hotline:'}</strong> 0937 514 896</p>
-                    <p><strong className="text-[#20242B]">{isVi ? 'Email:' : 'Email:'}</strong> infor@epath.edu.vn</p>
-                    <p><strong className="text-[#20242B]">{isVi ? 'Thời gian làm việc:' : 'Working hours:'}</strong> Thứ 2 – Thứ 7 (08:00 – 18:00)</p>
+                  <div className="max-w-sm mx-auto mb-6 text-xs text-[#5C6069] text-left space-y-2 py-3 border-y border-[#DEDDD6]/60">
+                    <p className="flex items-center gap-2.5">
+                      <Phone className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                      <span><strong className="text-[#20242B]">{isVi ? 'Hotline hỗ trợ:' : 'Support Hotline:'}</strong> 0937 514 896</span>
+                    </p>
+                    <p className="flex items-center gap-2.5">
+                      <Mail className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                      <span><strong className="text-[#20242B]">{isVi ? 'Email:' : 'Email:'}</strong> infor@epath.edu.vn</span>
+                    </p>
+                    <p className="flex items-center gap-2.5">
+                      <Clock className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                      <span><strong className="text-[#20242B]">{isVi ? 'Thời gian làm việc:' : 'Working hours:'}</strong> Thứ 2 – Thứ 7 (08:00 – 18:00)</span>
+                    </p>
                   </div>
 
                   <Button

@@ -209,7 +209,7 @@ export function AdvisoryLeadPopup() {
 
                 {/* Benefits checklist */}
                 {benefitsList.length > 0 && (
-                  <div className="space-y-1.5 mb-5 bg-[#F6F5F1] p-3 rounded-xl border border-[#DEDDD6]/80 text-xs text-[#20242B]">
+                  <div className="space-y-1.5 mb-5 text-xs text-[#20242B]">
                     {benefitsList.map((item, bIdx) => (
                       <div key={bIdx} className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#5C9024] shrink-0" />

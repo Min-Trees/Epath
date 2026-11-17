@@ -113,7 +113,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
 
               {/* 4 Quick Spec Badges in 1 Row on sm+ */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3.5">
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🎓 Văn bằng:' : '🎓 Diploma:'}
                   </span>
@@ -121,7 +121,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? 'Bằng VN + Mỹ' : 'VN & US'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '⏱️ Tín chỉ:' : '⏱️ Credits:'}
                   </span>
@@ -129,7 +129,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? '5 tín chỉ Mỹ' : '5 US Credits'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🏫 Hình thức:' : '🏫 Mode:'}
                   </span>
@@ -137,7 +137,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? 'Song song' : 'Concurrent'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🏛️ Kiểm định:' : '🏛️ Accredit:'}
                   </span>
@@ -231,7 +231,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
 
               {/* 4 Quick Spec Badges in 1 Row on sm+ */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3.5">
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🎓 Văn bằng:' : '🎓 Diploma:'}
                   </span>
@@ -239,7 +239,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? 'Bằng Tú tài Mỹ' : 'US Diploma'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '⏱️ Tín chỉ:' : '⏱️ Credits:'}
                   </span>
@@ -247,7 +247,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? '21.5 tín chỉ' : '21.5 Credits'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🏫 Hình thức:' : '🏫 Mode:'}
                   </span>
@@ -255,7 +255,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                     {isVi ? 'Online 100%' : 'Full-time Online'}
                   </span>
                 </div>
-                <div className="p-2 rounded-lg bg-[#F6F5F1] border border-[#EBEAE4]">
+                <div className="py-1">
                   <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
                     {isVi ? '🏛️ Kiểm định:' : '🏛️ Accredit:'}
                   </span>

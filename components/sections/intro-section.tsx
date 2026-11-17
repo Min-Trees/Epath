@@ -96,7 +96,7 @@ export function IntroSection() {
                     return (
                       <div
                         key={idx}
-                        className="flex items-start gap-3 p-3.5 rounded-md bg-[#F6F5F1]/80 border border-[#DEDDD6]/70 shadow-xs hover:border-[#8DC63F]/50 transition-colors"
+                        className="flex items-start gap-3 py-1.5 transition-colors"
                       >
                         <CheckCircle2 className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
                         <span className="text-sm sm:text-base text-[#20242B] font-medium leading-relaxed">
@@ -163,7 +163,7 @@ export function IntroSection() {
                 </div>
 
                 {/* Paragraph 4: Highlighted Callout / Origin Story */}
-                <div className="p-4 sm:p-5 rounded-md bg-[#F6F5F1] border-l-4 border-[#8DC63F] border-[#DEDDD6] shadow-xs mb-8 text-[#20242B] relative">
+                <div className="py-2.5 pl-4 border-l-4 border-[#8DC63F] my-6 text-[#20242B] relative">
                   <div className="flex items-start gap-3">
                     <Quote className="w-5 h-5 text-[#8DC63F] flex-shrink-0 mt-0.5" />
                     <p className="text-sm sm:text-[0.9375rem] leading-relaxed text-[#20242B]">

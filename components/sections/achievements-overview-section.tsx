@@ -102,7 +102,7 @@ export function AchievementsOverviewSection({ id = 'achievements', className = '
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={inViewViewport}
                   transition={{ duration: duration.slow, delay: 0.05 * (idx + 1), ease: easeOut }}
-                  className="bg-[#F6F5F1] rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/40 hover:shadow-md transition-all text-center flex flex-col justify-between"
+                  className="bg-white rounded-2xl p-5 border border-[#DEDDD6] hover:border-[#2E4A9E]/40 shadow-xs hover:shadow-md transition-all text-center flex flex-col justify-between"
                 >
                   <div>
                     <div

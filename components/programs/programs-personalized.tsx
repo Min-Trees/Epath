@@ -74,7 +74,7 @@ export function ProgramsPersonalized({ compact, translations }: Props) {
                   {translations.desc}
                 </p>
 
-                <div className="bg-[#F6F5F1] rounded-xl p-3.5 sm:p-4 border border-[#DEDDD6] mb-3">
+                <div className="py-2.5 border-t border-[#DEDDD6]/60 mb-3">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[#20242B] mb-2">
                     {translations.goalsTitle}
                   </p>

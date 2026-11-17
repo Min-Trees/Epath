@@ -283,7 +283,7 @@ export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
                 </h3>
 
                 {/* The user's exact quote p2 with styling */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#F6F5F1] border border-[#DEDDD6] mb-6 shadow-xs">
+                <div className="py-2.5 pl-4 border-l-4 border-[#8DC63F] mb-6">
                   <p className="text-xs sm:text-sm text-[#1E3570] font-semibold leading-relaxed">
                     {contentP2}
                   </p>

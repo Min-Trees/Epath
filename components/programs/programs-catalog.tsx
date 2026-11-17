@@ -249,18 +249,18 @@ export function ProgramsCatalog({
 
                               {/* Highlights badges */}
                               {p.highlights && p.highlights.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                <div className="space-y-1.5 mb-3">
                                   {p.highlights.slice(0, 2).map((h, hi) => {
                                     const text = typeof h === 'string' ? h : (h[locale] || h.vi || h.en)
                                     if (!text) return null
                                     return (
-                                      <span
+                                      <div
                                         key={hi}
-                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#F6F5F1] text-[#20242B] border border-[#DEDDD6]"
+                                        className="flex items-center gap-1.5 text-xs text-[#5C6069]"
                                       >
-                                        <CheckCircle2 className="w-3 h-3 text-[#5C9024] shrink-0" />
-                                        <span className="truncate max-w-[200px]">{text}</span>
-                                      </span>
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#5C9024] shrink-0" />
+                                        <span className="truncate">{text}</span>
+                                      </div>
                                     )
                                   })}
                                 </div>

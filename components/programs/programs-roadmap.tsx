@@ -345,7 +345,7 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={inViewViewport}
                 transition={{ duration: duration.slow, delay: idx * 0.06, ease: easeOut }}
-                className="relative bg-[#F6F5F1] rounded-2xl p-5 sm:p-6 border border-[#DEDDD6] hover:border-[#2E4A9E]/40 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
+                className="relative bg-white rounded-2xl p-5 sm:p-6 border border-[#DEDDD6] hover:border-[#2E4A9E]/40 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
               >
                 <div>
                   {/* Step Image Banner */}
@@ -387,14 +387,15 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
 
                   {/* Feature Badges */}
                   {step.badges.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-4">
+                    <div className="flex flex-wrap gap-x-3 gap-y-1.5 mb-3.5">
                       {step.badges.map((badge, bIdx) => (
-                        <span
+                        <div
                           key={bIdx}
-                          className="px-2.5 py-0.5 rounded-full bg-white border border-[#DEDDD6] text-[11px] font-semibold text-[#20242B]"
+                          className="inline-flex items-center gap-1.5 text-xs text-[#20242B] font-medium"
                         >
-                          {badge}
-                        </span>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#5C9024] shrink-0" />
+                          <span>{badge}</span>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -412,7 +413,7 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
 
                   {/* Outcomes Box */}
                   {step.outcomes.length > 0 && (
-                    <div className="bg-white rounded-xl p-3.5 border border-[#DEDDD6] mb-4">
+                    <div className="py-2.5 border-t border-[#DEDDD6]/60 mb-3">
                       <div className="text-[11px] font-bold uppercase tracking-wider text-[#20242B] mb-2 flex items-center gap-1.5">
                         <Award className="w-3.5 h-3.5" style={{ color: step.color }} />
                         <span>{isVi ? 'Mục tiêu & Chuẩn đầu ra:' : 'Key Outcomes:'}</span>

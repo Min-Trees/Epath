@@ -230,7 +230,7 @@ export default function PartnersPage() {
 
                   {/* Partner Details & Features (Collapsible with 'Xem thêm' button) */}
                   <div
-                    className={`lg:col-span-7 bg-[#F6F5F1] hover:bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group ${index % 2 === 1 ? 'lg:order-1' : ''}`}
+                    className={`lg:col-span-7 bg-white rounded-2xl p-6 sm:p-7 border border-[#DEDDD6] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                   >
                     {/* Watermark Numeral */}
                     <span className="absolute -top-6 -right-2 text-7xl sm:text-8xl font-black text-[#1E3570]/[0.04] pointer-events-none select-none font-mono">
@@ -267,7 +267,7 @@ export default function PartnersPage() {
                           >
                             <RichTextRenderer html={desc} />
                             {!isExpanded && (
-                              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#F6F5F1] group-hover:from-white to-transparent pointer-events-none transition-colors duration-300" />
+                              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent pointer-events-none transition-colors duration-300" />
                             )}
                           </div>
 

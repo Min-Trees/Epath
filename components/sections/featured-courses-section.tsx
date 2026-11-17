@@ -219,7 +219,7 @@ export function FeaturedCoursesSection({ initialData }: FeaturedCoursesSectionPr
                   <div className="pt-2">
                     <Link
                       href={courseLink}
-                      className="inline-flex items-center justify-between w-full px-3.5 py-2.5 rounded-md bg-[#F6F5F1] hover:bg-[#1E3570] text-[#1E3570] hover:text-white font-semibold text-xs sm:text-sm transition-all duration-200 group/btn border border-[#DEDDD6] hover:border-[#1E3570]"
+                      className="inline-flex items-center justify-between w-full px-3.5 py-2.5 rounded-md bg-white hover:bg-[#1E3570] text-[#1E3570] hover:text-white font-semibold text-xs sm:text-sm transition-all duration-200 group/btn border border-[#DEDDD6] hover:border-[#1E3570]"
                     >
                       <span>{isVi ? 'Khám phá chi tiết' : 'Explore Details'}</span>
                       <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />

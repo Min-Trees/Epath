@@ -355,7 +355,7 @@ export default function ProgramDetailPage() {
 
               {/* Curriculum & Detailed Content */}
               {content && (
-                <div className="bg-[#F6F5F1]/70 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[#DEDDD6]">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[#DEDDD6] shadow-xs">
                   <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-[#DEDDD6]">
                     <div className="w-9 h-9 rounded-xl bg-[#2E4A9E]/10 flex items-center justify-center">
                       <BookOpen className="w-5 h-5 text-[#2E4A9E]" />
@@ -404,7 +404,7 @@ export default function ProgramDetailPage() {
                       return (
                         <div
                           key={i}
-                          className="flex items-start gap-3 p-4 rounded-xl bg-[#F6F5F1]/70 border border-[#EBEAE4] text-xs sm:text-sm text-[#20242B] hover:border-[#8DC63F]/60 transition-colors"
+                          className="flex items-start gap-3 py-2 text-xs sm:text-sm text-[#20242B] transition-colors"
                         >
                           <CheckCircle2 className="w-4 h-4 text-[#5C9024] flex-shrink-0 mt-0.5" />
                           <span className="leading-snug font-medium">{text}</span>
@@ -441,7 +441,7 @@ export default function ProgramDetailPage() {
                       return (
                         <div
                           key={i}
-                          className="flex items-start gap-2.5 p-3.5 rounded-xl bg-[#FEF0E9]/60 border border-[#FDDDCF] text-xs sm:text-sm text-[#20242B]"
+                          className="flex items-start gap-2.5 py-2 text-xs sm:text-sm text-[#20242B]"
                         >
                           <Sparkles className="w-4 h-4 text-[#F26522] shrink-0 mt-0.5" />
                           <span className="font-semibold text-[#C94F16] leading-snug">{text}</span>
@@ -496,7 +496,7 @@ export default function ProgramDetailPage() {
             {/* ───────── SIDEBAR COLUMN (4 cols) ───────── */}
             <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
               {/* Quick Specs Card */}
-              <div className="bg-[#F6F5F1] rounded-2xl sm:rounded-3xl p-6 border border-[#DEDDD6]">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-6 border border-[#DEDDD6] shadow-xs">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[#1E3570] mb-4 pb-2 border-b border-[#DEDDD6]">
                   {isVi ? 'Tổng quan khóa học' : 'Program Overview'}
                 </h3>

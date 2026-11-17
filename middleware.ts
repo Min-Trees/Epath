@@ -5,6 +5,7 @@ const intlMiddleware = createIntlMiddleware({
   locales: ['vi', 'en'],
   defaultLocale: 'vi',
   localePrefix: 'always',
+  localeDetection: false,
 })
 
 const SESSION_COOKIE = '__epath_session'

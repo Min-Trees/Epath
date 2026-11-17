@@ -58,7 +58,7 @@ export function ProgramsStages({ foundation, advanced, compact }: Props) {
             {foundation.goals.map((goal, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2 p-2 rounded-lg bg-[#F6F5F1] text-xs sm:text-sm text-[#20242B]"
+                className="flex items-start gap-2 py-1 text-xs sm:text-sm text-[#20242B]"
               >
                 <CheckCircle2 className="mt-0.5 w-3.5 h-3.5 text-[#2E4A9E] flex-shrink-0" />
                 <span className="font-medium">{goal}</span>

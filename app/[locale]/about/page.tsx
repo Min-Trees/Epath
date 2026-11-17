@@ -265,7 +265,7 @@ export default function AboutPage() {
                 </p>
 
                 {/* Lead Quote */}
-                <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#2E4A9E] mb-4">
+                <div className="py-2 pl-3.5 border-l-3 border-[#2E4A9E] mb-4">
                   <RichTextRenderer
                     html={pick(aboutContent?.visionContent, locale) || t('visionText')}
                     className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed [&_p]:my-1"
@@ -273,29 +273,29 @@ export default function AboutPage() {
                 </div>
 
                 {/* Key Strategic Pillars */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider">
+                <div className="space-y-1.5 mb-4">
+                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider mb-2">
                     {isVi ? 'Trụ Cột Phát Triển Dài Hạn' : 'Key Strategic Pillars'}
                   </h4>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <Globe2 className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <Globe2 className="w-4 h-4 text-[#2E4A9E] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Tiếp cận toàn cầu: ' : 'Global access: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Xóa bỏ rào cản tài chính & địa lý, mang bằng cấp chuẩn Mỹ đến mọi học sinh.' : 'Accessible US-accredited diplomas for all students.'}</span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <BookOpen className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <BookOpen className="w-4 h-4 text-[#2E4A9E] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Lộ trình K–12: ' : 'K-12 pathway: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Hành trình xuyên suốt từ Mầm non đến THPT, đảm bảo liên tục không đứt gãy.' : 'Continuous seamless journey from Kindergarten through High School.'}</span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <Sparkles className="w-4 h-4 text-[#2E4A9E] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <Sparkles className="w-4 h-4 text-[#2E4A9E] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Tư duy suốt đời: ' : 'Lifelong mindset: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Nuôi dưỡng niềm say mê tri thức, tự tin hội nhập và thích ứng toàn cầu.' : 'Fostering intellectual passion and global adaptability.'}</span>
@@ -304,14 +304,12 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Highlight Bottom Box */}
-              <div className="p-2.5 rounded-xl bg-[#2E4A9E]/5 border border-[#2E4A9E]/20 mt-1">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2E4A9E] shrink-0" />
-                  <p className="text-xs text-[#20242B] font-medium truncate">
-                    {t('visionHighlight')}
-                  </p>
-                </div>
+              {/* Highlight Bottom Info */}
+              <div className="flex items-center gap-2 py-1.5 mt-2 border-t border-[#DEDDD6]/50">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#2E4A9E] shrink-0" />
+                <p className="text-xs text-[#20242B] font-medium truncate">
+                  {t('visionHighlight')}
+                </p>
               </div>
             </motion.div>
 
@@ -343,7 +341,7 @@ export default function AboutPage() {
                 </p>
 
                 {/* Lead Quote */}
-                <div className="p-3 rounded-xl bg-[#F6F5F1] border-l-3 border-[#8DC63F] mb-4">
+                <div className="py-2 pl-3.5 border-l-3 border-[#8DC63F] mb-4">
                   <RichTextRenderer
                     html={pick(aboutContent?.missionContent, locale) || t('missionText')}
                     className="text-xs sm:text-sm text-[#20242B] font-medium leading-relaxed [&_p]:my-1"
@@ -351,29 +349,29 @@ export default function AboutPage() {
                 </div>
 
                 {/* Key Mission Pillars */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider">
+                <div className="space-y-1.5 mb-4">
+                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider mb-2">
                     {isVi ? 'Trụ Cột Hành Động Cốt Lõi' : 'Core Action Pillars'}
                   </h4>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <Users className="w-4 h-4 text-[#5C9024] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <Users className="w-4 h-4 text-[#5C9024] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Đồng hành 3 bên: ' : 'Tripartite partnership: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Cố vấn học thuật 1:1 đồng hành cùng phụ huynh và học sinh từng giai đoạn.' : '1:1 Academic mentorship guiding student and parent progress.'}</span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <GraduationCap className="w-4 h-4 text-[#5C9024] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <GraduationCap className="w-4 h-4 text-[#5C9024] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Chuẩn hóa quốc tế: ' : 'Standardized excellence: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Tích hợp Edmentum K-12, khảo thí Cambridge và thực nghiệm FabLab EIU.' : 'Combining Edmentum K-12, Cambridge ESOL, and FabLab EIU.'}</span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#F6F5F1]/70 border border-[#EBEAE4]">
-                    <Award className="w-4 h-4 text-[#5C9024] shrink-0" />
+                  <div className="flex items-start gap-2.5 py-1.5">
+                    <Award className="w-4 h-4 text-[#5C9024] shrink-0 mt-0.5" />
                     <p className="text-xs text-[#20242B]">
                       <strong className="font-bold">{isVi ? 'Năng lực toàn diện: ' : '21st Century skills: '}</strong>
                       <span className="text-[#5C6069]">{isVi ? 'Rèn luyện tự học, tư duy phản biện và xây dựng Student Portfolio cạnh tranh.' : 'Self-directed learning, critical thinking, and global portfolios.'}</span>
@@ -517,8 +515,8 @@ export default function AboutPage() {
             transition={{ duration: duration.slow, ease: easeOut }}
             className="bg-white rounded-2xl p-6 sm:p-8 border border-[#DEDDD6] hover:border-[#1E3570]/30 shadow-xs hover:shadow-md transition-all"
           >
-            <div className="grid sm:grid-cols-3 gap-3.5 mb-6">
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              <div className="flex items-start gap-3 py-1">
                 <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
@@ -529,7 +527,7 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+              <div className="flex items-start gap-3 py-1">
                 <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
@@ -540,7 +538,7 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F6F5F1] border border-[#EBEAE4]">
+              <div className="flex items-start gap-3 py-1">
                 <CheckCircle2 className="w-4 h-4 text-[#8DC63F] shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#20242B]">
