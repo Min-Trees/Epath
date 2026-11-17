@@ -53,30 +53,48 @@ export function Header() {
     }))
   }
 
-  // Smooth-scroll helper with header offset
-  const scrollToAnchor = useCallback((hash: string) => {
-    if (!hash || typeof document === 'undefined') return false
-    const cleanId = hash.replace(/^#/, '')
-    const el = document.getElementById(cleanId)
-    if (!el) return false
+  // Robust scroll to anchor with multi-interval retries that resist router layout shifts and Next.js scroll resets
+  const triggerHashScroll = useCallback((targetHash: string) => {
+    if (!targetHash || typeof document === 'undefined') return
 
-    // Ensure body overflow lock is removed
-    document.body.style.overflow = ''
+    const cleanId = targetHash.replace(/^#/, '')
+    let userInteracted = false
 
-    const headerHeight = headerRef.current?.offsetHeight || 72
-    const rect = el.getBoundingClientRect()
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0
-    const targetY = Math.max(0, rect.top + scrollTop - headerHeight - 16)
-
-    try {
-      window.scrollTo({
-        top: targetY,
-        behavior: 'smooth',
-      })
-    } catch {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const onUserInteraction = () => {
+      userInteracted = true
     }
-    return true
+    window.addEventListener('wheel', onUserInteraction, { passive: true, once: true })
+    window.addEventListener('touchstart', onUserInteraction, { passive: true, once: true })
+
+    const delays = [30, 100, 200, 350, 550, 800, 1200]
+    delays.forEach((delay) => {
+      setTimeout(() => {
+        if (userInteracted) return
+
+        const el = document.getElementById(cleanId)
+        if (!el) return
+
+        // Ensure body overflow lock is removed
+        document.body.style.overflow = ''
+
+        const headerHeight = headerRef.current?.offsetHeight || 72
+        const rect = el.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0
+        const targetY = Math.max(0, rect.top + scrollTop - headerHeight - 16)
+
+        // Only scroll if we are not already positioned at the target
+        if (Math.abs(scrollTop - targetY) > 25) {
+          try {
+            window.scrollTo({
+              top: targetY,
+              behavior: 'smooth',
+            })
+          } catch {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }
+      }, delay)
+    })
   }, [])
 
   // Universal click handler for nav links (mobile & desktop)
@@ -85,10 +103,13 @@ export function Header() {
     href: string,
     onSuccess?: () => void
   ) => {
-    // Immediately unlock body overflow so page can scroll right away
+    // 1. Immediately unlock body overflow so page can scroll right away
     if (typeof document !== 'undefined') {
       document.body.style.overflow = ''
     }
+
+    onSuccess?.()
+    setIsMobileMenuOpen(false)
 
     const [targetPath, hash] = href.split('#')
     const currentPath = (pathname || '').replace(/\/$/, '')
@@ -98,57 +119,52 @@ export function Header() {
       (!currentPath && normalizedTargetPath === `/${locale}`) ||
       (currentPath === `/${locale}` && !normalizedTargetPath)
 
-    if (hash && isSamePage) {
-      e.preventDefault()
-      onSuccess?.()
-
-      if (window.location.hash !== `#${hash}`) {
-        window.history.pushState(null, '', `#${hash}`)
+    if (hash) {
+      if (isSamePage) {
+        e.preventDefault()
+        if (window.location.hash !== `#${hash}`) {
+          window.history.pushState(null, '', `#${hash}`)
+        }
+        triggerHashScroll(hash)
+      } else {
+        // Cross page: save hash to sessionStorage so destination page can scroll even if router delays hash
+        try {
+          sessionStorage.setItem('epath_nav_hash', hash)
+        } catch {}
       }
-
-      // Retry scrolling across animation ticks so closing menu animation does not cancel scroll
-      const delays = [40, 120, 250, 400]
-      delays.forEach((delay) => {
-        setTimeout(() => {
-          scrollToAnchor(hash)
-        }, delay)
-      })
-      return
     }
-
-    onSuccess?.()
   }
 
   // Cross-page hash navigation on mount and pathname updates
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const hash = window.location.hash.replace(/^#/, '')
-    if (!hash) return
 
-    let attempts = 0
-    const maxAttempts = 15
-    const interval = setInterval(() => {
-      attempts++
-      const scrolled = scrollToAnchor(hash)
-      if (scrolled || attempts >= maxAttempts) {
-        clearInterval(interval)
-      }
-    }, 100)
+    let hash = window.location.hash.replace(/^#/, '')
+    if (!hash) {
+      try {
+        hash = sessionStorage.getItem('epath_nav_hash') || ''
+        if (hash) {
+          sessionStorage.removeItem('epath_nav_hash')
+        }
+      } catch {}
+    }
 
-    return () => clearInterval(interval)
-  }, [pathname, scrollToAnchor])
+    if (hash) {
+      triggerHashScroll(hash)
+    }
+  }, [pathname, triggerHashScroll])
 
   // Listen for hashchange events
   useEffect(() => {
     const onHashChange = () => {
       const hash = window.location.hash.replace(/^#/, '')
       if (hash) {
-        setTimeout(() => scrollToAnchor(hash), 50)
+        triggerHashScroll(hash)
       }
     }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
-  }, [scrollToAnchor])
+  }, [triggerHashScroll])
 
   // Lock body scroll when mobile menu is open to prevent page bounce & ensure smooth menu scroll
   useEffect(() => {
@@ -206,7 +222,7 @@ export function Header() {
       setIsMobileMenuOpen(false)
       setActiveDropdown(null)
     })
-  }, [locale, startTransition])
+  }, [pathname, locale, startTransition])
 
   const navItems = [
     { label: t('home'), href: `/${locale}` },
@@ -340,6 +356,7 @@ export function Header() {
                               <Link
                                 key={child.label}
                                 href={child.href}
+                                scroll={false}
                                 className="epath-dropdown-item rounded-none"
                                 onClick={(e) =>
                                   handleNavClick(e, child.href, () => setActiveDropdown(null))
@@ -414,6 +431,7 @@ export function Header() {
                       <div className="flex items-center justify-between">
                         <Link
                           href={item.href}
+                          scroll={false}
                           className={cn(
                             'epath-mobile-link flex-1 block px-3 py-2 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
                             'text-[#1E3570] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
@@ -447,6 +465,7 @@ export function Header() {
                             <Link
                               key={child.label}
                               href={child.href}
+                              scroll={false}
                               className={cn(
                                 'epath-mobile-sublink flex items-center px-3 py-2 text-sm sm:text-base rounded-lg transition-all duration-200',
                                 'text-[#5C6069] hover:bg-[#F6F5F1] hover:text-[#2E4A9E]'
