@@ -42,6 +42,7 @@ import { duration, easeOut, inViewViewport } from '@/lib/motion-presets'
 import { useCmsContext } from '@/lib/cms-context'
 import { getSettingLocalized } from '@/lib/settings-helpers'
 import { DEFAULT_ADMISSIONS_DATA } from '@/lib/admissions-data'
+import { StepModelSection } from '@/components/sections/step-model-section'
 import type { AdmissionsContentInput } from '@/lib/cms-types'
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -421,9 +422,16 @@ function AdmissionsContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. FINANCIAL POLICY & SUSTAINABLE INVESTMENT (#tuition / #hoc-phi)
+          2. STANDARDIZED 5-STEP ADMISSIONS PROCESS (#steps)
       ─────────────────────────────────────────────────────────────── */}
-      <section id="tuition" className="py-12 sm:py-16 bg-[#F6F5F1] border-b border-[#DEDDD6] scroll-mt-20 relative">
+      {admissionsData.stepsSection?.showSteps !== false && (
+        <StepModelSection id="steps" />
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. FINANCIAL POLICY & SUSTAINABLE INVESTMENT (#tuition / #hoc-phi)
+      ─────────────────────────────────────────────────────────────── */}
+      <section id="tuition" className="py-12 sm:py-16 bg-[#F6F5F1] border-b border-[#DEDDD6] scroll-mt-24 sm:scroll-mt-28 relative">
         <div id="hoc-phi" className="absolute -top-24 pointer-events-none" />
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
@@ -646,10 +654,10 @@ function AdmissionsContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          4. REGISTRATION FORM & CAMPUS CONTACT HUB
+          4. REGISTRATION FORM & CAMPUS CONTACT HUB (#contact)
       ─────────────────────────────────────────────────────────────── */}
-      <section id="form-tu-van" className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6]">
-        <div id="contact" className="container mx-auto px-4">
+      <section id="form-tu-van" className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6] scroll-mt-24 sm:scroll-mt-28">
+        <div id="contact" className="container mx-auto px-4 scroll-mt-24 sm:scroll-mt-28">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start max-w-6xl mx-auto">
             {/* Form Column */}
             <motion.div
@@ -988,9 +996,9 @@ function AdmissionsContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          5. 12 FAQs ACCORDION WITH QUICK CATEGORY FILTERS
+          5. 12 FAQs ACCORDION WITH QUICK CATEGORY FILTERS (#faq)
       ─────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-12 sm:py-16 bg-[#F6F5F1]">
+      <section id="faq" className="py-12 sm:py-16 bg-[#F6F5F1] scroll-mt-24 sm:scroll-mt-28">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-8">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EAEFFB] text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2.5">

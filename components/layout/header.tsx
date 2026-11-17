@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useTransition, useRef } from 'react'
+import { useState, useEffect, useTransition, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Menu } from 'lucide-react'
+import { Menu, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -38,6 +38,109 @@ export function Header() {
   const { openRegistrationModal } = useRegistrationModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  // Track open sections on mobile accordion (default all expanded)
+  const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({
+    'item-1': true,
+    'item-2': true,
+    'item-4': true,
+    'item-5': true,
+  })
+
+  const toggleMobileSection = (key: string) => {
+    setOpenMobileSections((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }))
+  }
+
+  // Smooth-scroll helper with header offset
+  const scrollToAnchor = useCallback((hash: string) => {
+    if (!hash || typeof document === 'undefined') return false
+    const cleanId = hash.replace(/^#/, '')
+    const el = document.getElementById(cleanId)
+    if (!el) return false
+    const headerHeight = headerRef.current?.offsetHeight || 72
+    const elTop = el.getBoundingClientRect().top + window.scrollY - headerHeight - 16
+    window.scrollTo({
+      top: Math.max(0, elTop),
+      behavior: 'smooth',
+    })
+    return true
+  }, [])
+
+  // Universal click handler for nav links (mobile & desktop)
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    onSuccess?: () => void
+  ) => {
+    const [targetPath, hash] = href.split('#')
+    const currentPath = (pathname || '').replace(/\/$/, '')
+    const normalizedTargetPath = (targetPath || '').replace(/\/$/, '')
+    const isSamePage =
+      currentPath === normalizedTargetPath ||
+      (!currentPath && normalizedTargetPath === `/${locale}`) ||
+      (currentPath === `/${locale}` && !normalizedTargetPath)
+
+    if (hash && isSamePage) {
+      e.preventDefault()
+      onSuccess?.()
+
+      if (window.location.hash !== `#${hash}`) {
+        window.history.pushState(null, '', `#${hash}`)
+      }
+
+      setTimeout(() => {
+        scrollToAnchor(hash)
+      }, 100)
+      return
+    }
+
+    onSuccess?.()
+  }
+
+  // Cross-page hash navigation on mount and pathname updates
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const hash = window.location.hash.replace(/^#/, '')
+    if (!hash) return
+
+    let attempts = 0
+    const maxAttempts = 12
+    const interval = setInterval(() => {
+      attempts++
+      const scrolled = scrollToAnchor(hash)
+      if (scrolled || attempts >= maxAttempts) {
+        clearInterval(interval)
+      }
+    }, 120)
+
+    return () => clearInterval(interval)
+  }, [pathname, scrollToAnchor])
+
+  // Listen for hashchange events
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace(/^#/, '')
+      if (hash) {
+        setTimeout(() => scrollToAnchor(hash), 50)
+      }
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [scrollToAnchor])
+
+  // Lock body scroll when mobile menu is open to prevent page bounce & ensure smooth menu scroll
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [isMobileMenuOpen])
+
   // useTransition: mark locale updates as non-urgent so the visible tree
   // (header / footer) stays responsive while the new route is prepared.
   const [, startTransition] = useTransition()
@@ -178,6 +281,7 @@ export function Header() {
                   >
                     <Link
                       href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
                       className={cn(
                         'nav-link',
                         isActive && 'nav-link-active',
@@ -216,7 +320,9 @@ export function Header() {
                                 key={child.label}
                                 href={child.href}
                                 className="epath-dropdown-item rounded-none"
-                                onClick={() => setActiveDropdown(null)}
+                                onClick={(e) =>
+                                  handleNavClick(e, child.href, () => setActiveDropdown(null))
+                                }
                               >
                                 <span className="epath-dropdown-item-text">{child.label}</span>
                               </Link>
@@ -267,48 +373,84 @@ export function Header() {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.nav
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: duration.normal, ease: easeOut }}
-              className="epath-mobile-nav lg:hidden overflow-hidden mt-3 pb-4 border-t border-[#DEDDD6] pt-3 z-[65] bg-white rounded-2xl shadow-xl px-2"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: easeOut }}
+              className="epath-mobile-nav lg:hidden mt-2.5 z-[65] bg-white rounded-2xl shadow-2xl border border-[#DEDDD6] max-h-[calc(100dvh-84px)] flex flex-col overflow-hidden"
             >
-              <div className="flex flex-col gap-1">
-                {navItems.map((item) => (
-                  <div key={item.label}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        'epath-mobile-link block px-4 py-2.5 text-lg font-semibold rounded-xl transition-colors duration-200',
-                        'text-[#20242B] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
-                      )}
-                      onClick={() => setIsMobileMenuOpen(false)}
+              {/* Scrollable list container with momentum scrolling */}
+              <div
+                className="overflow-y-auto overscroll-contain px-3 py-3 space-y-1 scrollbar-thin"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
+                {navItems.map((item, idx) => {
+                  const sectionKey = `item-${idx}`
+                  const hasChildren = Boolean(item.children && item.children.length > 0)
+                  const isExpanded = openMobileSections[sectionKey] ?? true
+
+                  return (
+                    <div
+                      key={item.label}
+                      className="border-b border-[#DEDDD6]/50 last:border-b-0 pb-1.5 mb-1"
                     >
-                      {item.label}
-                    </Link>
-                    {item.children && (
-                      <div className="pl-6 flex flex-col gap-0.5 mt-0.5">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className={cn(
-                              'epath-mobile-sublink flex items-center px-4 py-2 text-base rounded-none transition-all duration-200',
-                              'text-[#5C6069] hover:bg-transparent hover:text-[#3A54A4] hover:translate-x-1.5 hover:underline underline-offset-4'
-                            )}
-                            onClick={() => setIsMobileMenuOpen(false)}
+                      <div className="flex items-center justify-between">
+                        <Link
+                          href={item.href}
+                          className={cn(
+                            'epath-mobile-link flex-1 block px-3 py-2 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
+                            'text-[#1E3570] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
+                          )}
+                          onClick={(e) =>
+                            handleNavClick(e, item.href, () => setIsMobileMenuOpen(false))
+                          }
+                        >
+                          {item.label}
+                        </Link>
+                        {hasChildren && (
+                          <button
+                            type="button"
+                            onClick={() => toggleMobileSection(sectionKey)}
+                            className="w-9 h-9 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
+                            aria-label={`Toggle ${item.label} submenu`}
                           >
-                            {child.label}
-                          </Link>
-                        ))}
+                            <ChevronDown
+                              className={cn(
+                                'w-4 h-4 transition-transform duration-200',
+                                isExpanded && 'rotate-180'
+                              )}
+                            />
+                          </button>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
-                <div className="mt-4 px-4">
+
+                      {hasChildren && isExpanded && (
+                        <div className="pl-4 pr-1 py-1 flex flex-col gap-0.5 space-y-0.5 border-l-2 border-[#2E4A9E]/20 ml-3 my-1">
+                          {item.children!.map((child) => (
+                            <Link
+                              key={child.label}
+                              href={child.href}
+                              className={cn(
+                                'epath-mobile-sublink flex items-center px-3 py-2 text-sm sm:text-base rounded-lg transition-all duration-200',
+                                'text-[#5C6069] hover:bg-[#F6F5F1] hover:text-[#2E4A9E]'
+                              )}
+                              onClick={(e) =>
+                                handleNavClick(e, child.href, () => setIsMobileMenuOpen(false))
+                              }
+                            >
+                              <span>{child.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+
+                <div className="pt-3 pb-1 px-1">
                   <button
                     type="button"
-                    className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-semibold rounded-full shadow-md transition-all duration-200 text-base cursor-pointer"
+                    className="flex items-center justify-center w-full py-3 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base cursor-pointer"
                     onClick={() => {
                       setIsMobileMenuOpen(false)
                       openRegistrationModal({ source: 'header-mobile' })

@@ -34,7 +34,12 @@ const fallbackSteps = [
   { number: 5, titleKey: 'achievement', descKey: 'achievementDesc', icon: Award },
 ]
 
-export function StepModelSection() {
+interface StepModelSectionProps {
+  id?: string
+  className?: string
+}
+
+export function StepModelSection({ id = 'step-timeline', className = '' }: StepModelSectionProps = {}) {
   const t = useTranslations('steps')
   const locale = useLocale() as Locale
   const sectionRef = useSectionActive<HTMLElement>({ threshold: 0.15 })
@@ -65,9 +70,11 @@ export function StepModelSection() {
   return (
     <section
       ref={sectionRef}
-      id="step-timeline"
-      className="py-20 bg-[#F6F5F1] overflow-hidden step-section"
+      id={id}
+      className={`py-16 sm:py-20 bg-[#F6F5F1] overflow-hidden step-section scroll-mt-24 sm:scroll-mt-28 relative ${className}`}
     >
+      <div id="steps" className="absolute -top-24 pointer-events-none" />
+      <div id="step-timeline" className="absolute -top-24 pointer-events-none" />
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

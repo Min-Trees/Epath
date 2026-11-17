@@ -135,7 +135,7 @@ export default function AboutPage() {
       {/* ─────────────────────────────────────────────────────────────
           INTRO & STATS – Interactive cards & image zoom
       ─────────────────────────────────────────────────────────────── */}
-      <section id="about" className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white">
+      <section id="about" className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white scroll-mt-24 sm:scroll-mt-28">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
@@ -212,7 +212,7 @@ export default function AboutPage() {
       {/* ─────────────────────────────────────────────────────────────
           VISION & MISSION – Compact & Wide in 1 section
       ─────────────────────────────────────────────────────────────── */}
-      <section id="vision" className="py-10 sm:py-12 bg-[#F6F5F1]">
+      <section id="vision" className="py-10 sm:py-12 bg-[#F6F5F1] scroll-mt-24 sm:scroll-mt-28">
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
           {/* Section Header */}
           <motion.div
@@ -320,7 +320,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.slow, delay: 0.08, ease: easeOut }}
-              className="bg-white rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between"
+              className="bg-white rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs border border-[#DEDDD6] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between scroll-mt-24 sm:scroll-mt-28"
             >
               <div>
                 {/* Header Badge & Icon */}
@@ -397,7 +397,7 @@ export default function AboutPage() {
       {/* ─────────────────────────────────────────────────────────────
           CORE VALUES – Staggered interactive cards
       ─────────────────────────────────────────────────────────────── */}
-      <section id="values" className="py-12 sm:py-16 bg-white">
+      <section id="values" className="py-12 sm:py-16 bg-white scroll-mt-24 sm:scroll-mt-28">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}

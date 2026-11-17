@@ -159,9 +159,10 @@ export default function EventsPage() {
   return (
     <>
       {/* ─────────────────────────────────────────────────────────────
-          EVENTS GRID
+          EVENTS GRID (#featured, #news)
       ─────────────────────────────────────────────────────────────── */}
-      <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-[#F6F5F1]">
+      <section id="featured" className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-[#F6F5F1] scroll-mt-24 sm:scroll-mt-28 relative">
+        <div id="news" className="absolute -top-24 pointer-events-none" />
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-12">

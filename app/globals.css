@@ -1220,6 +1220,9 @@
 }
 
 /* Mobile nav in scrolled / solid state */
+.epath-mobile-nav {
+  -webkit-overflow-scrolling: touch;
+}
 .epath-header--solid .epath-mobile-nav,
 .epath-header[data-solid='true'] .epath-mobile-nav,
 .epath-header[data-scrolled='true'] .epath-mobile-nav {
