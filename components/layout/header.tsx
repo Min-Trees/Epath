@@ -218,6 +218,7 @@ export function Header() {
       label: t('admissions'),
       href: `/${locale}/admissions`,
       children: [
+        { label: t('promotions'), href: `/${locale}/admissions#promotions` },
         { label: t('admissionsProcess'), href: `/${locale}/admissions#steps` },
         { label: t('tuition'), href: `/${locale}/admissions#tuition` },
         { label: t('faq'), href: `/${locale}/admissions#faq` },

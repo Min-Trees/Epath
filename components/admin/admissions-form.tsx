@@ -14,6 +14,7 @@ import type {
   TrustBadge,
   TuitionTrack,
   FinancialGuarantee,
+  AdmissionPromotionFlyer,
 } from '@/lib/cms-types'
 import {
   Sparkles,
@@ -38,7 +39,7 @@ import {
   Percent,
 } from 'lucide-react'
 
-type TabKey = 'hero' | 'tuition' | 'policy' | 'campus'
+type TabKey = 'hero' | 'promotions' | 'tuition' | 'policy' | 'campus'
 
 export function AdmissionsForm() {
   const [form, setForm] = useState<AdmissionsContentInput>(DEFAULT_ADMISSIONS_DATA)
@@ -62,6 +63,7 @@ export function AdmissionsForm() {
           setForm({
             hero: item.hero || DEFAULT_ADMISSIONS_DATA.hero,
             trustBadges: item.trustBadges?.length ? item.trustBadges : DEFAULT_ADMISSIONS_DATA.trustBadges,
+            promotions: item.promotions || DEFAULT_ADMISSIONS_DATA.promotions,
             stepsSection: item.stepsSection || DEFAULT_ADMISSIONS_DATA.stepsSection,
             tuition: item.tuition || DEFAULT_ADMISSIONS_DATA.tuition,
             financialPolicy: item.financialPolicy || DEFAULT_ADMISSIONS_DATA.financialPolicy,
@@ -217,6 +219,61 @@ export function AdmissionsForm() {
     })
   }
 
+  const addFlyer = () => {
+    const newFlyer: AdmissionPromotionFlyer = {
+      id: `flyer-${Date.now()}`,
+      title: { vi: 'Chương Trình Ưu Đãi Tuyển Sinh Mới', en: 'New Admissions Offer' },
+      subtitle: { vi: 'Ưu đãi dành riêng cho học viên đăng ký trong tháng này.', en: 'Special benefits for early applicants.' },
+      badge: { vi: 'ƯU ĐÃI HOT', en: 'HOT PROMO' },
+      desktopImageUrl: '/images/admissions/admissions-hero.jpg',
+      mobileImageUrl: '',
+      targetProgram: '',
+      ctaText: { vi: 'Đăng ký nhận ưu đãi', en: 'Claim This Offer' },
+      isActive: true,
+      order: ((form.promotions?.flyers || []).length) + 1,
+    }
+    setForm({
+      ...form,
+      promotions: {
+        badge: form.promotions?.badge || { vi: 'Chương trình ưu đãi & học bổng', en: 'Special Offers & Scholarships' },
+        title: form.promotions?.title || { vi: 'Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền', en: 'Admissions Special Offers & Exclusive Scholarships' },
+        subtitle: form.promotions?.subtitle || { vi: 'Cơ hội nhận học bổng học thuật Hoa Kỳ và ưu đãi học phí lên đến 30%.', en: 'Opportunities for US academic scholarships and tuition savings.' },
+        isActive: form.promotions?.isActive !== false,
+        flyers: [...(form.promotions?.flyers || []), newFlyer],
+      },
+    })
+  }
+
+  const updateFlyer = (index: number, patch: Partial<AdmissionPromotionFlyer>) => {
+    const flyers = [...(form.promotions?.flyers || [])]
+    flyers[index] = { ...flyers[index], ...patch }
+    setForm({
+      ...form,
+      promotions: {
+        badge: form.promotions?.badge || { vi: 'Chương trình ưu đãi & học bổng', en: 'Special Offers & Scholarships' },
+        title: form.promotions?.title || { vi: 'Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền', en: 'Admissions Special Offers & Exclusive Scholarships' },
+        subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+        isActive: form.promotions?.isActive !== false,
+        flyers,
+      },
+    })
+  }
+
+  const removeFlyer = (index: number) => {
+    const flyers = (form.promotions?.flyers || []).filter((_, i) => i !== index)
+    setForm({
+      ...form,
+      promotions: {
+        ...form.promotions,
+        badge: form.promotions?.badge || { vi: 'Chương trình ưu đãi & học bổng', en: 'Special Offers & Scholarships' },
+        title: form.promotions?.title || { vi: 'Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền', en: 'Admissions Special Offers & Exclusive Scholarships' },
+        subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+        isActive: form.promotions?.isActive !== false,
+        flyers,
+      },
+    })
+  }
+
   if (isLoading) {
     return (
       <div className="py-16 text-center text-sm text-[#5C6069] flex items-center justify-center gap-2">
@@ -291,9 +348,10 @@ export function AdmissionsForm() {
       <div className="flex flex-wrap gap-2 border-b border-[#DEDDD6] pb-2">
         {[
           { key: 'hero', label: '1. Hero & Điểm tin cậy', icon: ShieldCheck },
-          { key: 'tuition', label: '2. Gói học phí (4 Tracks)', icon: Coins },
-          { key: 'policy', label: '3. Chính sách & Cam kết', icon: Percent },
-          { key: 'campus', label: '4. Campus & Form liên hệ', icon: Building2 },
+          { key: 'promotions', label: '2. Chương trình Ưu Đãi (Flyer PNG)', icon: Sparkles },
+          { key: 'tuition', label: '3. Gói học phí (4 Tracks)', icon: Coins },
+          { key: 'policy', label: '4. Chính sách & Cam kết', icon: Percent },
+          { key: 'campus', label: '5. Campus & Form liên hệ', icon: Building2 },
         ].map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.key
@@ -329,20 +387,42 @@ export function AdmissionsForm() {
             </CardHeader>
             <CardContent className="pt-5 space-y-5">
               {/* Image Picker */}
-              <div className="space-y-2">
-                <Label className="text-xs font-bold text-[#20242B]">
-                  Hình ảnh Hero Tuyển Sinh (Khuyến nghị 16:11 hoặc 4:3, chất lượng cao)
-                </Label>
-                <ImagePicker
-                  value={form.hero.imageUrl}
-                  onChange={(url) =>
-                    setForm({
-                      ...form,
-                      hero: { ...form.hero, imageUrl: url },
-                    })
-                  }
-                  folder="admissions"
-                />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-[#20242B]">
+                    Hình ảnh Hero Desktop (Khuyến nghị 16:11 hoặc 4:3)
+                  </Label>
+                  <ImagePicker
+                    value={form.hero.imageUrl}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        hero: { ...form.hero, imageUrl: url },
+                      })
+                    }
+                    folder="admissions"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold text-[#2E4A9E]">
+                      Hình ảnh Hero Mobile (Hiển thị riêng trên Mobile)
+                    </Label>
+                    <span className="text-[10px] text-[#5C6069] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-semibold">Tùy chọn</span>
+                  </div>
+                  <ImagePicker
+                    value={form.hero.mobileImageUrl || ''}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        hero: { ...form.hero, mobileImageUrl: url },
+                      })
+                    }
+                    folder="admissions"
+                    helperText="Cấu hình ảnh riêng cho màn hình điện thoại (dọc/vuông). Không ảnh hưởng đến ảnh desktop."
+                  />
+                </div>
               </div>
 
               {/* Welcome Badge */}
@@ -758,7 +838,389 @@ export function AdmissionsForm() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          TAB 2: TUITION TRACKS (4 GÓI HỌC PHÍ)
+          TAB 2: PROMOTIONS & FLYERS (CHƯƠNG TRÌNH ƯU ĐÃI)
+      ─────────────────────────────────────────────────────────────── */}
+      {activeTab === 'promotions' && (
+        <div className="space-y-6">
+          {/* Section Heading Settings */}
+          <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
+            <CardHeader className="pb-3 border-b border-[#DEDDD6]/60">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-bold text-[#1E3570] flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#F26522]" />
+                  <span>Tiêu đề & Giới thiệu Mục "Chương trình Ưu Đãi" (#promotions)</span>
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-semibold text-[#5C6069] flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.promotions?.isActive !== false}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          promotions: {
+                            badge: form.promotions?.badge || { vi: 'Chương trình ưu đãi & học bổng', en: 'Special Offers & Scholarships' },
+                            title: form.promotions?.title || { vi: 'Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền', en: 'Admissions Special Offers & Exclusive Scholarships' },
+                            subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+                            isActive: e.target.checked,
+                            flyers: form.promotions?.flyers || [],
+                          },
+                        })
+                      }
+                      className="rounded border-[#DEDDD6] text-[#F26522] focus:ring-[#F26522]"
+                    />
+                    <span>Bật hiển thị trên trang Tuyển sinh</span>
+                  </label>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-5 space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Badge nhãn (Tiếng Việt)</Label>
+                  <Input
+                    value={form.promotions?.badge?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: { ...(form.promotions?.badge || { vi: '', en: '' }), vi: e.target.value },
+                          title: form.promotions?.title || { vi: '', en: '' },
+                          subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Chương trình ưu đãi & học bổng"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Badge nhãn (English)</Label>
+                  <Input
+                    value={form.promotions?.badge?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: { ...(form.promotions?.badge || { vi: '', en: '' }), en: e.target.value },
+                          title: form.promotions?.title || { vi: '', en: '' },
+                          subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Special Offers & Scholarships"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Tiêu đề chính (Tiếng Việt)</Label>
+                  <Input
+                    value={form.promotions?.title?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: form.promotions?.badge || { vi: '', en: '' },
+                          title: { ...(form.promotions?.title || { vi: '', en: '' }), vi: e.target.value },
+                          subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Tiêu đề chính (English)</Label>
+                  <Input
+                    value={form.promotions?.title?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: form.promotions?.badge || { vi: '', en: '' },
+                          title: { ...(form.promotions?.title || { vi: '', en: '' }), en: e.target.value },
+                          subtitle: form.promotions?.subtitle || { vi: '', en: '' },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Admissions Special Offers & Scholarships"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Mô tả phụ (Tiếng Việt)</Label>
+                  <Textarea
+                    rows={2}
+                    value={form.promotions?.subtitle?.vi || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: form.promotions?.badge || { vi: '', en: '' },
+                          title: form.promotions?.title || { vi: '', en: '' },
+                          subtitle: { ...(form.promotions?.subtitle || { vi: '', en: '' }), vi: e.target.value },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Cơ hội nhận học bổng và ưu đãi học phí lên đến 30%..."
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#20242B]">Mô tả phụ (English)</Label>
+                  <Textarea
+                    rows={2}
+                    value={form.promotions?.subtitle?.en || ''}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        promotions: {
+                          ...form.promotions,
+                          badge: form.promotions?.badge || { vi: '', en: '' },
+                          title: form.promotions?.title || { vi: '', en: '' },
+                          subtitle: { ...(form.promotions?.subtitle || { vi: '', en: '' }), en: e.target.value },
+                          isActive: form.promotions?.isActive !== false,
+                          flyers: form.promotions?.flyers || [],
+                        },
+                      })
+                    }
+                    placeholder="Opportunities for US academic scholarships and tuition savings..."
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Flyers List Card */}
+          <Card className="border-[#DEDDD6] rounded-2xl shadow-xs">
+            <CardHeader className="pb-3 border-b border-[#DEDDD6]/60 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold text-[#1E3570] flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#2E4A9E]" />
+                  <span>Danh Sách Flyer Chương Trình Ưu Đãi (Hot PNG Flyers)</span>
+                </CardTitle>
+                <p className="text-xs text-[#5C6069] mt-0.5">
+                  Nội dung tập trung hiển thị ảnh Flyer PNG (kèm hỗ trợ ảnh riêng cho Mobile), khi khách click sẽ mở form đăng ký tư vấn.
+                </p>
+              </div>
+              <Button
+                type="button"
+                onClick={addFlyer}
+                className="rounded-xl text-xs font-bold bg-[#F26522] hover:bg-[#C94F16] text-white shadow-xs gap-1.5"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Thêm Flyer Ưu Đãi</span>
+              </Button>
+            </CardHeader>
+            <CardContent className="pt-5 space-y-6">
+              {(!form.promotions?.flyers || form.promotions.flyers.length === 0) ? (
+                <div className="text-center py-10 bg-[#F6F5F1] rounded-2xl border border-dashed border-[#DEDDD6]">
+                  <Sparkles className="w-8 h-8 text-[#5C6069] mx-auto mb-2 opacity-50" />
+                  <p className="text-xs text-[#5C6069] font-medium mb-3">Chưa có flyer ưu đãi nào được cấu hình.</p>
+                  <Button
+                    type="button"
+                    onClick={addFlyer}
+                    variant="outline"
+                    className="rounded-xl text-xs font-bold border-[#2E4A9E] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white"
+                  >
+                    <Plus className="w-3.5 h-3.5 mr-1" />
+                    <span>Thêm Flyer đầu tiên</span>
+                  </Button>
+                </div>
+              ) : (
+                form.promotions.flyers.map((flyer, idx) => (
+                  <div
+                    key={flyer.id || idx}
+                    className="p-5 rounded-2xl bg-[#F6F5F1]/80 border border-[#DEDDD6] space-y-4 relative group hover:border-[#F26522]/50 transition-all"
+                  >
+                    <div className="flex items-center justify-between pb-3 border-b border-[#DEDDD6]/60">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-[#1E3570] text-white text-xs font-black flex items-center justify-center">
+                          {idx + 1}
+                        </span>
+                        <h4 className="text-sm font-bold text-[#1E3570]">
+                          {flyer.title.vi || `Flyer #${idx + 1}`}
+                        </h4>
+                        {flyer.badge?.vi && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F26522] text-white">
+                            {flyer.badge.vi}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <label className="text-xs font-semibold text-[#5C6069] flex items-center gap-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={flyer.isActive !== false}
+                            onChange={(e) => updateFlyer(idx, { isActive: e.target.checked })}
+                            className="rounded border-[#DEDDD6] text-[#F26522] focus:ring-[#F26522]"
+                          />
+                          <span>Kích hoạt</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm('Bạn có chắc muốn xóa flyer ưu đãi này?')) {
+                              removeFlyer(idx)
+                            }
+                          }}
+                          className="w-7 h-7 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700 flex items-center justify-center transition-colors"
+                          title="Xóa flyer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Flyer Titles */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Tên ưu đãi (VI)</Label>
+                        <Input
+                          value={flyer.title.vi}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              title: { ...flyer.title, vi: e.target.value },
+                            })
+                          }
+                          placeholder="VD: Học Bổng Khởi Đầu Sớm – Giảm 30% Học Phí"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Tên ưu đãi (EN)</Label>
+                        <Input
+                          value={flyer.title.en}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              title: { ...flyer.title, en: e.target.value },
+                            })
+                          }
+                          placeholder="e.g. Early Bird Scholarship – 30% Tuition Grant"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Badges & Subtitle */}
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Huy hiệu góc ảnh (VI)</Label>
+                        <Input
+                          value={flyer.badge?.vi || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              badge: { ...(flyer.badge || { vi: '', en: '' }), vi: e.target.value },
+                            })
+                          }
+                          placeholder="VD: HỌC BỔNG 30%"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Huy hiệu góc ảnh (EN)</Label>
+                        <Input
+                          value={flyer.badge?.en || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              badge: { ...(flyer.badge || { vi: '', en: '' }), en: e.target.value },
+                            })
+                          }
+                          placeholder="e.g. 30% SCHOLARSHIP"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Chương trình học liên kết</Label>
+                        <Input
+                          value={flyer.targetProgram || ''}
+                          onChange={(e) => updateFlyer(idx, { targetProgram: e.target.value })}
+                          placeholder="VD: high-dual-diploma, elementary..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* DUAL IMAGE CONFIGURATION: DESKTOP & MOBILE */}
+                    <div className="grid sm:grid-cols-2 gap-4 p-4 rounded-xl bg-white border border-[#DEDDD6]">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-[#1E3570]">
+                          1. Ảnh Flyer Desktop (PNG/JPG)
+                        </Label>
+                        <ImagePicker
+                          value={flyer.desktopImageUrl || ''}
+                          onChange={(url) => updateFlyer(idx, { desktopImageUrl: url })}
+                          folder="flyers"
+                          helperText="Ảnh flyer hiển thị trên máy tính/laptop (tỷ lệ 16:10 hoặc chữ nhật nằm/ngang)."
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-bold text-[#2E4A9E]">
+                            2. Ảnh Flyer Mobile (Hiển thị riêng trên Mobile)
+                          </Label>
+                          <span className="text-[10px] text-[#2E4A9E] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-bold">Mobile riêng</span>
+                        </div>
+                        <ImagePicker
+                          value={flyer.mobileImageUrl || ''}
+                          onChange={(url) => updateFlyer(idx, { mobileImageUrl: url })}
+                          folder="flyers"
+                          helperText="Cấu hình ảnh dọc hoặc poster mobile riêng để giao diện điện thoại tối ưu mà không ảnh hưởng desktop."
+                        />
+                      </div>
+                    </div>
+
+                    {/* CTA Button Text */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Chữ trên nút đăng ký (VI)</Label>
+                        <Input
+                          value={flyer.ctaText?.vi || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              ctaText: { ...(flyer.ctaText || { vi: '', en: '' }), vi: e.target.value },
+                            })
+                          }
+                          placeholder="Đăng ký nhận ưu đãi"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-[#20242B]">Chữ trên nút đăng ký (EN)</Label>
+                        <Input
+                          value={flyer.ctaText?.en || ''}
+                          onChange={(e) =>
+                            updateFlyer(idx, {
+                              ctaText: { ...(flyer.ctaText || { vi: '', en: '' }), en: e.target.value },
+                            })
+                          }
+                          placeholder="Claim This Offer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          TAB 3: TUITION TRACKS (4 GÓI HỌC PHÍ)
       ─────────────────────────────────────────────────────────────── */}
       {activeTab === 'tuition' && (
         <div className="space-y-6">
@@ -1124,20 +1586,42 @@ export function AdmissionsForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-5 space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold text-[#20242B]">
-                  Hình ảnh tư vấn học vụ (Consultation photo)
-                </Label>
-                <ImagePicker
-                  value={form.financialPolicy.leftBoxImage}
-                  onChange={(url) =>
-                    setForm({
-                      ...form,
-                      financialPolicy: { ...form.financialPolicy, leftBoxImage: url },
-                    })
-                  }
-                  folder="admissions"
-                />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-[#20242B]">
+                    Hình ảnh tư vấn Desktop (Consultation photo)
+                  </Label>
+                  <ImagePicker
+                    value={form.financialPolicy.leftBoxImage}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        financialPolicy: { ...form.financialPolicy, leftBoxImage: url },
+                      })
+                    }
+                    folder="admissions"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold text-[#2E4A9E]">
+                      Hình ảnh tư vấn Mobile (Hiển thị riêng trên Mobile)
+                    </Label>
+                    <span className="text-[10px] text-[#5C6069] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-semibold">Tùy chọn</span>
+                  </div>
+                  <ImagePicker
+                    value={form.financialPolicy.leftBoxMobileImage || ''}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        financialPolicy: { ...form.financialPolicy, leftBoxMobileImage: url },
+                      })
+                    }
+                    folder="admissions"
+                    helperText="Cấu hình ảnh riêng cho màn hình điện thoại. Không ảnh hưởng đến ảnh desktop."
+                  />
+                </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -1426,20 +1910,42 @@ export function AdmissionsForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-5 space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold text-[#20242B]">
-                  Hình ảnh Campus EPath
-                </Label>
-                <ImagePicker
-                  value={form.campusSection.campusImage}
-                  onChange={(url) =>
-                    setForm({
-                      ...form,
-                      campusSection: { ...form.campusSection, campusImage: url },
-                    })
-                  }
-                  folder="admissions"
-                />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-[#20242B]">
+                    Hình ảnh Campus Desktop
+                  </Label>
+                  <ImagePicker
+                    value={form.campusSection.campusImage}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        campusSection: { ...form.campusSection, campusImage: url },
+                      })
+                    }
+                    folder="admissions"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold text-[#2E4A9E]">
+                      Hình ảnh Campus Mobile (Hiển thị riêng trên Mobile)
+                    </Label>
+                    <span className="text-[10px] text-[#5C6069] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-semibold">Tùy chọn</span>
+                  </div>
+                  <ImagePicker
+                    value={form.campusSection.campusMobileImage || ''}
+                    onChange={(url) =>
+                      setForm({
+                        ...form,
+                        campusSection: { ...form.campusSection, campusMobileImage: url },
+                      })
+                    }
+                    folder="admissions"
+                    helperText="Cấu hình ảnh riêng cho màn hình điện thoại. Không ảnh hưởng đến ảnh desktop."
+                  />
+                </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">

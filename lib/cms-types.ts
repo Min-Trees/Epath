@@ -600,6 +600,7 @@ export const HeroContentSchema = z.object({
   videoUrl: z.string().default(''),
   videoThumbnail: z.string().default(''),
   backgroundImage: z.string().default(''),
+  mobileBackgroundImage: z.string().optional().default(''),
   slides: z.array(z.string()).optional().default([]),
   finalSlideIndex: z.number().optional().default(-1),
   slideInterval: z.number().optional().default(4),
@@ -639,6 +640,7 @@ export const PromoPopupSchema = z.object({
   cooldownHours: z.number().int().nonnegative().default(12),
   // Left Visual Column
   imageUrl: z.string().default('/images/admissions/admissions-consultation.jpg'),
+  mobileImageUrl: z.string().optional().default(''),
   tag: LocalizedStringSchema,
   tagDescription: LocalizedStringSchema,
   // Right Content Column
@@ -692,6 +694,29 @@ export const FinancialGuaranteeSchema = z.object({
 })
 export type FinancialGuarantee = z.infer<typeof FinancialGuaranteeSchema>
 
+export const AdmissionPromotionFlyerSchema = z.object({
+  id: z.string(),
+  title: LocalizedStringSchema,
+  subtitle: LocalizedStringSchema.optional(),
+  badge: LocalizedStringSchema.optional(),
+  desktopImageUrl: z.string().default('/images/flyers/flyer-sample-desktop.png'),
+  mobileImageUrl: z.string().optional().default(''),
+  targetProgram: z.string().optional().default(''),
+  ctaText: LocalizedStringSchema.optional(),
+  isActive: z.boolean().default(true),
+  order: z.number().default(0),
+})
+export type AdmissionPromotionFlyer = z.infer<typeof AdmissionPromotionFlyerSchema>
+
+export const AdmissionPromotionsSectionSchema = z.object({
+  badge: LocalizedStringSchema,
+  title: LocalizedStringSchema,
+  subtitle: LocalizedStringSchema,
+  isActive: z.boolean().default(true),
+  flyers: z.array(AdmissionPromotionFlyerSchema).default([]),
+})
+export type AdmissionPromotionsSection = z.infer<typeof AdmissionPromotionsSectionSchema>
+
 export const AdmissionsContentSchema = z.object({
   id: z.string().optional(),
   hero: z.object({
@@ -699,12 +724,14 @@ export const AdmissionsContentSchema = z.object({
     title: LocalizedStringSchema,
     subtitle: LocalizedStringSchema,
     imageUrl: z.string().default('/images/admissions/admissions-hero.jpg'),
+    mobileImageUrl: z.string().optional().default(''),
     floatingBadgeTitle: LocalizedStringSchema,
     floatingBadgeSubtitle: LocalizedStringSchema,
     primaryCtaText: LocalizedStringSchema,
     secondaryCtaText: LocalizedStringSchema,
   }),
   trustBadges: z.array(TrustBadgeSchema).default([]),
+  promotions: AdmissionPromotionsSectionSchema.optional(),
   stepsSection: z.object({
     badge: LocalizedStringSchema,
     title: LocalizedStringSchema,
@@ -722,6 +749,7 @@ export const AdmissionsContentSchema = z.object({
     leftBoxTitle: LocalizedStringSchema,
     leftBoxDesc: LocalizedStringSchema,
     leftBoxImage: z.string().default('/images/admissions/admissions-consultation.jpg'),
+    leftBoxMobileImage: z.string().optional().default(''),
     leftBoxBadge: LocalizedStringSchema,
     buttonText: LocalizedStringSchema,
     rightBoxTitle: LocalizedStringSchema,
@@ -732,6 +760,7 @@ export const AdmissionsContentSchema = z.object({
     title: LocalizedStringSchema,
     subtitle: LocalizedStringSchema,
     campusImage: z.string().default('/images/admissions/admissions-campus.jpg'),
+    campusMobileImage: z.string().optional().default(''),
     addressLabel: LocalizedStringSchema,
     addressValue: LocalizedStringSchema,
     hotline: z.string().default('0937 514 896'),

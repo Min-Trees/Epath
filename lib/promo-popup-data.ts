@@ -5,6 +5,7 @@ export const DEFAULT_PROMO_POPUP_DATA: PromoPopupInput = {
   delaySeconds: 15,
   cooldownHours: 12,
   imageUrl: '/images/admissions/admissions-consultation.jpg',
+  mobileImageUrl: '',
   tag: {
     vi: 'Tư Vấn Miễn Phí',
     en: 'Free Assessment',

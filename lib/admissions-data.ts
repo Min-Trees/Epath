@@ -15,6 +15,7 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
       en: 'A structured pathway from diagnostic testing to Cognia & WASC US High School Diploma at 1/3 of international school costs.',
     },
     imageUrl: '/images/admissions/admissions-hero.jpg',
+    mobileImageUrl: '',
     floatingBadgeTitle: {
       vi: 'Bằng Tú Tài Mỹ Cognia & WASC',
       en: 'Cognia & WASC US Diploma',
@@ -82,6 +83,71 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
       },
     },
   ],
+  promotions: {
+    badge: {
+      vi: 'Chương trình ưu đãi & học bổng',
+      en: 'Special Offers & Scholarships',
+    },
+    title: {
+      vi: 'Chương Trình Ưu Đãi Tuyển Sinh & Học Bổng Độc Quyền',
+      en: 'Admissions Special Offers & Exclusive Scholarships',
+    },
+    subtitle: {
+      vi: 'Cơ hội nhận học bổng học thuật Hoa Kỳ, ưu đãi học phí lên đến 30% và bộ quà tặng nhập học đặc quyền khi ghi danh tại EPath Education.',
+      en: 'Opportunities for US academic scholarships, tuition savings up to 30%, and exclusive welcome gifts upon enrollment at EPath Education.',
+    },
+    isActive: true,
+    flyers: [
+      {
+        id: 'flyer-early-bird',
+        title: {
+          vi: 'Học Bổng Khởi Đầu Sớm – Ưu Đãi Học Phí 30%',
+          en: 'Early Bird Scholarship – 30% Tuition Grant',
+        },
+        subtitle: {
+          vi: 'Dành cho học sinh đăng ký khảo sát năng lực đầu vào và ghi danh sớm khóa học chuẩn Hoa Kỳ.',
+          en: 'Exclusive for students completing diagnostic tests and early enrollment.',
+        },
+        badge: {
+          vi: 'HỌC BỔNG 30%',
+          en: '30% SCHOLARSHIP',
+        },
+        desktopImageUrl: '/images/admissions/admissions-hero.jpg',
+        mobileImageUrl: '/images/admissions/admissions-consultation.jpg',
+        targetProgram: 'high-dual-diploma',
+        ctaText: {
+          vi: 'Đăng ký nhận ưu đãi',
+          en: 'Claim This Offer',
+        },
+        isActive: true,
+        order: 1,
+      },
+      {
+        id: 'flyer-diagnostic-free',
+        title: {
+          vi: 'Miễn Phí Khảo Sát Năng Lực Chuẩn Edmentum Hoa Kỳ',
+          en: 'Complimentary US Edmentum Diagnostic Assessment',
+        },
+        subtitle: {
+          vi: 'Kiểm tra trình độ tiếng Anh, Toán & Khoa học theo chuẩn Edmentum Exact Path trị giá 2.500.000 VNĐ.',
+          en: 'Comprehensive English, Math & Science benchmark testing valued at 2,500,000 VND.',
+        },
+        badge: {
+          vi: 'MIỄN PHÍ 100%',
+          en: '100% FREE',
+        },
+        desktopImageUrl: '/images/admissions/admissions-assessment.jpg',
+        mobileImageUrl: '/images/admissions/admissions-assessment.jpg',
+        targetProgram: 'elementary',
+        ctaText: {
+          vi: 'Đăng ký kiểm tra miễn phí',
+          en: 'Book Free Test',
+        },
+        isActive: true,
+        order: 2,
+      },
+    ],
+  },
   stepsSection: {
     badge: {
       vi: 'Quy trình tuyển sinh chuẩn mực',
@@ -283,6 +349,7 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
       en: 'By leveraging Edmentum\'s digital curriculum and campus-based teachers, EPath eliminates bloated campus overheads and invests directly in faculty excellence, 1:1 mentorship, and accredited diploma credentials.',
     },
     leftBoxImage: '/images/admissions/admissions-consultation.jpg',
+    leftBoxMobileImage: '',
     leftBoxBadge: {
       vi: 'Kiểm định Cognia & WASC',
       en: 'Cognia & WASC Certified',
@@ -362,6 +429,7 @@ export const DEFAULT_ADMISSIONS_DATA: AdmissionsContentInput = {
       en: 'Parents are always welcome to tour our campus and meet our academic leadership team.',
     },
     campusImage: '/images/admissions/admissions-campus.jpg',
+    campusMobileImage: '',
     addressLabel: {
       vi: 'Địa chỉ campus',
       en: 'Campus address',

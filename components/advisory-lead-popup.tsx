@@ -172,13 +172,18 @@ export function AdvisoryLeadPopup() {
 
             {/* Left Visual Column */}
             <div className="md:w-5/12 relative h-48 md:h-auto min-h-[190px] overflow-hidden bg-[#1E3570] flex-shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={config.imageUrl || '/images/admissions/admissions-consultation.jpg'}
-                alt="EPath Academic Advisory"
-                className="w-full h-full object-cover"
-                loading="eager"
-              />
+              <picture className="w-full h-full block">
+                {config.mobileImageUrl && (
+                  <source media="(max-width: 768px)" srcSet={config.mobileImageUrl} />
+                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={config.imageUrl || '/images/admissions/admissions-consultation.jpg'}
+                  alt="EPath Academic Advisory"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+              </picture>
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3.5 right-3.5 text-white">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8DC63F] text-[#20242B] mb-1.5 uppercase tracking-wider">

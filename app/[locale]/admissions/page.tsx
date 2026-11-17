@@ -43,6 +43,7 @@ import { useCmsContext } from '@/lib/cms-context'
 import { getSettingLocalized } from '@/lib/settings-helpers'
 import { DEFAULT_ADMISSIONS_DATA } from '@/lib/admissions-data'
 import { StepModelSection } from '@/components/sections/step-model-section'
+import { useRegistrationModal } from '@/components/registration-modal-context'
 import type { AdmissionsContentInput } from '@/lib/cms-types'
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -76,6 +77,7 @@ function AdmissionsContent() {
   const searchParams = useSearchParams()
   const locale = useLocale()
   const isVi = locale === 'vi'
+  const { openRegistrationModal } = useRegistrationModal()
 
   const { data: cms } = useCmsContext()
   const admissionsHero =
@@ -95,6 +97,15 @@ function AdmissionsContent() {
     trustBadges: rawAdmissions?.trustBadges?.length
       ? rawAdmissions.trustBadges
       : DEFAULT_ADMISSIONS_DATA.trustBadges,
+    promotions: {
+      badge: rawAdmissions?.promotions?.badge || DEFAULT_ADMISSIONS_DATA.promotions?.badge || { vi: '', en: '' },
+      title: rawAdmissions?.promotions?.title || DEFAULT_ADMISSIONS_DATA.promotions?.title || { vi: '', en: '' },
+      subtitle: rawAdmissions?.promotions?.subtitle || DEFAULT_ADMISSIONS_DATA.promotions?.subtitle || { vi: '', en: '' },
+      isActive: rawAdmissions?.promotions?.isActive !== false,
+      flyers: rawAdmissions?.promotions?.flyers?.length
+        ? rawAdmissions.promotions.flyers
+        : DEFAULT_ADMISSIONS_DATA.promotions?.flyers || [],
+    },
     stepsSection: {
       ...DEFAULT_ADMISSIONS_DATA.stepsSection,
       ...(rawAdmissions?.stepsSection || {}),
@@ -358,13 +369,21 @@ function AdmissionsContent() {
               className="lg:col-span-5 relative"
             >
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-[#DEDDD6] bg-white aspect-[4/3] sm:aspect-[16/11]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={heroImage}
-                  alt="EPath Education Admissions"
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
+                <picture className="w-full h-full block">
+                  {(admissionsData.hero as { mobileImageUrl?: string }).mobileImageUrl && (
+                    <source
+                      media="(max-width: 768px)"
+                      srcSet={(admissionsData.hero as { mobileImageUrl?: string }).mobileImageUrl}
+                    />
+                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={heroImage}
+                    alt="EPath Education Admissions"
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                  />
+                </picture>
                 {/* Softened gradient overlay so photo preserves crisp contrast */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/35 via-transparent to-transparent pointer-events-none" />
 
@@ -422,7 +441,141 @@ function AdmissionsContent() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. STANDARDIZED 5-STEP ADMISSIONS PROCESS (#steps)
+          2. CHƯƠNG TRÌNH ƯU ĐÃI & HỌC BỔNG HOT (#promotions)
+          Hiển thị flyer PNG ưu đãi. Nội dung thuần ảnh, click mở form đăng ký tư vấn.
+      ─────────────────────────────────────────────────────────────── */}
+      {admissionsData.promotions?.isActive !== false && admissionsData.promotions?.flyers && admissionsData.promotions.flyers.length > 0 && (
+        <section
+          id="promotions"
+          className="py-12 sm:py-16 bg-white border-b border-[#DEDDD6] scroll-mt-24 sm:scroll-mt-28 relative"
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              {/* Header */}
+              <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#F26522]/10 text-[#F26522] text-xs font-bold uppercase tracking-wider mb-2.5">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>
+                    {admissionsData.promotions.badge?.[locale as 'vi' | 'en'] ||
+                      admissionsData.promotions.badge?.vi ||
+                      (isVi ? 'Chương trình ưu đãi' : 'Special Offers')}
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#1E3570] mb-3 tracking-tight">
+                  {admissionsData.promotions.title?.[locale as 'vi' | 'en'] ||
+                    admissionsData.promotions.title?.vi ||
+                    (isVi ? 'Chương Trình Ưu Đãi & Học Bổng Tuyển Sinh' : 'Admissions Special Offers & Scholarships')}
+                </h2>
+                <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed max-w-2xl mx-auto">
+                  {admissionsData.promotions.subtitle?.[locale as 'vi' | 'en'] ||
+                    admissionsData.promotions.subtitle?.vi ||
+                    (isVi
+                      ? 'Khám phá các gói học bổng học thuật và ưu đãi đặc quyền được thiết kế dành riêng cho học sinh đăng ký trong tháng.'
+                      : 'Explore exclusive scholarship packages and tuition benefits designed for early applicants.')}
+                </p>
+              </div>
+
+              {/* Flyers Grid */}
+              <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+                {admissionsData.promotions.flyers
+                  .filter((f) => f.isActive !== false)
+                  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                  .map((flyer) => {
+                    const flyerTitle = flyer.title?.[locale as 'vi' | 'en'] || flyer.title?.vi || ''
+                    const flyerSubtitle = flyer.subtitle?.[locale as 'vi' | 'en'] || flyer.subtitle?.vi || ''
+                    const flyerBadge = flyer.badge?.[locale as 'vi' | 'en'] || flyer.badge?.vi
+                    const ctaText = flyer.ctaText?.[locale as 'vi' | 'en'] || flyer.ctaText?.vi || (isVi ? 'Đăng ký nhận ưu đãi' : 'Claim Offer')
+                    const desktopImg = flyer.desktopImageUrl || '/images/admissions/admissions-hero.jpg'
+                    const mobileImg = flyer.mobileImageUrl || desktopImg
+
+                    return (
+                      <motion.div
+                        key={flyer.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={inViewViewport}
+                        transition={{ duration: duration.slow, ease: easeOut }}
+                        className="bg-white rounded-3xl border border-[#DEDDD6] hover:border-[#F26522]/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                      >
+                        {/* Flyer Image Container - Content only displays image (flyer PNG) */}
+                        <div
+                          className="relative w-full aspect-[16/10] sm:aspect-[16/10] bg-[#F6F5F1] overflow-hidden cursor-pointer"
+                          onClick={() =>
+                            openRegistrationModal({
+                              source: 'admissions-promotion-flyer',
+                              initialTitle: flyerTitle,
+                              initialProgram: flyer.targetProgram || flyerTitle,
+                            })
+                          }
+                        >
+                          <picture className="w-full h-full block">
+                            {flyer.mobileImageUrl && (
+                              <source media="(max-width: 640px)" srcSet={flyer.mobileImageUrl} />
+                            )}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={desktopImg}
+                              alt={flyerTitle}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                              loading="lazy"
+                            />
+                          </picture>
+
+                          {/* Floating Badge on Flyer */}
+                          {flyerBadge && (
+                            <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#F26522] text-white shadow-md">
+                              {flyerBadge}
+                            </div>
+                          )}
+
+                          {/* Hover Overlay Hint */}
+                          <div className="absolute inset-0 bg-[#1E3570]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#1E3570] text-xs font-bold shadow-lg">
+                              {isVi ? 'Bấm để nhận ưu đãi' : 'Click to claim offer'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Bottom Action Bar */}
+                        <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 bg-white">
+                          <div className="mb-4">
+                            <h3 className="text-base sm:text-lg font-black text-[#1E3570] mb-1.5 leading-snug group-hover:text-[#F26522] transition-colors">
+                              {flyerTitle}
+                            </h3>
+                            {flyerSubtitle && (
+                              <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed line-clamp-2">
+                                {flyerSubtitle}
+                              </p>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openRegistrationModal({
+                                source: 'admissions-promotion-flyer',
+                                initialTitle: flyerTitle,
+                                initialProgram: flyer.targetProgram || flyerTitle,
+                              })
+                            }
+                            className="w-full py-3 px-4 rounded-xl bg-[#F26522] hover:bg-[#C94F16] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer group/btn"
+                          >
+                            <Sparkles className="w-4 h-4 text-white" />
+                            <span>{ctaText}</span>
+                            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. STANDARDIZED 5-STEP ADMISSIONS PROCESS (#steps)
       ─────────────────────────────────────────────────────────────── */}
       {admissionsData.stepsSection?.showSteps !== false && (
         <StepModelSection id="steps" />
@@ -547,16 +700,24 @@ function AdmissionsContent() {
                 <div>
                   {/* Photo Accent */}
                   <div className="relative rounded-2xl overflow-hidden mb-5 border border-[#DEDDD6] aspect-[16/10] bg-[#F6F5F1]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        admissionsData.financialPolicy.leftBoxImage ||
-                        '/images/admissions/admissions-consultation.jpg'
-                      }
-                      alt="EPath Academic Consultation"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <picture className="w-full h-full block">
+                      {(admissionsData.financialPolicy as { leftBoxMobileImage?: string }).leftBoxMobileImage && (
+                        <source
+                          media="(max-width: 768px)"
+                          srcSet={(admissionsData.financialPolicy as { leftBoxMobileImage?: string }).leftBoxMobileImage}
+                        />
+                      )}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={
+                          admissionsData.financialPolicy.leftBoxImage ||
+                          '/images/admissions/admissions-consultation.jpg'
+                        }
+                        alt="EPath Academic Consultation"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </picture>
                     <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11px] font-black bg-[#1E3570] text-white shadow-sm">
                       {admissionsData.financialPolicy.leftBoxBadge?.[locale as 'vi' | 'en'] ||
                         admissionsData.financialPolicy.leftBoxBadge?.vi}
@@ -849,16 +1010,24 @@ function AdmissionsContent() {
             >
               {/* Campus Photo Header */}
               <div className="relative rounded-2xl overflow-hidden border border-[#DEDDD6] shadow-sm aspect-[16/9] bg-[#F6F5F1]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={
-                    admissionsData.campusSection.campusImage ||
-                    '/images/admissions/admissions-campus.jpg'
-                  }
-                  alt="EPath Campus"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                <picture className="w-full h-full block">
+                  {(admissionsData.campusSection as { campusMobileImage?: string }).campusMobileImage && (
+                    <source
+                      media="(max-width: 768px)"
+                      srcSet={(admissionsData.campusSection as { campusMobileImage?: string }).campusMobileImage}
+                    />
+                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={
+                      admissionsData.campusSection.campusImage ||
+                      '/images/admissions/admissions-campus.jpg'
+                    }
+                    alt="EPath Campus"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </picture>
                 {/* Softened gradient overlay so campus photo preserves crisp contrast */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/35 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-bold flex items-center gap-1.5 drop-shadow">

@@ -5,7 +5,9 @@ import { RegistrationModal } from './registration-modal'
 
 export interface OpenRegistrationOptions {
   program?: string
+  initialProgram?: string
   title?: string
+  initialTitle?: string
   source?: string
 }
 
@@ -27,8 +29,8 @@ export function RegistrationModalProvider({ children }: { children: React.ReactN
   const [source, setSource] = useState('website')
 
   const openRegistrationModal = useCallback((options?: OpenRegistrationOptions) => {
-    setProgram(options?.program || '')
-    setProgramTitle(options?.title || '')
+    setProgram(options?.program || options?.initialProgram || '')
+    setProgramTitle(options?.title || options?.initialTitle || '')
     setSource(options?.source || 'website')
     setIsOpen(true)
   }, [])

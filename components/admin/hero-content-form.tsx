@@ -546,8 +546,15 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
           <ImagePicker
             value={form.backgroundImage ?? ''}
             onChange={(url) => setField('backgroundImage', url)}
-            label="Background Image"
-            helperText="Ảnh nền cho phần hero. Không giới hạn dung lượng."
+            label="Background Image Desktop"
+            helperText="Ảnh nền cho phần hero trên máy tính. Không giới hạn dung lượng."
+            folder="hero"
+          />
+          <ImagePicker
+            value={form.mobileBackgroundImage ?? ''}
+            onChange={(url) => setField('mobileBackgroundImage', url)}
+            label="Background Image Mobile (Tùy chọn cho điện thoại)"
+            helperText="Ảnh nền riêng hiển thị trên điện thoại (tỷ lệ 9:16 hoặc 4:5). Nếu để trống, sẽ dùng ảnh Desktop."
             folder="hero"
           />
           <div>

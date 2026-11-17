@@ -57,6 +57,7 @@ export function PromoPopupForm({ load, update, create }: Props) {
             delaySeconds: item.delaySeconds ?? 15,
             cooldownHours: item.cooldownHours ?? 12,
             imageUrl: item.imageUrl || DEFAULT_PROMO_POPUP_DATA.imageUrl,
+            mobileImageUrl: item.mobileImageUrl || '',
             tag: item.tag || DEFAULT_PROMO_POPUP_DATA.tag,
             tagDescription: item.tagDescription || DEFAULT_PROMO_POPUP_DATA.tagDescription,
             badge: item.badge || DEFAULT_PROMO_POPUP_DATA.badge,
@@ -324,13 +325,33 @@ export function PromoPopupForm({ load, update, create }: Props) {
               <Label className="text-xs font-semibold text-slate-700">
                 Ảnh minh họa popup (Tải lên hoặc chọn từ Thư viện S3)
               </Label>
-              <div className="rounded border border-slate-200 p-3 bg-slate-50">
-                <ImagePicker
-                  value={form.imageUrl || ''}
-                  onChange={(url) => setForm((p) => ({ ...p, imageUrl: url }))}
-                  folder="promo-popup"
-                  helperText="Ảnh góc nhìn dọc/chữ nhật hiển thị ở nửa bên trái popup. Nên dùng ảnh học sinh, cố vấn học tập chất lượng cao."
-                />
+              <div className="rounded border border-slate-200 p-3 bg-slate-50 space-y-3">
+                <div>
+                  <Label className="text-[11px] font-bold text-slate-700 mb-1 block">
+                    Ảnh hiển thị Desktop
+                  </Label>
+                  <ImagePicker
+                    value={form.imageUrl || ''}
+                    onChange={(url) => setForm((p) => ({ ...p, imageUrl: url }))}
+                    folder="promo-popup"
+                    helperText="Ảnh góc nhìn dọc/chữ nhật hiển thị ở nửa bên trái popup trên máy tính/laptop."
+                  />
+                </div>
+
+                <div className="pt-2 border-t border-slate-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-[11px] font-bold text-[#2E4A9E]">
+                      Ảnh hiển thị riêng cho Mobile (Tùy chọn)
+                    </Label>
+                    <span className="text-[10px] text-slate-500 bg-white border border-slate-200 px-2 py-0.2 rounded-full font-semibold">Tùy chọn</span>
+                  </div>
+                  <ImagePicker
+                    value={form.mobileImageUrl || ''}
+                    onChange={(url) => setForm((p) => ({ ...p, mobileImageUrl: url }))}
+                    folder="promo-popup"
+                    helperText="Ảnh riêng cho màn hình điện thoại di động. Nếu để trống, sẽ dùng ảnh Desktop."
+                  />
+                </div>
               </div>
             </div>
 

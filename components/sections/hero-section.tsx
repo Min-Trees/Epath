@@ -120,6 +120,7 @@ export function HeroSection({
   const videoUrl = (hero?.videoUrl as string) || ''
   const videoThumbnail = (hero?.videoThumbnail as string) || ''
   const backgroundImage = (hero?.backgroundImage as string) || ''
+  const mobileBackgroundImage = (hero?.mobileBackgroundImage as string) || ''
   const activeBackground = backgroundImage || '/images/hero/hero-bg.jpg'
 
   // Default sample slides for Home hero if none configured in CMS
@@ -332,20 +333,25 @@ export function HeroSection({
             })
           ) : (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={activeBackground}
-                alt=""
-                className="w-full h-full object-cover select-none pointer-events-none"
-                style={{
-                  animation: 'heroKenBurns 9s linear forwards',
-                  willChange: 'transform',
-                  transformOrigin: 'center center',
-                }}
-                loading="eager"
-                decoding="async"
-                draggable={false}
-              />
+              <picture className="w-full h-full block">
+                {mobileBackgroundImage && (
+                  <source media="(max-width: 768px)" srcSet={mobileBackgroundImage} />
+                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={activeBackground}
+                  alt=""
+                  className="w-full h-full object-cover select-none pointer-events-none"
+                  style={{
+                    animation: 'heroKenBurns 9s linear forwards',
+                    willChange: 'transform',
+                    transformOrigin: 'center center',
+                  }}
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                />
+              </picture>
             </div>
           )}
         </div>
