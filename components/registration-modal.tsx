@@ -20,6 +20,7 @@ import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 interface Props {
   isOpen: boolean
@@ -76,12 +77,15 @@ export function RegistrationModal({
     }
   }, [initialProgram])
 
-  // Lock body scroll when modal is open and handle Escape key
+  // Lock body scroll when modal is open and handle Escape key.
+  //
+  // The shared reference-counted lock is used so that opening this modal
+  // from inside the mobile menu (or on top of the advisory popup) does
+  // not release the background lock when only one of them closes.
+  useScrollLock(isOpen)
+
   useEffect(() => {
     if (!isOpen) return
-
-    const originalOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -92,7 +96,6 @@ export function RegistrationModal({
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      document.body.style.overflow = originalOverflow
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [isOpen, onClose])
@@ -162,7 +165,7 @@ export function RegistrationModal({
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-xl max-h-[92vh] bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#DEDDD6] z-10 flex flex-col"
+            className="relative w-full max-w-xl max-h-[92dvh] bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#DEDDD6] z-10 flex flex-col"
             role="dialog"
             aria-modal="true"
             aria-labelledby="registration-modal-title"
@@ -201,7 +204,10 @@ export function RegistrationModal({
             </div>
 
             {/* Scrollable Form Body */}
-            <div className="p-6 sm:p-8 overflow-y-auto space-y-4 flex-1 overscroll-contain">
+            <div
+              className="p-6 sm:p-8 overflow-y-auto space-y-4 flex-1 overscroll-contain"
+              style={{ touchAction: 'pan-y' }}
+            >
               {submitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}

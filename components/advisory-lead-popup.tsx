@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useCmsContext } from '@/lib/cms-context'
 import { DEFAULT_PROMO_POPUP_DATA } from '@/lib/promo-popup-data'
 import type { PromoPopup } from '@/lib/cms-types'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 const STORAGE_KEY = 'epath-advisory-popup-dismissed-at'
 
@@ -43,6 +44,15 @@ export function AdvisoryLeadPopup() {
   const isActive = config.isActive !== false
   const delayMs = Math.max(1, (config.delaySeconds ?? 15)) * 1000
   const cooldownHours = config.cooldownHours ?? 12
+
+  // Lock the background scroll while the popup is open.
+  //
+  // This popup previously had NO scroll lock at all, so on mobile the
+  // page behind it kept scrolling while the user swiped inside the popup
+  // ("scroll chaining") — the popup visually drifted away from the
+  // viewport. The shared reference-counted lock also prevents the lock
+  // from being released early if the registration modal is opened on top.
+  useScrollLock(isOpen)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -137,7 +147,10 @@ export function AdvisoryLeadPopup() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6 overflow-hidden overscroll-contain"
+          style={{ touchAction: 'none' }}
+        >
           {/* Soft Blur Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -197,7 +210,10 @@ export function AdvisoryLeadPopup() {
             </div>
 
             {/* Right Content Column */}
-            <div className="md:w-7/12 p-5 sm:p-6 flex flex-col justify-between">
+            <div
+              className="md:w-7/12 p-5 sm:p-6 flex flex-col justify-between overflow-y-auto overscroll-contain max-h-[60dvh] md:max-h-none"
+              style={{ touchAction: 'pan-y' }}
+            >
               <div>
                 <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-[11px] font-bold uppercase tracking-wider mb-2">
                   <GraduationCap className="w-3.5 h-3.5" />

@@ -11,6 +11,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { motion, AnimatePresence } from 'framer-motion'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { useRegistrationModal } from '@/components/registration-modal-context'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 /**
  * Header – performance-optimised rebuild.
@@ -74,8 +75,9 @@ export function Header() {
         const el = document.getElementById(cleanId)
         if (!el) return
 
-        // Ensure body overflow lock is removed
-        document.body.style.overflow = ''
+        // NOTE: the shared scroll-lock manager owns `document.body.style`
+        // and restores the scroll offset itself. Clearing overflow here
+        // would fight with it and leave the page permanently unscrollable.
 
         const headerHeight = headerRef.current?.offsetHeight || 72
         const rect = el.getBoundingClientRect()
@@ -103,10 +105,10 @@ export function Header() {
     href: string,
     onSuccess?: () => void
   ) => {
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = ''
-    }
-
+    // NOTE: do NOT touch `document.body.style.overflow` here.
+    // The shared scroll-lock manager owns that state. Resetting it
+    // manually used to leave the body pinned with `position: fixed`
+    // after navigating from the mobile menu, freezing the whole page.
     onSuccess?.()
     setIsMobileMenuOpen(false)
 
@@ -165,31 +167,14 @@ export function Header() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [triggerHashScroll])
 
-  // Body scroll lock on mobile & desktop when menu is open: freeze body completely so background page NEVER scrolls
-  useEffect(() => {
-    if (typeof document === 'undefined') return
-
-    if (isMobileMenuOpen) {
-      const scrollY = window.scrollY
-      const originalOverflow = document.body.style.overflow
-      const originalPosition = document.body.style.position
-      const originalTop = document.body.style.top
-      const originalWidth = document.body.style.width
-
-      document.body.style.overflow = 'hidden'
-      document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
-      document.body.style.width = '100%'
-
-      return () => {
-        document.body.style.overflow = originalOverflow
-        document.body.style.position = originalPosition
-        document.body.style.top = originalTop
-        document.body.style.width = originalWidth
-        window.scrollTo(0, scrollY)
-      }
-    }
-  }, [isMobileMenuOpen])
+  // Body scroll lock on mobile & desktop when menu is open: freeze the
+  // background completely so the page NEVER scrolls behind the panel.
+  //
+  // We use the shared reference-counted lock (not a local save/restore)
+  // because the registration modal can be opened from INSIDE this menu.
+  // With a local lock, closing one overlay would release the lock while
+  // the other was still open — leaving the page frozen forever.
+  useScrollLock(isMobileMenuOpen)
 
   // useTransition: mark locale updates as non-urgent so the visible tree
   // (header / footer) stays responsive while the new route is prepared.
@@ -197,6 +182,36 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null)
 
   const isHomePage = !pathname || pathname === '/' || pathname === `/${locale}` || pathname === `/${locale}/`
+
+  // Publish the REAL header height as a CSS variable so the mobile nav
+  // panel can align perfectly with the bottom of the header.
+  //
+  // Why: the panel used to hard-code `top-[76px]`. That number drifted
+  // from the actual header height (logo-wrapper 52px + 12px padding x2)
+  // and broke completely on short viewports / with the mobile keyboard
+  // open, because the panel then had almost no scrollable height left.
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+
+    const apply = () => {
+      document.documentElement.style.setProperty(
+        '--epath-header-h',
+        `${el.offsetHeight}px`
+      )
+    }
+
+    apply()
+
+    const ro = new ResizeObserver(apply)
+    ro.observe(el)
+
+    window.addEventListener('resize', apply)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', apply)
+    }
+  }, [])
 
   // rAF-throttled scroll handler. Writes to a DOM attribute instead of
   // setState, so React never re-renders during scroll. Only one DOM
@@ -426,11 +441,27 @@ export function Header() {
       </div>
     </header>
 
-    {/* Mobile Navigation Menu - Full-height Panel with Native Touch Scroll */}
+    {/* Mobile Navigation Menu - Full-height Panel with Native Touch Scroll
+
+        Sizing strategy:
+          - `top` is driven by `--epath-header-h` (the real measured header
+            height, published by the ResizeObserver above) instead of a
+            hard-coded 76px. This keeps the panel flush with the header
+            bottom on every device / breakpoint.
+          - `height` uses `100dvh` (dynamic viewport height) so the panel
+            correctly follows the mobile keyboard and the iOS URL bar.
+          - `overflow-y-auto` (not `overflow-y-scroll`) so the scrollbar
+            only appears when there is actually content to scroll.
+
+        z-index: the panel sits BELOW the header (z-60) on purpose. The
+        header is `position: fixed` and would otherwise intercept the
+        first touch near the top of the panel, making it feel "stuck". */}
     {isMobileMenuOpen && (
       <div
-        className="fixed inset-x-0 top-[76px] sm:top-[84px] bottom-0 z-[55] lg:hidden bg-white overflow-y-scroll overscroll-contain border-t border-[#DEDDD6]"
+        className="fixed inset-x-0 bottom-0 z-[45] lg:hidden bg-white overflow-y-auto overscroll-contain border-t border-[#DEDDD6] pb-[env(safe-area-inset-bottom)]"
         style={{
+          top: 'var(--epath-header-h, 76px)',
+          height: 'calc(100dvh - var(--epath-header-h, 76px))',
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'contain',
           touchAction: 'pan-y',

@@ -17,6 +17,7 @@ import Link from 'next/link'
 import type { Program, Locale } from '@/lib/cms-types'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 import { easeOut, duration } from '@/lib/motion-presets'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 interface Props {
   program: Program | null
@@ -42,12 +43,14 @@ export function ProgramDetailModal({
   levelBgColor,
   onClose,
 }: Props) {
-  // Lock body scroll when modal is open and handle Escape key
+  // Lock body scroll when modal is open and handle Escape key.
+  //
+  // Shared reference-counted lock so overlapping overlays (e.g. this modal
+  // opened from the mobile menu) never release the background lock early.
+  useScrollLock(!!program)
+
   useEffect(() => {
     if (!program) return
-
-    const originalOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -58,7 +61,6 @@ export function ProgramDetailModal({
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      document.body.style.overflow = originalOverflow
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [program, onClose])
@@ -103,7 +105,7 @@ export function ProgramDetailModal({
         exit={{ opacity: 0, scale: 0.95, y: 16 }}
         transition={{ duration: duration.normal, ease: easeOut }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl max-h-[90vh] sm:max-h-[85vh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-[#DEDDD6] z-10 flex flex-col"
+        className="relative w-full max-w-3xl max-h-[90dvh] sm:max-h-[85dvh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-[#DEDDD6] z-10 flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-labelledby="program-detail-title"
@@ -138,7 +140,10 @@ export function ProgramDetailModal({
         </div>
 
         {/* Scrollable Content (Single scrollbar, no nested conflicts) */}
-        <div className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1 overscroll-contain">
+        <div
+          className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1 overscroll-contain"
+          style={{ touchAction: 'pan-y' }}
+        >
           {/* Title & Short Description */}
           <div>
             <h2
