@@ -1240,6 +1240,111 @@
   max-width: 100%;
   box-sizing: border-box;
 }
+
+/* ---------------------------------------------------------------------
+   Mobile menu panel — touch scrolling.
+
+   Why this exists:
+   The panel scrolls, but a swipe only worked when the finger started on
+   the very edge of the screen. In the middle of the panel the browser
+   hijacked the gesture and turned it into a TEXT SELECTION drag.
+
+   Root cause:
+   `<a>` elements are selectable by default. When the user presses and
+   holds (long-press) and then drags, Chrome/Android starts a
+   "selection drag" gesture and CANCELS the pan gesture, so the panel
+   never scrolls. Because the panel is packed with sibling links, the
+   browser happily had text to select on nearly every row.
+
+   Fix:
+   1. `touch-action: pan-y` on the panel AND every descendant, so the
+      browser is told up-front that vertical panning is allowed here
+      and must not be cancelled by a long-press.
+   2. `user-select: none` so a long-press can never begin a text
+      selection drag in the first place.
+   3. `-webkit-overflow-scrolling: touch` for momentum scrolling on
+      iOS Safari.
+   4. `overscroll-behavior: contain` to stop the gesture from chaining
+      to the page behind.
+   --------------------------------------------------------------------- */
+.epath-mobile-panel {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  overflow-y: auto;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Every descendant inherits the same gesture rules. Without this, a
+   long-press on a link starts a selection drag and kills the scroll. */
+.epath-mobile-panel,
+.epath-mobile-panel * {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Long-press on a link would otherwise pop the iOS callout menu and
+     hijack the gesture. */
+  -webkit-touch-callout: none;
+}
+/* ---------------------------------------------------------------------
+   Hide the floating chatbot while a full-screen overlay is open.
+
+   The Preny widget is a `position: fixed` element pinned to the bottom
+   right corner. The mobile nav panel is also fixed and covers the same
+   area, so the widget sits ON TOP of the panel and:
+     - swallows taps on the "Đăng ký ngay" CTA (bottom of the panel), and
+     - intercepts swipe gestures in that corner, so the panel appears
+       to only scroll when you drag along the screen edge.
+
+   The widget lives outside React (it injects itself into <body> and
+   renders inside a shadow root), so we toggle a class on <body> and
+   hide it with plain CSS. `!important` is required because the widget
+   is injected with inline styles.
+   --------------------------------------------------------------------- */
+body.epath-overlay-open #preny-chat-host,
+body.epath-overlay-open #preny-chat-host *,
+body.epath-overlay-open [data-preny-bot-id] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Keep the panel scrollable via keyboard / trackpad for desktop users. */
+.epath-mobile-panel:focus-within {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ---------------------------------------------------------------------
+   Scrollable overlay bodies (registration modal, program detail modal,
+   advisory popup).
+
+   Same long-press problem as the mobile nav panel: the body contains
+   form fields and links, so a press-and-hold starts a text-selection
+   drag or pops the iOS callout menu, cancelling the scroll gesture.
+
+   `touch-action: pan-y` lets the browser know vertical panning is
+   expected here. `user-select: none` stops long-press from turning
+   into a selection drag — but text inputs must stay selectable, so they
+   are re-enabled below.
+   --------------------------------------------------------------------- */
+.epath-scroll-area {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.epath-scroll-area input,
+.epath-scroll-area textarea,
+.epath-scroll-area select,
+.epath-scroll-area [contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
 .epath-mobile-link,
 .epath-header--solid .epath-mobile-link,
 .epath-header[data-solid='true'] .epath-mobile-link,

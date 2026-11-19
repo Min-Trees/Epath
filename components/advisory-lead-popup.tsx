@@ -9,6 +9,7 @@ import { useCmsContext } from '@/lib/cms-context'
 import { DEFAULT_PROMO_POPUP_DATA } from '@/lib/promo-popup-data'
 import type { PromoPopup } from '@/lib/cms-types'
 import { useScrollLock } from '@/lib/use-scroll-lock'
+import { useBodyClass } from '@/lib/use-body-class'
 
 const STORAGE_KEY = 'epath-advisory-popup-dismissed-at'
 
@@ -53,6 +54,10 @@ export function AdvisoryLeadPopup() {
   // viewport. The shared reference-counted lock also prevents the lock
   // from being released early if the registration modal is opened on top.
   useScrollLock(isOpen)
+
+  // Hide the floating chatbot while the popup is open — it sits in the
+  // bottom-right corner and would overlap the popup's action buttons.
+  useBodyClass(isOpen)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -210,10 +215,7 @@ export function AdvisoryLeadPopup() {
             </div>
 
             {/* Right Content Column */}
-            <div
-              className="md:w-7/12 p-5 sm:p-6 flex flex-col justify-between overflow-y-auto overscroll-contain max-h-[60dvh] md:max-h-none"
-              style={{ touchAction: 'pan-y' }}
-            >
+            <div className="epath-scroll-area md:w-7/12 p-5 sm:p-6 flex flex-col justify-between overflow-y-auto overscroll-contain max-h-[60dvh] md:max-h-none">
               <div>
                 <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-[11px] font-bold uppercase tracking-wider mb-2">
                   <GraduationCap className="w-3.5 h-3.5" />

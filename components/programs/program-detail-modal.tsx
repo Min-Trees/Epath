@@ -18,6 +18,7 @@ import type { Program, Locale } from '@/lib/cms-types'
 import { RichTextRenderer } from '@/components/admin/rich-text-renderer'
 import { easeOut, duration } from '@/lib/motion-presets'
 import { useScrollLock } from '@/lib/use-scroll-lock'
+import { useBodyClass } from '@/lib/use-body-class'
 
 interface Props {
   program: Program | null
@@ -48,6 +49,9 @@ export function ProgramDetailModal({
   // Shared reference-counted lock so overlapping overlays (e.g. this modal
   // opened from the mobile menu) never release the background lock early.
   useScrollLock(!!program)
+
+  // Hide the floating chatbot while the modal is open.
+  useBodyClass(!!program)
 
   useEffect(() => {
     if (!program) return
@@ -140,10 +144,7 @@ export function ProgramDetailModal({
         </div>
 
         {/* Scrollable Content (Single scrollbar, no nested conflicts) */}
-        <div
-          className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1 overscroll-contain"
-          style={{ touchAction: 'pan-y' }}
-        >
+        <div className="epath-scroll-area p-5 sm:p-7 overflow-y-auto space-y-6 flex-1 overscroll-contain">
           {/* Title & Short Description */}
           <div>
             <h2

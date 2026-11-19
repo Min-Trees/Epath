@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { duration, easeOut } from '@/lib/motion-presets'
 import { useRegistrationModal } from '@/components/registration-modal-context'
 import { useScrollLock } from '@/lib/use-scroll-lock'
+import { useBodyClass } from '@/lib/use-body-class'
 
 /**
  * Header – performance-optimised rebuild.
@@ -175,6 +176,35 @@ export function Header() {
   // With a local lock, closing one overlay would release the lock while
   // the other was still open — leaving the page frozen forever.
   useScrollLock(isMobileMenuOpen)
+
+  // Hide the floating chatbot while the panel is open — it overlaps the
+  // panel's bottom-right corner (the "Đăng ký ngay" CTA) and blocks both
+  // taps and swipe gestures there.
+  useBodyClass(isMobileMenuOpen)
+
+  // Suppress the long-press context menu inside the mobile nav panel.
+  //
+  // On iOS Safari, pressing and holding on a link pops up the system
+  // callout menu ("Callout / Copy / Look Up"). That menu steals the
+  // gesture, so the subsequent drag never becomes a scroll.
+  //
+  // `contextmenu` is the only event that reliably fires for that callout
+  // on iOS, so preventing it is the standard fix.
+  const mobilePanelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return
+
+    const el = mobilePanelRef.current
+    if (!el) return
+
+    const onContextMenu = (e: Event) => {
+      e.preventDefault()
+    }
+
+    el.addEventListener('contextmenu', onContextMenu)
+    return () => el.removeEventListener('contextmenu', onContextMenu)
+  }, [isMobileMenuOpen])
 
   // useTransition: mark locale updates as non-urgent so the visible tree
   // (header / footer) stays responsive while the new route is prepared.
@@ -458,13 +488,11 @@ export function Header() {
         first touch near the top of the panel, making it feel "stuck". */}
     {isMobileMenuOpen && (
       <div
-        className="fixed inset-x-0 bottom-0 z-[45] lg:hidden bg-white overflow-y-auto overscroll-contain border-t border-[#DEDDD6] pb-[env(safe-area-inset-bottom)]"
+        ref={mobilePanelRef}
+        className="epath-mobile-panel fixed inset-x-0 bottom-0 z-[45] lg:hidden bg-white border-t border-[#DEDDD6] pb-[env(safe-area-inset-bottom)]"
         style={{
           top: 'var(--epath-header-h, 76px)',
           height: 'calc(100dvh - var(--epath-header-h, 76px))',
-          WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'contain',
-          touchAction: 'pan-y',
         }}
       >
         <div className="container mx-auto px-4 sm:px-6 py-4 space-y-1 pb-32">

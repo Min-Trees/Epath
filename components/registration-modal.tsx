@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useScrollLock } from '@/lib/use-scroll-lock'
+import { useBodyClass } from '@/lib/use-body-class'
 
 interface Props {
   isOpen: boolean
@@ -83,6 +84,10 @@ export function RegistrationModal({
   // from inside the mobile menu (or on top of the advisory popup) does
   // not release the background lock when only one of them closes.
   useScrollLock(isOpen)
+
+  // Hide the floating chatbot while the modal is open so it cannot cover
+  // the modal's bottom-right corner (and swallow swipes there).
+  useBodyClass(isOpen)
 
   useEffect(() => {
     if (!isOpen) return
@@ -204,10 +209,7 @@ export function RegistrationModal({
             </div>
 
             {/* Scrollable Form Body */}
-            <div
-              className="p-6 sm:p-8 overflow-y-auto space-y-4 flex-1 overscroll-contain"
-              style={{ touchAction: 'pan-y' }}
-            >
+            <div className="epath-scroll-area p-6 sm:p-8 overflow-y-auto space-y-4 flex-1 overscroll-contain">
               {submitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
