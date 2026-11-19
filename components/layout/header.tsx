@@ -103,21 +103,8 @@ export function Header() {
     href: string,
     onSuccess?: () => void
   ) => {
-    // 1. Immediately unlock fixed body scroll and retrieve locked Y offset
-    let currentY = window.pageYOffset || document.documentElement.scrollTop || 0
     if (typeof document !== 'undefined') {
-      const savedYStr = document.body.getAttribute('data-epath-locked-scroll')
-      if (savedYStr) {
-        currentY = parseInt(savedYStr, 10)
-      }
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.left = ''
-      document.body.style.right = ''
-      document.body.style.width = ''
       document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-      document.body.removeAttribute('data-epath-locked-scroll')
     }
 
     onSuccess?.()
@@ -134,7 +121,6 @@ export function Header() {
     if (hash) {
       if (isSamePage) {
         e.preventDefault()
-        window.scrollTo(0, currentY)
         if (window.location.hash !== `#${hash}`) {
           window.history.pushState(null, '', `#${hash}`)
         }
@@ -179,34 +165,15 @@ export function Header() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [triggerHashScroll])
 
-  // Bulletproof mobile body scroll lock: freeze window.scrollY via position: fixed
+  // Simple body scroll lock when mobile menu is open
   useEffect(() => {
     if (typeof document === 'undefined') return
 
     if (isMobileMenuOpen) {
-      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0
-      document.body.setAttribute('data-epath-locked-scroll', scrollY.toString())
-      document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
-      document.body.style.left = '0'
-      document.body.style.right = '0'
-      document.body.style.width = '100%'
+      const prevOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
-      document.documentElement.style.overflow = 'hidden'
-
       return () => {
-        const savedY = parseInt(document.body.getAttribute('data-epath-locked-scroll') || '0', 10)
-        document.body.style.position = ''
-        document.body.style.top = ''
-        document.body.style.left = ''
-        document.body.style.right = ''
-        document.body.style.width = ''
-        document.body.style.overflow = ''
-        document.documentElement.style.overflow = ''
-        document.body.removeAttribute('data-epath-locked-scroll')
-        if (savedY > 0) {
-          window.scrollTo(0, savedY)
-        }
+        document.body.style.overflow = prevOverflow
       }
     }
   }, [isMobileMenuOpen])
@@ -446,135 +413,101 @@ export function Header() {
       </div>
     </header>
 
-    {/* Mobile Navigation Dropdown & Backdrop */}
+    {/* Mobile Navigation Menu - Clean & Basic Full-height Panel */}
     <AnimatePresence>
       {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 top-[76px] sm:top-[84px] z-[55] lg:hidden flex flex-col bg-black/40 backdrop-blur-xs overscroll-contain"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setIsMobileMenuOpen(false)
-            }
-          }}
-          onTouchMove={(e) => {
-            if (e.target === e.currentTarget) {
-              e.preventDefault()
-            }
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2, ease: easeOut }}
+          className="fixed inset-x-0 top-[76px] sm:top-[84px] bottom-0 z-[55] lg:hidden bg-white overflow-y-auto border-t border-[#DEDDD6]"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          <motion.nav
-            initial={{ opacity: 0, y: -10, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: easeOut }}
-            className="mx-3 sm:mx-4 mt-2 mb-6 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] bg-white rounded-2xl shadow-2xl border border-[#DEDDD6] flex flex-col overflow-hidden"
-            style={{
-              touchAction: 'pan-y',
-            }}
-          >
-            <div
-              className="epath-mobile-nav flex-1 min-h-0 overflow-y-auto overscroll-contain p-3.5 space-y-1 scrollbar-thin"
-              style={{
-                WebkitOverflowScrolling: 'touch',
-                touchAction: 'pan-y',
-              }}
-            >
-              {navItems.map((item, idx) => {
-                const sectionKey = `item-${idx}`
-                const hasChildren = Boolean(item.children && item.children.length > 0)
-                const isExpanded = openMobileSections[sectionKey] ?? true
+          <div className="container mx-auto px-4 sm:px-6 py-4 space-y-1 pb-24">
+            {navItems.map((item, idx) => {
+              const sectionKey = `item-${idx}`
+              const hasChildren = Boolean(item.children && item.children.length > 0)
+              const isExpanded = openMobileSections[sectionKey] ?? true
 
-                return (
-                  <div
-                    key={item.label}
-                    className="border-b border-[#DEDDD6]/50 last:border-b-0 pb-1.5 mb-1"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Link
-                        href={item.href}
-                        scroll={!item.href.includes('#')}
-                        className={cn(
-                          'epath-mobile-link flex-1 block px-3 py-2.5 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
-                          'text-[#1E3570] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
-                        )}
-                        onClick={(e) =>
-                          handleNavClick(e, item.href, () => setIsMobileMenuOpen(false))
-                        }
-                      >
-                        {item.label}
-                      </Link>
-                      {hasChildren && (
-                        <button
-                          type="button"
-                          onClick={() => toggleMobileSection(sectionKey)}
-                          className="w-10 h-10 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
-                          aria-label={`Toggle ${item.label} submenu`}
-                        >
-                          <ChevronDown
-                            className={cn(
-                              'w-4 h-4 transition-transform duration-200',
-                              isExpanded && 'rotate-180'
-                            )}
-                          />
-                        </button>
+              return (
+                <div
+                  key={item.label}
+                  className="border-b border-[#DEDDD6]/50 last:border-b-0 pb-1.5 mb-1"
+                >
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={item.href}
+                      scroll={!item.href.includes('#')}
+                      className={cn(
+                        'flex-1 block px-3 py-2.5 text-base sm:text-lg font-bold rounded-xl transition-colors duration-200',
+                        'text-[#1E3570] hover:bg-[#2E4A9E]/8 hover:text-[#2E4A9E]'
                       )}
-                    </div>
-
-                    {hasChildren && isExpanded && (
-                      <div className="pl-4 pr-1 py-1 flex flex-col gap-0.5 space-y-0.5 border-l-2 border-[#2E4A9E]/20 ml-3 my-1">
-                        {item.children!.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            scroll={!child.href.includes('#')}
-                            className={cn(
-                              'epath-mobile-sublink flex items-center px-3 py-2 text-sm sm:text-base rounded-lg transition-all duration-200',
-                              'text-[#5C6069] hover:bg-[#F6F5F1] hover:text-[#2E4A9E]'
-                            )}
-                            onClick={(e) =>
-                              handleNavClick(e, child.href, () => setIsMobileMenuOpen(false))
-                            }
-                          >
-                            <span>{child.label}</span>
-                          </Link>
-                        ))}
-                      </div>
+                      onClick={(e) =>
+                        handleNavClick(e, item.href, () => setIsMobileMenuOpen(false))
+                      }
+                    >
+                      {item.label}
+                    </Link>
+                    {hasChildren && (
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileSection(sectionKey)}
+                        className="w-10 h-10 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
+                        aria-label={`Toggle ${item.label} submenu`}
+                      >
+                        <ChevronDown
+                          className={cn(
+                            'w-4 h-4 transition-transform duration-200',
+                            isExpanded && 'rotate-180'
+                          )}
+                        />
+                      </button>
                     )}
                   </div>
-                )
-              })}
 
-              {/* CTA Register Button */}
-              <div className="pt-4 pb-2 px-1">
-                <button
-                  type="button"
-                  className="flex items-center justify-center w-full py-3.5 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-base cursor-pointer"
-                  onClick={() => {
-                    if (typeof document !== 'undefined') {
-                      const savedYStr = document.body.getAttribute('data-epath-locked-scroll')
-                      const currentY = savedYStr ? parseInt(savedYStr, 10) : 0
-                      document.body.style.position = ''
-                      document.body.style.top = ''
-                      document.body.style.left = ''
-                      document.body.style.right = ''
-                      document.body.style.width = ''
-                      document.body.style.overflow = ''
-                      document.documentElement.style.overflow = ''
-                      document.body.removeAttribute('data-epath-locked-scroll')
-                      if (currentY > 0) {
-                        window.scrollTo(0, currentY)
-                      }
-                    }
-                    setIsMobileMenuOpen(false)
-                    openRegistrationModal({ source: 'header-mobile' })
-                  }}
-                >
-                  <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
-                </button>
-              </div>
+                  {hasChildren && isExpanded && (
+                    <div className="pl-4 pr-1 py-1 flex flex-col gap-0.5 space-y-0.5 border-l-2 border-[#2E4A9E]/20 ml-3 my-1">
+                      {item.children!.map((child) => (
+                        <Link
+                          key={child.label}
+                          href={child.href}
+                          scroll={!child.href.includes('#')}
+                          className={cn(
+                            'flex items-center px-3 py-2 text-sm sm:text-base rounded-lg transition-all duration-200',
+                            'text-[#5C6069] hover:bg-[#F6F5F1] hover:text-[#2E4A9E]'
+                          )}
+                          onClick={(e) =>
+                            handleNavClick(e, child.href, () => setIsMobileMenuOpen(false))
+                          }
+                        >
+                          <span>{child.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            {/* CTA Register Button */}
+            <div className="pt-4 pb-6 px-1">
+              <button
+                type="button"
+                className="flex items-center justify-center w-full py-3.5 text-center bg-gradient-to-r from-[#F05A28] to-[#E04D1A] hover:from-[#E04D1A] hover:to-[#D03D0A] text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-base cursor-pointer"
+                onClick={() => {
+                  if (typeof document !== 'undefined') {
+                    document.body.style.overflow = ''
+                  }
+                  setIsMobileMenuOpen(false)
+                  openRegistrationModal({ source: 'header-mobile' })
+                }}
+              >
+                <span>{locale === 'vi' ? 'Đăng ký ngay' : 'Register'}</span>
+              </button>
             </div>
-          </motion.nav>
-        </div>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   </>
