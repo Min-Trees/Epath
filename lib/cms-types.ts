@@ -602,6 +602,7 @@ export const HeroContentSchema = z.object({
   backgroundImage: z.string().default(''),
   mobileBackgroundImage: z.string().optional().default(''),
   slides: z.array(z.string()).optional().default([]),
+  mobileSlides: z.array(z.string()).optional().default([]),
   finalSlideIndex: z.number().optional().default(-1),
   slideInterval: z.number().optional().default(4),
   isActive: z.boolean().default(true),
@@ -628,6 +629,7 @@ export const AboutContentSchema = z.object({
   milestones: z.string().default('[]'), // JSON array of { year, title, description }
   // About Hero Image
   heroImage: z.string().default(''),
+  mobileHeroImage: z.string().optional().default(''),
 })
 export type AboutContentInput = z.infer<typeof AboutContentSchema>
 export type AboutContent = Omit<AboutContentInput, 'id'> & { id: string }
@@ -913,6 +915,7 @@ export const PartnersContentSchema = z.object({
     title: LocalizedStringSchema,
     subtitle: LocalizedStringSchema,
     bannerUrl: z.string().default(''),
+    mobileBannerUrl: z.string().optional().default(''),
   }),
   cta: z.object({
     title: LocalizedStringSchema,

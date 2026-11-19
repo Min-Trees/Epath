@@ -32,6 +32,7 @@ const defaultForm: Partial<AboutContent> = {
   facultySubtitle: { vi: '', en: '' },
   milestones: '[]',
   heroImage: '',
+  mobileHeroImage: '',
 }
 
 export function AboutContentForm({ load, update, create }: AboutContentFormProps) {
@@ -244,14 +245,44 @@ export function AboutContentForm({ load, update, create }: AboutContentFormProps
                 Ảnh này sẽ xuất hiện tại khối &ldquo;VỀ EPATH EDUCATION&rdquo; trên Trang chủ và đầu trang Giới thiệu (/about).
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-5">
-              <ImagePicker
-                value={form.heroImage ?? ''}
-                onChange={(url) => setField('heroImage', url)}
-                label="Tải ảnh lên S3 hoặc chọn từ thư viện"
-                helperText="Khuyên dùng ảnh chụp học sinh hoặc hoạt động học thuật sắc nét (tỷ lệ 4:3 hoặc 16:9)."
-                folder="about"
-              />
+            <CardContent className="pt-5 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5 p-3 rounded-xl bg-gray-50/80 border border-gray-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-xs font-bold text-[#1E3570] flex items-center gap-1.5">
+                      <span>1. Ảnh Desktop</span>
+                      <span className="text-[10px] text-[#2E4A9E] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-bold">
+                        Màn hình lớn
+                      </span>
+                    </Label>
+                  </div>
+                  <ImagePicker
+                    value={form.heroImage ?? ''}
+                    onChange={(url) => setField('heroImage', url)}
+                    label="Tải ảnh lên S3 hoặc chọn từ thư viện"
+                    helperText="Khuyên dùng ảnh chụp học sinh sắc nét (tỷ lệ 4:3 hoặc 16:9)."
+                    folder="about"
+                  />
+                </div>
+
+                <div className="space-y-1.5 p-3 rounded-xl bg-[#F4F9EC]/60 border border-[#D5E7B8]">
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-xs font-bold text-[#3B6D11] flex items-center gap-1.5">
+                      <span>2. Ảnh Mobile (Tùy chọn)</span>
+                      <span className="text-[10px] text-[#5C9024] bg-[#E2F0D0] px-2 py-0.5 rounded-full font-bold">
+                        Mobile riêng
+                      </span>
+                    </Label>
+                  </div>
+                  <ImagePicker
+                    value={form.mobileHeroImage ?? ''}
+                    onChange={(url) => setField('mobileHeroImage', url)}
+                    label="Chọn hoặc tải ảnh mobile riêng"
+                    helperText="Hiển thị riêng trên điện thoại (tỷ lệ 4:5 hoặc 3:4). Nếu để trống sẽ dùng ảnh Desktop."
+                    folder="about"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 

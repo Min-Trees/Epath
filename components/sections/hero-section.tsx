@@ -132,6 +132,7 @@ export function HeroSection({
 
   // Slideshow configuration
   const rawSlides = (hero?.slides as string[] | undefined) || []
+  const rawMobileSlides = (hero?.mobileSlides as string[] | undefined) || []
   const configuredSlides = rawSlides.filter((s) => typeof s === 'string' && s.trim().length > 0)
   const slides =
     configuredSlides.length > 0
@@ -139,6 +140,7 @@ export function HeroSection({
       : pageId === 'home' && !backgroundImage
       ? DEFAULT_HOME_SLIDES
       : []
+  const mobileSlides = rawMobileSlides
 
   const descriptionText =
     (hero && pickLocalized(hero.subtitle, locale)) ||
@@ -204,6 +206,39 @@ export function HeroSection({
     resetTimer()
   }
 
+  // Mobile touch swipe handling for Hero Slideshow
+  const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (slides.length <= 1) return
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (slides.length <= 1 || touchStartX.current === null || touchStartY.current === null) return
+    const touchEndX = e.changedTouches[0].clientX
+    const touchEndY = e.changedTouches[0].clientY
+    const deltaX = touchEndX - touchStartX.current
+    const deltaY = touchEndY - touchStartY.current
+
+    // Only switch slide if horizontal swipe is intentional (> 35px and more horizontal than vertical)
+    if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+      if (deltaX < 0) {
+        // Swipe left -> Next slide
+        setCurrentSlideIndex((prev) => (prev + 1) % slides.length)
+        resetTimer()
+      } else {
+        // Swipe right -> Prev slide
+        setCurrentSlideIndex((prev) => (prev - 1 + slides.length) % slides.length)
+        resetTimer()
+      }
+    }
+    touchStartX.current = null
+    touchStartY.current = null
+  }
+
 
   // Marquee items according to current locale
   const marqueeItems = locale === 'en' ? MARQUEE_ITEMS_EN : MARQUEE_ITEMS_VI
@@ -258,6 +293,8 @@ export function HeroSection({
         className="hero-section relative min-h-screen flex flex-col overflow-hidden is-visible"
         style={{ backgroundColor: '#e8e8e8' }}
         aria-label="Hero"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* ── Layer 1A: Solid gray background (bottom-most) ─────────── */}
         <div
@@ -294,6 +331,7 @@ export function HeroSection({
           ) : slides.length > 0 ? (
             slides.map((url, idx) => {
               const isActive = idx === currentSlideIndex
+              const mobileSlideUrl = mobileSlides[idx]?.trim()
               return (
                 <div
                   key={idx}
@@ -305,29 +343,34 @@ export function HeroSection({
                   }}
                   aria-hidden={!isActive}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={url}
-                    alt=""
-                    className="w-full h-full object-cover select-none pointer-events-none"
-                    style={
-                      isActive
-                        ? {
-                            animation: 'heroKenBurns 9s linear forwards',
-                            willChange: 'transform',
-                            transformOrigin: 'center center',
-                          }
-                        : {
-                            animation: 'none',
-                            transform: 'scale(1)',
-                            transition: 'transform 1.2s ease',
-                            willChange: 'transform',
-                          }
-                    }
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                  />
+                  <picture className="w-full h-full block">
+                    {mobileSlideUrl ? (
+                      <source media="(max-width: 768px)" srcSet={mobileSlideUrl} />
+                    ) : null}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt=""
+                      className="w-full h-full object-cover select-none pointer-events-none"
+                      style={
+                        isActive
+                          ? {
+                              animation: 'heroKenBurns 9s linear forwards',
+                              willChange: 'transform',
+                              transformOrigin: 'center center',
+                            }
+                          : {
+                              animation: 'none',
+                              transform: 'scale(1)',
+                              transition: 'transform 1.2s ease',
+                              willChange: 'transform',
+                            }
+                      }
+                      loading={idx === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </picture>
                 </div>
               )
             })
@@ -475,19 +518,23 @@ export function HeroSection({
 
         {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ─── */}
         {slides.length > 1 && (
-          <div className="absolute bottom-14 right-6 sm:right-12 z-30 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 shadow-lg">
+          <div className="absolute bottom-14 right-4 sm:right-12 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSelectSlide(idx)}
                 aria-label={`Chuyển tới slide ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  idx === currentSlideIndex
-                    ? 'w-6 bg-[#8bc53f]'
-                    : 'w-2 bg-white/50 hover:bg-white/90'
-                }`}
-              />
+                className="h-7 px-1 flex items-center justify-center cursor-pointer"
+              >
+                <span
+                  className={`h-2 rounded-full transition-all duration-300 block ${
+                    idx === currentSlideIndex
+                      ? 'w-6 bg-[#8bc53f] shadow-sm'
+                      : 'w-2 bg-white/50 hover:bg-white/90'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         )}

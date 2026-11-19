@@ -210,6 +210,7 @@ export const DEFAULT_PARTNERS_CONTENT: PartnersContentInput = {
       en: 'EPath Education partners with premier global academic, testing, and technology organizations to provide a certified, comprehensive K-12 learning ecosystem.',
     },
     bannerUrl: '/images/partners/partner-edmentum.jpg',
+    mobileBannerUrl: '',
   },
   cta: {
     title: {

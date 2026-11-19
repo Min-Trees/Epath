@@ -32,6 +32,7 @@ export function IntroSection() {
   const cmsTitle = pick(aboutContent?.introTitle, locale).trim()
   const cmsText = pick(aboutContent?.introContent, locale).trim()
   const heroImage = aboutContent?.heroImage?.trim() || '/images/about/about-story.jpg'
+  const mobileHeroImage = aboutContent?.mobileHeroImage?.trim() || ''
 
   // Determine headline
   const defaultHeadline = isVi ? (
@@ -218,13 +219,18 @@ export function IntroSection() {
           >
             <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-white bg-[#F6F5F1]">
               <div className="aspect-[4/5] sm:aspect-[3/4] relative overflow-hidden group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={heroImage}
-                  alt={typeof headline === 'string' ? headline : 'EPath Education'}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  loading="lazy"
-                />
+                <picture className="w-full h-full block">
+                  {mobileHeroImage ? (
+                    <source media="(max-width: 768px)" srcSet={mobileHeroImage} />
+                  ) : null}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={heroImage}
+                    alt={typeof headline === 'string' ? headline : 'EPath Education'}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </picture>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1E3570]/85 via-[#1E3570]/20 to-transparent pointer-events-none" />
 
                 {/* Top Badge */}

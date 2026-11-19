@@ -30,7 +30,9 @@ const defaultForm: Partial<HeroContent> = {
   videoUrl: '',
   videoThumbnail: '',
   backgroundImage: '',
+  mobileBackgroundImage: '',
   slides: [],
+  mobileSlides: [],
   finalSlideIndex: -1,
   slideInterval: 4,
   isActive: true,
@@ -153,10 +155,19 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
   }
 
   const slides = (form.slides as string[] | undefined) || []
+  const mobileSlides = (form.mobileSlides as string[] | undefined) || []
 
   const addSlide = () => {
-    const next = [...slides, '']
-    setField('slides', next)
+    const nextSlides = [...slides, '']
+    const nextMobile = [...mobileSlides]
+    while (nextMobile.length < nextSlides.length) {
+      nextMobile.push('')
+    }
+    setForm((prev) => ({
+      ...prev,
+      slides: nextSlides,
+      mobileSlides: nextMobile,
+    }))
   }
 
   const updateSlide = (idx: number, url: string) => {
@@ -165,29 +176,61 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
     setField('slides', next)
   }
 
-  const removeSlide = (idx: number) => {
-    const next = slides.filter((_, i) => i !== idx)
-    setField('slides', next)
-    if (form.finalSlideIndex === idx) {
-      setField('finalSlideIndex', -1)
-    } else if (typeof form.finalSlideIndex === 'number' && form.finalSlideIndex > idx) {
-      setField('finalSlideIndex', form.finalSlideIndex - 1)
+  const updateMobileSlide = (idx: number, url: string) => {
+    const next = [...mobileSlides]
+    while (next.length <= idx) {
+      next.push('')
     }
+    next[idx] = url
+    setField('mobileSlides', next)
+  }
+
+  const removeSlide = (idx: number) => {
+    const nextSlides = slides.filter((_, i) => i !== idx)
+    const nextMobile = mobileSlides.filter((_, i) => i !== idx)
+    setForm((prev) => ({
+      ...prev,
+      slides: nextSlides,
+      mobileSlides: nextMobile,
+      finalSlideIndex:
+        prev.finalSlideIndex === idx
+          ? -1
+          : typeof prev.finalSlideIndex === 'number' && prev.finalSlideIndex > idx
+          ? prev.finalSlideIndex - 1
+          : prev.finalSlideIndex,
+    }))
   }
 
   const moveSlide = (idx: number, direction: -1 | 1) => {
     const targetIdx = idx + direction
     if (targetIdx < 0 || targetIdx >= slides.length) return
-    const next = [...slides]
-    const temp = next[idx]
-    next[idx] = next[targetIdx]
-    next[targetIdx] = temp
-    setField('slides', next)
-    if (form.finalSlideIndex === idx) {
-      setField('finalSlideIndex', targetIdx)
-    } else if (form.finalSlideIndex === targetIdx) {
-      setField('finalSlideIndex', idx)
+    const nextSlides = [...slides]
+    const temp = nextSlides[idx]
+    nextSlides[idx] = nextSlides[targetIdx]
+    nextSlides[targetIdx] = temp
+
+    const nextMobile = [...mobileSlides]
+    while (nextMobile.length < slides.length) {
+      nextMobile.push('')
     }
+    const tempMobile = nextMobile[idx]
+    nextMobile[idx] = nextMobile[targetIdx]
+    nextMobile[targetIdx] = tempMobile
+
+    setForm((prev) => {
+      let nextFinal = prev.finalSlideIndex
+      if (prev.finalSlideIndex === idx) {
+        nextFinal = targetIdx
+      } else if (prev.finalSlideIndex === targetIdx) {
+        nextFinal = idx
+      }
+      return {
+        ...prev,
+        slides: nextSlides,
+        mobileSlides: nextMobile,
+        finalSlideIndex: nextFinal,
+      }
+    })
   }
 
   if (isLoading) {
@@ -468,12 +511,45 @@ export function HeroContentForm({ load, update, create, remove }: HeroContentFor
                       </div>
                     </div>
 
-                    <ImagePicker
-                      value={url}
-                      onChange={(newUrl) => updateSlide(idx, newUrl)}
-                      label={`Chọn hoặc tải ảnh #${idx + 1}`}
-                      folder="hero"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* 1. Desktop Slide Image */}
+                      <div className="space-y-1.5 p-3 rounded-xl bg-gray-50/80 border border-gray-200">
+                        <div className="flex items-center justify-between mb-1">
+                          <Label className="text-xs font-bold text-[#1E3570] flex items-center gap-1.5">
+                            <span>1. Ảnh Slide Desktop</span>
+                            <span className="text-[10px] text-[#2E4A9E] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-bold">
+                              16:9 Ngang
+                            </span>
+                          </Label>
+                        </div>
+                        <ImagePicker
+                          value={url}
+                          onChange={(newUrl) => updateSlide(idx, newUrl)}
+                          label={`Chọn hoặc tải ảnh desktop #${idx + 1}`}
+                          helperText="Hiển thị trên máy tính/laptop (khuyên dùng tỷ lệ 16:9 hoặc 21:9)."
+                          folder="hero"
+                        />
+                      </div>
+
+                      {/* 2. Mobile Slide Image */}
+                      <div className="space-y-1.5 p-3 rounded-xl bg-[#F4F9EC]/60 border border-[#D5E7B8]">
+                        <div className="flex items-center justify-between mb-1">
+                          <Label className="text-xs font-bold text-[#3B6D11] flex items-center gap-1.5">
+                            <span>2. Ảnh Slide Mobile (Tùy chọn)</span>
+                            <span className="text-[10px] text-[#5C9024] bg-[#E2F0D0] px-2 py-0.5 rounded-full font-bold">
+                              Mobile riêng
+                            </span>
+                          </Label>
+                        </div>
+                        <ImagePicker
+                          value={mobileSlides[idx] || ''}
+                          onChange={(newUrl) => updateMobileSlide(idx, newUrl)}
+                          label={`Chọn hoặc tải ảnh mobile #${idx + 1}`}
+                          helperText="Hiển thị riêng trên điện thoại (tỷ lệ 9:16 hoặc 4:5 dọc). Nếu để trống sẽ dùng ảnh Desktop."
+                          folder="hero"
+                        />
+                      </div>
+                    </div>
 
                     <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
                       <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-gray-700 select-none">

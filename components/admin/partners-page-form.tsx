@@ -280,20 +280,46 @@ export function PartnersPageForm() {
             </div>
           </div>
 
-          <div>
-            <Label className="text-xs font-semibold text-[#1E3570] block mb-1">
-              Hình ảnh Banner đại diện trang Đối tác
-            </Label>
-            <ImagePicker
-              value={form.hero?.bannerUrl || ''}
-              onChange={(url) =>
-                setForm({
-                  ...form,
-                  hero: { ...form.hero, bannerUrl: url },
-                })
-              }
-              folder="partners"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5 p-3 rounded-xl bg-gray-50/80 border border-gray-200">
+              <Label className="text-xs font-bold text-[#1E3570] flex items-center gap-1.5 mb-1">
+                <span>1. Banner Desktop</span>
+                <span className="text-[10px] text-[#2E4A9E] bg-[#EAEFFB] px-2 py-0.5 rounded-full font-bold">
+                  Màn hình lớn
+                </span>
+              </Label>
+              <ImagePicker
+                value={form.hero?.bannerUrl || ''}
+                onChange={(url) =>
+                  setForm({
+                    ...form,
+                    hero: { ...form.hero, bannerUrl: url },
+                  })
+                }
+                helperText="Banner ngang hiển thị trên máy tính/laptop."
+                folder="partners"
+              />
+            </div>
+
+            <div className="space-y-1.5 p-3 rounded-xl bg-[#F4F9EC]/60 border border-[#D5E7B8]">
+              <Label className="text-xs font-bold text-[#3B6D11] flex items-center gap-1.5 mb-1">
+                <span>2. Banner Mobile (Tùy chọn)</span>
+                <span className="text-[10px] text-[#5C9024] bg-[#E2F0D0] px-2 py-0.5 rounded-full font-bold">
+                  Mobile riêng
+                </span>
+              </Label>
+              <ImagePicker
+                value={form.hero?.mobileBannerUrl || ''}
+                onChange={(url) =>
+                  setForm({
+                    ...form,
+                    hero: { ...form.hero, mobileBannerUrl: url },
+                  })
+                }
+                helperText="Hiển thị riêng trên điện thoại. Nếu để trống sẽ dùng ảnh Desktop."
+                folder="partners"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
