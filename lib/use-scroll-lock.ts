@@ -15,38 +15,61 @@ import { useEffect, useRef } from 'react'
  * The counter guarantees the lock is only released when the LAST
  * overlay closes.
  *
- * iOS Safari ignores `overflow: hidden` on <body> alone, so we also pin
- * the body with `position: fixed` and restore the exact scroll offset on
- * release. That combination is what makes the background truly frozen
- * on iOS while still allowing the overlay itself to scroll.
+ * ── CRITICAL: why we do NOT use `position: fixed` on <body> ──────────────
+ * The classic iOS scroll-lock trick is `body { position: fixed; top: -Ypx }`.
+ * It DOES freeze the background — but it also breaks every nested scroll
+ * container on the page:
+ *
+ *   When <body> is `position: fixed`, the browser promotes the document
+ *   element to the ONLY scroll container. Nested `overflow-y: auto` boxes
+ *   stop receiving touch gestures entirely, because the swipe is handed
+ *   to the (now frozen, zero-height) document scroller instead.
+ *
+ *   Measured in this repo: with the body pinned, `documentElement.
+ *   scrollHeight` collapsed from 8481px to 690px (viewport height only),
+ *   so the mobile nav panel had NO scrollable ancestor left to scroll —
+ *   `panel.scrollTop = 300` worked programmatically but a real finger
+ *   swipe never moved it. That is exactly the "menu mobile không cuộn
+ *   được" symptom.
+ *
+ * Instead we lock with `overflow: hidden` on BOTH <html> and <body>:
+ *   - <html> is the real document scroller, so hiding its overflow stops
+ *     the background from scrolling.
+ *   - <body> overflow:hidden stops iOS Safari from scrolling the body.
+ *   - `overscroll-behavior: none` prevents scroll chaining / rubber-band
+ *     from leaking the gesture back to the page.
+ *   - The document keeps its full scroll height, so nested overlays
+ *     (mobile nav panel, modal bodies) scroll perfectly.
+ *
+ * We still capture and restore the scroll offset so closing an overlay
+ * never leaves the user at a different position than where they started.
  */
 let lockCount = 0
-let savedOverflow = ''
-let savedPosition = ''
-let savedTop = ''
-let savedLeft = ''
-let savedRight = ''
-let savedWidth = ''
+let savedHtmlOverflow = ''
+let savedBodyOverflow = ''
+let savedHtmlOverscroll = ''
+let savedBodyOverscroll = ''
 let savedScrollY = 0
 
 function lock() {
   if (typeof document === 'undefined') return
 
   if (lockCount === 0) {
-    savedOverflow = document.body.style.overflow
-    savedPosition = document.body.style.position
-    savedTop = document.body.style.top
-    savedLeft = document.body.style.left
-    savedRight = document.body.style.right
-    savedWidth = document.body.style.width
+    const html = document.documentElement
+    const body = document.body
+
+    savedHtmlOverflow = html.style.overflow
+    savedBodyOverflow = body.style.overflow
+    savedHtmlOverscroll = html.style.overscrollBehavior
+    savedBodyOverscroll = body.style.overscrollBehavior
     savedScrollY = window.scrollY
 
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${savedScrollY}px`
-    document.body.style.left = '0'
-    document.body.style.right = '0'
-    document.body.style.width = '100%'
+    // Lock the document scroller + the body. No `position: fixed` so that
+    // nested scroll containers keep receiving touch gestures.
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    html.style.overscrollBehavior = 'none'
+    body.style.overscrollBehavior = 'none'
   }
 
   lockCount++
@@ -58,12 +81,13 @@ function unlock() {
   lockCount = Math.max(0, lockCount - 1)
   if (lockCount > 0) return
 
-  document.body.style.overflow = savedOverflow
-  document.body.style.position = savedPosition
-  document.body.style.top = savedTop
-  document.body.style.left = savedLeft
-  document.body.style.right = savedRight
-  document.body.style.width = savedWidth
+  const html = document.documentElement
+  const body = document.body
+
+  html.style.overflow = savedHtmlOverflow
+  body.style.overflow = savedBodyOverflow
+  html.style.overscrollBehavior = savedHtmlOverscroll
+  body.style.overscrollBehavior = savedBodyOverscroll
 
   // Restore the scroll position captured at lock time. Without this the
   // page jumps back to the top whenever an overlay closes.
