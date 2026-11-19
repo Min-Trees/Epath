@@ -38,18 +38,13 @@ export function Header() {
   const { openRegistrationModal } = useRegistrationModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  // Track open sections on mobile accordion (default all expanded)
-  const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({
-    'item-1': true,
-    'item-2': true,
-    'item-4': true,
-    'item-5': true,
-  })
+  // Track open sections on mobile accordion (default collapsed for clean, compact mobile view)
+  const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({})
 
   const toggleMobileSection = (key: string) => {
     setOpenMobileSections((prev) => ({
       ...prev,
-      [key]: !(prev[key] ?? true),
+      [key]: !prev[key],
     }))
   }
 
@@ -165,11 +160,11 @@ export function Header() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [triggerHashScroll])
 
-  // Simple body scroll lock when mobile menu is open
+  // Body scroll lock on desktop only; avoid locking on mobile to preserve iOS Safari touch gesture pipeline
   useEffect(() => {
     if (typeof document === 'undefined') return
 
-    if (isMobileMenuOpen) {
+    if (isMobileMenuOpen && window.innerWidth >= 1024) {
       const prevOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       return () => {
@@ -417,18 +412,22 @@ export function Header() {
     <AnimatePresence>
       {isMobileMenuOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2, ease: easeOut }}
-          className="fixed inset-x-0 top-[76px] sm:top-[84px] bottom-0 z-[55] lg:hidden bg-white overflow-y-auto border-t border-[#DEDDD6]"
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="fixed inset-x-0 top-[76px] sm:top-[84px] bottom-0 z-[55] lg:hidden bg-white overflow-y-auto overscroll-contain touch-pan-y border-t border-[#DEDDD6]"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorY: 'contain',
+            touchAction: 'pan-y',
+          }}
         >
-          <div className="container mx-auto px-4 sm:px-6 py-4 space-y-1 pb-24">
+          <div className="container mx-auto px-4 sm:px-6 py-4 space-y-1 pb-28">
             {navItems.map((item, idx) => {
               const sectionKey = `item-${idx}`
               const hasChildren = Boolean(item.children && item.children.length > 0)
-              const isExpanded = openMobileSections[sectionKey] ?? true
+              const isExpanded = Boolean(openMobileSections[sectionKey])
 
               return (
                 <div
@@ -453,12 +452,12 @@ export function Header() {
                       <button
                         type="button"
                         onClick={() => toggleMobileSection(sectionKey)}
-                        className="w-10 h-10 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-lg transition-all cursor-pointer mr-1"
+                        className="w-12 h-12 flex items-center justify-center text-[#5C6069] hover:text-[#2E4A9E] hover:bg-[#F6F5F1] rounded-xl transition-all cursor-pointer mr-0.5"
                         aria-label={`Toggle ${item.label} submenu`}
                       >
                         <ChevronDown
                           className={cn(
-                            'w-4 h-4 transition-transform duration-200',
+                            'w-5 h-5 transition-transform duration-200',
                             isExpanded && 'rotate-180'
                           )}
                         />
