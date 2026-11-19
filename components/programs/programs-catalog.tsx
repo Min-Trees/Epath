@@ -238,7 +238,10 @@ export function ProgramsCatalog({
                           {/* Card Content */}
                           <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                             <div>
-                              <Link href={`/${locale}/programs/${p.slug || p.id}`} className="block">
+                              <Link
+                                href={`/${locale}/programs/${p.slug || p.id}`}
+                                className="block inline-flex items-center min-h-[32px]"
+                              >
                                 <h3 className="text-base font-bold mb-1.5 text-[#20242B] group-hover:text-[#2E4A9E] transition-colors duration-300">
                                   {title}
                                 </h3>
@@ -271,7 +274,7 @@ export function ProgramsCatalog({
                             <div className="pt-3 border-t border-[#DEDDD6]/60 flex items-center justify-between gap-2 mt-1">
                               <Link
                                 href={`/${locale}/programs/${p.slug || p.id}`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200 min-h-[44px] sm:min-h-0"
                               >
                                 <Eye className="w-3.5 h-3.5" />
                                 <span>{translations.viewDetails}</span>
@@ -286,7 +289,7 @@ export function ProgramsCatalog({
                                     source: 'catalog-grid',
                                   })
                                 }
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs bg-[#FEF0E9] text-[#F26522] hover:bg-[#F26522] hover:text-white transition-all duration-200 cursor-pointer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs bg-[#FEF0E9] text-[#F26522] hover:bg-[#F26522] hover:text-white transition-all duration-200 cursor-pointer min-h-[44px] sm:min-h-0"
                               >
                                 <span>{translations.register}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
@@ -332,7 +335,7 @@ export function ProgramsCatalog({
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap mb-0.5">
                                 <span
-                                  className="px-2 py-0.2 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                  className="px-2 py-0.2 rounded-full text-xs font-bold uppercase tracking-wider sm:text-[10px]"
                                   style={{ backgroundColor: level.bgColor, color: level.color }}
                                 >
                                   {translations.levels[level.id]}
@@ -358,7 +361,7 @@ export function ProgramsCatalog({
                           <div className="flex items-center gap-2 flex-shrink-0 justify-end pt-2 md:pt-0 border-t md:border-t-0 border-[#DEDDD6]">
                             <Link
                               href={`/${locale}/programs/${p.slug || p.id}`}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#EAEFFB] text-[#2E4A9E] hover:bg-[#2E4A9E] hover:text-white transition-all duration-200 min-h-[44px] sm:min-h-0"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>{translations.viewDetails}</span>

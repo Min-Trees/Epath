@@ -239,9 +239,14 @@ export function StepModelSection({ id = 'step-timeline', className = '' }: StepM
                       <IconComponent className="w-5 h-5 text-white" />
                     </motion.div>
 
+                    {/* RESPONSIVE NOTE:
+                        This animated in from `x: 14`, pushing the card 14px
+                        past the right viewport edge on mobile. Animating on
+                        the Y axis keeps the entrance motion without
+                        exceeding the screen width. */}
                     <motion.div
-                      initial={{ opacity: 0, x: 14 }}
-                      whileInView={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 14 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                       viewport={inViewViewport}
                       transition={{
                         duration: duration.normal,

@@ -37,7 +37,7 @@ export function ProgramsStages({ foundation, advanced, compact }: Props) {
               <BookOpen className="w-5 h-5 text-[#2E4A9E]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2E4A9E]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#2E4A9E] sm:text-[11px]">
                 Giai đoạn 01
               </span>
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#20242B]">
@@ -89,7 +89,7 @@ export function ProgramsStages({ foundation, advanced, compact }: Props) {
               <Sparkles className="w-5 h-5 text-[#F26522]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#F26522]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#F26522] sm:text-[11px]">
                 Giai đoạn 02
               </span>
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#20242B]">

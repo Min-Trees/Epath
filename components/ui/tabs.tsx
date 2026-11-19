@@ -13,7 +13,10 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
+      // RESPONSIVE NOTE (tap target):
+      // h-10 = 40px, below the 44px guideline on phones.
+      // Mobile uses h-11 (44px); desktop keeps the original h-10.
+      'inline-flex h-11 sm:h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
       className
     )}
     {...props}

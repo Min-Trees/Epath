@@ -74,10 +74,18 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
 
         {/* 2 Comparison Cards - Wider and Compact */}
         <div className="grid lg:grid-cols-2 gap-5 lg:gap-6 items-stretch">
-          {/* Card 1: Dual Diploma */}
+          {/* Card 1: Dual Diploma
+
+              RESPONSIVE NOTE:
+              The entrance used to slide in from `x: -16`, which pushed the
+              card 16px past the LEFT viewport edge on mobile. Since these
+              cards sit in a `grid lg:grid-cols-2` (single column below
+              `lg`), the horizontal offset had no visual purpose on mobile
+              and only caused overflow. Y-axis keeps the motion, minus the
+              overflow. */}
           <motion.div
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.slow, ease: easeOut }}
             className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-lg border border-[#DEDDD6] hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
@@ -94,13 +102,13 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
                 <div className="absolute top-2.5 left-2.5 flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#2E4A9E] text-white text-[11px] font-bold tracking-wider uppercase shadow-xs">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#2E4A9E] text-white text-xs font-bold tracking-wider uppercase shadow-xs sm:text-[11px]">
                     {translations.dual.label}
                   </span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-semibold drop-shadow flex items-center justify-between">
                   <span>{isVi ? 'Song Bằng Mỹ' : 'US Dual Diploma'}</span>
-                  <span className="text-[11px] bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded-full">Cognia & WASC</span>
+                  <span className="text-xs bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded-full sm:text-[11px]">Cognia & WASC</span>
                 </div>
               </div>
 
@@ -114,34 +122,34 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
               {/* 4 Quick Spec Badges in 1 Row on sm+ */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3.5">
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🎓 Văn bằng:' : '🎓 Diploma:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? 'Bằng VN + Mỹ' : 'VN & US'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '⏱️ Tín chỉ:' : '⏱️ Credits:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? '5 tín chỉ Mỹ' : '5 US Credits'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🏫 Hình thức:' : '🏫 Mode:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? 'Song song' : 'Concurrent'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🏛️ Kiểm định:' : '🏛️ Accredit:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     Cognia & WASC
                   </span>
                 </div>
@@ -171,7 +179,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
             </div>
 
             <div className="mt-1 space-y-2.5">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#8DC63F]/15 border-l-2 border-[#5C9024] text-[11px] text-[#20242B]">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#8DC63F]/15 border-l-2 border-[#5C9024] text-xs text-[#20242B] sm:text-[11px]">
                 <Info className="w-3.5 h-3.5 flex-shrink-0 text-[#5C9024]" />
                 <span className="truncate">{translations.dual.note}</span>
               </div>
@@ -192,10 +200,13 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
             </div>
           </motion.div>
 
-          {/* Card 2: Fulltime Homeschool */}
+          {/* Card 2: Fulltime Homeschool
+
+              RESPONSIVE NOTE: see Card 1 above — `x: 16` overflowed the
+              right viewport edge on mobile, so it now animates on Y. */}
           <motion.div
-            initial={{ opacity: 0, x: 16 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={inViewViewport}
             transition={{ duration: duration.slow, delay: 0.08, ease: easeOut }}
             className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-lg border border-[#DEDDD6] hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between"
@@ -212,13 +223,13 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
                 <div className="absolute top-2.5 left-2.5 flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#F26522] text-white text-[11px] font-bold tracking-wider uppercase shadow-xs">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#F26522] text-white text-xs font-bold tracking-wider uppercase shadow-xs sm:text-[11px]">
                     {translations.fulltime.label}
                   </span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-semibold drop-shadow flex items-center justify-between">
                   <span>{isVi ? 'Tú Tài Mỹ Toàn Phần' : 'Full-Time US Diploma'}</span>
-                  <span className="text-[11px] bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded-full">Cognia & WASC</span>
+                  <span className="text-xs bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded-full sm:text-[11px]">Cognia & WASC</span>
                 </div>
               </div>
 
@@ -232,34 +243,34 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
               {/* 4 Quick Spec Badges in 1 Row on sm+ */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3.5">
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🎓 Văn bằng:' : '🎓 Diploma:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? 'Bằng Tú tài Mỹ' : 'US Diploma'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '⏱️ Tín chỉ:' : '⏱️ Credits:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? '21.5 tín chỉ' : '21.5 Credits'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🏫 Hình thức:' : '🏫 Mode:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     {isVi ? 'Online 100%' : 'Full-time Online'}
                   </span>
                 </div>
                 <div className="py-1">
-                  <span className="text-[10px] font-bold text-[#5C6069] block mb-0.5">
+                  <span className="text-xs font-bold text-[#5C6069] block mb-0.5 sm:text-[10px]">
                     {isVi ? '🏛️ Kiểm định:' : '🏛️ Accredit:'}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
+                  <span className="text-xs sm:text-xs font-bold text-[#1E3570] leading-tight block truncate">
                     Cognia & NCAA
                   </span>
                 </div>
@@ -289,7 +300,7 @@ export function ProgramsEdOptions({ locale, compact, dualImage, fulltimeImage, t
             </div>
 
             <div className="mt-1 space-y-2.5">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F26522]/10 border-l-2 border-[#F26522] text-[11px] text-[#20242B]">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F26522]/10 border-l-2 border-[#F26522] text-xs text-[#20242B] sm:text-[11px]">
                 <Globe2 className="w-3.5 h-3.5 flex-shrink-0 text-[#F26522]" />
                 <span className="truncate">
                   {isVi

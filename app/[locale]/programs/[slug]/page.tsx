@@ -215,7 +215,7 @@ export default function ProgramDetailPage() {
             </Link>
             <ChevronRight className="w-3.5 h-3.5 text-[#8E939E]" />
             <span
-              className="px-2 py-0.5 rounded-md font-semibold text-[11px]"
+              className="px-2 py-0.5 rounded-md font-semibold text-xs sm:text-[11px]"
               style={{ backgroundColor: levelDef.lightBg, color: levelDef.color }}
             >
               {t(`levels.${levelDef.id}`)}
@@ -609,7 +609,7 @@ export default function ProgramDetailPage() {
                               {relTitle}
                             </h4>
                             {rel.ageRange && (
-                              <p className="text-[11px] text-[#5C6069] flex items-center gap-1 mt-0.5">
+                              <p className="text-xs text-[#5C6069] flex items-center gap-1 mt-0.5 sm:text-[11px]">
                                 <Clock className="w-3 h-3 text-[#F26522]" />
                                 <span>{formatAgeRange(rel.ageRange, locale)}</span>
                               </p>

@@ -204,7 +204,7 @@ export function AdvisoryLeadPopup() {
               </picture>
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3.5 right-3.5 text-white">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8DC63F] text-[#20242B] mb-1.5 uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#8DC63F] text-[#20242B] mb-1.5 uppercase tracking-wider sm:text-[10px]">
                   <Sparkles className="w-3 h-3" />
                   {tagText}
                 </span>
@@ -217,7 +217,7 @@ export function AdvisoryLeadPopup() {
             {/* Right Content Column */}
             <div className="epath-scroll-area md:w-7/12 p-5 sm:p-6 flex flex-col justify-between overflow-y-auto overscroll-contain max-h-[60dvh] md:max-h-none">
               <div>
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-[11px] font-bold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2E4A9E]/10 text-[#2E4A9E] text-xs font-bold uppercase tracking-wider mb-2 sm:text-[11px]">
                   <GraduationCap className="w-3.5 h-3.5" />
                   <span>{badgeText}</span>
                 </div>
@@ -271,7 +271,7 @@ export function AdvisoryLeadPopup() {
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="text-[11px] text-[#5C6069] hover:text-[#20242B] underline cursor-pointer"
+                    className="text-xs text-[#5C6069] hover:text-[#20242B] underline cursor-pointer sm:text-[11px]"
                   >
                     {dismissBtnText}
                   </button>

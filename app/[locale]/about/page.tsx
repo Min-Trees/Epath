@@ -187,9 +187,17 @@ export default function AboutPage() {
               )}
             </motion.div>
 
+            {/* RESPONSIVE NOTE:
+                This used to animate in from `x: 20`. On a 390px viewport
+                that pushed the element's right edge to 394px — 4px past
+                the screen — which produced a horizontal overflow that
+                `overflow-x: clip` on <html> was silently hiding.
+
+                Animating on the Y axis instead keeps the entrance motion
+                but never exceeds the viewport width. */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={inViewViewport}
               transition={{ duration: duration.slow, ease: easeOut }}
               className="relative group max-w-md mx-auto lg:max-w-none"
@@ -252,7 +260,7 @@ export default function AboutPage() {
                   <div className="w-10 h-10 bg-[#2E4A9E]/10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-108 shadow-xs">
                     <Eye className="w-5 h-5 text-[#2E4A9E]" />
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#2E4A9E]/10 text-[#2E4A9E] border border-[#2E4A9E]/20">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2E4A9E]/10 text-[#2E4A9E] border border-[#2E4A9E]/20 sm:text-[11px]">
                     {isVi ? 'Tầm nhìn chiến lược' : 'Strategic Vision'}
                   </span>
                 </div>
@@ -274,7 +282,7 @@ export default function AboutPage() {
 
                 {/* Key Strategic Pillars */}
                 <div className="space-y-1.5 mb-4">
-                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-bold text-[#1E3570] uppercase tracking-wider mb-2 sm:text-[11px]">
                     {isVi ? 'Trụ Cột Phát Triển Dài Hạn' : 'Key Strategic Pillars'}
                   </h4>
 
@@ -328,7 +336,7 @@ export default function AboutPage() {
                   <div className="w-10 h-10 bg-[#8DC63F]/15 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-108 shadow-xs">
                     <Target className="w-5 h-5 text-[#5C9024]" />
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#8DC63F]/15 text-[#5C9024] border border-[#8DC63F]/30">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#8DC63F]/15 text-[#5C9024] border border-[#8DC63F]/30 sm:text-[11px]">
                     {isVi ? 'Sứ mệnh hành động' : 'Action Mission'}
                   </span>
                 </div>
@@ -350,7 +358,7 @@ export default function AboutPage() {
 
                 {/* Key Mission Pillars */}
                 <div className="space-y-1.5 mb-4">
-                  <h4 className="text-[11px] font-bold text-[#1E3570] uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-bold text-[#1E3570] uppercase tracking-wider mb-2 sm:text-[11px]">
                     {isVi ? 'Trụ Cột Hành Động Cốt Lõi' : 'Core Action Pillars'}
                   </h4>
 
@@ -459,7 +467,7 @@ export default function AboutPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2 mb-1">
                         <span
-                          className="text-[11px] font-black tracking-wider uppercase"
+                          className="text-xs font-black tracking-wider uppercase sm:text-[11px]"
                           style={{ color: accent.color }}
                         >
                           0{index + 1}
@@ -634,7 +642,7 @@ export default function AboutPage() {
                         <IconComponent className="w-5 h-5" />
                       </div>
                       {cardTag && (
-                        <span className={`absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${theme.badgeBg} text-white shadow-xs`}>
+                        <span className={`absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full text-xs sm:text-[11px] font-bold ${theme.badgeBg} text-white shadow-xs`}>
                           {cardTag}
                         </span>
                       )}

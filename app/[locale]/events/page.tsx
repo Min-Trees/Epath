@@ -227,14 +227,14 @@ export default function EventsPage() {
                         <div className="flex items-center gap-2 flex-wrap mb-2">
                           {((event as Record<string, unknown>).badge as string) && (
                             <span
-                              className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                              className="px-2.5 py-0.5 rounded-full text-xs font-bold sm:text-[11px]"
                               style={{ backgroundColor: `${accent.color}15`, color: accent.color }}
                             >
                               {localizeBadge((event as Record<string, unknown>).badge as string)}
                             </span>
                           )}
                           {((event as Record<string, unknown>).format as string) && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F6F5F1] text-[#5C6069] border border-[#DEDDD6]">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#F6F5F1] text-[#5C6069] border border-[#DEDDD6] sm:text-[10px]">
                               {localizeFormat((event as Record<string, unknown>).format as string)}
                             </span>
                           )}

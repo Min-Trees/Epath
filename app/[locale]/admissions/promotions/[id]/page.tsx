@@ -313,7 +313,7 @@ export default function PromotionDetailPage() {
               {flyer.targetProgram && (
                 <div className="p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#F6F5F1] border border-[#DEDDD6] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-[#2E4A9E] text-white mb-2">
+                    <span className="inline-block px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-[#2E4A9E] text-white mb-2 sm:text-[11px]">
                       {isVi ? 'Lộ trình đào tạo liên kết' : 'Linked Pathway'}
                     </span>
                     <h3 className="text-base sm:text-lg font-bold text-[#1E3570] mb-1">
@@ -474,7 +474,7 @@ export default function PromotionDetailPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             {otherBadge && (
-                              <span className="text-[10px] font-bold text-[#F26522] uppercase tracking-wider block mb-0.5">
+                              <span className="text-xs font-bold text-[#F26522] uppercase tracking-wider block mb-0.5 sm:text-[10px]">
                                 {otherBadge}
                               </span>
                             )}

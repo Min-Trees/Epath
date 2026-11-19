@@ -138,7 +138,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-[#1E3570] text-sm sm:text-base mb-0.5">Email</h3>
                     <p className="text-xs sm:text-sm text-[#5C6069] leading-relaxed">
-                      <a href="mailto:infor@epath.edu.vn" className="text-[#5C6069] hover:text-[#2E4A9E] transition-colors">
+                      <a href="mailto:infor@epath.edu.vn" className="text-[#5C6069] hover:text-[#2E4A9E] transition-colors inline-flex items-center min-h-[32px]">
                         infor@epath.edu.vn
                       </a>
                     </p>

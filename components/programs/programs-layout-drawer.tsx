@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -7,13 +8,14 @@ import {
   RotateCcw,
   Check,
   Eye,
-  EyeOff,
+    EyeOff,
   LayoutGrid,
   Sparkles,
 } from 'lucide-react'
 import type { ProgramsLayoutConfig, SectionVisibility, LayoutDensity } from './types'
 import { DEFAULT_LAYOUT_CONFIG } from './types'
 import { duration, easeOut } from '@/lib/motion-presets'
+import { cn } from '@/lib/utils'
 import type { Locale } from '@/lib/cms-types'
 
 interface Props {
@@ -65,6 +67,23 @@ export function ProgramsLayoutDrawer({
   onChangeConfig,
   onClose,
 }: Props) {
+  // The drawer animates differently on mobile (bottom sheet) vs desktop
+  // (right slide-over), so we need to know the breakpoint. Framer Motion
+  // needs a static `initial`/`animate` variant, so this is resolved on
+  // the client and re-evaluated when the drawer opens.
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const mq = window.matchMedia('(max-width: 639px)')
+    const apply = () => setIsMobile(mq.matches)
+
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [isOpen])
+
   if (!isOpen) return null
 
   const isVi = locale === 'vi'
@@ -96,7 +115,14 @@ export function ProgramsLayoutDrawer({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] overflow-hidden flex justify-end">
+      <div
+        className={cn(
+          'fixed inset-0 z-[100] overflow-hidden flex',
+          // Mobile: bottom sheet (align to bottom, panel slides up).
+          // sm+: right slide-over (align to the right edge).
+          isMobile ? 'items-end' : 'justify-end'
+        )}
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -107,18 +133,45 @@ export function ProgramsLayoutDrawer({
           className="fixed inset-0 bg-[#1E3570]/50 backdrop-blur-sm"
         />
 
-        {/* Slide-over panel */}
+        {/* Slide-over panel
+
+            RESPONSIVE NOTE:
+            The panel used to be `w-full max-w-md`, which on a phone meant
+            it covered 100% of the screen — a settings drawer taking over
+            the whole viewport with no visible page behind it.
+
+            On mobile it is now a BOTTOM SHEET (slides up, max 88dvh tall)
+            so the page stays visible above it. From `sm:` up it keeps the
+            original right-hand slide-over behaviour.
+
+            The animation differs per breakpoint, so we read the viewport
+            width at mount time and use the matching variant. */}
         <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
+          initial={isMobile ? { y: '100%' } : { x: '100%' }}
+          animate={isMobile ? { y: 0 } : { x: 0 }}
+          exit={isMobile ? { y: '100%' } : { x: '100%' }}
           transition={{ duration: duration.slow, ease: easeOut }}
-          className="relative w-full max-w-md bg-white h-full shadow-2xl z-10 flex flex-col border-l border-[#DEDDD6]"
+          className={cn(
+            'relative bg-white shadow-2xl z-10 flex flex-col',
+            isMobile
+              ? // Bottom sheet on mobile: anchored to the bottom, rounded
+                // top corners, scrollable, never taller than 88dvh.
+                'w-full max-h-[88dvh] rounded-t-3xl border-t border-[#DEDDD6]'
+              : // Slide-over panel from sm up.
+                'w-full max-w-md h-full border-l border-[#DEDDD6]'
+          )}
         >
           {/* Header */}
           <div className="px-6 py-5 border-b border-[#DEDDD6] bg-[#F6F5F1] flex items-center justify-between">
+            {/* Drag handle — mobile bottom-sheet affordance. */}
+            {isMobile && (
+              <div
+                aria-hidden
+                className="absolute left-1/2 -translate-x-1/2 -top-2.5 h-1 w-10 rounded-full bg-[#DEDDD6]"
+              />
+            )}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#2E4A9E]/10 flex items-center justify-center text-[#2E4A9E]">
+              <div className="w-10 h-10 rounded-xl bg-[#2E4A9E]/10 flex items-center justify-center text-[#2E4A9E] shrink-0">
                 <SlidersHorizontal className="w-5 h-5" />
               </div>
               <div>
@@ -135,7 +188,7 @@ export function ProgramsLayoutDrawer({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full text-[#5C6069] hover:text-[#20242B] hover:bg-black/5 transition-colors"
+              className="p-2 rounded-full text-[#5C6069] hover:text-[#20242B] hover:bg-black/5 transition-colors shrink-0"
               aria-label="Đóng"
             >
               <X className="w-5 h-5" />
@@ -143,7 +196,7 @@ export function ProgramsLayoutDrawer({
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          <div className="p-6 overflow-y-auto overscroll-contain space-y-6 flex-1">
             {/* Density switch */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#20242B] mb-2.5">

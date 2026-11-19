@@ -134,12 +134,16 @@ export function Footer(props: FooterProps) {
             <p className="text-white/80 text-xs sm:text-sm mb-6 leading-relaxed">
               {footerDesc}
             </p>
+            {/* RESPONSIVE NOTE:
+                Social icons were 36x36px (w-9 h-9). Bumped to 44x44px so
+                they meet the recommended minimum tap target on phones.
+                The icon glyph itself stays at w-4 h-4. */}
             <div className="flex gap-2.5">
               <a
                 href={fbUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#2E4A9E] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
+                className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#2E4A9E] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
                 aria-label="Facebook"
               >
                 <Facebook className="w-4 h-4" />
@@ -148,7 +152,7 @@ export function Footer(props: FooterProps) {
                 href={ytUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#F26522] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
+                className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#F26522] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
                 aria-label="YouTube"
               >
                 <Youtube className="w-4 h-4" />
@@ -157,7 +161,7 @@ export function Footer(props: FooterProps) {
                 href={igUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
+                className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -167,7 +171,7 @@ export function Footer(props: FooterProps) {
                   href={tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
+                  className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#8DC63F] hover:text-white transition-all duration-200 hover:-translate-y-0.5"
                   aria-label="TikTok"
                 >
                   <Music2 className="w-4 h-4" />
@@ -185,7 +189,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#breakthrough-english`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Tiếng Anh Bứt Phá' : 'SpeedUp English'}
                 </Link>
@@ -193,7 +197,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#science-foundation`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Nền tảng Khoa học Quốc tế (Mầm non - Gr 2)' : 'Science & Academic Foundation'}
                 </Link>
@@ -201,7 +205,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#elementary`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Chương trình Tiểu học (Lớp 3 – 5)' : 'Elementary Programs (Grades 3–5)'}
                 </Link>
@@ -209,7 +213,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#middle`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Chương trình THCS (Lớp 6 – 8)' : 'Middle School Programs (Grades 6–8)'}
                 </Link>
@@ -217,7 +221,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#high`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Chương trình THPT (Lớp 9 – 12)' : 'High School Programs (Grades 9–12)'}
                 </Link>
@@ -225,7 +229,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/programs#personal-development`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {isVi ? 'Phát triển Năng lực Cá nhân' : 'Personal Development'}
                 </Link>
@@ -242,7 +246,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/about`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.aboutUs')}
                 </Link>
@@ -250,7 +254,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/about#vision`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.vision')}
                 </Link>
@@ -258,7 +262,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/about#values`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.values')}
                 </Link>
@@ -266,7 +270,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/partners`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.partners')}
                 </Link>
@@ -274,7 +278,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/admissions`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.admissions')}
                 </Link>
@@ -282,7 +286,7 @@ export function Footer(props: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/events`}
-                  className="text-white/75 hover:text-white transition-colors duration-200 inline-block hover:translate-x-1 transition-transform"
+                  className="text-white/75 hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px] py-1 hover:translate-x-1 transition-transform"
                 >
                   {t('quickLinks.events')}
                 </Link>
@@ -306,7 +310,7 @@ export function Footer(props: FooterProps) {
                 <Phone className="w-4 h-4 text-[#8DC63F] shrink-0" />
                 <a
                   href={`tel:${phone.replace(/\s/g, '')}`}
-                  className="text-white/80 hover:text-white transition-colors duration-200 font-semibold"
+                  className="text-white/80 hover:text-white transition-colors duration-200 font-semibold inline-flex items-center min-h-[32px]"
                 >
                   {phone}
                 </a>
@@ -315,7 +319,7 @@ export function Footer(props: FooterProps) {
                 <Mail className="w-4 h-4 text-[#8DC63F] shrink-0" />
                 <a
                   href={`mailto:${email}`}
-                  className="text-white/80 hover:text-white transition-colors duration-200 break-all"
+                  className="text-white/80 hover:text-white transition-colors duration-200 break-all inline-flex items-center min-h-[32px]"
                 >
                   {email}
                 </a>
@@ -354,15 +358,19 @@ export function Footer(props: FooterProps) {
               {copyrightText}
             </p>
             <div className="flex gap-5">
+              {/* RESPONSIVE NOTE (tap target):
+                  These legal links were only ~16px tall. `inline-flex
+                  items-center min-h-[32px]` grows the hit box while
+                  keeping the visual position identical. */}
               <Link
                 href={`/${locale}/privacy`}
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px]"
               >
                 {t('privacy')}
               </Link>
               <Link
                 href={`/${locale}/terms`}
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-white transition-colors duration-200 inline-flex items-center min-h-[32px]"
               >
                 {t('terms')}
               </Link>

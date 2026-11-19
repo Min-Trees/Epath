@@ -67,6 +67,12 @@ export function LanguageSwitcher() {
   return (
     <div className="flex items-center gap-1.5 sm:gap-2">
 
+      {/* RESPONSIVE NOTE (tap target):
+          The flag buttons wrapped a 28x28px image, so the clickable area
+          was only ~27-29px — below the 44px guideline on phones.
+          The <button> is now 44x44px on mobile (w-11 h-11) and the image
+          keeps its current visual size, so the layout is unchanged
+          visually but the whole 44px square is now tappable. */}
       <button
         type="button"
         onClick={() => switchLanguage('vi')}
@@ -74,6 +80,9 @@ export function LanguageSwitcher() {
         title="Tiếng Việt"
         className={cn(
           'transition-all duration-200 rounded-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3a54a4]',
+          // Keep the 44x44px tap target up to `lg` — a tablet is still a
+          // touch device, so the compact size only applies on desktop.
+          'w-11 h-11 lg:w-auto lg:h-auto',
           activeLocale === 'vi'
             ? 'opacity-100 scale-105 cursor-default'
             : 'opacity-55 hover:opacity-100 scale-95 hover:scale-100 cursor-pointer'
@@ -95,6 +104,9 @@ export function LanguageSwitcher() {
         title="English"
         className={cn(
           'transition-all duration-200 rounded-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3a54a4]',
+          // Keep the 44x44px tap target up to `lg` — a tablet is still a
+          // touch device, so the compact size only applies on desktop.
+          'w-11 h-11 lg:w-auto lg:h-auto',
           activeLocale === 'en'
             ? 'opacity-100 scale-105 cursor-default'
             : 'opacity-55 hover:opacity-100 scale-95 hover:scale-100 cursor-pointer'

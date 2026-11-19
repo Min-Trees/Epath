@@ -195,7 +195,7 @@ export default function PartnersPage() {
                       {/* Top Category Badge */}
                       <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
                         <span
-                          className="px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-md tracking-wide"
+                          className="px-3 py-1 rounded-full text-xs font-bold text-white shadow-md tracking-wide sm:text-[11px]"
                           style={{ backgroundColor: badgeBg }}
                         >
                           {badgeLabel}
@@ -219,7 +219,7 @@ export default function PartnersPage() {
                             <span className="text-xs sm:text-sm font-bold text-white drop-shadow-sm block truncate">
                               {badgeLabel}
                             </span>
-                            <span className="text-[10px] sm:text-[11px] text-white/80 block uppercase tracking-wider">
+                            <span className="text-xs sm:text-[11px] text-white/80 block uppercase tracking-wider">
                               {partner.category.toUpperCase()} • EPATH ACCREDITED
                             </span>
                           </div>
@@ -250,7 +250,7 @@ export default function PartnersPage() {
                             href={partner.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[#1E3570] hover:text-[#8DC63F] font-bold text-xs sm:text-sm hover:underline shrink-0 pt-1 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-[#1E3570] hover:text-[#8DC63F] font-bold text-xs sm:text-sm hover:underline shrink-0 pt-1 transition-colors min-h-[32px]"
                           >
                             <span>{t('visitWebsite')}</span>
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -274,7 +274,7 @@ export default function PartnersPage() {
                           <button
                             type="button"
                             onClick={() => toggleExpand(partner.id)}
-                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#2E4A9E] hover:text-[#F26522] mt-2 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold min-h-[32px] text-[#2E4A9E] hover:text-[#F26522] mt-2 transition-colors cursor-pointer"
                           >
                             <span>{isExpanded ? (isVi ? 'Thu gọn' : 'Show less') : (isVi ? 'Xem thêm' : 'Read more')}</span>
                             <ChevronDown
@@ -297,7 +297,7 @@ export default function PartnersPage() {
                             {partner.features.map((feat, i) => (
                               <li key={i} className="flex items-start gap-2.5">
                                 <div
-                                  className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-[10px]"
+                                  className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-xs sm:text-[10px]"
                                   style={{ backgroundColor: accent.color }}
                                 >
                                   <Check className="w-2.5 h-2.5" />

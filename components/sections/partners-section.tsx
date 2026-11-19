@@ -133,7 +133,7 @@ export function PartnersSection() {
                     {/* Badge */}
                     <div className="flex justify-center mb-4">
                       <span
-                        className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wide"
+                        className="px-3 py-1 rounded-full text-xs font-bold tracking-wide sm:text-[11px]"
                         style={{ backgroundColor: badge.bg, color: badge.color }}
                       >
                         {isVi ? badge.label.vi : badge.label.en}
@@ -205,7 +205,7 @@ export function PartnersSection() {
               </div>
               <div className="text-left">
                 <div className="font-bold text-xs sm:text-sm text-[#20242B]">{cert.name}</div>
-                <div className="text-[11px] text-[#5C6069]">{t(cert.descriptionKey)}</div>
+                <div className="text-xs text-[#5C6069] sm:text-[11px]">{t(cert.descriptionKey)}</div>
               </div>
             </div>
           ))}

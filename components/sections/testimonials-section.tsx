@@ -206,7 +206,14 @@ export function TestimonialsSection() {
               </>
             )}
 
-            {/* Pagination Dots */}
+            {/* Pagination Dots
+
+                RESPONSIVE NOTE (tap target):
+                The dot button itself was h-3 w-3 (12x12px), far below the
+                44px minimum. The visible pill is now drawn by an inner
+                <span> while the <button> gets a 44x44px hit area.
+                `-my-3`/`-mx-1` cancel the extra padding so the row keeps
+                its original visual spacing. */}
             {list.length > 1 && (
               <div className="flex justify-center gap-2 mt-8">
                 {list.map((_, index) => (
@@ -215,12 +222,16 @@ export function TestimonialsSection() {
                     onClick={() => setCurrent(index)}
                     type="button"
                     aria-label={`Go to testimonial ${index + 1}`}
-                    className={`h-3 rounded-full transition-all duration-300 ease-out cursor-pointer ${
-                      index === current
-                        ? 'bg-[#2E4A9E] w-8'
-                        : 'bg-[#DEDDD6] hover:bg-[#2E4A9E]/50 w-3'
-                    }`}
-                  />
+                    className="w-11 h-11 -my-3 flex items-center justify-center cursor-pointer"
+                  >
+                    <span
+                      className={`h-3 rounded-full transition-all duration-300 ease-out block ${
+                        index === current
+                          ? 'bg-[#2E4A9E] w-8'
+                          : 'bg-[#DEDDD6] hover:bg-[#2E4A9E]/50 w-3'
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
             )}

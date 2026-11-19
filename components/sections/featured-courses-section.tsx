@@ -169,7 +169,7 @@ export function FeaturedCoursesSection({ initialData }: FeaturedCoursesSectionPr
                   {/* Level / Age Tag */}
                   {courseLevel && (
                     <div className="absolute top-3 left-3">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[11px] font-bold text-[#1E3570] shadow-xs border border-white/60">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-[#1E3570] shadow-xs border border-white/60 sm:text-[11px]">
                         <Clock className="w-3 h-3 text-[#8DC63F]" />
                         {courseLevel}
                       </span>
@@ -182,7 +182,7 @@ export function FeaturedCoursesSection({ initialData }: FeaturedCoursesSectionPr
                       {badgesList.map((badge, bIdx) => (
                         <span
                           key={bIdx}
-                          className="px-2 py-0.5 rounded bg-black/50 backdrop-blur-md text-[10px] font-medium text-white border border-white/20 truncate"
+                          className="px-2 py-0.5 rounded bg-black/50 backdrop-blur-md text-xs font-medium text-white border border-white/20 truncate sm:text-[10px]"
                         >
                           {badge}
                         </span>

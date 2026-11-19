@@ -187,13 +187,28 @@ export function CoreValuesSection() {
                   />
                 </div>
 
-                {/* iSchool expanding More button – anchored to bottom baseline */}
+                {/* iSchool expanding More button – anchored to bottom baseline.
+
+                    IMPORTANT (responsive):
+                    The "Tìm hiểu thêm / More" label was `opacity-0 max-w-0`
+                    and only expanded on `group-hover`. Touch devices have NO
+                    hover state, so on mobile the label was permanently
+                    invisible and the arrow button had no accessible name.
+
+                    Fix: the label is ALWAYS visible on mobile (where there is
+                    no hover to reveal it) and only collapses on desktop, where
+                    the hover expand is a meaningful interaction. */}
                 <div className="relative z-10 mt-auto pt-2 flex items-center">
                   <Link
                     href={`/${locale}/about#values`}
                     className="inline-flex items-center text-sm font-medium text-[#414042]"
+                    aria-label={
+                      locale === 'en'
+                        ? 'More about our core values'
+                        : 'Tìm hiểu thêm về giá trị cốt lõi'
+                    }
                   >
-                    <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
+                    <span className="max-w-[140px] sm:max-w-0 sm:opacity-0 overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[140px] group-hover:opacity-100 group-hover:mr-2 text-[#2E4A9E]">
                       {locale === 'en' ? 'More' : 'Tìm hiểu thêm'}
                     </span>
                     <span

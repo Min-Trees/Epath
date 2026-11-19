@@ -516,16 +516,23 @@ export function HeroSection({
           </div>
         </div>
 
-        {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ─── */}
+        {/* ── Layer 3.5: Slide navigation dots (if multiple slides) ───
+
+            RESPONSIVE NOTE:
+            The visible dot is only 8px (h-2 w-2), which is far too small
+            to tap reliably on a phone. The <button> wrapper is stretched
+            to a 44x44px hit area while the dot keeps its visual size.
+            The negative vertical margin keeps the visual alignment
+            identical to before so the pill does not grow. */}
         {slides.length > 1 && (
-          <div className="absolute bottom-14 right-4 sm:right-12 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-lg">
+          <div className="absolute bottom-14 right-4 sm:right-12 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-1.5 py-1 rounded-full border border-white/20 shadow-lg">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSelectSlide(idx)}
                 aria-label={`Chuyển tới slide ${idx + 1}`}
-                className="h-7 px-1 flex items-center justify-center cursor-pointer"
+                className="w-11 h-11 -my-2 flex items-center justify-center cursor-pointer"
               >
                 <span
                   className={`h-2 rounded-full transition-all duration-300 block ${
@@ -558,7 +565,7 @@ export function HeroSection({
                 key={idx}
                 className="inline-flex items-center mx-1.5 sm:mx-2 flex-shrink-0"
               >
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/85 hover:bg-white text-[#1e3570] font-semibold text-[11px] sm:text-xs tracking-wide shadow-[0_2px_8px_rgba(30,53,112,0.14)] hover:shadow-[0_3px_12px_rgba(30,53,112,0.22)] transition-all duration-300 cursor-default">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/85 hover:bg-white text-[#1e3570] font-semibold text-xs sm:text-xs tracking-wide shadow-[0_2px_8px_rgba(30,53,112,0.14)] hover:shadow-[0_3px_12px_rgba(30,53,112,0.22)] transition-all duration-300 cursor-default">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F] shadow-[0_0_6px_rgba(141,198,63,0.8)] shrink-0" />
                   {item}
                 </span>

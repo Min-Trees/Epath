@@ -252,7 +252,7 @@ export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
                           <h4 className="text-xs sm:text-sm font-bold text-[#20242B] mb-0.5">
                             {item.title}
                           </h4>
-                          <p className="text-[11px] sm:text-xs text-[#5C6069] leading-normal">
+                          <p className="text-xs sm:text-xs text-[#5C6069] leading-normal">
                             {item.desc}
                           </p>
                         </div>
@@ -262,7 +262,7 @@ export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#E5E4DE] text-[11px] sm:text-xs text-[#5C6069] flex items-center gap-2">
+              <div className="mt-6 pt-4 border-t border-[#E5E4DE] text-xs sm:text-xs text-[#5C6069] flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#F26522]" />
                 <span>{isVi ? 'Những yếu tố thường khiến lộ trình học tập bị gián đoạn' : 'Factors that commonly disrupt educational continuity'}</span>
               </div>
@@ -300,7 +300,7 @@ export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
                         <span className="w-5 h-5 rounded-full bg-[#8DC63F]/20 text-[#5C9024] flex items-center justify-center shrink-0">
                           <Check className="w-3 h-3 stroke-[2.5]" />
                         </span>
-                        <span className="text-[11px] font-bold text-[#5C9024] uppercase tracking-wider">
+                        <span className="text-xs font-bold text-[#5C9024] uppercase tracking-wider sm:text-[11px]">
                           {item.tag}
                         </span>
                       </div>
@@ -345,7 +345,7 @@ export function ProgramsIntro({ p1, p2, compact, isTop = true }: Props) {
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#F6F5F1] text-[#20242B] text-[10px] font-bold uppercase tracking-wider border border-[#DEDDD6]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#F6F5F1] text-[#20242B] text-xs font-bold uppercase tracking-wider border border-[#DEDDD6] sm:text-[10px]">
                       {metric.badge}
                     </span>
                     <div className="w-8 h-8 rounded-xl bg-[#EAEFFB] text-[#2E4A9E] flex items-center justify-center">

@@ -44,7 +44,7 @@ export function ProgramsPersonalized({ compact, translations }: Props) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#8DC63F] block mb-0.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#8DC63F] block mb-0.5 sm:text-[11px]">
                   {isVi ? 'Đồng hành 1 kèm 1' : '1-on-1 Mentorship'}
                 </span>
                 <span className="text-xs font-semibold text-white/95 leading-snug block">
@@ -61,7 +61,7 @@ export function ProgramsPersonalized({ compact, translations }: Props) {
                     <Globe2 className="w-5 h-5 text-[#5C9024]" />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#5C9024]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#5C9024] sm:text-[11px]">
                       {isVi ? 'Cố vấn học thuật' : 'Academic Advisory'}
                     </span>
                     <h2 className="text-lg sm:text-xl font-bold text-[#20242B]">
@@ -75,7 +75,7 @@ export function ProgramsPersonalized({ compact, translations }: Props) {
                 </p>
 
                 <div className="py-2.5 border-t border-[#DEDDD6]/60 mb-3">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#20242B] mb-2">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#20242B] mb-2 sm:text-[11px]">
                     {translations.goalsTitle}
                   </p>
                   <ul className="space-y-1.5">

@@ -360,7 +360,7 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
                       <span
-                        className="px-2.5 py-0.5 rounded-full text-[11px] font-black tracking-wider uppercase backdrop-blur-md shadow-xs"
+                        className="px-2.5 py-0.5 rounded-full text-xs font-black tracking-wider uppercase backdrop-blur-md shadow-xs sm:text-[11px]"
                         style={{ backgroundColor: `${step.color}E6` }}
                       >
                         {isVi ? `Bước ${step.step}` : `Step ${step.step}`}
@@ -414,7 +414,7 @@ export function ProgramsRoadmap({ locale, compact, isTop = true }: Props) {
                   {/* Outcomes Box */}
                   {step.outcomes.length > 0 && (
                     <div className="py-2.5 border-t border-[#DEDDD6]/60 mb-3">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-[#20242B] mb-2 flex items-center gap-1.5">
+                      <div className="text-xs font-bold uppercase tracking-wider text-[#20242B] mb-2 flex items-center gap-1.5 sm:text-[11px]">
                         <Award className="w-3.5 h-3.5" style={{ color: step.color }} />
                         <span>{isVi ? 'Mục tiêu & Chuẩn đầu ra:' : 'Key Outcomes:'}</span>
                       </div>

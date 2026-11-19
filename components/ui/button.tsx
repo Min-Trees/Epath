@@ -21,10 +21,18 @@ const buttonVariants = cva(
         blue: 'bg-[#2E4A9E] text-white hover:bg-[#1E3570] hover:-translate-y-0.5 transition-transform',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 px-3',
-        lg: 'h-11 px-8',
-        icon: 'h-10 w-10',
+        // RESPONSIVE NOTE (tap targets):
+        // WCAG 2.2 / Apple HIG recommend a minimum 44x44px touch target.
+        // `sm` was h-9 (36px) and `default` was h-10 (40px) — both below
+        // the guideline on phones.
+        //
+        // The heights below are the MOBILE values; from `sm:` up the
+        // original (more compact desktop) sizes are restored so the
+        // desktop layout keeps its current density.
+        default: 'h-11 sm:h-10 px-4 py-2',
+        sm: 'h-10 sm:h-9 px-3',
+        lg: 'h-12 sm:h-11 px-8',
+        icon: 'h-11 w-11 sm:h-10 sm:w-10',
       },
     },
     defaultVariants: {

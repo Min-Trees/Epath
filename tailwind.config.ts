@@ -10,7 +10,18 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      // RESPONSIVE NOTE:
+      // Tailwind's default container padding is 2rem (32px) at EVERY
+      // breakpoint. Every section in this project already sets its own
+      // horizontal padding (`px-4 sm:px-6 lg:px-8`), so the container
+      // padding was ADDED on top of it. That made the effective gutter
+      // 16px on mobile (container's 32px was overridden by px-4) but
+      // 32px at `sm:` (where px-6 = 24px lost to the container's 32px)
+      // — so sections were misaligned by 8px between breakpoints.
+      //
+      // Setting it to 0 lets the per-section utilities be the single
+      // source of truth for the gutter.
+      padding: '0',
       screens: {
         '2xl': '1400px',
       },

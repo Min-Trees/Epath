@@ -186,7 +186,7 @@ export function RegistrationModal({
                 <X className="w-4.5 h-4.5" />
               </button>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#2E4A9E]/10 text-[#2E4A9E] mb-2 shadow-2xs">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2E4A9E]/10 text-[#2E4A9E] mb-2 shadow-2xs sm:text-[11px]">
                 <Sparkles className="w-3.5 h-3.5 text-[#2E4A9E]" />
                 <span>{isVi ? 'Đăng Ký Tư Vấn Trực Tiếp' : 'Direct Advisory Registration'}</span>
               </div>

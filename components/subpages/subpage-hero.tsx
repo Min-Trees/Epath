@@ -129,7 +129,7 @@ export function SubpageHero({
             {tags.map((tag, idx) => (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/90 hover:bg-white text-[#1E3570] font-semibold text-[11px] sm:text-xs tracking-wide shadow-xs border border-[#DEDDD6]/80 transition-all cursor-default"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-md bg-white/90 hover:bg-white text-[#1E3570] font-semibold text-xs sm:text-xs tracking-wide shadow-xs border border-[#DEDDD6]/80 transition-all cursor-default"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8DC63F] shadow-[0_0_6px_rgba(141,198,63,0.8)] shrink-0" />
                 {tag}
